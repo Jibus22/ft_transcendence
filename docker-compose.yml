@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 5002:5432
+    env_file:
+      - .env
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+
+  back_end_server:
+    build: ./back_end
+    volumes:
+      - ./back_end:/usr/src/app
+    ports:
+      - 5001:3000
+    depends_on:
+      - database
+
+  front_end_server:
+    build: ./front_end
+    volumes:
+      - ./front_end:/usr/src/app
+    ports:
+      - 5000:3000
+    depends_on:
+      - back_end_server
