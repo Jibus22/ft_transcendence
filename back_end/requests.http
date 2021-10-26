@@ -1,0 +1,100 @@
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+
+### create new user
+
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+	"email": "hello@coucou.com",
+	"password": "string"
+}
+
+### login with same user
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+	"email": "hello@coucou.com",
+	"password": "string"
+}
+
+### signout
+POST http://localhost:3000/auth/signout
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#									TEST
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+### hello string
+GET http://localhost:3000/hello
+
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#									USER AUTH
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+
+### whoAmI
+GET http://localhost:3000/auth/whoami
+
+
+### find one user by id
+GET http://localhost:3000/auth/3
+
+### find all users by email
+GET http://localhost:3000/auth?email=hello@coucou.com
+
+### remove user by id
+DELETE http://localhost:3000/auth/1
+
+### update user email
+PATCH http://localhost:3000/auth/2
+content-type: application/json
+
+{
+	"email": "E@MAIL.com"
+}
+
+### find all users by email
+GET http://localhost:3000/auth?email=E@MAIL.com
+
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#								REPORTS
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+### Send a report
+POST http://localhost:3000/reports
+content-type: application/json
+
+{
+	"price": 23500,
+	"make": "honda",
+	"model": "civic",
+	"year": 1994,
+	"lng": 0,
+	"lat": 0,
+	"mileage": 130150
+}
+
+### change approved status of a report by its id
+PATCH http://localhost:3000/reports/2
+content-type: application/json
+
+{
+	"approved": true
+}
+
+### get estimate for existing vehicule
+GET http://localhost:3000/reports?make=honda&model=civic&lng=0&lat=0&mileage=120000&year=1993

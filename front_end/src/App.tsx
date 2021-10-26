@@ -1,29 +1,31 @@
-import React from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.tsx</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Yooooooooooooooooooooo
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+const App: FC = () => {
 
-const App = () => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+			fetch('http://localhost:3000/hello')
+			.then(res => {
+
+			  if (res.ok) {
+          return res.json();
+        } else {
+          throw Error('Could not fetch data')
+        }
+			})
+			.then(data => {
+        setData(data);
+			})
+			.catch(err => {
+				setError(err.message);
+			})
+	}, [])
+
+
   return (
     <div className="App">
       <header className="App-header">
@@ -31,14 +33,9 @@ const App = () => {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          >
-          HelloWorld!
-        </a>
+        <div>
+          <p>{(data && {data}) || ( error && `Could not get data... Error: ${error}`) || 'Waiting' }</p>
+        </div>
       </header>
     </div>
 	)
