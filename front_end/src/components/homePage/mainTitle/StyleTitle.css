@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300');
+
+.MainTitle {
+    margin-top: 2%;
+    margin-left: 20%;
+    width: 85%;
+    height: 100%;
+    font-family:monospace, serif;
+} 
+
+
+
+.Title{
+    font-size: 2.5em;
+    padding : 20px 0 20px 0;
+    text-align: center;
+   
+}
+
+h1, h5 {
+  color: #D7E9F7;
+  
+}
+
+.Title h1{
+  font-size: 1.5em
+}
+
+.MainTitle .TitleText{
+   text-align: center;
+    padding-top: px;  
+}
+
+.TitleText h5 {
+  font-size: 1.2em
+}
+
+.MainTitle hr {
+    border: 0;
+    height: 1px;
+    width: 100%;
+    margin: 0px 0 20px 0px ;
+    animation-name: slideHr;
+    animation-delay: 0s;
+    animation-duration: 4s;
+    color: white;
+} 
+
+
+
+ @keyframes slideHr {
+  from {
+   visibility: visible;
+    margin-left: 100%;
+    width: 0%;
+  }
+
+  to {
+    visibility: visible;
+    margin-left: 0%;
+   
+    width: 100%;
+  }
+ }
+
+ .MainTitle { 
+  display:inline-block;
+  overflow: hidden;    
+  white-space:nowrap;
+
+}
+
+.MainTitle:first-of-type h1, h5 {   
+  animation: showup 7s;
+  animation-iteration-count: 1;
+}
+
+.MainTitle:last-of-type h1, h5{
+  animation: reveal 0s;
+  animation-iteration-count: 0;
+  
+}
+
+.MainTitle:last-of-type h1, h5{
+  animation: slidein 7s ;
+  animation-iteration-count: 1;
+ 
+}  
+@keyframes showup {
+  0% {opacity:0;}
+  20% {opacity:1;}
+  80% {opacity:1;}
+  100% {opacity:0;}
+}
+
+@keyframes slidein {
+  0% { margin-left:-1600px; }
+  20% { margin-left:-800px; }
+  35% { margin-left:0px; }
+  100% { margin-left:0px; }
+}
+
+@keyframes reveal {
+     0% {opacity:0;width:0px;}
+     20% {opacity:1;width:0px;}
+    30% {width:355px;}
+    80% {opacity:1;}
+    100% {opacity:0;width:355px;}
+}
+
+
+
+ 
+@media screen and (max-width: 1357px) {
+  .MainTitle {
+  
+    
+  }
+  .Title {
+    font-size: 1.8em;
+   
+  }
+  .TitleText h5 {
+    font-size: 1em
+  }
+  
+}
+
+
+
+
+@media screen and (max-width: 1199px) {
+  .MainTitle {
+   
+   
+  }
+
+  .Title {
+    
+   
+    
+  }
+
+}
+
+@media screen and (max-width: 1034px) { 
+  
+  .MainTitle {
+      
+      
+      
+  }
+}
+@media screen and (max-width: 980px) {
+  .MainTitle {
+   
+  }
+  
+}
+
+
+ 

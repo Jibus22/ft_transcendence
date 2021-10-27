@@ -1,0 +1,112 @@
+
+.mainHeader {
+    width: 100%;
+    justify-content: center;
+
+    
+   .logo{
+       width: 50px;
+       height: 50px;
+       margin: 0 0 0 20px ;
+   }
+   
+
+}
+
+.menuHeader {
+   width: 75%;
+   height: 70px;
+   border-radius: 23px;
+   border: 1px solid var(--borderLight) ;
+   margin: 20px auto;
+   display: flex;
+ 
+   background-color: var(--colorBlueC);
+
+
+
+
+   .selectedNave{
+       
+    border-bottom: 1px #e6c073 solid;
+
+    
+    
+    
+}
+    
+
+}
+
+.headerMenu {
+    margin: 0 0 0 25%;
+    width: 50%;
+    
+    display: flex;
+    justify-content: center;
+
+   .linkLogoNav {
+       width: 30px;
+    
+       margin: 0 80px 0 80px;
+       
+   }
+
+    .iconHeader {
+        color: rgba(255, 255, 255, .2);
+       
+        // margin: 0 80px 0 80px;
+       
+        
+      
+    }
+}
+
+.iconeSetting:hover, .iconeRank:hover, .iconeNewGame:hover  {
+    color: var(--colorHover);
+
+}
+
+
+
+
+.nav-item  {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+    
+}
+    
+
+
+
+.logHeader {
+    margin: 0 20px 0 0;
+    .profil {
+        align-self: end;
+        margin: 0 0 0 0;
+     
+
+        h2 {
+            color: white;
+            font-size: 1em;
+            margin: 14px 18px 0 0
+        }
+    }
+
+    img {
+        width: 50px;
+        height: 50px;
+        align-self: end;
+        margin: 0 0px 0 0;
+    }
+
+    .profil:hover {
+        padding: 0 0 0 10px;
+        border-radius: 20px;
+        background-color: #364f6b;
+    }
+    
+}
+

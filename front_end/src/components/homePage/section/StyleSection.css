@@ -1,0 +1,140 @@
+
+.Section {
+    width: 100%;
+    height: 100%;
+    padding: 30px 0 0 30px;
+    margin-top: 50px;
+}
+
+.profil img {
+    width: 75px;
+    height: 75px;
+}
+
+
+.profil1{
+    display: flex;
+    margin: 5px 0 0 30px;
+    width: 100%;
+}
+
+
+
+.profil2 {
+    display: flex;
+    margin: 65px 0 0 100px;
+    width: 100%;
+
+   
+}
+.profil3 {
+   
+    display: flex;
+    margin: 65px 0 0 200px;
+    width: 100%;
+}
+
+.profil4 {
+   
+    display: flex;
+    margin: 70px 0 0 20px;
+    width: 100%;
+}
+
+.profil5 {
+   
+    display: flex;
+    margin: 70px 0 0 120px;
+    width: 100%;
+}
+
+.info {
+    margin: -10px 0 0px 30px ;
+    padding-top: 10px;
+    
+}
+
+.info p {
+    font-family: 'Libre Baskerville', serif;   
+    color: #D7E9F7;
+    padding: 5px 0 0 0;
+    margin-left: 20px;
+    font-size: 1em;
+}
+
+
+
+hr {
+   
+    width: 150%;
+    height: 0.3px;
+    margin: -10px 0 1px 0;
+    
+}
+
+@media screen and (max-width: 1880px) {
+    .listProfil {
+        
+    }
+
+    .listProfil img {
+    
+        
+        
+    }
+    .info {
+        
+    }
+
+}
+
+
+@media screen and (max-width: 1597px) {
+    .listProfil {
+        
+   
+        
+    }
+    .profil {
+      
+        
+        
+    }
+}
+
+@media screen and (max-width: 1362px) {
+    .listProfil {
+      
+     
+
+        
+       
+        
+    }
+    .info {
+        
+    }
+    .listProfil img {
+    
+        
+    }
+    
+}
+
+
+
+@media screen and (max-width: 1034px) {
+    .listProfil {
+       
+       
+    }
+}
+
+
+@media screen and (max-width: 980px) {
+    .listProfil {
+       
+        
+    }
+    
+}

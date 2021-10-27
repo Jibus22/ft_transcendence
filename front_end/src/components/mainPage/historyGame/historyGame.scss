@@ -1,0 +1,155 @@
+@use "@material/tab-bar/mdc-tab-bar";
+
+.mainHisUser {
+    width: 75%;
+    height: 65vh;
+    margin: 70px auto;
+    border: 1px solid var(--borderLight) ;
+    border-radius: 30px;
+    background-color: var(--colorBlueC);
+   
+
+    h1 {
+        color: white;
+        font-size: 2em;
+    }
+
+    .searchCase {
+        width: 90%;
+        height: 40px;
+        margin: 30px 0 0 0 ;
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+
+        h2 {
+            color: white;
+            font-size: 1.3em;
+            margin-left: 20px;
+        }
+
+        .searchBar {
+            border-radius: 30px;
+            border: 1px solid var(--borderLight) ;
+            width: 26%;
+        }
+        .myGameBar {
+            border: 1px solid var(--borderLight) ;
+            width: 15%;
+            margin: 0 50px 0 0px;
+            ;
+        }
+
+        .ui.input input {
+            color: white;
+          }
+
+              
+    } 
+    .dpdInfo {
+        display: flex;
+        width: 90%;
+        margin: 20px auto;
+       
+
+        h3 {
+       
+            font-size: 1em;
+        }
+        .date {
+            margin: 15px 0 0 107px;
+        }
+        .score {
+            margin: 15px 0 0 474px;
+        }
+        .time {
+            margin: 15px 0 0 243px;
+        }
+    }
+
+    .pageOverflow {
+        overflow: auto;
+        
+        width: 95%;
+        margin: 0px 0 0 0;
+
+        
+        
+    }
+    ::-webkit-scrollbar {
+        width: 10px;
+        
+      }
+      ::-webkit-scrollbar-track {
+        margin-top: 30px;
+        margin-bottom: 60px;
+        border-radius: 20px;
+      
+    }
+    
+   
+
+    .histUser {
+        width: 80%;
+        height: 90%;
+        margin: 0px auto;
+        
+
+       
+        .infoHistory {
+            display: flex;
+            color: grey;
+            margin: 40px 0 0 0;
+
+            .date {
+                margin: 15px 0 0 30px;
+                
+                .time {
+                    margin: -10px 0 0 0
+                }
+                
+            }
+
+            .userImg {
+                margin: 10px 0 0 70px;
+                img {
+                    width: 70px;
+                }
+               
+            }
+
+            .playerScore {
+                width: 400px;
+                margin: 0 0 0 60px;
+           
+
+                .player {
+                    margin: 10px 0 0 0;
+                    display: flex;
+                    justify-content: center;
+
+                    .vs {
+                        margin: 0 9px 0 9px;
+                    }
+                }
+                .score {
+                    display: flex;
+                    justify-content: center;
+                    margin: -10px 0 0 7px;
+                }
+            }
+            .duration {
+                margin: 10px 0 0 60px;
+            }
+
+           
+        }
+        hr {
+            width: 90%;
+            margin: 30px 0 0 0;
+
+            
+        }
+    }
+  
+}

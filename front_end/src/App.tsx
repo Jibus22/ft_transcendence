@@ -1,45 +1,20 @@
-import React, { FC, useEffect, useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React  from 'react';
+import { Homepage, MainPage } from './components';
 
-const App: FC = () => {
+import { BrowserRouter as Router, Route, Switch}  from 'react-router-dom';
 
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-			fetch('http://back_end_server/hello')
-			.then(res => {
-
-			  if (res.ok) {
-          return res.json();
-        } else {
-          throw Error('Could not fetch data')
-        }
-			})
-			.then(data => {
-        setData(data);
-			})
-			.catch(err => {
-				setError(err.message);
-			})
-	}, [])
-
-
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <div>
-          <p>{(data && {data}) || ( error && `Could not get data... Error: ${error}`) || 'Waiting' }</p>
-        </div>
-      </header>
-    </div>
-	)
+    <Router> 
+      <div className=' home'>
+        <Switch> 
+           <Route exact path='/' component={Homepage}/>
+           <Route path='/MainPage' component={ MainPage}/>
+           {/* <Route component={ErrorPage}/> */}
+       </Switch>
+      </div>
+      </Router>
+  )
 }
 
 export default App;
-

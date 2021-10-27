@@ -1,0 +1,153 @@
+
+.mainParamUser {
+    margin: 20px 0 0 0;
+    display: flex;
+    
+    width: 100%;
+    height: 86vh;
+
+    // #181E28
+    // #0A1929
+ 
+
+  
+    background-color: #2E4266;
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+
+
+.ongletParamUser {
+    width: 30%;
+    height: 30%;
+    margin: 80px 0 0 80px;
+    background-color: #303a52;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+        font-size: 1.5em;
+        margin: 20px 0 0 0;
+    }
+    h3 {
+        font-size: 1.1em;
+        color: rgba(255, 255, 255, .8);
+       
+        
+    }
+    hr {
+        color: white;
+        width: 80%;
+        display: flex;
+        margin: 14px 0 0 34px;
+    }
+
+    .navInfo {
+        margin: 10px 0 0 0;
+        
+        height: 40px;
+    }
+    .navHistory {
+        height: 40px;
+        
+    }
+    .navInfo:hover,
+    .navHistory:hover{
+        
+        background-color: rgba(54, 79, 107, .3);
+    
+    }
+
+   .selectedNav{
+       
+       border-left: 3px #e6c073 solid;
+
+       
+       background-color: #364f6b;
+       
+   }
+
+    
+
+
+    .personalInfo {
+        
+        margin: 8px 0 0 0;
+        text-align: center;
+
+
+        
+    }
+    .ratioInfo {
+        margin: 8px 0 0 0;
+        
+    }
+   
+}
+
+
+.ParamUser {
+    margin: 20px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+   
+
+    // #181E28
+    // #0A1929
+ 
+
+  
+    background-color: #2E4266;
+    // border: 1px solid rgba(255, 255, 255, .1);
+    // padding: 30px 80px 0 80px;
+    
+   
+
+    .mainProfilUser {
+        width: 70%;
+        display: flex;
+        justify-content: center;
+        margin: 50px 0 0 0px;
+        // border: red solid 1px;
+        
+       
+        
+    }
+    .statLoginUser {
+        width: 25%;
+        margin: 0 0 0 40px;
+        
+        display: flex;
+        flex-direction: column;
+       
+        
+        h1 {
+            font-size: 1.8em;
+            display: flex;
+            
+           
+        }
+    }
+
+    .statUser {
+        // border: green 3px solid;
+        display: flex
+    }
+    .statUser {
+       margin: 10px 0 0 0;
+        h1 {
+            font-size: 1em;
+            margin: 0 0 0 0;
+        }
+        h3 {
+            color: white;
+            font-size: 2em;
+        }
+    }
+    .userStat {
+        margin: 0 80px 0 0px ;
+    }
+}
+
+
