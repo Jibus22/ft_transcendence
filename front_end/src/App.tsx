@@ -8,7 +8,7 @@ const App: FC = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-			fetch('http://localhost:3000/hello')
+			fetch('http://back_end_server/hello')
 			.then(res => {
 
 			  if (res.ok) {

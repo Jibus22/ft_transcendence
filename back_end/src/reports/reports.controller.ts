@@ -9,12 +9,23 @@ import { Serialize } from '../interceptors/serialize.interceptor';
 import { ApprovedReportDto } from './dtos/approve-report.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('Reports')
 @Controller('reports')
 export class ReportsController {
 
 	constructor( private reportsService: ReportsService) {}
 
+	@ApiResponse({
+		type: ReportDto
+	})
+	@ApiOperation({
+		summary: 'Post a new report to the database',
+		description: 'Allow user to post a new report in the database, it still has\
+		to be approved by admin to be used in the estimation'
+	})
 	@Post()
 	@Serialize(ReportDto)
 	@UseGuards(AuthGuard)

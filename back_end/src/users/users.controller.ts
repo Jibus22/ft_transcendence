@@ -20,7 +20,10 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './users.entity'
 import { AuthGuard } from '../guards/auth.guard';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('Users')
 @Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
@@ -29,13 +32,15 @@ export class UsersController {
     private authService: AuthService
     ) {}
 
-    @Post('/signup')
-    async createUser(@Body() body: CreateUserDto, @Session() session: any) {
-      const user = await this.authService.signup(body.email, body.password);
-      session.userId = user.id;
+  @ApiResponse({type: UserDto})
+  @Post('/signup')
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
     return user;
   }
 
+  @ApiResponse({type: UserDto})
   @Post('/signin')
   async signin(@Body() body: CreateUserDto, @Session() session: any) {
     const user = await this.authService.signin(body.email, body.password)
@@ -43,6 +48,7 @@ export class UsersController {
     return user;
   }
 
+  @ApiResponse({type: UserDto})
   @Get('/whoami')
   @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {

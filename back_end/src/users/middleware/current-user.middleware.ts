@@ -11,6 +11,8 @@ declare global {
 	}
 }
 
+/** Extracts the userId from the session object into the request object */
+
 @Injectable()
 export class CurrentUserMiddleware implements NestMiddleware {
 
