@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:14
 
 # Up one directory regarding the app, we set the node_modules
 WORKDIR /usr/src
