@@ -3,28 +3,32 @@ import './historyGame.scss'
 
 import 'semantic-ui-css/semantic.min.css'
 import { Input } from 'semantic-ui-react'
-import { Fade } from "react-awesome-reveal";
+import { useSpring, animated } from 'react-spring'
 
 import FF from '../../homePage/section/photos/FF.png'
 import JB from '../../homePage/section/photos/jb.png'
 
 
-const InputN = () => <Input className='myGameBar' 
-           transparent={true} 
-placeholder='My game' />
-
-const InputSearch = () => <Input className='searchBar' icon='search'
-            iconPosition='left' transparent={true} 
+const InputN = () => <Input className='myGameBar' transparent={true}  placeholder='My game' />
+const InputSearch = () => <Input className='searchBar' icon='search' iconPosition='left' transparent={true} 
 placeholder='Search...' />
 
 const HistoryGame= () => {
 
-  
+    
+        const props = useSpring({
+            opacity: 1,
+            transform: "translate(0px, 0px)",
+            from: { opacity: 0, transform: "translate(0px, 500px)" } ,
+            config: {
+              delay: 400,
+              duration: 500,
+            },
+          });
 
     return (
       
-        <Fade direction='up' duration={300} className='w-100'>
-            
+        <animated.div  style={props} className='w-100'>   
         <div className='mainHisUser  d-flex flex-column  '>
             <div className='searchCase '>
               
@@ -181,7 +185,7 @@ const HistoryGame= () => {
             </div>
      
         </div>
-         </Fade>
+        </animated.div>
       
     )
 }

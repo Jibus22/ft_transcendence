@@ -21,7 +21,7 @@ const Header = () => {
             <ul className="navbar-nav headerMenu ">
                 <li className="nav-item  linkLogoNav">
                     <NavLink 
-                    to='/MainPage/home' className='navGame'   activeClassName="selectedNave" >
+                    to='/MainPage' className='navGame'   activeClassName="selectedNave" >
                         <Icon path={mdiGamepadVariantOutline} title="Setting Profile" size={1.1}
                             className='iconeNewGame iconHeader ' />
                     </NavLink>

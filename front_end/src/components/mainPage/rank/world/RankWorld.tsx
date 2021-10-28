@@ -6,7 +6,7 @@ import Rank from '../img/rank-3.svg'
 
 const RankWorld = () => {
     return (
-        <Fade direction='up' duration={400} className='w-100 fadeRankFriend'>
+        // <Fade direction='up' duration={400} className='w-100 fadeRankFriend'>
         <div className='mainRankFriends d-flex flex-column '>
             <div className='MainUserRankdiv d-flex '>
                 <div className='d-flex rankdiv rankdiv1'>
@@ -37,7 +37,7 @@ const RankWorld = () => {
             </div>
 
         </div>
-        </Fade>
+        // </Fade>
     )
 }
 

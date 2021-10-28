@@ -17,7 +17,7 @@ const ParamUser = () => {
         
         <Router> 
 
-        <Fade direction='up' duration={400} className='w-100'>
+        {/* <Fade direction='up' duration={400} className='w-100'> */}
         
         <div className='mainParamUser d-flex'>
 
@@ -76,8 +76,8 @@ const ParamUser = () => {
             {/* <PersoInfo/> */}
             </div>
 
-            <Route exact path='/MainPage/setting' component={ PersoInfo }></Route>
-            <Route exact path='/MainPage/historyGame' component={ HistoryGame }></Route>
+            {/* <Route exact path='/MainPage/setting' component={ PersoInfo }></Route>
+            <Route exact path='/MainPage/historyGame' component={ HistoryGame }></Route> */}
         
         </div>
         
@@ -91,7 +91,7 @@ const ParamUser = () => {
         
        
         </div>
-        </Fade>
+        {/* </Fade> */}
         </Router>
         
       
