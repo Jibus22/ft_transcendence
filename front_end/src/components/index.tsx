@@ -24,4 +24,6 @@ export {default as UserRank} from './mainPage/rank/UserRank'
 export {default as RankFriends} from './mainPage/rank/friends/RankFriends'
 export {default as RankWorld} from './mainPage/rank/world/RankWorld'
 
+export {default as OnlineGame} from  './mainPage/onlineGame/OnlineGame'
+
 // export {default as ErrorPage} from './errorPage/ErrorPage'

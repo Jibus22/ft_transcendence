@@ -1,11 +1,13 @@
 
 .mainChat {
-    margin: 90px 5% 0 25%;
-    width: 25%;
-    height: 75vh;
-    border-radius: 23px;
-    background-color: #2E4266;
-    border: 1px solid rgba(255, 255, 255, .1);
+    width: 3%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    margin: 0 100px 0 0;
+   
 
+    
     
 }

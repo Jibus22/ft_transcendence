@@ -26,9 +26,8 @@ const GameWindow = () => {
         <animated.div  style={props} className='w-100'> 
         <div className='mainGameWindow '>
 
-            <div className='mainGame '>
-                
-            </div>
+            
+            
             
         </div>
         </animated.div>

@@ -1,15 +1,25 @@
 import React from 'react' 
 import './chatRoom.scss'
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import { pink } from '@mui/material/colors';
 // import { BrowserRouter as Router, Link, Route, NavLink, Switch } from 'react-router-dom'
-import { Fade } from "react-awesome-reveal";
+
+
 
 const ChatRoom = () => {
     return (
-        <Fade direction='up' duration={400} className='w-100'> 
-        <div className='mainChat'>
+        <div className='mainChat  '>
+         <Fab className='iconeChat' color="primary" aria-label="add" 
+            sx={{width: 80, height: 80}}
+         
+         >
+            <PeopleAltIcon sx={{width: 40, height: 40}}/>
 
+            
+        </Fab>
         </div>
-        </Fade>
     )
 }
 

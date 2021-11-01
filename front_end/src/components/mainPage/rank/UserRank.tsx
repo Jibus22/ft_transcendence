@@ -3,6 +3,8 @@ import './userRank.scss'
 import {RankFriends, RankWorld} from '../..'
 import { useSpring, animated } from 'react-spring'
 import { BrowserRouter as Router, Route, NavLink} from 'react-router-dom'
+import Button from '@mui/material/Button';
+
 
 const UserRank = () => {
 
@@ -19,7 +21,7 @@ const UserRank = () => {
     return (
         <Router>
         <animated.div  style={props} className='w-100'> 
-        <div className='mainUserRank w-100 d-flex flex-column  '>
+        <div className='mainUserRank d-flex flex-column  '>
             <div className='titleRank d-flex flex-column '>
                 <h1>Leaderboard</h1>
                 <hr />

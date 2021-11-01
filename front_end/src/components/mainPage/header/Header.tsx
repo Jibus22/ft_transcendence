@@ -3,7 +3,7 @@ import './header.scss'
 import {NavLink} from 'react-router-dom'
 import Logo from './src/logo.svg'
 import Icon from '@mdi/react'
-import { mdiCogOutline, mdiBellOutline, mdiCrownOutline, mdiGamepadVariantOutline } from '@mdi/js';
+import {mdiCrownOutline, mdiGamepadVariantOutline, mdiCalendarClock } from '@mdi/js';
 
 import FF from '../../homePage/section/photos/FF.png'
 
@@ -34,18 +34,19 @@ const Header = () => {
                     </NavLink>
                 </li>
 
-                <li className="nav-item linkLogoNav" >
+                {/* <li className="nav-item linkLogoNav" >
                     <NavLink 
                     to='/MainPage/setting' className='navParam'   activeClassName="selectedNave"> 
                         <Icon path={mdiCogOutline} title="Setting" size={1.1}
                             className='iconeSetting iconHeader' />
                     </NavLink>
-                </li>
+                </li> */}
 
                 <li className="nav-item linkLogoNav" >
                     <NavLink  style={{ textDecoration: 'none' }}
                     to='/MainPage/historyGame' className='navParam'   activeClassName="selectedNave"> 
-                        <h2>history</h2>
+                        <Icon path={mdiCalendarClock} title="history Profile" size={1.1}
+                         className='iconeHistory iconHeader' />
                     </NavLink>
                 </li>
 

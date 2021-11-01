@@ -3,19 +3,35 @@ import './historyGame.scss'
 
 import 'semantic-ui-css/semantic.min.css'
 import { Input } from 'semantic-ui-react'
+import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+import { pink } from '@mui/material/colors';
+import { alpha, styled } from '@mui/material/styles';
+import InputAdornment from '@mui/material/InputAdornment';
+
+
 import { useSpring, animated } from 'react-spring'
 
 import FF from '../../homePage/section/photos/FF.png'
 import JB from '../../homePage/section/photos/jb.png'
 
 
-const InputN = () => <Input className='myGameBar' transparent={true}  placeholder='My game' />
-const InputSearch = () => <Input className='searchBar' icon='search' iconPosition='left' transparent={true} 
-placeholder='Search...' />
+const CssTextField = styled(TextField)({
+    '& label.Mui-focused': {
+      color: 'black',
+      
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'grey',
+      },
+      
+      
+    },
+  });
 
 const HistoryGame= () => {
 
-    
         const props = useSpring({
             opacity: 1,
             transform: "translate(0px, 0px)",
@@ -23,17 +39,28 @@ const HistoryGame= () => {
             config: {
               delay: 400,
               duration: 500,
-            },
-          });
+            },});
 
     return (
       
         <animated.div  style={props} className='w-100'>   
         <div className='mainHisUser  d-flex flex-column  '>
-            <div className='searchCase '>
-              
-                <InputN/>
-                <InputSearch />
+            <div className='searchCase  '>
+                <h1>History</h1>
+                
+
+                <CssTextField className='myGame'  id="outlined-password-input" size='small'
+                            label="My game" />
+
+
+                <CssTextField className='searchBarre'  id="outlined-password-input" size='small' label="My game"
+                    InputProps={{ 
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: pink[50], fontSize: 20,  }} />
+                      </InputAdornment> ),}}/>
+
+               
 
             </div>
 
