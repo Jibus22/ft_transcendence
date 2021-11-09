@@ -2,6 +2,8 @@
 import React from 'react'
 import './game.scss'
 // import { BrowserRouter as Router, Link, Route, NavLink, Switch, useHistory } from 'react-router-dom'
+import Button from '@mui/material/Button';
+
 
 import { useSpring, animated } from 'react-spring'
 
@@ -17,15 +19,35 @@ const GameWindow = () => {
           duration: 500,
         },
       });
+
+    // const [loading, setLoading] = React.useState(false);
+    // function handleClick() {
+    //     setLoading(true);
+    // }
+      
  
      
 
     return (
 
-        // <Fade direction='up' duration={400} className='w-100'> 
+      
         <animated.div  style={props} className='w-100'> 
-        <div className='mainGameWindow '>
+        <div className='mainGameWindow d-flex flex-column'>
+            <div className='msgPlay'>
+                <h1>Do you want to play now ? </h1>
+            </div>
+            <div className='playRandom '>
+               
+                 <Button variant="contained"   sx={{borderRadius: 3, width: 2/2, height: 2/2}}>Play</Button> 
+                 
+            
 
+
+
+            </div>
+            <div className='playFriend '>
+             <Button variant="contained"   sx={{borderRadius: 3, width: 2/2, height: 2/2}}>Invit Friend</Button>
+            </div>
             
             
             

@@ -2,6 +2,8 @@ import React from 'react'
 import '../userRank.scss'
 import { useSpring, animated } from 'react-spring'
 import FF from '../img/FF.png'
+
+
 import Button from '@mui/material/Button';
 
 const Rankfriends = () => {

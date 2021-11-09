@@ -1,25 +1,24 @@
 import React from 'react' 
-import  './StyleTitle.css'
+import  './StyleTitle.scss'
 
 
 const MainTitlePage = () => {
     return (
-        <div className='d-flex flex-column p-4  w-75 Header  '>
+        <div className='d-flex flex-column  w-75 Header  '>
                 <div className='MainTitle '>
-                    <div className='Sep'>
+                    {/* <div className='Sep'>
                         <hr />
-                    </div>
+                    </div> */}
                    
-                    <div className='Title'>
+                    <div className='Title '>
                         <h1>Transcendence</h1>
                     </div> 
-                    <div className=''>
+                    <div className='TitleText'> 
+                        <h5>Let's play</h5>
+                    </div>        
+                    <div className='sepTitle'>
                         <hr/>
                     </div>
-                    
-                    <div className='TitleText'> 
-                        <h5>The most expensive experience</h5>
-                    </div>        
                 </div>
 
                 <footer className=''>

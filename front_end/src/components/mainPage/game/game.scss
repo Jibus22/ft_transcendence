@@ -5,12 +5,45 @@
 
     margin: 30px 0 0 200px;
   
-    width: 93%;
+    width: 80%;
     height: 65vh;
 
     border-radius: 23px;
     background-color: #2E4266;
     border: 1px solid rgba(255, 255, 255, .1);
+
+    .msgPlay {
+        margin: 140px 0 0 0;
+        h1 {
+            font-size: 2.4em;
+        }
+    }
+
+    .playRandom {
+        width: 40%;
+        height: 10%;
+        margin: 70px auto;
+
+        .MuiButton-root {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+    }
+
+    .playFriend {
+        width: 40%;
+        height: 10%;
+        margin: 0px auto;
+
+        .MuiButton-root {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        
+
+
+    }
 
    
 

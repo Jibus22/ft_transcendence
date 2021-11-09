@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300');
+
+.MainTitle {
+    position: absolute;
+    width: 690px;
+    height: 88px;
+    left: 130px;
+    top: 117px;
+   
+    .Title{
+      text-align: center;
+      
+
+      h1 {
+      font-family: Montserrat, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 95px;
+      line-height: 88px;
+      color: #FFFFFF;
+      text-align: center;
+
+      }  
+  }
+
+    .TitleText {
+      text-align: center;
+
+      h5 {
+        font-family: Montserrat, sans-serif;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 30px;
+        line-height: 60px;
+        text-align: center;
+        color: #E69C6A;
+    }
+  }
+    
+  
+    .sepTitle {
+      hr {
+        height: 3px;
+        width: 100%;
+        margin: 20px auto ;
+        animation-name: slideHr;
+        animation-delay: 0s;
+        animation-duration: 4s;
+        color: #CA6C88;
+        
+      }
+  }
+} 
+
+
+            ////////////////////////
+            /// animation titre ////
+            ////////////////////////
+
+.MainTitle:first-of-type h1, h5 {   
+  animation: showup 7s;
+  animation-iteration-count: 1;
+}
+
+.MainTitle:last-of-type h1, h5{
+  animation: reveal 0s;
+  animation-iteration-count: 0;
+  
+}
+
+.MainTitle:last-of-type h1, h5{
+  animation: slidein 7s ;
+  animation-iteration-count: 1;
+ 
+}  
+@keyframes showup {
+  0% {opacity:0;}
+  20% {opacity:1;}
+  80% {opacity:1;}
+  100% {opacity:0;}
+}
+
+@keyframes slidein {
+  0% { margin-left:-1600px; }
+  20% { margin-left:-800px; }
+  35% { margin-left:0px; }
+  100% { margin-left:0px; }
+}
+
+@keyframes reveal {
+     0% {opacity:0;width:0px;}
+     20% {opacity:1;width:0px;}
+    30% {width:355px;}
+    80% {opacity:1;}
+    100% {opacity:0;width:355px;}
+}
+
+@keyframes slideHr {
+  from {
+   visibility: visible;
+    margin-left: 100%;
+    width: 0%;
+  }
+
+  to {
+    visibility: visible;
+    margin-left: 0%;
+   
+    width: 100%;
+  }
+ }
+
+        ////////////////////////
+        ////// reponsive ///////
+        ////////////////////////
+ 
+
+ 
+@media screen and (max-width: 1357px) {
+  .MainTitle {
+  
+    
+  }
+  .Title {
+    font-size: 1.8em;
+   
+  }
+  .TitleText h5 {
+    font-size: 1em
+  }
+  
+}
+
+
+
+
+@media screen and (max-width: 1366px) {
+  .MainTitle {
+    border: white 2px solid;
+   
+  }
+
+  .Title {
+    
+   
+    
+  }
+
+}
+
+@media screen and (max-width: 1034px) { 
+  
+  .MainTitle {
+      
+      
+      
+  }
+}
+@media screen and (max-width: 980px) {
+  .MainTitle {
+   
+  }
+  
+}
+
+
+ 

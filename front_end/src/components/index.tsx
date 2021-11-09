@@ -1,5 +1,6 @@
 
 import RankWorld from './mainPage/rank/world/RankWorld';
+import WindowChat from './mainPage/chatroom/windows/WindowChat';
 export { default as Homepage} from './homePage/HomePage'
 
 export { default as TitlePage} from './homePage/mainTitle/MainTitlePage';
@@ -12,7 +13,11 @@ export {default as LoadingBarre} from './loadingBarre/LoadingBarre'
 export {default as MainPage} from './mainPage/MainPage'
 
 export {default as Header} from './mainPage/header/Header'
+
+
 export {default as ChatRoom} from './mainPage/chatroom/ChatRoom'
+export {default as WindowChat} from './mainPage/chatroom/windows/WindowChat'
+
 export {default as GameWindow} from './mainPage/game/Game'
 
 export {default as ParamUser} from './mainPage/paramUser/ParamUser'

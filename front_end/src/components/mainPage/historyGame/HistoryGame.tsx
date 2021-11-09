@@ -53,7 +53,7 @@ const HistoryGame= () => {
                             label="My game" />
 
 
-                <CssTextField className='searchBarre'  id="outlined-password-input" size='small' label="My game"
+                <CssTextField className='searchBarre'  id="outlined-password-input" size='small' label="Search"
                     InputProps={{ 
                     startAdornment: (
                       <InputAdornment position="start">
