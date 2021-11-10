@@ -23,6 +23,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { DebugGuard } from '../guards/debug.guard';
 
 @ApiTags('Users')
 @Serialize(UserDto)
@@ -30,6 +31,12 @@ import { ConfigService } from '@nestjs/config';
 export class UsersController {
   constructor(private authService: AuthService,
     private configService: ConfigService) {}
+
+    @Post('/debug_signin')
+    @UseGuards(DebugGuard)
+    logDebugUser(@Session() session: any) {
+      session.userId = this.authService.logDebugUser();
+    }
 
     @Get('/callback')
     async authCallback(@Query() query, @Res() res, @Session() session: any) {

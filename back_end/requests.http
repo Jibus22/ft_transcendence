@@ -3,110 +3,22 @@
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
-### create new user
-
-POST http://localhost:3000/auth/signup
-content-type: application/json
-
-{
-	"email": "hello@coucou.com",
-	"password": "string"
-}
-
-### login with same user
-POST http://localhost:3000/auth/signin
-content-type: application/json
-
-{
-	"email": "hello@coucou.com",
-	"password": "string"
-}
-
-### signout
-POST http://localhost:3000/auth/signout
-
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#									TEST
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-
-### hello string
-GET http://localhost:3000/hello
-
-
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#									42 OAUTH - USER AUTH
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-
-### signin request
-GET https://api.intra.42.fr/oauth/authorize?client_id=c70cf69ce9a0065518d0165c9a14860cd35575f0ee9984f6031e752d5729b0d9&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=cod&state=coucou42
-
-### callback
-GET http://localhost:3000/auth/callback
-
-
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 #									USER AUTH
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
+### signin with debug session
 
-### whoAmI
-GET http://localhost:3000/auth/whoami
-
-
-### find one user by id
-GET http://localhost:3000/auth/3
-
-### find all users by email
-GET http://localhost:3000/auth?email=hello@coucou.com
-
-### remove user by id
-DELETE http://localhost:3000/auth/1
-
-### update user email
-PATCH http://localhost:3000/auth/2
+POST http://localhost:3000/auth/debug_signin
 content-type: application/json
 
 {
-	"email": "E@MAIL.com"
 }
 
-### find all users by email
-GET http://localhost:3000/auth?email=E@MAIL.com
+### signout
+POST http://localhost:3000/auth/signout
 
-
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#								REPORTS
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-
-### Send a report
-POST http://localhost:3000/reports
-content-type: application/json
-
-{
-	"price": 23500,
-	"make": "honda",
-	"model": "civic",
-	"year": 1994,
-	"lng": 0,
-	"lat": 0,
-	"mileage": 130150
-}
-
-### change approved status of a report by its id
-PATCH http://localhost:3000/reports/2
-content-type: application/json
-
-{
-	"approved": true
-}
-
-### get estimate for existing vehicule
-GET http://localhost:3000/reports?make=honda&model=civic&lng=0&lat=0&mileage=120000&year=1993
+### get my own infos
+GET http://localhost:3000/auth/me
