@@ -108,3 +108,4 @@ dist
 .tern-port
 back_end/dbDev.sqlite
 .gitignore
+back_end/package-lock.json

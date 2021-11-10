@@ -4,8 +4,8 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
 
 	@Get('/hello')
-  helloworld() {
-    return { message: 'hello_world_transcendence, from backend' };
+  getHello() {
+    return 'Hello World!';
   }
 
 }
