@@ -51,7 +51,7 @@ export class AuthService {
 
     return lastValueFrom(
       this.httpService
-        .post(this.configService.get('AUTH_42API_URL'), null, requestConfig)
+        .post(this.configService.get('AUTH_42API_TOKEN_URL'), null, requestConfig)
         .pipe(
           map((resp) => {
             return resp.data.access_token;
@@ -92,6 +92,7 @@ export class AuthService {
     if (users.length) {
       return users[0];
     }
+    user.use_local_photo = false;
     return this.usersService.create(user);
   }
 }
