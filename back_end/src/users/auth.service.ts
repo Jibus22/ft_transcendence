@@ -28,10 +28,10 @@ export class AuthService {
   // 	return user;
   // }
 
-  async signinUser(queryCode: string, queryState: string) {
+  async registerUser(queryCode: string, queryState: string) {
     const token = await this.getAuthToken(queryCode, queryState);
     const user: Partial<User> = await this.getUserData(token);
-    this.addUser(user);
+    return this.updateDatabase(user);
   }
 
   async getAuthToken(queryCode: string, queryState: string) {
@@ -87,12 +87,18 @@ export class AuthService {
     });
   }
 
-  async addUser(user: Partial<User>): Promise<User> {
+  async updateDatabase(user: Partial<User>): Promise<User> {
     const users = await this.usersService.find(user.login);
     if (users.length) {
-      return users[0];
+      return this.usersService.update(users[0].id,
+        {photo_url_42: users[0].photo_url_42} as User);
     }
     user.use_local_photo = false;
     return this.usersService.create(user);
+  }
+
+  async logDebugUser(): Promise<User> {
+    const users = await this.usersService.find('bvalette');
+    return this.usersService.create(users[0]);
   }
 }

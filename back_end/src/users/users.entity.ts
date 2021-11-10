@@ -43,8 +43,8 @@ export class User {
   // logRemove() {
   //   console.log('Removed User: ', this.id);
   // }
-  // @AfterUpdate()
-  // logUpdate() {
-  //   console.log('Updated User: ', this.id);
-  // }
+  @AfterUpdate()
+  logUpdate() {
+    console.log('Updated User: ', this);
+  }
 }

@@ -41,14 +41,22 @@ export class UsersController {
     @Get('/callback')
     async authCallback(@Query() query, @Res() res, @Session() session: any) {
 
-      await this.authService.signinUser(query.code, query.state);
-      // if ( ! user) {
-      //   throw new BadGatewayException('could not log');
-      // }
+      const user = await this.authService.registerUser(query.code, query.state);
+      session.userId = user.id;
       return res.redirect(this.configService.get('AUTH_REDIRECT_URL'));
     }
 
+    @ApiResponse({ type: UserDto })
+    @Get('/me')
+    @UseGuards(AuthGuard)
+    whoAmI(@CurrentUser() user: User) {
+      return user;
+    }
 
+    @Post('/signout')
+    signOut(@Session() session: any) {
+      session.userId = null;
+    }
 
 
 
@@ -76,17 +84,7 @@ export class UsersController {
   //   return user;
   // }
 
-  // @ApiResponse({ type: UserDto })
-  // @Get('/whoami')
-  // @UseGuards(AuthGuard)
-  // whoAmI(@CurrentUser() user: User) {
-  //   return user;
-  // }
 
-  // @Post('/signout')
-  // signOut(@Session() session: any) {
-  //   session.userId = null;
-  // }
 
   // @Get('/:id')
   // async findUser(@Param('id') id: string) {
