@@ -2,15 +2,16 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class UsersService {
 
-	constructor( @InjectRepository(User) private repo: Repository<User> ) {}
+	constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-	create(email: string, password: string) {
-		const user = this.repo.create({email, password});
-		return this.repo.save(user);
+	create(user: Partial<User>) {
+		const newUser = this.repo.create(user);
+		return this.repo.save(newUser);
 	}
 
 	findOne(id: number) {
@@ -20,8 +21,8 @@ export class UsersService {
 		return this.repo.findOne(id);
 	}
 
-	find(email: string) {
-		return this.repo.find({ email });
+	find(login_42: string) {
+		return this.repo.find({ login_42 });
 	}
 
 	async update( id: number, attrs: Partial<User> ) {

@@ -19,7 +19,7 @@ describe('AuthService', () => {
 			},
 
 			create: (email: string, password: string) => {
-				const user = { id: Math.floor(Math.random() * 9999999999), email, password} as User;
+				const user = { email, password} as User;
 				users.push(user);
 				return Promise.resolve(user);
 			}

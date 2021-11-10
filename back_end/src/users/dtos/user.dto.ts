@@ -10,5 +10,5 @@ export class UserDto {
 
 	@ApiProperty()
 	@Expose()
-	email: string;
+	login: string;
 }

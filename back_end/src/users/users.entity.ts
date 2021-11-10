@@ -6,37 +6,45 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
+  Timestamp,
+  BeforeInsert,
+  Unique,
 } from 'typeorm';
-import { Report } from '../reports/reports.entity'
 
 @Entity()
 export class User {
 
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+
+  @Column({unique: true})
+  login: string;
+
+  @Column({unique: true})
+  login_42: string;
 
   @Column()
-  email: string;
+  photo_url_42: string;
 
-  @Column({default: true})
-  admin: boolean;
+  @Column({
+    unique: true,
+    nullable: true})
+	photo_url_local: string;
 
   @Column()
-  password: string;
+	use_local_photo: boolean;
 
-  @OneToMany( () => Report, (report) => report.user)
-  reports: Report[];
 
   @AfterInsert()
   logInsert() {
-    console.log('Inserted User: ', this.id);
+    console.log('Inserted User: ', this);
   }
-  @AfterRemove()
-  logRemove() {
-    console.log('Removed User: ', this.id);
-  }
-  @AfterUpdate()
-  logUpdate() {
-    console.log('Updated User: ', this.id);
-  }
+  // @AfterRemove()
+  // logRemove() {
+  //   console.log('Removed User: ', this.id);
+  // }
+  // @AfterUpdate()
+  // logUpdate() {
+  //   console.log('Updated User: ', this.id);
+  // }
 }
