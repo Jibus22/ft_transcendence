@@ -5,7 +5,7 @@
 
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
-#									USER AUTH
+#								DEBUG __	USER AUTH
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
@@ -15,6 +15,7 @@ POST http://localhost:3000/auth/debug_signin
 content-type: application/json
 
 {
+	"login": "fake-vgoldman-custome"
 }
 
 ### signout
@@ -22,3 +23,113 @@ POST http://localhost:3000/auth/signout
 
 ### get my own infos
 GET http://localhost:3000/auth/me
+
+### create 1 user
+POST http://localhost:3000/auth/debug_createUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-bvalette-custome",
+		"login_42": "fake-bvalette",
+		"photo_url_42": "https://cdn.intra.42.fr/users/bvalette.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	}
+]
+
+### add 1 user
+POST http://localhost:3000/auth/debug_createUserBatch
+content-type: application/json
+
+{
+	"login": "fake-bvalette-custome",
+	"login_42": "fake-bvalette",
+	"photo_url_42": "https://cdn.intra.42.fr/users/vgoldman.jpg",
+	"photo_url_local": null,
+	"use_local_photo": false
+}
+
+### delete 1 user
+DELETE http://localhost:3000/auth/debug_deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "bvalette"
+	}
+]
+
+### delete 1 user
+DELETE http://localhost:3000/auth/debug_deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-bvalette-custome"
+	}
+]
+
+### create User batch
+POST http://localhost:3000/auth/debug_createUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-vgoldman-custome",
+		"login_42": "fake-vgoldman",
+		"photo_url_42": "https://cdn.intra.42.fr/users/vgoldman.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-frfrancd-custome",
+		"login_42": "fake-frfrancd",
+		"photo_url_42": "https://cdn.intra.42.fr/users/frfrancd.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-jle-corr-custome",
+		"login_42": "fake-jle-corr",
+		"photo_url_42": "https://cdn.intra.42.fr/users/jle-corr.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-mrouchy-custome",
+		"login_42": "fake-mrouchy",
+		"photo_url_42": "https://cdn.intra.42.fr/users/mrouchy.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-randomDude-custome",
+		"login_42": "fake-randomDude",
+		"photo_url_42": "https://cdn.intra.42.fr/users/medium_default.png",
+		"photo_url_local": null,
+		"use_local_photo": false
+	}
+]
+
+### delete User batch
+DELETE http://localhost:3000/auth/debug_deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-vgoldman-custome"
+	},
+	{
+		"login": "fake-frfrancd-custome"
+	},
+	{
+		"login": "fake-jle-corr-custome"
+	},
+	{
+		"login": "fake-mrouchy-custome"
+	},
+	{
+		"login": "fake-randomDude-custome"
+	}
+]
