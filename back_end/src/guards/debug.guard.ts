@@ -11,6 +11,7 @@ export class DebugGuard implements CanActivate {
  constructor(private configService: ConfigService ) {}
 
   canActivate(context: ExecutionContext) {
-    return this.configService.get('ENV_MODE') === 'dev';
+    const env = this.configService.get('NODE_ENV');
+    return env === 'developement' || env === 'test' ;
   }
 }
