@@ -8,24 +8,26 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/users.entity';
+import { DevelopmentModule } from './development/development.module';
+import { UsersService } from 'src/users/users.service';
+import { DevelopmentService } from './development/development.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(
       {
         isGlobal: true,
-        // envFilePath: `.env.${process.env.NODE_ENV}`
-      }
-    ),
-    // TypeOrmModule.forRoot(),
-     TypeOrmModule.forRoot(
-      {
-        type: 'sqlite',
-        database: 'dbDev.sqlite',
-        entities: [User],
-        synchronize: true
       }),
-    UsersModule],
+      TypeOrmModule.forRoot(
+        {
+          type: 'sqlite',
+          database: 'dbDev.sqlite',
+          entities: [User],
+          synchronize: true
+        }),
+        UsersModule,
+        DevelopmentModule,
+      ],
   controllers: [AppController],
   providers: [AppService,
     {

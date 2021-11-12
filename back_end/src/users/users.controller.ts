@@ -13,8 +13,6 @@ import {
   BadGatewayException,
   Delete,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UpdateUserDto } from './dtos/update-users.dto';
 import { UserDto } from './dtos/user.dto';
 import { Serialize } from './interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
@@ -22,10 +20,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './entities/users.entity';
 import { AuthGuard } from '../guards/auth.guard';
 import { ApiOperation, ApiProperty, ApiPropertyOptional, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { DebugGuard } from '../guards/debug.guard';
-import { CreateUserDto } from './dtos/create-user.dto';
 
 @ApiTags('Users')
 @Serialize(UserDto)
@@ -33,27 +28,6 @@ import { CreateUserDto } from './dtos/create-user.dto';
 export class UsersController {
   constructor(private authService: AuthService,
     private configService: ConfigService) {}
-
-    @Post('/debug_signin')
-    @UseGuards(DebugGuard)
-    async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
-      session.userId = await this.authService.debug_logUser(user.login);
-      return user;
-    }
-
-    @ApiResponse({ type: UserDto })
-    @Post('/debug_createUserBatch')
-    @UseGuards(DebugGuard)
-    async createUserBatch(@Body() body: CreateUserDto[] | CreateUserDto, @Session() session: any) {
-      const users : Partial<User>[] = body as CreateUserDto[];
-      return await this.authService.debug_createUserBatch(users);
-    }
-
-    @Delete('/debug_deleteUserBatch')
-    @UseGuards(DebugGuard)
-    async deleteUserBatch(@Body() body: {login: string}[], @Session() session: any) {
-      await this.authService.debug_deleteUserBatch(body);
-    }
 
     @Get('/callback')
     async authCallback(@Query() query, @Res() res, @Session() session: any) {

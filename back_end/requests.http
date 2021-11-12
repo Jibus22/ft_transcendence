@@ -11,21 +11,21 @@
 
 ### signin with debug session
 
-POST http://localhost:3000/auth/debug_signin
+POST http://localhost:3000/dev/signin
 content-type: application/json
 
 {
-	"login": "fake-vgoldman-custome"
+	"login": "fake-bvalette-custome"
 }
 
 ### signout
-POST http://localhost:3000/auth/signout
+POST http://localhost:3000/dev/t
 
 ### get my own infos
 GET http://localhost:3000/auth/me
 
 ### create 1 user
-POST http://localhost:3000/auth/debug_createUserBatch
+POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
 [
@@ -39,7 +39,7 @@ content-type: application/json
 ]
 
 ### add 1 user
-POST http://localhost:3000/auth/debug_createUserBatch
+POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
 {
@@ -51,7 +51,7 @@ content-type: application/json
 }
 
 ### delete 1 user
-DELETE http://localhost:3000/auth/debug_deleteUserBatch
+DELETE http://localhost:3000/dev/deleteUserBatch
 content-type: application/json
 
 [
@@ -61,7 +61,7 @@ content-type: application/json
 ]
 
 ### delete 1 user
-DELETE http://localhost:3000/auth/debug_deleteUserBatch
+DELETE http://localhost:3000/dev/deleteUserBatch
 content-type: application/json
 
 [
@@ -71,7 +71,7 @@ content-type: application/json
 ]
 
 ### create User batch
-POST http://localhost:3000/auth/debug_createUserBatch
+POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
 [
@@ -113,7 +113,7 @@ content-type: application/json
 ]
 
 ### delete User batch
-DELETE http://localhost:3000/auth/debug_deleteUserBatch
+DELETE http://localhost:3000/dev/deleteUserBatch
 content-type: application/json
 
 [

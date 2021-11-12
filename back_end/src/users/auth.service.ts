@@ -1,9 +1,10 @@
-import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { User } from './entities/users.entity';
+import { map, lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -89,28 +90,4 @@ export class AuthService {
     return this.usersService.create(user);
   }
 
-  async debug_logUser(login: string) {
-    const users = await this.usersService.find(login);
-    if ( ! users[0]) {
-      throw new BadRequestException(`No user ${login}`);
-    }
-    return this.usersService.create(users[0]);
-  }
-
-  async debug_createUserBatch(users: Partial<User> | Partial<User>[]) {
-    return await this.usersService.create(users).catch((e) => {
-      throw new BadRequestException(e.message);
-    })
-  }
-
-  async debug_deleteUserBatch(users: Partial<User>[]) {
-    users.forEach(async (val) => {
-      if ( ! val.login) {
-        throw new BadRequestException('missing login');
-      }
-      await this.usersService.remove(val.login).catch((e)=>  {
-        throw new BadRequestException(e.message);
-      });
-    });
-  }
 }
