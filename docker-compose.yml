@@ -25,6 +25,8 @@ services:
       - ./back_end:/usr/src/app
     ports:
       - 3000:3000
+      - 9229:9229
+    command: npm run ${NODE_CMD}
     # depends_on:
     #   - database
 
