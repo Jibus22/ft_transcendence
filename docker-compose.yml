@@ -26,7 +26,7 @@ services:
     ports:
       - 3000:3000
       - 9229:9229
-    command: npm run ${NODE_CMD}
+    command: npm run ${NODE_CMD:-start:dev}
     # depends_on:
     #   - database
 
