@@ -7,10 +7,7 @@ const cookieSession = require('cookie-session');
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { User } from './users/users.entity';
-import { config } from 'process';
-
-
+import { User } from './users/entities/users.entity';
 
 @Module({
   imports: [

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { User } from './users.entity'
+import { User } from './entities/users.entity'
 import { find } from 'rxjs';
 import { BadGatewayException, BadRequestException, NotFoundException } from '@nestjs/common';
 

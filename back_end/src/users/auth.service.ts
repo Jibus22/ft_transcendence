@@ -3,12 +3,7 @@ import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/co
 import { UsersService } from './users.service';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { User } from './users.entity';
-import { getSystemErrorMap } from 'util';
-import { UserDto } from './dtos/user.dto';
-import { map, interval, lastValueFrom } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { response } from 'express';
+import { User } from './entities/users.entity';
 
 @Injectable()
 export class AuthService {

@@ -19,7 +19,7 @@ import { UserDto } from './dtos/user.dto';
 import { Serialize } from './interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from './users.entity';
+import { User } from './entities/users.entity';
 import { AuthGuard } from '../guards/auth.guard';
 import { ApiOperation, ApiProperty, ApiPropertyOptional, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { HttpModule, HttpService } from '@nestjs/axios';
