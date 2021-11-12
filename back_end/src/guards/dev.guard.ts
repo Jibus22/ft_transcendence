@@ -6,7 +6,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class DebugGuard implements CanActivate {
+export class DevGuard implements CanActivate {
 
  constructor(private configService: ConfigService ) {}
 
