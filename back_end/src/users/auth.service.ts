@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
@@ -12,21 +12,12 @@ import { response } from 'express';
 
 @Injectable()
 export class AuthService {
+
   constructor(
     private usersService: UsersService,
     private configService: ConfigService,
     private httpService: HttpService,
   ) {}
-
-  // async signin(login_42: string) {
-
-  //   let [user] = await this.usersService.find(login_42);
-
-  //   if (!user) {
-  //     user = this.usersService.create(login_42);
-  //   }
-  // 	return user;
-  // }
 
   async registerUser(queryCode: string, queryState: string) {
     const token = await this.getAuthToken(queryCode, queryState);
@@ -51,7 +42,11 @@ export class AuthService {
 
     return lastValueFrom(
       this.httpService
-        .post(this.configService.get('AUTH_42API_TOKEN_URL'), null, requestConfig)
+        .post(
+          this.configService.get('AUTH_42API_TOKEN_URL'),
+          null,
+          requestConfig,
+        )
         .pipe(
           map((resp) => {
             return resp.data.access_token;
@@ -87,18 +82,40 @@ export class AuthService {
     });
   }
 
-  async updateDatabase(user: Partial<User>): Promise<User> {
+  async updateDatabase(user: Partial<User>) {
     const users = await this.usersService.find(user.login);
     if (users.length) {
-      return this.usersService.update(users[0].id,
-        {photo_url_42: users[0].photo_url_42} as User);
+      console.log(`USER exists: ${users[0].id}`);
+      return this.usersService.update(users[0].id, {
+        photo_url_42: users[0].photo_url_42,
+      } as User);
     }
     user.use_local_photo = false;
     return this.usersService.create(user);
   }
 
-  async logDebugUser(): Promise<User> {
-    const users = await this.usersService.find('bvalette');
+  async debug_logUser(login: string) {
+    const users = await this.usersService.find(login);
+    if ( ! users[0]) {
+      throw new BadRequestException(`No user ${login}`);
+    }
     return this.usersService.create(users[0]);
+  }
+
+  async debug_createUserBatch(users: Partial<User> | Partial<User>[]) {
+    return await this.usersService.create(users).catch((e) => {
+      throw new BadRequestException(e.message);
+    })
+  }
+
+  async debug_deleteUserBatch(users: Partial<User>[]) {
+    users.forEach(async (val) => {
+      if ( ! val.login) {
+        throw new BadRequestException('missing login');
+      }
+      await this.usersService.remove(val.login).catch((e)=>  {
+        throw new BadRequestException(e.message);
+      });
+    });
   }
 }

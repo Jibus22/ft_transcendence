@@ -10,26 +10,25 @@ describe('UsersController', () => {
   let controller: UsersController;
   let fakeUsersService: Partial<UsersService>
   let fakeAuthService: Partial<AuthService>
-
   beforeEach(async () => {
 
     fakeUsersService = {
-      findOne: (id: number) => {
-        return Promise.resolve({id, email: 'aaa@bbb.com', password: 'aaa'} as User);
-      },
-      find: (email: string) => {
-        return Promise.resolve([
-          ({id: 42, email, password: 'aaa'} as User)
-        ]);
-      }
+      // findOne: (id: number) => {
+      //   return Promise.resolve({id} as User);
+      // },
+      // find: (email: string) => {
+      //   return Promise.resolve([
+      //     ({id} as User)
+      //   ]);
+      // }
       // update: () => {},
       // remove: () => {}
 
     };
     fakeAuthService = {
-      signin: (email: string, password: string) => {
-        return Promise.resolve({ id: 1, email, password} as User);
-       },
+      // signin: (email: string, password: string) => {
+      //   return Promise.resolve({ id: 1, email, password} as User);
+      //  },
       // signup: () => { }
     };
 
@@ -54,42 +53,42 @@ describe('UsersController', () => {
     controller = module.get<UsersController>(UsersController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+  // it('should be defined', () => {
+  //   expect(controller).toBeDefined();
+  // });
 
-  it('findAllUsers returns a list of users with a given email', async () => {
+  // it('findAllUsers returns a list of users with a given email', async () => {
 
-    const users = await controller.findAllUsers('abc@mail.com');
+  //   const users = await controller.findAllUsers('abc@mail.com');
 
-    expect(users.length).toEqual(1);
-    expect(users[0].email).toEqual('abc@mail.com');
-  });
+  //   expect(users.length).toEqual(1);
+  //   expect(users[0].email).toEqual('abc@mail.com');
+  // });
 
-  it('findUser returns a single user with a given id', async () => {
+  // it('findUser returns a single user with a given id', async () => {
 
-    const user = await controller.findUser('abc@mail.com');
+  //   const user = await controller.findUser('abc@mail.com');
 
-    expect(user).toBeDefined();
-  });
+  //   expect(user).toBeDefined();
+  // });
 
-  it('findUser thows an error is user with given email does not exist', async () => {
+  // it('findUser thows an error is user with given email does not exist', async () => {
 
-    // reimplement
-    fakeUsersService.findOne = () => null;
+  //   // reimplement
+  //   fakeUsersService.findOne = () => null;
 
-    const promise = controller.findUser('abc@mail.com');
-    await expect(promise).rejects.toBeInstanceOf(NotFoundException);
-  });
+  //   const promise = controller.findUser('abc@mail.com');
+  //   await expect(promise).rejects.toBeInstanceOf(NotFoundException);
+  // });
 
-  it('signin updates session object and returns user', async () => {
-    const session = { userId: -1 };
-                                            // @body equivalent                    @session
-    const user = await controller.signin({email: 'abc@dhjd.com', password: 'abc'}, session);
+  // it('signin updates session object and returns user', async () => {
+  //   const session = { userId: -1 };
+  //                                           // @body equivalent                    @session
+  //   const user = await controller.signin({email: 'abc@dhjd.com', password: 'abc'}, session);
 
-    expect(user.id).toEqual(1);
-    expect(session.userId).toEqual(1);
+  //   expect(user.id).toEqual(1);
+  //   expect(session.userId).toEqual(1);
 
-  });
+  // });
 
-});
+// });

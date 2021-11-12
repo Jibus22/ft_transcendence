@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   AfterRemove,
   AfterUpdate,
@@ -39,10 +40,12 @@ export class User {
   logInsert() {
     console.log('Inserted User: ', this);
   }
-  // @AfterRemove()
-  // logRemove() {
-  //   console.log('Removed User: ', this.id);
-  // }
+
+  @AfterRemove()
+  logRemove() {
+    console.log('Removed User: ', this);
+  }
+
   @AfterUpdate()
   logUpdate() {
     console.log('Updated User: ', this);
