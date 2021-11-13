@@ -3,9 +3,10 @@ import { Controller, Get } from '@nestjs/common';
 @Controller()
 export class AppController {
 
-	@Get('/hello')
+	@Get('/api_status')
   getHello() {
-    return 'Hello World!';
+    console.log(process.env.COOKIE_KEY);
+    return 'online';
   }
 
 }
