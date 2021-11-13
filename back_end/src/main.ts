@@ -17,11 +17,11 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    include: [UsersModule],
     // modules to be documented
+    include: [UsersModule],
   });
-  SwaggerModule.setup('api', app, document);
   // api is the endpoint of documentation's website
+  SwaggerModule.setup('api', app, document);
 
   /**
    * App listen port from the env, or defaults to 3000
