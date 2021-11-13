@@ -19,10 +19,10 @@ content-type: application/json
 }
 
 ### signout
-POST http://localhost:3000/users/signout
+POST http://localhost:3000/auth/signout
 
 ### get my own infos
-GET http://localhost:3000/users/me
+GET http://localhost:3000/auth/me
 
 ### create 1 user
 POST http://localhost:3000/dev/createUserBatch
@@ -139,7 +139,7 @@ content-type: application/json
 GET http://localhost:3000/users
 
 ### update data of one user
-PATCH http://localhost:3000/users/me
+PATCH http://localhost:3000/auth/me
 content-type: application/json
 
 {
