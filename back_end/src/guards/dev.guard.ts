@@ -12,6 +12,6 @@ export class DevGuard implements CanActivate {
 
   canActivate(context: ExecutionContext) {
     const env = this.configService.get('NODE_ENV');
-    return env === 'developement' || env === 'test' ;
+    return env === 'dev' || env === 'test' ;
   }
 }
