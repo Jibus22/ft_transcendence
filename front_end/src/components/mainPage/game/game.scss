@@ -3,47 +3,119 @@
 .mainGameWindow {
 
 
-    margin: 30px 0 0 200px;
+    margin: 30px 0 0 145px;
   
-    width: 80%;
-    height: 65vh;
+    width: 83%;
+    height: 70vh;
 
     border-radius: 23px;
-    background-color: #2E4266;
-    border: 1px solid rgba(255, 255, 255, .1);
+    // background-color: #2E4266;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    
+    background: linear-gradient(104.69deg, #E69C6A -3.67%, rgba(230, 156, 106, 0) 102.8%);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 8px );
+    -webkit-backdrop-filter: blur( 8px );
+    
 
     .msgPlay {
-        margin: 140px 0 0 0;
+        margin: 80px auto;
+        width: 55%;
         h1 {
-            font-size: 2.4em;
+            font-family: Montserrat, sans-serif;
+            color: white;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 55px;
+            line-height: 70px;
+            text-align: center;
         }
+    }
+    .iconePLayGame {
+        margin: -40px auto;
+        img {
+            width: 165px;
+            
+        }
+    }
+
+
+    .buttonMui {
+        background-color: #CA6C88;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        color: white;
+        font-family: Montserrat, sans-serif;
+        font-size: 27px;
+        font-weight: 500;
+    }
+    .buttonMui:hover {
+        font-size: 30px;
+        background-color: rgba(124,90,100, 0.9);
+    }
+    .MuiCircularProgress-root {
+        color: #CA6C88;
     }
 
     .playRandom {
         width: 40%;
-        height: 10%;
-        margin: 70px auto;
+        height: 8%;
+        margin: 100px auto;
 
-        .MuiButton-root {
-            font-size: 1.4em;
-            font-weight: bold;
-        }
     }
 
     .playFriend {
         width: 40%;
-        height: 10%;
-        margin: 0px auto;
+        height: 8%;
+        margin: -50px auto;
+    }
+    .buttonMuiFriend {
+        margin: 50px 0 0 0;
+    }
 
-        .MuiButton-root {
-            font-size: 1.3em;
-            font-weight: bold;
-        }
+
+   
+    .formDivButton {
+        .formDiv {
+            margin-top: 50px;
+        } 
+       
+        height: 60px;
 
         
+        .buttonDiv {
+            width: 60px;
+            border-radius: 0 10px 10px 0px;
+            background-color: white;
 
-
+            img {
+                width: 40px;
+            }
+            img:hover {
+                width: 200px;
+            }
+            
+        }
     }
+    .formDivButton:focus-visible{
+        outline:none;
+        text-decoration: none;
+        
+       
+        
+    }
+    .formDivButton ::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 22px;
+      
+        height: 30px;
+        font-family: Montserrat, sans-serif;
+        
+        // ANIMATIONHOVER CSSS
+    }
+    
+
+
+    
 
    
 

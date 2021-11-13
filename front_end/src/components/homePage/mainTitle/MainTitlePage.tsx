@@ -10,7 +10,7 @@ const MainTitlePage = () => {
                         <hr />
                     </div> */}
                    
-                    <div className='Title '>
+                    <div className='Title  '>
                         <h1>Transcendence</h1>
                     </div> 
                     <div className='TitleText'> 

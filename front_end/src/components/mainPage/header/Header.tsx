@@ -14,57 +14,52 @@ const Header = () => {
  
     return (
       
-    <div className=' d-flex flex-column mainHeader'>
+    <div className=' d-flex flex-column mainHeader '>
     <nav className="navbar navbar-expand-lg  menuHeader ">
-        <img className='logo' src={Logo} alt="" />
-        <div className="container-fluid  ">
-            <ul className="navbar-nav headerMenu ">
+
+        <div className="d-flex  mainNavMenu">
+            <ul className="navbar-nav headerMenu  w-100 ">
                 <li className="nav-item  linkLogoNav">
-                    <NavLink 
-                    to='/MainPage' className='navGame'   activeClassName="selectedNave" >
-                        <Icon path={mdiGamepadVariantOutline} title="Setting Profile" size={1.1}
-                            className='iconeNewGame iconHeader ' />
+                    <NavLink  to='/MainPage' className='toNavLink'   activeClassName="selectedNave" >
+                      
+                            <h1>Games</h1>
+                            
                     </NavLink>
                 </li>
                 
-                <li className="nav-item linkLogoNav" >
-                    <NavLink to="/MainPage/Rank-Friends"  activeClassName="selectedNave" > 
-                        <Icon path={mdiCrownOutline} title="Setting Profile" size={1.1}
-                         className='iconeRank iconHeader' />
+                <li className="nav-item leaderDiv  " >
+                    <NavLink to="/MainPage/Rank-Friends" className='toNavLink'   activeClassName="selectedNave" > 
+                      
+                         <h1>LeaderBoard</h1>
                     </NavLink>
                 </li>
 
-                {/* <li className="nav-item linkLogoNav" >
-                    <NavLink 
-                    to='/MainPage/setting' className='navParam'   activeClassName="selectedNave"> 
-                        <Icon path={mdiCogOutline} title="Setting" size={1.1}
-                            className='iconeSetting iconHeader' />
-                    </NavLink>
-                </li> */}
-
-                <li className="nav-item linkLogoNav" >
-                    <NavLink  style={{ textDecoration: 'none' }}
-                    to='/MainPage/historyGame' className='navParam'   activeClassName="selectedNave"> 
-                        <Icon path={mdiCalendarClock} title="history Profile" size={1.1}
-                         className='iconeHistory iconHeader' />
+    
+                <li className="nav-item linkLogoNav " >
+                    <NavLink  to='/MainPage/historyGame' className='toNavLink'     activeClassName="selectedNave"> 
+                        
+                         <h1>History</h1>
                     </NavLink>
                 </li>
 
             </ul>
-            <div>
+            
             </div>
-
         
         
         <div className='logHeader d-flex '>
-            <NavLink style={{ textDecoration: 'none' }} to='/MainPage/setting'>
-            <div className="profil d-flex" >
-                <h2>Frfrance</h2>
-                <img  src={FF} alt="" /> 
+            <NavLink style={{ textDecoration: 'none' }} to='/MainPage/setting' className='w-100 '>
+            <div className="profil d-flex  " >
+                <div className='profilLoggin  '>
+                    <h2 className=''>Frfrance</h2>
+                </div>
+                <div className='profilLogginImg '>
+                    <img  className=''   src={FF} alt="" /> 
+                </div>
             </div>
             </NavLink>
-    </div>
-    </div>
+        </div>
+   
     </nav>
         <div>
        

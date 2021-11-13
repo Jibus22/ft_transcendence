@@ -7,7 +7,8 @@
 }
 
 .mainHome {
-  background-image: url('./img/flat-mountains.svg');
+  background: url('./img/flat-mountains.svg');
+  background-size: 100%;
 }
 
 .Home {
@@ -37,11 +38,17 @@
 //   animation-duration:10s;
 // }
 
-// @keyframes slide {
-//   0% {
-//     transform:translateX(-25%);
-//   }
-//   100% {
-//     transform:translateX(25%);
-//   }
-// }
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
+}
+
+
+@media screen and (max-width: 1357px) {
+  
+
+}

@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Switch}  from 'react-router-dom';
 const App = () => {
   return (
     <Router> 
-      <div className=' home'>
+      <div className='home'>
         <Switch> 
            <Route exact path='/' component={Homepage}/>
            <Route path='/MainPage' component={ MainPage}/>

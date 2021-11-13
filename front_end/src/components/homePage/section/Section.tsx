@@ -10,7 +10,7 @@ import { Fade } from "react-awesome-reveal";
 
 const Section = () => {
     return (
-        <div className="Section d-flex ">
+        <div className="Section d-flex">
         <div className=" listProfil  d-flex flex-column ">
             <div className=" profil profil1  ">
             
