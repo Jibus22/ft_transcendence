@@ -24,9 +24,11 @@ import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Users')
 @Serialize(UserDto)
-@Controller('auth')
+@Controller('users')
 export class UsersController {
-  constructor(private authService: AuthService,
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
     private configService: ConfigService) {}
 
     @Get('/callback')
