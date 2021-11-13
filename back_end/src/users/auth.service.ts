@@ -39,7 +39,7 @@ export class AuthService {
     return lastValueFrom(
       this.httpService
         .post(
-          this.configService.get('AUTH_42API_TOKEN_URL'),
+          this.configService.get('AUTH_API_TOKEN_URL'),
           null,
           requestConfig,
         )
@@ -63,7 +63,7 @@ export class AuthService {
 
     return lastValueFrom(
       this.httpService
-        .get(this.configService.get('AUTH_42API_USER_ENDPOINT'), requestConfig)
+        .get(this.configService.get('AUTH_API_USER_ENDPOINT'), requestConfig)
         .pipe(
           map((resp) => {
             return {
