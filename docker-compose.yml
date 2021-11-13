@@ -6,21 +6,11 @@ volumes:
 
 services:
 
-  # database:
-  #   image: 'postgres:latest'
-  #   ports:
-  #     - 5002:5432
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./db-data/:/var/lib/postgresql/data/
-
   back_end_server:
-    # depends_on:
-    #   - database
     build: ./back_end
     env_file:
-      - .env_common.env
+      - .env
+      - .env_prod.env
     volumes:
       ### Important to make sure node_module is not imported from local
       - notused_back:/usr/src/app/node_modules
@@ -28,11 +18,7 @@ services:
     ports:
       - 3000:3000
       - 9229:9229
-    command: npm run ${NODE_CMD_TRANSCENDENCE:-start:prod}
-    ### Start in Production mode by default, for other mode launch with:
-    ###   docker-compose --env-file env_dev.env up [--build]
-    ###   docker-compose --env-file env_debug.env up [--build]
-    ###   docker-compose --env-file env_test.env up [--build]
+    command: npm run start:prod
 
   front_end_server:
     build: ./front_end
@@ -41,5 +27,27 @@ services:
       - ./front_end:/usr/src/app
     ports:
       - 3001:3000
-    # depends_on:
-    #   - back_end_server
+    command: npm run start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # database:
+  #   image: 'postgres:latest'
+  #   ports:
+  #     - 5002:5432
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./db-data/:/var/lib/postgresql/data/

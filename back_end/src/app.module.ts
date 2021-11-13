@@ -21,8 +21,8 @@ import { DevelopmentService } from './development/development.service';
       TypeOrmModule.forRoot(
         {
           type: 'sqlite',
-          database: 'dbDev.sqlite',
-          // database: process.env.DB_NAME,
+          // database: 'dbDev.sqlite',
+          database: process.env.DB_NAME,
           entities: [User],
           synchronize: true
         }),
@@ -48,8 +48,7 @@ export class AppModule {
     consumer.apply(
       cookieSession(
         {
-          // keys: [this.configService.get('COOKIE_KEY')],
-          keys: ['erwui7984897456oruosifa9ppsf'],
+          keys: [this.configService.get('COOKIE_KEY')],
         })).forRoutes('*');
   }
 }

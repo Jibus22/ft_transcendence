@@ -5,5 +5,5 @@ services:
   back_end_server:
     env_file:
       - .env
-      - .env_dev.env
-    command: npm run start:dev
+      - .env_debug.env
+    command: npm run start:debug
