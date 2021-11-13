@@ -1,9 +1,9 @@
 @use "@material/tab-bar/mdc-tab-bar";
 
 .mainHisUser {
-    width: 75%;
-    height: 65vh;
-    margin: 70px auto;
+    width: 76%;
+    height: 70vh;
+    margin: 20px 0 0 200px;
     border: 1px solid var(--borderLight) ;
     border-radius: 30px;
     background-color: var(--colorBlueC);
@@ -22,10 +22,57 @@
         flex-direction: row;
         justify-content: end;
 
+        h1 {
+            font-size: 2em;
+            margin: 0 400px 0 0;
+        }
+
         h2 {
             color: white;
             font-size: 1.3em;
             margin-left: 20px;
+        }
+        
+        .myGame {
+            margin: 0 50px 0 0;
+            
+            .MuiInputBase-root {
+                height: 100px;
+                 color: white;
+                
+            }
+            
+            .MuiOutlinedInput-root {
+                border-color: red;
+                
+            }
+            .MuiOutlinedInput{
+                border-color: grey;
+            }
+            
+            
+            
+           
+        }
+
+
+
+        .searchBarre .MuiInputBase-root {
+            border-radius: 20px;
+            width: 250px;
+            color: white;
+            
+            
+        }
+        .searchBarre .MuiInputAdornment-root {
+            width: 15px;
+           
+        }
+        .searchBarre .MuiIcon-colorPrimary {
+            color: white;
+        }
+        .searchBarre .MuiInputLabel-root {
+            margin: 5px 0 0 5px;
         }
 
         .searchBar {

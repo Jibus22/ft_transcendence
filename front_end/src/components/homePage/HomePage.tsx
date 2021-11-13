@@ -1,11 +1,11 @@
 import React from 'react' 
-import './StyleHomePage.css'
+import './StyleHomePage.scss'
 import { TitlePage, Loggin, Footer, Section} from '..';
 
 
 const Homepage = () => {
         return ( 
-        <div  className='App d-flex flex-column justify-content-between pt-5'>
+        <div  className='App mainHome d-flex flex-column justify-content-between pt-5'>
       <div className="bg"></div>
       <div className="bg bg2"></div>
       <div className="bg bg3"></div>
@@ -18,9 +18,9 @@ const Homepage = () => {
 
         <Loggin/>
       </div>
-      <div className=''>
+      {/* <div className=''>
         <Footer/>
-      </div>
+      </div> */}
     </div>
     )
     

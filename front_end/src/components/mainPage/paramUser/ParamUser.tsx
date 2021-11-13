@@ -1,102 +1,115 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import './paramUser.scss'
-import {HistoryGame, PersoInfo} from '../..'
-import { BrowserRouter as Router, Route, NavLink} from 'react-router-dom'
+import TextField from '@mui/material/TextField';
+import { useSpring, animated } from 'react-spring'
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
 import FF from './photos/FF.png'
 
-import { Fade } from "react-awesome-reveal";
+import AddUser from './Adduser'
+import ListUser from './Listuser';
+import Test from './test'
+import { Formik, Field } from 'formik';
+import axios, {AxiosResponse} from 'axios';
+import { Agent } from 'http';
 
+
+const CssTextField = styled(TextField)({
+    '& label.Mui-focused': {
+      color: 'black',
+      
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'grey',
+        borderRadius: 20,
+       
+      },
+      
+      
+    },
+  });
+
+
+  
 
 
 const ParamUser = () => {
+    // const props = useSpring({
+    //     opacity: 1,
+    //     transform: "translate(0px, 0px)",
+    //     from: { opacity: 0, transform: "translate(0px, 500px)" } ,
+    //     config: {
+    //       delay: 400,
+    //       duration: 500,
+    //     },
+    //   });
     
 
+    const [users, setUser] = useState <Array<string>>([]);
+    let [selectedUser, setSlectedUser] = useState(0);
+    
 
+    useEffect(() => {
+        axios.get('https://jsonplaceholder.typicode.com/users') .then (response => response.data)
+                                                                .then ( users => setUser( users))
+                                                                .catch (err => console.log(err))
+    })
+    
     return (
         
-        <Router> 
-
-        <Fade direction='up' duration={400} className='w-100'>
+        <div style={ { minHeight: '100vh'} } className="container-fluid p-5 bg-light d-flex flex-column justify-content-center align-items-center">
+            <Test></Test>
+        <ListUser users={ users  } selectUser={ (index : number) => setSlectedUser(selectedUser = index ) } />  
+        <hr className="w-100 my-5" />
+        <AddUser user={ users && users[selectedUser] ? users[selectedUser] : null } />
         
-        <div className='mainParamUser d-flex'>
-
-            <div className='ongletParamUser '>
-                <h1>My setting</h1>
-                <hr />
-            
-                <NavLink  style={{ textDecoration: 'none' }} to='/MainPage/setting' className='navInfo'   
-                activeClassName="selectedNav">
-                <div className='personalInfo'>
-                    <h3>Personal info</h3>
-                </div>
-                </NavLink>
-                <NavLink style={{ textDecoration: 'none' }}  to='/MainPage/historyGame' className='navHistory' 
-                activeClassName="selectedNav">
-                <div className='ratioInfo'>
-                    <h3>Historique Game</h3>
-                    
-                </div>
-                </NavLink>
-                
-            </div>
-            
-           
-        
-        <div className='ParamUser  '>
-           <div className='mainProfilUser '>
-               <div>
-                   <img src={FF} alt="" />
-               </div>
-               <div className='statLoginUser'>
-                    <h1>Kazuuma</h1>
-                    <div className='statUser'> 
-                        <div className='userPlay userStat'>
-                            <h3>32</h3>
-                            <h1>Game</h1>
-
-                </div>
-                <div className='userWin userStat'>
-                    <h3>20</h3>
-                    <h1>Victoire</h1>
-                    
-                </div>
-                <div className='userLoose userStat'>
-                    <h3>12</h3>
-                    <h1>Defaite</h1>
-                    
-                </div>
-                </div>
-                </div>
-           </div>
-            
-
-
-            <div>
-            {/* <PersoInfo/> */}
-            </div>
-
-            <Route exact path='/MainPage/setting' component={ PersoInfo }></Route>
-            <Route exact path='/MainPage/historyGame' component={ HistoryGame }></Route>
-        
-        </div>
-        
-        
-        <div>
-
-        </div>
-        
+      </div>
     
-       
-        
-       
-        </div>
-        </Fade>
-        </Router>
-        
       
     )
 }
 
 
 export default ParamUser
+
+
+
+
+
+
+ // <animated.div  style={props} className='w-100'> 
+        // <div className='mainParamUser d-flex flex-column'>
+        //     <div className='userImg'>
+        //         <img src={FF} alt="" />
+        //     </div>
+        //     <div className='userStat  d-flex'>
+        //         <div className='game d-flex flex-column'>
+        //             <h1>32</h1>
+        //             <h2>Game</h2>
+        //         </div>
+        //         <div className='win d-flex flex-column'>
+        //             <h1>30</h1>
+        //             <h2>Win</h2>
+        //         </div>
+        //         <div className='loose  d-flex flex-column'>
+        //             <h1>2</h1>
+        //             <h2>Loose</h2>
+        //         </div>
+        //     </div>
+        //     <div className='userLoggin '>
+        //         <CssTextField className='loggin'  id="outlined-password-input" size='small' label="User 42 nickname"
+        //                     sx={{width: 2/2}} />
+        //     </div>
+        //     <div className='userQuit'>
+        //         <Button variant="contained">Disconnect</Button>
+
+        //     </div>
+       
+    
+       
+        
+       
+        // </div>
+        // </animated.div>

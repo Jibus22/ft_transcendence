@@ -1,14 +1,27 @@
 import React from 'react' 
 import './userRank.scss'
 import {RankFriends, RankWorld} from '../..'
-import { Fade } from "react-awesome-reveal";
+import { useSpring, animated } from 'react-spring'
 import { BrowserRouter as Router, Route, NavLink} from 'react-router-dom'
+import Button from '@mui/material/Button';
+
 
 const UserRank = () => {
+
+    const props = useSpring({
+        opacity: 1,
+        transform: "translate(0px, 0px)",
+        from: { opacity: 0, transform: "translate(0px, 500px)" } ,
+        config: {
+          delay: 400,
+          duration: 500,
+        },
+      });
+
     return (
         <Router>
-        <Fade direction='up' duration={400} className='w-100'>
-        <div className='mainUserRank w-100 d-flex flex-column  '>
+        <animated.div  style={props} className='w-100'> 
+        <div className='mainUserRank d-flex flex-column  '>
             <div className='titleRank d-flex flex-column '>
                 <h1>Leaderboard</h1>
                 <hr />
@@ -34,7 +47,7 @@ const UserRank = () => {
             <Route exact path='/MainPage/Rank-World' component={ RankWorld}></Route>
 
         </div>
-        </Fade>
+        </animated.div>
         </Router>
     )
 }
