@@ -50,15 +50,17 @@
     }
 
     .buttonConnect {
-
+      width: 70%;
+      height: 70px;
+      margin: 20px auto;
       .linkDiv {
-        width: 70%;
-        height: 70px;
-        margin: 20px auto;
+        // width: 70%;
+        // height: 70px;
+        // margin: 20px auto;
       }
 
-      .buttonMui {
-        // margin: 20px auto;
+      .buttonMuiConnect {
+        
         width: 100%;
         height: 100%;
         background-color: #CA6C88;
