@@ -21,7 +21,7 @@ export class AuthService {
     return this.updateDatabase(user);
   }
 
-  async getAuthToken(queryCode: string, queryState: string) {
+  async getAuthToken(queryCode: string, queryState: string): Promise<string> {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'multipart/form-data',
