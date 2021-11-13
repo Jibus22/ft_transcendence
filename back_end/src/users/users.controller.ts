@@ -62,9 +62,10 @@ export class UsersController {
 
     @ApiResponse({ type: UpdateUserDto })
     @Patch('/me')
-    update(@Body() body: Partial<UpdateUserDto>, @Session() session: any) {
-      const user = this.usersService.findOne(session.userId);
-      console.log(user);
+    async update(@Body() body: Partial<UpdateUserDto>, @Session() session: any) {
+      const user = await this.usersService.findOne(session.userId);
+      console.log(user.id);
+      console.log(body.login);
       // return this.usersService.update(session. );
     }
 
