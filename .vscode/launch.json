@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Docker: Attach to Node",
+      "type": "pwa-node",
+      "request": "attach",
+      "restart": true,
+      "port": 9229,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}/back_end",
+      "remoteRoot": "/usr/src/app",
+      "protocol": "inspector"
+    }
+  ]
+}

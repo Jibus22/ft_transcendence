@@ -1,3 +1,44 @@
+# compiled output
+*/dist
+*/node_modules
+package-lock.json
+*/package-lock.json
+back_end/documentation
+back_end/*.sqlite
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+
 # Logs
 db-data
 logs
@@ -103,3 +144,6 @@ dist
 
 # TernJS port file
 .tern-port
+back_end/dbDev.sqlite
+.gitignore
+back_end/package-lock.json

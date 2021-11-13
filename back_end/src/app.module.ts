@@ -7,30 +7,27 @@ const cookieSession = require('cookie-session');
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { ReportsModule } from './reports/reports.module';
-import { User } from './users/users.entity';
-import { Report } from './reports/reports.entity';
-import { config } from 'process';
-
-
+import { User } from './users/entities/users.entity';
+import { DevelopmentModule } from './development/development.module';
+import { UsersService } from './users/users.service';
+import { DevelopmentService } from './development/development.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(
       {
         isGlobal: true,
-        envFilePath: `.env.${process.env.NODE_ENV}`
-      }
-    ),
-    // TypeOrmModule.forRoot(),
-     TypeOrmModule.forRoot(
-      {
-        type: 'sqlite',
-        database: 'dbDev.sqlite',
-        entities: [User, Report],
-        synchronize: true
       }),
-    UsersModule, ReportsModule],
+      TypeOrmModule.forRoot(
+        {
+          type: 'sqlite',
+          database: process.env.DB_NAME,
+          entities: [User],
+          synchronize: true
+        }),
+        UsersModule,
+        DevelopmentModule,
+      ],
   controllers: [AppController],
   providers: [AppService,
     {

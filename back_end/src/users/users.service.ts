@@ -1,31 +1,40 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './users.entity';
+import { User } from './entities/users.entity';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class UsersService {
 
-	constructor( @InjectRepository(User) private repo: Repository<User> ) {}
+	constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-	create(email: string, password: string) {
-		const user = this.repo.create({email, password});
-		return this.repo.save(user);
+	async create(user: Partial<User> | Partial<User>[]) {
+		const newUser = this.repo.create(user as Partial<User>);
+		return await this.repo.save(newUser);
 	}
 
-	findOne(id: number) {
+	async remove(login: string) {
+		const user = await this.find(login);
+		if ( ! user) {
+			throw new NotFoundException('user not found');
+		}
+		return this.repo.remove(user);
+	}
+
+	async findOne(id: string) {
 		if ( ! id) {
 			return null;
 		}
-		return this.repo.findOne(id);
+		return await this.repo.findOne(id);
 	}
 
-	find(email: string) {
-		return this.repo.find({ email });
+	async find(login: string) {
+		return await this.repo.find({ login });
 	}
 
-	async update( id: number, attrs: Partial<User> ) {
-		const user = await this.findOne(id);
+	async update( login: string, attrs: Partial<User> ) {
+		const user = await this.findOne(login);
 		if ( ! user) {
 			throw new NotFoundException('user not found');
 		}
@@ -33,11 +42,8 @@ export class UsersService {
 		return this.repo.save(user);
 	}
 
-	async remove(id: number) {
-		const user = await this.findOne(id);
-		if ( ! user) {
-			throw new NotFoundException('user not found');
-		}
-		return this.repo.remove(user);
+	async getAllUsers() {
+		return this.repo.find();
 	}
+
 }

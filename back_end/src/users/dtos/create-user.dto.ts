@@ -1,13 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsString } from 'class-validator';
 
 export class CreateUserDto {
 
-	@ApiProperty()
-	@IsEmail()
-	email: string;
-
-	@ApiProperty()
 	@IsString()
-	password:string;
+	login: string;
+
+	@IsString()
+	login_42: string;
+
+	@IsString()
+	photo_url_42: string;
+
+	@IsString()
+	photo_url_local: string;
+
+	@IsBoolean()
+	use_local_photo: boolean;
 }

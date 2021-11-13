@@ -3,98 +3,145 @@
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#								DEBUG __	USER AUTH
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
 
-### create new user
+### signin with debug session
 
-POST http://localhost:3000/auth/signup
+POST http://localhost:3000/dev/signin
 content-type: application/json
 
 {
-	"email": "hello@coucou.com",
-	"password": "string"
-}
-
-### login with same user
-POST http://localhost:3000/auth/signin
-content-type: application/json
-
-{
-	"email": "hello@coucou.com",
-	"password": "string"
+	"login": "fake-bvalette-custome"
 }
 
 ### signout
 POST http://localhost:3000/auth/signout
 
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#									TEST
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
+### get my own infos
+GET http://localhost:3000/auth/me
 
-### hello string
-GET http://localhost:3000/hello
+### create 1 user
+POST http://localhost:3000/dev/createUserBatch
+content-type: application/json
 
+[
+	{
+		"login": "fake-bvalette-custome",
+		"login_42": "fake-bvalette",
+		"photo_url_42": "https://cdn.intra.42.fr/users/bvalette.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	}
+]
 
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#									USER AUTH
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-
-
-### whoAmI
-GET http://localhost:3000/auth/whoami
-
-
-### find one user by id
-GET http://localhost:3000/auth/3
-
-### find all users by email
-GET http://localhost:3000/auth?email=hello@coucou.com
-
-### remove user by id
-DELETE http://localhost:3000/auth/1
-
-### update user email
-PATCH http://localhost:3000/auth/2
+### add 1 user
+POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
 {
-	"email": "E@MAIL.com"
+	"login": "fake-bvalette-custome",
+	"login_42": "fake-bvalette",
+	"photo_url_42": "https://cdn.intra.42.fr/users/vgoldman.jpg",
+	"photo_url_local": null,
+	"use_local_photo": false
 }
 
-### find all users by email
-GET http://localhost:3000/auth?email=E@MAIL.com
+### delete 1 user
+DELETE http://localhost:3000/dev/deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "bvalette"
+	}
+]
+
+### delete 1 user
+DELETE http://localhost:3000/dev/deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-bvalette-custome"
+	}
+]
+
+### create User batch
+POST http://localhost:3000/dev/createUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-vgoldman-custome",
+		"login_42": "fake-vgoldman",
+		"photo_url_42": "https://cdn.intra.42.fr/users/vgoldman.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-frfrancd-custome",
+		"login_42": "fake-frfrancd",
+		"photo_url_42": "https://cdn.intra.42.fr/users/frfrancd.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-jle-corr-custome",
+		"login_42": "fake-jle-corr",
+		"photo_url_42": "https://cdn.intra.42.fr/users/jle-corr.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-mrouchy-custome",
+		"login_42": "fake-mrouchy",
+		"photo_url_42": "https://cdn.intra.42.fr/users/mrouchy.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-randomDude-custome",
+		"login_42": "fake-randomDude",
+		"photo_url_42": "https://cdn.intra.42.fr/users/medium_default.png",
+		"photo_url_local": null,
+		"use_local_photo": false
+	}
+]
+
+### delete User batch
+DELETE http://localhost:3000/dev/deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-vgoldman-custome"
+	},
+	{
+		"login": "fake-frfrancd-custome"
+	},
+	{
+		"login": "fake-jle-corr-custome"
+	},
+	{
+		"login": "fake-mrouchy-custome"
+	},
+	{
+		"login": "fake-randomDude-custome"
+	}
+]
 
 
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#								REPORTS
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
+### get all users
+GET http://localhost:3000/users
 
-### Send a report
-POST http://localhost:3000/reports
+### update data of one user
+PATCH http://localhost:3000/auth/me
 content-type: application/json
 
 {
-	"price": 23500,
-	"make": "honda",
-	"model": "civic",
-	"year": 1994,
-	"lng": 0,
-	"lat": 0,
-	"mileage": 130150
+	"login": "fake-randomDude-custome_CHANGED"
 }
-
-### change approved status of a report by its id
-PATCH http://localhost:3000/reports/2
-content-type: application/json
-
-{
-	"approved": true
-}
-
-### get estimate for existing vehicule
-GET http://localhost:3000/reports?make=honda&model=civic&lng=0&lat=0&mileage=120000&year=1993
