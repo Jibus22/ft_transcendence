@@ -19,10 +19,10 @@ content-type: application/json
 }
 
 ### signout
-POST http://localhost:3000/auth/signout
+POST http://localhost:3000/users/signout
 
 ### get my own infos
-GET http://localhost:3000/auth/me
+GET http://localhost:3000/users/me
 
 ### create 1 user
 POST http://localhost:3000/dev/createUserBatch
@@ -133,3 +133,7 @@ content-type: application/json
 		"login": "fake-randomDude-custome"
 	}
 ]
+
+
+### get all users
+GET http://localhost:3000/users

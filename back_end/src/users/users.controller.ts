@@ -21,6 +21,8 @@ import { User } from './entities/users.entity';
 import { AuthGuard } from '../guards/auth.guard';
 import { ApiOperation, ApiProperty, ApiPropertyOptional, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { UpdateUserDto } from '../users/dtos/update-users.dto';
+import { UsersService } from '../users/users.service';
 
 @ApiTags('Users')
 @Serialize(UserDto)
@@ -39,6 +41,18 @@ export class UsersController {
       return res.redirect(this.configService.get('AUTH_REDIRECT_URL'));
     }
 
+    @Delete('/signout')
+    signOut(@Session() session: any) {
+      session.userId = null;
+    }
+
+    // @ApiResponse({ type: User[] })
+    @Get('/')
+    @UseGuards(AuthGuard)
+    getAllUsers() {
+      return this.usersService.getAllUsers();
+    }
+
     @ApiResponse({ type: UserDto })
     @Get('/me')
     @UseGuards(AuthGuard)
@@ -46,9 +60,12 @@ export class UsersController {
       return user;
     }
 
-    @Post('/signout')
-    signOut(@Session() session: any) {
-      session.userId = null;
+    @ApiResponse({ type: UpdateUserDto })
+    @Patch('/me')
+    update(@Body() body: Partial<UpdateUserDto>, @Session() session: any) {
+      const user = this.usersService.findOne(session.userId);
+      console.log(user);
+      // return this.usersService.update(session. );
     }
 
 

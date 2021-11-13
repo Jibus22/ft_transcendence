@@ -42,4 +42,8 @@ export class UsersService {
 		return this.repo.save(user);
 	}
 
+	async getAllUsers() {
+		return this.repo.find();
+	}
+
 }
