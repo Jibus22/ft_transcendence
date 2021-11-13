@@ -19,8 +19,8 @@ services:
     # depends_on:
     #   - database
     build: ./back_end
-    # env_file:
-    #   - .env_prod.env
+    env_file:
+      - .env_common.env
     volumes:
       ### Important to make sure node_module is not imported from local
       - notused_back:/usr/src/app/node_modules
