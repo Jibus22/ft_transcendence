@@ -1,17 +1,11 @@
 .mainUserRank{
-    margin: 20px 0 0 0;
-    display: flex;
+    width: 75%;
+    height: 72vh;
+    margin: 0 0 0 200px;
     
-    width: 100%;
-    height: 86vh;
-
-    // #181E28
-    // #0A1929
- 
-
-  
-    background-color: #2E4266;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid var(--borderLight) ;
+    border-radius: 30px;
+    background-color: var(--colorBlueC);
 
     .titleRank {
         margin: 30px auto;
@@ -49,26 +43,33 @@
     }
 }
 
-
-.fadeRankFriend {
-    height: 70%;
+::-webkit-scrollbar {
+    width: 10px;
+    
+  }
+  ::-webkit-scrollbar-track {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-radius: 40px;
+  
 }
 
 
-.mainRankFriends {
-    width: 80%;
-    height: 95%;
-    margin: 15px auto;
-    border: 1px solid rgba(255, 255, 255, .1);
-    background-color: var(--colorBlueF);
-    border-radius: 30px;
 
+.mainRankFriends {
+    width: 90%;
+    height: 70%;
+    margin: 15px auto;
+ 
+    overflow: auto;
+
+    
     .MainUserRankdiv {
-        width: 85%;
+        width: 100%;
         height: 60px;
         margin: 20px auto;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, .1);
+   
+        
 
 
         .blasonRank {
@@ -80,9 +81,9 @@
             margin: 9px 0 0 20px;
         }
         .photoRankUser {
-            width: 45px;
-            height: 45px;
-            margin: 6px 0 0 70px;
+            width: 60px;
+            height: 60px;
+            margin: 0px 0 0 70px;
         }
         .logginUser {
             font-size: 1.5em;
@@ -105,9 +106,9 @@
     }
     .rankdiv3 {
         margin: 10px 0 10px 150px;
-        border-radius: 10px;
-        background-color: red;
-        width: 50px;
+        // border-radius: 10px;
+        // background-color: red;
+        width: 150px;
 
         h1 {
             font-size: 1.8em;

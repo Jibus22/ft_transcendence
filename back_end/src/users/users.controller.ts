@@ -26,7 +26,7 @@ import { UsersService } from '../users/users.service';
 
 @ApiTags('Users')
 @Serialize(UserDto)
-@Controller('users')
+@Controller('auth')
 export class UsersController {
   constructor(
     private usersService: UsersService,

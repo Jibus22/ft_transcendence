@@ -1,0 +1,140 @@
+
+.Section {
+    width: 50%;
+    height: 70%;
+    padding: 30px 0 0 30px;
+    margin: 140px 0 0 20px;
+
+    
+
+}
+
+.profil img {
+    width: 85px;
+    height: 85px;
+}
+
+
+.profil1{
+    display: flex;
+    margin: 5px 0 0 30px;
+    width: 100%;
+}
+
+
+
+.profil2 {
+    display: flex;
+    margin: 50px 0 0 100px;
+    width: 100%;
+
+   
+}
+.profil3 {
+   
+    display: flex;
+    margin: 50px 0 0 200px;
+    width: 100%;
+}
+
+.listProfil2 {
+    margin: 0 100px 0 0;
+}
+
+
+.profil4 {
+   
+    display: flex;
+    margin: 65px 0 0 20px;
+    width: 100%;
+}
+
+.profil5 {
+   
+    display: flex;
+    margin: 60px 0 0 120px;
+    width: 100%;
+}
+
+.info {
+    margin: 10px 0 0px 30px ;
+}
+
+.info h3 {
+   font-family: Montserrat, sans-serif;
+   font-weight: normal;
+    font-size: 24px;
+    color: white;
+
+}
+.info p {
+    color: #CA6C88;
+    font-family: Montserrat, sans-serif;
+   font-weight: normal;
+    margin: -13px 0 0 0;
+    font-size: 23px;
+    line-height: 30px;
+}
+
+
+@media screen and (max-width: 1366px) {
+    .Section {
+        width: 54%;
+        height: 50%;
+        padding: 30px 0 0 30px;
+        margin: 110px 0 0 20px;
+    
+        .profil img {
+            width: 55px;
+            height: 55px;
+        }
+        
+        
+        .profil1{
+            margin: 5px 0 0 10px;
+           
+        }
+        .profil2 {
+            margin: 35px 0 0 80px;
+        }
+        .profil3 {
+            margin: 35px 0 0 150px;
+        }
+        
+        .listProfil2 {
+            margin: 0 100px 0 0;
+        }
+        
+        .profil4 {
+            margin: 45px 0 0 20px;
+            
+        }
+        
+        .profil5 {
+            margin: 40px 0 0 100px;
+            
+        }
+        
+        .info {
+            margin: 4px 0 0px 20px ;
+        }
+        
+        .info h3 {
+          
+           font-weight: normal;
+            font-size: 18px;
+            
+        
+        }
+        .info p {
+           font-weight: normal;
+            margin: -13px 0 0 0;
+            font-size: 18px;
+            line-height: 22px;
+        }
+        
+    
+    }
+
+
+}
