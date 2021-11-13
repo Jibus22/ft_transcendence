@@ -9,7 +9,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/users.entity';
 import { DevelopmentModule } from './development/development.module';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from './users/users.service';
 import { DevelopmentService } from './development/development.service';
 
 @Module({
@@ -21,7 +21,8 @@ import { DevelopmentService } from './development/development.service';
       TypeOrmModule.forRoot(
         {
           type: 'sqlite',
-          database: 'dbDev.sqlite',
+          // database: 'dbDev.sqlite',
+          database: process.env.DB_NAME,
           entities: [User],
           synchronize: true
         }),

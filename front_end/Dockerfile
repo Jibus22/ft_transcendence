@@ -30,4 +30,3 @@ ENV PATH /usr/src/node_modules/.bin:$PATH
 WORKDIR /usr/src/app
 
 EXPOSE 3000
-CMD [ "npm", "run", "start" ]

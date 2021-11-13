@@ -6,29 +6,19 @@ volumes:
 
 services:
 
-  # database:
-  #   image: 'postgres:latest'
-  #   ports:
-  #     - 5002:5432
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./db-data/:/var/lib/postgresql/data/
-
   back_end_server:
     build: ./back_end
     env_file:
       - .env
+      - .env_prod.env
     volumes:
-      # import to make sure node_module is not imported from local
+      ### Important to make sure node_module is not imported from local
       - notused_back:/usr/src/app/node_modules
       - ./back_end:/usr/src/app
     ports:
       - 3000:3000
       - 9229:9229
-    command: npm run ${NODE_CMD:-start:dev}
-    # depends_on:
-    #   - database
+    command: npm run start:prod
 
   front_end_server:
     build: ./front_end
@@ -37,5 +27,27 @@ services:
       - ./front_end:/usr/src/app
     ports:
       - 3001:3000
-    # depends_on:
-    #   - back_end_server
+    command: npm run start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # database:
+  #   image: 'postgres:latest'
+  #   ports:
+  #     - 5002:5432
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./db-data/:/var/lib/postgresql/data/
