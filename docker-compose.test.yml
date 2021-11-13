@@ -10,4 +10,7 @@ services:
     env_file:
       - .env
       - .env_test.env
+    volumes:
+      ## in order to run test:watch, git is required to check files changes
+      - ./.git:/usr/src/app/.git
     command: npm run test:e2e
