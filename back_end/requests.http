@@ -19,7 +19,7 @@ content-type: application/json
 }
 
 ### signout
-POST http://localhost:3000/dev/t
+POST http://localhost:3000/auth/signout
 
 ### get my own infos
 GET http://localhost:3000/auth/me
