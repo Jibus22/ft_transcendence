@@ -11,32 +11,38 @@ import { DevGuard } from '../guards/dev.guard';
 import { User } from '../users/entities/users.entity';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { DevelopmentService } from './development.service';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('DevTools')
 @UseGuards(DevGuard)
 @Controller('dev')
 export class DevelopmentController {
   constructor(private developmentService: DevelopmentService) {}
 
+  @ApiProperty()
   @Get('/hello')
   hello() {
     return 'hello world from dev';
   }
 
+  @ApiProperty()
   @Post('/signin')
   async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
     session.userId = await this.developmentService.debug_logUser(user.login);
     return user;
   }
 
+  @ApiProperty()
   @Post('/createUserBatch')
   async createUserBatch(
     @Body() body: CreateUserDto[] | CreateUserDto,
     @Session() session: any,
-  ) {
-    const users: Partial<User>[] = body as CreateUserDto[];
-    return await this.developmentService.debug_createUserBatch(users);
-  }
+    ) {
+      const users: Partial<User>[] = body as CreateUserDto[];
+      return await this.developmentService.debug_createUserBatch(users);
+    }
 
+  @ApiProperty()
   @Delete('/deleteUserBatch')
   async deleteUserBatch(
     @Body() body: { login: string }[],
