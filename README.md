@@ -20,6 +20,9 @@ docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_ser
 ### Run production mode:
 docker-compose up [--build]
 
+### Documentation for the backend routes:
+http://localhost:3000/api/
+
 
 ### DEBUG conf to attach vscode to docker container:
 ```
