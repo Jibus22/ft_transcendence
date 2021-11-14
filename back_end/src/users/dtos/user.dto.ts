@@ -7,7 +7,7 @@ export class UserDto {
 
 	@ApiProperty()
 	@Expose()
-	id: number;
+	id: string;
 
 	@ApiProperty()
 	@Expose()
