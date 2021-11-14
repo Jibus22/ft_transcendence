@@ -21,8 +21,8 @@ FROM node:14
 # Up one directory regarding the app, we set the node_modules
 WORKDIR /usr/src
 COPY package*.json package*.json* ./
-# RUN npm install --no-optional && npm -g install chokidar && npm cache clean --force
-RUN yarn install
+# RUN npm install --no-optional && npm cache clean --force
+RUN yarn && yarn cache clean
 
 ENV PATH /usr/src/node_modules/.bin:$PATH
 
