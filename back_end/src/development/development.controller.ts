@@ -12,8 +12,12 @@ import { User } from '../users/entities/users.entity';
 import { CreateUserDto } from '../users/dtos/create-user.dto';
 import { DevelopmentService } from './development.service';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { UserDto } from '../users/dtos/user.dto';
+import { devUserDto } from './dtos/devUser.dto';
 
 @ApiTags('DevTools')
+@Serialize(devUserDto)
 @UseGuards(DevGuard)
 @Controller('dev')
 export class DevelopmentController {
@@ -29,7 +33,7 @@ export class DevelopmentController {
   @Post('/signin')
   async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
     session.userId = await this.developmentService.debug_logUser(user.login);
-    return user;
+    return session.userId;
   }
 
   @ApiProperty()
