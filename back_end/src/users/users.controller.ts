@@ -13,7 +13,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { UserDto } from './dtos/user.dto';
 import { User } from './entities/users.entity';
 import { Serialize } from './interceptors/serialize.interceptor';
-import { CreateUserDto } from 'dist/development/dtos/create-user.dto';
+import { AddFriendDto } from './dtos/add-friend.dto';
 
 @ApiTags('Users')
 @Serialize(UserDto)
@@ -84,8 +84,8 @@ export class UsersController {
       summary: 'Get list of friends of the currently logger user'
     })
     @ApiCookieAuth()
-    async getAllFriends() {
-      return await this.friendsService.getAllFriends();
+    async getAllFriends(@Session() session) {
+      return await this.friendsService.getAllFriends(session.userId.id);
     }
 
     @Post('/friends')
@@ -94,8 +94,8 @@ export class UsersController {
       summary: 'Add one friend to the currently logger user'
     })
     @ApiCookieAuth()
-    async addFriend(@Body() friendId: Partial<CreateUserDto>) {
-      return await this.friendsService.addFriend();
+    async addFriend(@Body() friendId: AddFriendDto, @Session() session) {
+      return await this.friendsService.addFriend(session.userId.id, friendId.id);
     }
 
     @Delete('/friends')
@@ -104,8 +104,8 @@ export class UsersController {
       summary: 'Remove one friend to the currently logger user'
     })
     @ApiCookieAuth()
-    async removeFriend() {
-      return await this.friendsService.removeFriend();
+    async removeFriend(@Body() friendId: AddFriendDto, @Session() session) {
+      return await this.friendsService.removeFriend(session.userId.id, friendId.id);
     }
 
 
