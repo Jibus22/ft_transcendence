@@ -15,6 +15,10 @@ import {
 @Entity()
 export class User {
 
+  /*
+  ** Data
+  */
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,6 +43,10 @@ export class User {
   @ManyToMany(type => User, (user) => user.friends)
   @JoinTable()
   friends: User[];
+
+  /*
+  ** Lifecycle functions
+  */
 
   @AfterInsert()
   logInsert() {

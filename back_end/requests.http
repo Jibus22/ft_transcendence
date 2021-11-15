@@ -15,7 +15,7 @@ POST http://localhost:3000/dev/signin
 content-type: application/json
 
 {
-	"login": "bvalette"
+	"login": "fake-randomDude-custome"
 }
 
 ### signout
@@ -144,4 +144,32 @@ content-type: application/json
 
 {
 	"login": "me_account_brian"
+}
+
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#								FRIENDS
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+
+
+### get all friends
+GET http://localhost:3000/users/friends
+
+### add one friends
+POST http://localhost:3000/users/friends
+content-type: application/json
+
+{
+  "id": "74fd19d4-e7ac-45c7-aaa6-ef10635666a2"
+}
+
+### remove one friends
+DELETE http://localhost:3000/users/friends
+content-type: application/json
+
+{
+	"id": "74fd19d4-e7ac-45c7-aaa6-ef10635666a2"
 }

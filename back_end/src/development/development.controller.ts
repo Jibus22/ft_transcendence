@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Session,
   Post,
   Delete,
@@ -9,11 +8,10 @@ import {
 } from '@nestjs/common';
 import { DevGuard } from '../guards/dev.guard';
 import { User } from '../users/entities/users.entity';
-import { CreateUserDto } from '../users/dtos/create-user.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { DevelopmentService } from './development.service';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { Serialize } from '../interceptors/serialize.interceptor';
-import { UserDto } from '../users/dtos/user.dto';
 import { devUserDto } from './dtos/devUser.dto';
 
 @ApiTags('DevTools')
