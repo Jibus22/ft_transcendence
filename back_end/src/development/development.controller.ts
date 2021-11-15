@@ -24,15 +24,9 @@ export class DevelopmentController {
   constructor(private developmentService: DevelopmentService) {}
 
   @ApiProperty()
-  @Get('/hello')
-  hello() {
-    return 'hello world from dev';
-  }
-
-  @ApiProperty()
   @Post('/signin')
   async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
-    session.userId = await this.developmentService.debug_logUser(user.login);
+    session.userId = await this.developmentService.dev_logUser(user.login);
     return session.userId;
   }
 
@@ -43,7 +37,7 @@ export class DevelopmentController {
     @Session() session: any,
     ) {
       const users: Partial<User>[] = body as CreateUserDto[];
-      return await this.developmentService.debug_createUserBatch(users);
+      return await this.developmentService.dev_createUserBatch(users);
     }
 
   @ApiProperty()
@@ -52,6 +46,6 @@ export class DevelopmentController {
     @Body() body: { login: string }[],
     @Session() session: any,
   ) {
-    await this.developmentService.debug_deleteUserBatch(body);
+    await this.developmentService.dev_deleteUserBatch(body);
   }
 }
