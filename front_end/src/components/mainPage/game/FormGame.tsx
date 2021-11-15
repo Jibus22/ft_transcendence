@@ -1,5 +1,7 @@
+import React, { useState } from 'react';
 import { Formik, Field } from 'formik';
-import { IconButton, InputAdornment, Button, CircularProgress   } from '@mui/material';
+import { IconButton , CircularProgress   } from '@mui/material';
+import { useSpring, animated } from 'react-spring'
 import IconMess from './img/carbon_send-alt-filled.png'
 
 const style = {
@@ -28,13 +30,25 @@ const style = {
 
   export default function FormGame(props : any) {
 
-    const lol = props.click;
-    
+    const anim = useSpring({
+        opacity: 1,
+        transform: "translate(0px, 0px)",
+        from: { opacity: 0, transform: "translate(0px, 0px)" } ,
+        config: {
+          delay: 1000,
+          duration: 700,
+        },
+      });
 
-
+    const[loading, setLoading] = useState(false);
+        
     const submit = (values: Values) => {
+        setLoading(true);
+        setInterval(() => {
+            setLoading(false);
+        }, 2000);
         console.log(values);
-        alert(JSON.stringify(values, null, 2));
+      
        
       };
 
@@ -49,16 +63,20 @@ const style = {
         enableReinitialize={ true }
       >
         { ({ handleSubmit}) => (
-        <div className='formDivButton '>
-          <form onSubmit={ handleSubmit } className="d-flex w-100 h-100  formDiv ">
+        <animated.div  style={anim} className='w-100'> 
+        <div className='formDivButton'>
+          <form onSubmit={ handleSubmit } className="d-flex w-100 h-100  formDiv  ">
             <Field style={style} name="loggin" placeholder="Nickname" autoComplete="off" />
-            <div className='buttonDiv' >                
-            <IconButton type="submit" className='w-100 h-100' onClick={lol}   >
-                <img src={IconMess} alt="" />
+            <div className='buttonDiv'  >     
+            {loading &&  <CircularProgress size={25} sx={{mt: 2}}  /> }
+            {!loading &&  <IconButton type="submit" className='w-100 h-100'   >
+                <img  src={IconMess} alt="" />
             </IconButton>
+            }
             </div>
           </form>
           </div>
+        </animated.div>
         ) }
       </Formik>
       </div>

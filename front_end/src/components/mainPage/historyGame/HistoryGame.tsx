@@ -2,16 +2,12 @@ import React  from 'react'
 import './historyGame.scss'
 
 import 'semantic-ui-css/semantic.min.css'
-import { Input } from 'semantic-ui-react'
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import { pink } from '@mui/material/colors';
-import { alpha, styled } from '@mui/material/styles';
+import {styled } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-
-
 import { useSpring, animated } from 'react-spring'
-
 import FF from '../../homePage/section/photos/FF.png'
 import JB from '../../homePage/section/photos/jb.png'
 

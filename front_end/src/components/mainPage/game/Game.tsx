@@ -5,7 +5,7 @@ import './game.scss'
 
 import IconGame from './img/Group.png'
 import { useSpring, animated } from 'react-spring'
-import { IconButton, Button, CircularProgress   } from '@mui/material';
+import { Button, CircularProgress   } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import FormGame from './FormGame';
 
@@ -22,8 +22,8 @@ const GameWindow = () => {
         transform: "translate(0px, 0px)",
         from: { opacity: 0, transform: "translate(0px, 500px)" } ,
         config: {
-          delay: 400,
-          duration: 500,
+            delay: 400,
+            duration: 500,
         },
       });
 
@@ -31,11 +31,10 @@ const GameWindow = () => {
         const[loading, setLoading] = useState(false);
         function handleClick() {
                 setLoading(true);
-                console.log(loading)
                 setInterval(() => {
                     setLoading(false);
                 }, 2000);
-                console.log(loading)
+        
         }
 
 
@@ -78,6 +77,7 @@ const GameWindow = () => {
                      {!loading && 'Play Now'}
             </LoadingButton>
           {button}
+          
        
             </div>   
         </div>

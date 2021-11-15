@@ -1,6 +1,4 @@
 
-import RankWorld from './mainPage/rank/world/RankWorld';
-import WindowChat from './mainPage/chatroom/windows/WindowChat';
 export { default as Homepage} from './homePage/HomePage'
 
 export { default as TitlePage} from './homePage/mainTitle/MainTitlePage';

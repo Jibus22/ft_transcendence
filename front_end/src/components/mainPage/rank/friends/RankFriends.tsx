@@ -12,8 +12,8 @@ const Rankfriends = () => {
         transform: "translate(0px, 0px)",
         from: { opacity: 0, transform: "translate(0px, 0px)" } ,
         config: {
-          delay: 1000,
-          duration: 1800,
+      
+          duration: 10,
         },
       });
    

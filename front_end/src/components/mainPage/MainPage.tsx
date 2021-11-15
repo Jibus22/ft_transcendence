@@ -1,8 +1,8 @@
-import React, { useState, useEffect, lazy } from 'react' 
+
 import  './mainPage.scss'
 import { BrowserRouter as Router, Route} from 'react-router-dom'
-import { Header, LoadingBarre, GameWindow, ParamUser, UserRank, HistoryGame, ChatRoom, OnlineGame} from '..';
-import { Fade } from "react-awesome-reveal";
+import { Header, GameWindow, ParamUser, UserRank, HistoryGame, ChatRoom, OnlineGame} from '..';
+
 
 const MainPage = () => {
     // var [loading, setLoading] = useState(true);

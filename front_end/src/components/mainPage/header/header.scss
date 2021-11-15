@@ -11,10 +11,10 @@
    }
    
    .menuHeader {
-    width: 85%;
+    width: 80%;
     height: 85px;
    
-    margin: 50px auto;
+    margin: 100px auto;
     display: flex;
   
     background: rgba(230, 156, 106, 0.5);
@@ -126,6 +126,9 @@
             img {
                 width: 70px;
                 height: 70px;
+            }
+            .MuiBadge-colorPrimary {
+                color: #ff0000;   
             }
 
         }

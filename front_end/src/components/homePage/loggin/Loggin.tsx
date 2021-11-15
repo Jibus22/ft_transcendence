@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
 import './StyleLoggin.scss'
-import { Link }  from 'react-router-dom';
-import { Fade, Bounce } from "react-awesome-reveal";
+// import { Link }  from 'react-router-dom';
+// import { Fade, Bounce } from "react-awesome-reveal";
 import Lock from './other/Vector.png'
 
-import { styled } from '@mui/material/styles';
-import { purple } from '@mui/material/colors';
-import Button, { ButtonProps } from '@mui/material/Button';
-import axios from 'axios';
+
+import Button  from '@mui/material/Button';
+
 
 
 
 const Loggin = () => {
 
-    let [apiLink, setApiLink] = useState<string>('');
-
-    useEffect(() => {
-        axios.get('https://api.intra.42.fr/oauth/authorize?client_id=7610cae5bea0cf5544204791cb2461c29e2d38081bcadfb36a30fa7b01531fb4&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public&state=coucou42')
-        .then (response => response.data)
-        .catch (err => console.log(err))
-        // .then ( apiLink => setApiLink( users))
-
-    })
+    
 
     return (
     //     <Fade delay={1800} direction='up' className='fadeWrapper'>

@@ -18,185 +18,48 @@ const OnlineGame = () =>  {
         },
       });
  
+      let divTest =   <div className='partyOnline d-flex'>
+                <div className='userImg d-flex'>
+                    <div className='imgDom'>
+                        <img src={FF} alt="" />
+                    </div>
+                    <div className='imgExt'>
+                     <img src={JB} alt="" />
+                    </div>
 
+                </div>
+                <div className='userStat d-flex flex-column  '>
+                    <div className='player d-flex '>
+                        <p className='user' >frfrance</p>
+                        <p className='vs'>vs</p>
+                        <p className='user'>jl-core</p>
+                    </div>
+                    <div className='score d-flex'>
+                        <p>14</p>
+                        <p className='semiliconGame'>:</p>
+                        <p>1</p>
+                    </div> 
+                </div>
+                <div className='userWatch '>
+                <Button className='muiButton' variant="contained"   sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>Watch</Button>
+                </div>
+                  </div>
 
 
     return (
         <animated.div  style={props} className='w-100'> 
-            <div className='mainOnlineGame d-flex flex-column'>
+            <div className='mainOnlineGame d-flex flex-column '>
                 <div className='title '>
-                    <h1>Online Game</h1>
+                    <h1>Online game</h1>
                 </div>
                 <div className='pageOverflow'>
-
-                
                 <div className='onlineDiv '>
-                    <div className='partyOnline d-flex'>
-                        <div className='userImg'>
-                            <img src={FF} alt="" />
-                            <img src={JB} alt="" />
-                        </div>
-                        <div className='userStat d-flex flex-column '>
-                            <div className='player d-flex'>
-                                <p>frfrance</p>
-                                <p className='vs'> VS</p>
-                                <p>jl-core</p>
-                            </div>
-                            <div className='score d-flex'>
-                                <p>14</p>
-                                <p>:</p>
-                                <p>1</p>
-                            </div> 
-                        </div>
-                        <div className='userWatch '>
-                        <Button variant="contained"   sx={{borderRadius: 2, width: 2/2, mt: 2}}>Watch</Button>
-                        </div>
-                        
-
-                
-                    </div>
-                    <hr />
-                    
+                   {divTest}
+                   {divTest}
+                   {divTest}
+                   {divTest}
                 </div>
-                <div className='onlineDiv '>
-                    <div className='partyOnline d-flex'>
-                        <div className='userImg'>
-                            <img src={FF} alt="" />
-                            <img src={JB} alt="" />
-                        </div>
-                        <div className='userStat d-flex flex-column '>
-                            <div className='player d-flex'>
-                                <p>frfrance</p>
-                                <p className='vs'> VS</p>
-                                <p>jl-core</p>
-                            </div>
-                            <div className='score d-flex'>
-                                <p>14</p>
-                                <p>:</p>
-                                <p>1</p>
-                            </div> 
-                        </div>
-                        <div className='userWatch '>
-                        <Button variant="contained"   sx={{borderRadius: 2, width: 2/2, mt: 2}}>Watch</Button>
-                        </div>
-                        
 
-                
-                    </div>
-                    <hr />
-                    
-                </div>
-                <div className='onlineDiv '>
-                    <div className='partyOnline d-flex'>
-                        <div className='userImg'>
-                            <img src={FF} alt="" />
-                            <img src={JB} alt="" />
-                        </div>
-                        <div className='userStat d-flex flex-column '>
-                            <div className='player d-flex'>
-                                <p>frfrance</p>
-                                <p className='vs'> VS</p>
-                                <p>jl-core</p>
-                            </div>
-                            <div className='score d-flex'>
-                                <p>14</p>
-                                <p>:</p>
-                                <p>1</p>
-                            </div> 
-                        </div>
-                        <div className='userWatch '>
-                        <Button variant="contained"   sx={{borderRadius: 2, width: 2/2, mt: 2}}>Watch</Button>
-                        </div>
-                        
-
-                
-                    </div>
-                    <hr />
-                    
-                </div>
-                <div className='onlineDiv '>
-                    <div className='partyOnline d-flex'>
-                        <div className='userImg'>
-                            <img src={FF} alt="" />
-                            <img src={JB} alt="" />
-                        </div>
-                        <div className='userStat d-flex flex-column '>
-                            <div className='player d-flex'>
-                                <p>frfrance</p>
-                                <p className='vs'> VS</p>
-                                <p>jl-core</p>
-                            </div>
-                            <div className='score d-flex'>
-                                <p>14</p>
-                                <p>:</p>
-                                <p>1</p>
-                            </div> 
-                        </div>
-                        <div className='userWatch '>
-                        <Button variant="contained"   sx={{borderRadius: 2, width: 2/2, mt: 2}}>Watch</Button>
-                        </div>
-                        
-
-                
-                    </div>
-                    <hr />
-                    
-                </div>
-                <div className='onlineDiv '>
-                    <div className='partyOnline d-flex'>
-                        <div className='userImg'>
-                            <img src={FF} alt="" />
-                            <img src={JB} alt="" />
-                        </div>
-                        <div className='userStat d-flex flex-column '>
-                            <div className='player d-flex'>
-                                <p>frfrance</p>
-                                <p className='vs'> VS</p>
-                                <p>jl-core</p>
-                            </div>
-                            <div className='score d-flex'>
-                                <p>14</p>
-                                <p>:</p>
-                                <p>1</p>
-                            </div> 
-                        </div>
-                        <div className='userWatch '>
-                        <Button variant="contained"   sx={{borderRadius: 2, width: 2/2, mt: 2}}>Watch</Button>
-                        </div>
-                        
-
-                
-                    </div>
-                    <hr />
-                    
-                </div>
-                <div className='onlineDiv '>
-                    <div className='partyOnline d-flex'>
-                        <div className='userImg'>
-                            <img src={FF} alt="" />
-                            <img src={JB} alt="" />
-                        </div>
-                        <div className='userStat d-flex flex-column '>
-                            <div className='player d-flex'>
-                                <p>frfrance</p>
-                                <p className='vs'> VS</p>
-                                <p>jl-core</p>
-                            </div>
-                            <div className='score d-flex'>
-                                <p>14</p>
-                                <p>:</p>
-                                <p>1</p>
-                            </div> 
-                        </div>
-                        <div className='userWatch '>
-                        <Button variant="contained"   sx={{borderRadius: 2, width: 2/2, mt: 2}}>Watch</Button>
-                        </div>
-                        
-
-                
-                    </div>
-                    <hr />
-                    </div>
                 </div>
             </div>
         </animated.div>

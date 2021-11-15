@@ -3,10 +3,10 @@
 .mainGameWindow {
 
 
-    margin: 30px 0 0 145px;
+    margin: -20px 0 0 190px;
   
-    width: 83%;
-    height: 70vh;
+    width: 78%;
+    height: 65vh;
 
     border-radius: 23px;
     // background-color: #2E4266;
@@ -59,24 +59,25 @@
     .playRandom {
         width: 40%;
         height: 8%;
-        margin: 100px auto;
+        margin: 90px auto;
 
     }
 
     .playFriend {
         width: 40%;
         height: 8%;
-        margin: -50px auto;
+        margin: -60px auto;
     }
     .buttonMuiFriend {
-        margin: 50px 0 0 0;
+        margin: 30px 0 0 0;
     }
 
 
    
     .formDivButton {
+        margin-top: 30px;
         .formDiv {
-            margin-top: 50px;
+            
         } 
        
         height: 60px;
@@ -88,10 +89,10 @@
             background-color: white;
 
             img {
-                width: 40px;
+                width: 30px;
             }
             img:hover {
-                width: 200px;
+                width: 40px;
             }
             
         }

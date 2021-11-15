@@ -1,6 +1,6 @@
 import React from 'react' 
 import './StyleHomePage.scss'
-import { TitlePage, Loggin, Footer, Section} from '..';
+import { TitlePage, Loggin , Section} from '..';
 
 
 const Homepage = () => {

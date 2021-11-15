@@ -1,10 +1,7 @@
 import React from 'react' 
 import './header.scss'
 import {NavLink} from 'react-router-dom'
-import Logo from './src/logo.svg'
-import Icon from '@mdi/react'
-import {mdiCrownOutline, mdiGamepadVariantOutline, mdiCalendarClock } from '@mdi/js';
-
+import { Badge } from '@mui/material';
 import FF from '../../homePage/section/photos/FF.png'
 
 
@@ -54,7 +51,11 @@ const Header = () => {
                     <h2 className=''>Frfrance</h2>
                 </div>
                 <div className='profilLogginImg '>
+                <Badge  anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
+                color="success" overlap="circular" badgeContent=" " >
                     <img  className=''   src={FF} alt="" /> 
+                </Badge>
+                    
                 </div>
             </div>
             </NavLink>

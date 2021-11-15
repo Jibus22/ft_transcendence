@@ -6,7 +6,7 @@ import JB from './photos/jb.png'
 import VG from './photos/VG.png'
 import BG from './photos/BG.png'
 
-import { Fade } from "react-awesome-reveal";
+// import { Fade } from "react-awesome-reveal";
 
 const Section = () => {
     return (
