@@ -1,27 +1,26 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
+  AfterInsert,
   AfterRemove,
   AfterUpdate,
-  AfterInsert,
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToOne,
   OneToMany,
-  Timestamp,
-  BeforeInsert,
-  Unique,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
 export class User {
 
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   login: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   login_42: string;
 
   @Column()
@@ -29,12 +28,17 @@ export class User {
 
   @Column({
     unique: true,
-    nullable: true})
-	photo_url_local: string;
+    nullable: true,
+  })
+  photo_url_local: string;
 
   @Column()
-	use_local_photo: boolean;
+  use_local_photo: boolean;
 
+  // @Column({ nullable: true })
+  @ManyToOne(type => User)
+  @JoinTable({ name: "cat_id" })
+  friends: User[];
 
   @AfterInsert()
   logInsert() {

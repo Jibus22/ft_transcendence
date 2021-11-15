@@ -136,12 +136,12 @@ content-type: application/json
 
 
 ### get all users
-GET http://localhost:3000/auth
+GET http://localhost:3000/users
 
 ### update data of one user
-PATCH http://localhost:3000/auth/me
+PATCH http://localhost:3000/users/me
 content-type: application/json
 
 {
-	"login": "fake-bvalette-custome_CHANGED"
+	"login": "me_account_brian"
 }
