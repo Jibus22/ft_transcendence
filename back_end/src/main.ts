@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { UsersModule } from './users/users.module';
+import { DevelopmentModule } from './development/development.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +19,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config, {
     // modules to be documented
-    include: [UsersModule],
+    // include: [UsersModule]
   });
   // api is the endpoint of documentation's website
   SwaggerModule.setup('api', app, document);

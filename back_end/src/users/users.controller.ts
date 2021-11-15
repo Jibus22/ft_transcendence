@@ -12,6 +12,8 @@ import {
   UseGuards,
   BadGatewayException,
   Delete,
+  ResponseDecoratorOptions,
+  Redirect,
 } from '@nestjs/common';
 import { UserDto } from './dtos/user.dto';
 import { Serialize } from './interceptors/serialize.interceptor';
@@ -19,14 +21,14 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './entities/users.entity';
 import { AuthGuard } from '../guards/auth.guard';
-import { ApiOperation, ApiProperty, ApiPropertyOptional, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiCookieAuth, ApiOperation, ApiProperty, ApiPropertyOptional, ApiQuery, ApiResponse, ApiTags, PartialType } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { UpdateUserDto } from '../users/dtos/update-users.dto';
 import { UsersService } from '../users/users.service';
 
 @ApiTags('Users')
 @Serialize(UserDto)
-@Controller('auth')
+@Controller('users')
 export class UsersController {
   constructor(
     private usersService: UsersService,
@@ -34,7 +36,11 @@ export class UsersController {
     private configService: ConfigService) {}
 
     @Get('/callback')
-    async authCallback(@Query() query, @Res() res, @Session() session: any) {
+    @ApiOperation({
+      summary: 'Callback url for the 42 OAuth API'
+    })
+    async authCallback(@Query() query: {code: string, state: string},
+    @Res() res , @Session() session: any) {
 
       const user = await this.authService.registerUser(query.code, query.state);
       session.userId = user.id;
@@ -42,31 +48,44 @@ export class UsersController {
     }
 
     @Delete('/signout')
+    @ApiOperation({
+      summary: 'Remove userId from user\'s session cookie'
+    })
     signOut(@Session() session: any) {
       session.userId = null;
     }
 
-    // @ApiResponse({ type: User[] })
     @Get('/')
     @UseGuards(AuthGuard)
-    getAllUsers() {
-      return this.usersService.getAllUsers();
+    @ApiOperation({
+      summary: 'Get every users in the database'
+    })
+    @ApiCookieAuth()
+    async getAllUsers() {
+      return await this.usersService.getAllUsers();
     }
 
-    @ApiResponse({ type: UserDto })
     @Get('/me')
     @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Get infos of the currently logged user'
+    })
+    @ApiCookieAuth()
+    @ApiResponse({ type: UserDto })
     whoAmI(@CurrentUser() user: User) {
       return user;
     }
 
-    @ApiResponse({ type: UpdateUserDto })
     @Patch('/me')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Update infos of the currently logged user'
+    })
+    @ApiCookieAuth()
+    @ApiBody({ type: UpdateUserDto })
+    @ApiResponse({ type: UserDto })
     async update(@Body() body: Partial<UpdateUserDto>, @Session() session: any) {
-      const user = await this.usersService.findOne(session.userId);
-      console.log(user.id);
-      console.log(body.login);
-      // return this.usersService.update(session. );
+      return this.usersService.update(session.userId.id, body);
     }
 
 

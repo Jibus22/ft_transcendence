@@ -11,7 +11,7 @@ import Button  from '@mui/material/Button';
 
 const Loggin = () => {
 
-    
+
 
     return (
     //     <Fade delay={1800} direction='up' className='fadeWrapper'>
@@ -47,7 +47,7 @@ const Loggin = () => {
             <div className='buttonConnect d-flex'>
                 {/* <Link className='linkDiv' to="/MainPage"> */}
                 <form className='TextLog w-100 h-100'>
-                    <a href="https://api.intra.42.fr/oauth/authorize?client_id=7610cae5bea0cf5544204791cb2461c29e2d38081bcadfb36a30fa7b01531fb4&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public&state=coucou42">
+                    <a href="https://api.intra.42.fr/oauth/authorize?client_id=7610cae5bea0cf5544204791cb2461c29e2d38081bcadfb36a30fa7b01531fb4&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fusers%2Fcallback&response_type=code&scope=public&state=coucou42">
                 <Button className='buttonMuiConnect ' variant="contained" sx={{borderRadius: 2, textTransform: 'none' }}>Connect
 
                 </Button>

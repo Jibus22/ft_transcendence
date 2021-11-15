@@ -19,7 +19,7 @@ export class UsersService {
 		if ( ! user) {
 			throw new NotFoundException('user not found');
 		}
-		return this.repo.remove(user);
+		return await this.repo.remove(user);
 	}
 
 	async findOne(id: string) {
@@ -33,17 +33,17 @@ export class UsersService {
 		return await this.repo.find({ login });
 	}
 
-	async update( login: string, attrs: Partial<User> ) {
-		const user = await this.findOne(login);
+	async update(id: string, attrs: Partial<User>) {
+		const user = await this.findOne(id);
 		if ( ! user) {
 			throw new NotFoundException('user not found');
 		}
 		Object.assign(user, attrs);
-		return this.repo.save(user);
+		return await this.repo.save(user);
 	}
 
 	async getAllUsers() {
-		return this.repo.find();
+		return await this.repo.find();
 	}
 
 }

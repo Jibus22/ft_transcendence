@@ -15,14 +15,14 @@ POST http://localhost:3000/dev/signin
 content-type: application/json
 
 {
-	"login": "fake-bvalette-custome"
+	"login": "fake-randomDude-custome"
 }
 
 ### signout
-POST http://localhost:3000/auth/signout
+POST http://localhost:3000/users/signout
 
 ### get my own infos
-GET http://localhost:3000/auth/me
+GET http://localhost:3000/users/me
 
 ### create 1 user
 POST http://localhost:3000/dev/createUserBatch
@@ -139,9 +139,9 @@ content-type: application/json
 GET http://localhost:3000/users
 
 ### update data of one user
-PATCH http://localhost:3000/auth/me
+PATCH http://localhost:3000/users/me
 content-type: application/json
 
 {
-	"login": "fake-randomDude-custome_CHANGED"
+	"login": "me_account_brian"
 }
