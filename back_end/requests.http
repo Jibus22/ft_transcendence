@@ -15,7 +15,7 @@ POST http://localhost:3000/dev/signin
 content-type: application/json
 
 {
-	"login": "fake-randomDude-custome"
+	"login": "bvalette"
 }
 
 ### signout

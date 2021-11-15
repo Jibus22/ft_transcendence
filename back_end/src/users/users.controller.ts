@@ -1,30 +1,19 @@
 import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  Get,
-  Patch,
-  Param,
-  Query,
-  Session,
-  NotFoundException,
-  UseGuards,
-  BadGatewayException,
-  Delete,
-  ResponseDecoratorOptions,
-  Redirect,
+  Body, Controller, Delete, Get,
+  Patch, Post, Query, Res, Session, UseGuards
 } from '@nestjs/common';
-import { UserDto } from './dtos/user.dto';
-import { Serialize } from './interceptors/serialize.interceptor';
-import { AuthService } from './auth.service';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from './entities/users.entity';
-import { AuthGuard } from '../guards/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiCookieAuth, ApiOperation, ApiProperty, ApiPropertyOptional, ApiQuery, ApiResponse, ApiTags, PartialType } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FriendsService } from './service_friends/friends.service';
+import { AuthGuard } from '../guards/auth.guard';
 import { UpdateUserDto } from '../users/dtos/update-users.dto';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/service_users/users.service';
+import { AuthService } from './service_auth/auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { UserDto } from './dtos/user.dto';
+import { User } from './entities/users.entity';
+import { Serialize } from './interceptors/serialize.interceptor';
+import { CreateUserDto } from 'dist/development/dtos/create-user.dto';
 
 @ApiTags('Users')
 @Serialize(UserDto)
@@ -32,6 +21,7 @@ import { UsersService } from '../users/users.service';
 export class UsersController {
   constructor(
     private usersService: UsersService,
+    private friendsService: FriendsService,
     private authService: AuthService,
     private configService: ConfigService) {}
 
@@ -88,6 +78,35 @@ export class UsersController {
       return this.usersService.update(session.userId.id, body);
     }
 
+    @Get('/friends')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Get list of friends of the currently logger user'
+    })
+    @ApiCookieAuth()
+    async getAllFriends() {
+      return await this.friendsService.getAllFriends();
+    }
+
+    @Post('/friends')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Add one friend to the currently logger user'
+    })
+    @ApiCookieAuth()
+    async addFriend(@Body() friendId: Partial<CreateUserDto>) {
+      return await this.friendsService.addFriend();
+    }
+
+    @Delete('/friends')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Remove one friend to the currently logger user'
+    })
+    @ApiCookieAuth()
+    async removeFriend() {
+      return await this.friendsService.removeFriend();
+    }
 
 
 

@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config';
 const cookieSession = require('cookie-session');
 
 import { AppController } from './app.controller';
@@ -9,45 +9,45 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/users.entity';
 import { DevelopmentModule } from './development/development.module';
-import { UsersService } from './users/users.service';
+import { UsersService } from './users/service_users/users.service';
 import { DevelopmentService } from './development/development.service';
+import { FriendsService } from './users/service_friends/friends.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(
-      {
-        isGlobal: true,
-      }),
-      TypeOrmModule.forRoot(
-        {
-          type: 'sqlite',
-          database: process.env.DB_NAME,
-          entities: [User],
-          synchronize: true
-        }),
-        UsersModule,
-        DevelopmentModule,
-      ],
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: process.env.DB_NAME,
+      entities: [User],
+      synchronize: true,
+    }),
+    UsersModule,
+    DevelopmentModule,
+  ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [
+    AppService,
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
-        whitelist: true
-      })
-    }
+        whitelist: true,
+      }),
+    },
   ],
 })
-
 export class AppModule {
-
   constructor(private configService: ConfigService) {}
 
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(
-      cookieSession(
-        {
+    consumer
+      .apply(
+        cookieSession({
           keys: [this.configService.get('COOKIE_KEY')],
-        })).forRoutes('*');
+        }),
+      )
+      .forRoutes('*');
   }
 }

@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
-import { UsersService } from "../users.service";
+import { UsersService } from "../service_users/users.service";
 import { User } from "../entities/users.entity";
 
 declare global {
@@ -23,9 +23,6 @@ export class CurrentUserMiddleware implements NestMiddleware {
 
 		if (userId) {
 			const user = await this.usersService.findOne(userId);
-			if ( ! user) {
-				throw new ForbiddenException(`No user ${userId.login} in database`);
-			}
 			req.currentUser = user;
 		}
 

@@ -26,5 +26,5 @@ export class UserDto {
 
 	@ApiProperty()
 	@Expose()
-	cat_id: User[];
+	friendsId: User[];
 }

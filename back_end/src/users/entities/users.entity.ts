@@ -6,6 +6,7 @@ import {
   Entity,
   JoinColumn,
   JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -35,9 +36,8 @@ export class User {
   @Column()
   use_local_photo: boolean;
 
-  // @Column({ nullable: true })
-  @ManyToOne(type => User)
-  @JoinTable({ name: "cat_id" })
+  @ManyToMany(type => User, (user) => user.friends)
+  @JoinTable()
   friends: User[];
 
   @AfterInsert()

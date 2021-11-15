@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from 'axios';
 import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from '../service_users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { User } from './entities/users.entity';
+import { User } from '../entities/users.entity';
 import { map, lastValueFrom } from 'rxjs';
 
 @Injectable()
