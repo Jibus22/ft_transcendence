@@ -1,14 +1,12 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import { User } from '../entities/users.entity';
-import { UsersService } from '../service_users/users.service';
 
 @Injectable()
 export class FriendsService {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
-    private userService: UsersService,
   ) {}
 
   async getAllFriends(userId: string) {
