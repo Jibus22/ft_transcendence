@@ -82,12 +82,16 @@ export class AuthService {
     const users = await this.usersService.find(user.login);
     if (users.length) {
       console.log(`USER exists: ${users[0].id}`);  // TODO REMOVE DEBUG
-      return this.usersService.update(users[0].id, {
+      return await this.usersService.update(users[0].id, {
         photo_url_42: users[0].photo_url_42,
-      } as User);
+      } as User).catch((e) => {
+        throw new BadGatewayException(e.message);
+      });
     }
     user.use_local_photo = false;
-    return this.usersService.create(user);
+    return await this.usersService.create(user).catch((e) => {
+      throw new BadGatewayException(e.message);
+    });
   }
 
 }
