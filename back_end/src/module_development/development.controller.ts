@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DevGuard } from '../guards/dev.guard';
-import { User } from '../users/entities/users.entity';
+import { User } from '../module_users/entities/users.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { DevelopmentService } from './development.service';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';

@@ -1,0 +1,32 @@
+import { Controller, Delete, Get, InternalServerErrorException, Query, Redirect, Session } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ApiOperation } from '@nestjs/swagger';
+import { AuthService } from './service_auth/auth.service';
+
+@Controller('users')
+export class AuthController {
+
+	constructor(
+    private authService: AuthService,
+    private configService: ConfigService) {}
+
+    @Get('/callback')
+    @Redirect()
+    async authCallback(@Query() query: {code: string, state: string}, @Session() session: any) {
+
+      const user = await this.authService.registerUser(query.code, query.state);
+      if ( ! user) {
+        throw new InternalServerErrorException('Could not identify user.')
+      }
+      session.userId = user.id;
+      return { url: this.configService.get('AUTH_REDIRECT_URL') };
+    }
+
+    @Delete('/signout')
+    @ApiOperation({
+      summary: 'Remove userId from user\'s session cookie'
+    })
+    signOut(@Session() session: any) {
+      session.userId = null;
+    }
+}

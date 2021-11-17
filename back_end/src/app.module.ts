@@ -1,17 +1,14 @@
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-const cookieSession = require('cookie-session');
-
+import { APP_PIPE } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { User } from './users/entities/users.entity';
-import { DevelopmentModule } from './development/development.module';
-import { UsersService } from './users/service_users/users.service';
-import { DevelopmentService } from './development/development.service';
-import { FriendsService } from './users/service_friends/friends.service';
+import { DevelopmentModule } from './module_development/development.module';
+import { User } from './module_users/entities/users.entity';
+import { UsersModule } from './module_users/users.module';
+const cookieSession = require('cookie-session');
+
 
 @Module({
   imports: [

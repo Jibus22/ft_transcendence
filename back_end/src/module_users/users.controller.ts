@@ -1,19 +1,16 @@
 import {
-  Body, Controller, Delete, Get,
-  Patch, Post, Query, Res, Session, UseGuards
+  Body, Controller, Delete, Get, Patch, Post, Session, UseGuards
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { FriendsService } from './service_friends/friends.service';
 import { AuthGuard } from '../guards/auth.guard';
-import { UpdateUserDto } from '../users/dtos/update-users.dto';
-import { UsersService } from '../users/service_users/users.service';
-import { AuthService } from './service_auth/auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { AddFriendDto } from './dtos/add-friend.dto';
+import { UpdateUserDto } from './dtos/update-users.dto';
 import { UserDto } from './dtos/user.dto';
 import { User } from './entities/users.entity';
 import { Serialize } from './interceptors/serialize.interceptor';
-import { AddFriendDto } from './dtos/add-friend.dto';
+import { FriendsService } from './service_friends/friends.service';
+import { UsersService } from './service_users/users.service';
 
 @ApiTags('Users')
 @Serialize(UserDto)
@@ -22,28 +19,7 @@ export class UsersController {
   constructor(
     private usersService: UsersService,
     private friendsService: FriendsService,
-    private authService: AuthService,
-    private configService: ConfigService) {}
-
-    @Get('/callback')
-    @ApiOperation({
-      summary: 'Callback url for the 42 OAuth API'
-    })
-    async authCallback(@Query() query: {code: string, state: string},
-    @Res() res , @Session() session: any) {
-
-      const user = await this.authService.registerUser(query.code, query.state);
-      session.userId = user.id;
-      return res.redirect(this.configService.get('AUTH_REDIRECT_URL'));
-    }
-
-    @Delete('/signout')
-    @ApiOperation({
-      summary: 'Remove userId from user\'s session cookie'
-    })
-    signOut(@Session() session: any) {
-      session.userId = null;
-    }
+  ) {}
 
     @Get('/')
     @UseGuards(AuthGuard)
