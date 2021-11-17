@@ -24,7 +24,4 @@ export class UserDto {
 	})
 	photo_url: string;
 
-	@ApiProperty()
-	@Expose()
-	friends: User[];
 }

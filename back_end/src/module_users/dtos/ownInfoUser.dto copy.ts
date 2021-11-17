@@ -2,6 +2,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose, Transform, Exclude } from "class-transformer";
 import { User } from "../entities/users.entity";
+import { UserDto } from "./user.dto";
 
 @Exclude()
 export class OwnInfoUserDto {
@@ -16,6 +17,10 @@ export class OwnInfoUserDto {
 
 	@ApiProperty()
 	@Expose()
+	login_42: string;
+
+	@ApiProperty()
+	@Expose()
 	@Transform(value => {
 		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
 			return value.obj.photo_url_42;
@@ -25,10 +30,16 @@ export class OwnInfoUserDto {
 	photo_url: string;
 
 	@ApiProperty()
+	@Transform(value => {
+		return value.obj.friends;
+	})
 	@Expose()
-	friends: User[];
+	friends_list: UserDto[];
 
 	@ApiProperty()
+	@Transform(value => {
+		return value.obj.blockedAccounts;
+	})
 	@Expose()
-	blockedAccounts: User[];
+	blocked_list: UserDto[];
 }
