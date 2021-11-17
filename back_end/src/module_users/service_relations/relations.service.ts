@@ -42,8 +42,18 @@ export class RelationsService {
       .relation(User, relation)
       .of(userId)
       .remove(targetId)
+    .then(() => { return this;})
       .catch((error) => {
         throw new ConflictException(error.message); // TODO error message to be refined
       });
+  }
+
+  async setRelations(user: User) {
+    const friends = await this.repo
+      .createQueryBuilder(RelationType.Friend)
+      .leftJoinAndSelect(`Users.${RelationType.Friend}`, "friends")
+      .getMany();
+
+    console.log(friends);
   }
 }

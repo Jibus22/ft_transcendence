@@ -163,7 +163,7 @@ POST http://localhost:3000/users/friends
 content-type: application/json
 
 {
-  "id": "74fd19d4-e7ac-45c7-aaa6-ef10635666a2"
+  "id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
 }
 
 ### remove one friends
@@ -171,5 +171,48 @@ DELETE http://localhost:3000/users/friends
 content-type: application/json
 
 {
-	"id": "74fd19d4-e7ac-45c7-aaa6-ef10635666a2"
+	"id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
 }
+
+#------------------------------------------------------------------------------#
+#								BLOCK
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+
+
+### get all block
+GET http://localhost:3000/users/block
+
+### add one block
+POST http://localhost:3000/users/block
+content-type: application/json
+
+{
+  "id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
+}
+
+### remove one block
+DELETE http://localhost:3000/users/block
+content-type: application/json
+
+{
+	"id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## get my own infos
+GET http://localhost:3000/users/me

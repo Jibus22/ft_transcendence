@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Condition } from 'typeorm';
 import { User } from './entities/users.entity';
 import { AuthService } from './service_auth/auth.service';
-import { RelationsService } from './service_friends/relations.service';
+import { RelationsService } from './service_relations/relations.service';
 import { UsersService } from './service_users/users.service';
 import { UsersController } from './users.controller';
 
@@ -22,7 +22,7 @@ describe('UsersController', () => {
   };
 
   let fakeUsersService = {};
-  let fakeFriendsService = {};
+  let fakerelationsService = {};
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -34,7 +34,7 @@ describe('UsersController', () => {
         },
         {
           provide: RelationsService,
-          useValue: fakeFriendsService,
+          useValue: fakerelationsService,
         },
       ],
     }).compile();

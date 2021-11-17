@@ -3,13 +3,8 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
+  Entity, JoinTable,
+  ManyToMany, PrimaryGeneratedColumn
 } from 'typeorm';
 
 @Entity()
