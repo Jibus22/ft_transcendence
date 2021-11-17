@@ -6,13 +6,13 @@ import { User } from './entities/users.entity';
 import { AuthService } from './service_auth/auth.service';
 import { CurrentUserMiddleware } from './middleware/current-user.middleware';
 import { HttpModule } from '@nestjs/axios';
-import { FriendsService } from './service_friends/friends.service';
+import { RelationsService } from './service_friends/relations.service';
 import { AuthController } from './auth.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), HttpModule],
   providers: [
-    FriendsService,
+    RelationsService,
     UsersService,
     AuthService
   ],

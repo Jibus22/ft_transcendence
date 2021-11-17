@@ -9,7 +9,7 @@ import { UpdateUserDto } from './dtos/update-users.dto';
 import { UserDto } from './dtos/user.dto';
 import { User } from './entities/users.entity';
 import { Serialize } from './interceptors/serialize.interceptor';
-import { FriendsService } from './service_friends/friends.service';
+import { RelationsService, RelationType } from './service_friends/relations.service';
 import { UsersService } from './service_users/users.service';
 
 @ApiTags('Users')
@@ -18,7 +18,7 @@ import { UsersService } from './service_users/users.service';
 export class UsersController {
   constructor(
     private usersService: UsersService,
-    private friendsService: FriendsService,
+    private friendsService: RelationsService,
   ) {}
 
     @Get('/')
@@ -61,7 +61,7 @@ export class UsersController {
     })
     @ApiCookieAuth()
     async getAllFriends(@Session() session) {
-      return await this.friendsService.getAllFriends(session.userId.id);
+      return await this.friendsService.getAllRelations(session.userId.id, RelationType.Friend );
     }
 
     @Post('/friends')
@@ -71,7 +71,7 @@ export class UsersController {
     })
     @ApiCookieAuth()
     async addFriend(@Body() friendId: AddFriendDto, @Session() session) {
-      return await this.friendsService.addFriend(session.userId.id, friendId.id);
+      return await this.friendsService.addRelation(session.userId.id, friendId.id, RelationType.Friend);
     }
 
     @Delete('/friends')
@@ -81,7 +81,37 @@ export class UsersController {
     })
     @ApiCookieAuth()
     async removeFriend(@Body() friendId: AddFriendDto, @Session() session) {
-      return await this.friendsService.removeFriend(session.userId.id, friendId.id);
+      return await this.friendsService.removeRelation(session.userId.id, friendId.id, RelationType.Friend);
+    }
+
+    @Get('/block')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Get list of blocked accounts of the currently logger user'
+    })
+    @ApiCookieAuth()
+    async getAllBlocks(@Session() session) {
+      return await this.friendsService.getAllRelations(session.userId.id, RelationType.Block);
+    }
+
+    @Post('/block')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Add one blocked account to the currently logger user'
+    })
+    @ApiCookieAuth()
+    async addBlock(@Body() friendId: AddFriendDto, @Session() session) {
+      return await this.friendsService.addRelation(session.userId.id, friendId.id, RelationType.Block);
+    }
+
+    @Delete('/block')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Remove one blocked account to the currently logger user'
+    })
+    @ApiCookieAuth()
+    async removeBlock(@Body() friendId: AddFriendDto, @Session() session) {
+      return await this.friendsService.removeRelation(session.userId.id, friendId.id, RelationType.Block);
     }
 
 

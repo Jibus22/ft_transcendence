@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Condition } from 'typeorm';
 import { User } from './entities/users.entity';
 import { AuthService } from './service_auth/auth.service';
-import { FriendsService } from './service_friends/friends.service';
+import { RelationsService } from './service_friends/relations.service';
 import { UsersService } from './service_users/users.service';
 import { UsersController } from './users.controller';
 
@@ -33,7 +33,7 @@ describe('UsersController', () => {
           useValue: fakeUsersService,
         },
         {
-          provide: FriendsService,
+          provide: RelationsService,
           useValue: fakeFriendsService,
         },
       ],

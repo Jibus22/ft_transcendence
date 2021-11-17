@@ -44,6 +44,10 @@ export class User {
   @JoinTable()
   friends: User[];
 
+  @ManyToMany(type => User, (user) => user.blockedAccounts)
+  @JoinTable()
+  blockedAccounts: User[];
+
   /*
   ** Lifecycle functions
   */
