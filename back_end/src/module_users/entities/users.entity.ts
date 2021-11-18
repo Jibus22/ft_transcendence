@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
   AfterInsert,
   AfterRemove,
@@ -8,10 +8,10 @@ import {
   Entity, JoinTable,
   ManyToMany, PrimaryGeneratedColumn
 } from 'typeorm';
+import { UserDto } from '../dtos/user.dto';
 
 const conf = new ConfigService;
 
-@Exclude()
 @Entity()
 export class User {
 
@@ -19,15 +19,12 @@ export class User {
   ** Data
   */
 
-  @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Expose()
   @Column({ unique: true })
   login: string;
 
-  @Expose()
   @Column({ unique: true })
   login_42: string;
 
@@ -43,19 +40,16 @@ export class User {
   @Column()
   use_local_photo: boolean;
 
-  @Expose()
-  @ManyToMany(type => User, (user) => user.friends)
+  @ManyToMany(type => User, (user) => user.friend_list)
   @JoinTable()
-  friends: User[];
+  friend_list: UserDto[];
 
-  @Expose()
-  @ManyToMany(type => User, (user) => user.blockedAccounts)
+  @ManyToMany(type => User, (user) => user.blocked_list)
   @JoinTable()
-  blockedAccounts: User[];
+  blocked_list: UserDto[];
 
 // ----------------------
 
-	@Expose()
 	@Transform(value => {
 		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
 			return value.obj.photo_url_42;

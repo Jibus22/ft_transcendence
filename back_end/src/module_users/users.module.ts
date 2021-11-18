@@ -8,6 +8,7 @@ import { CurrentUserMiddleware } from './middleware/current-user.middleware';
 import { HttpModule } from '@nestjs/axios';
 import { RelationsService } from './service_relations/relations.service';
 import { AuthController } from './auth.controller';
+import { MeController } from './me.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), HttpModule],
@@ -16,7 +17,7 @@ import { AuthController } from './auth.controller';
     UsersService,
     AuthService
   ],
-  controllers: [UsersController, AuthController],
+  controllers: [UsersController, AuthController, MeController],
   exports: [UsersService]
 })
 

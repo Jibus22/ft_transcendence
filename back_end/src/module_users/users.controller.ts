@@ -35,6 +35,7 @@ import { UsersService } from './service_users/users.service';
 @ApiTags('Users')
 @ApiCookieAuth()
 @UseGuards(AuthGuard)
+@Serialize(UserDto)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -43,68 +44,27 @@ export class UsersController {
   ) {}
 
   @Get('/')
-  @Serialize(User)
   @ApiOperation({
     summary: 'Get every users in the database',
   })
   async getAllUsers() {
     return await this.usersService.getAllUsers();
   }
-  /*****************************************************************************
-   *    CURRENTLY LOGGED USER
-   *****************************************************************************/
 
-  @Get('/me')
-  @Serialize(privateUserDto)
-  @ApiOperation({
-    summary: 'Get infos of the currently logged user',
-  })
-  @ApiResponse({ type: User })
-  async whoAmI(@CurrentUser() user: User) {
-    await this.relationsService // TO DO move to service: separation of concerns
-    .getAllRelations(user.id, RelationType.Friend)
-    .then((value) => {
-      user.friends = value;
-    });
-    await this.relationsService
-    .getAllRelations(user.id, RelationType.Block)
-    .then((value) => {
-      user.blockedAccounts = value;
-    });
-    return user;
-  }
-
-  @Get('/:id')
-  @Serialize(User)
-  @ApiOperation({
-    summary: 'Get public infors of user :id',
-  })
-  async getUserById(@Param() id: string) {
-    console.log(id);
-    return await this.usersService.findOne(id);
-  }
-
-
-  @Patch('/me')
-  @Serialize(privateUserDto)
-  @ApiOperation({
-    summary: 'Update infos of the currently logged user',
-  })
-  @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ type: UserDto })
-  async update(
-    @Body() body: Partial<UpdateUserDto>,
-    @Session() session: Record<string, any>,
-  ) {
-    return this.usersService.update(session.userId.id, body);
-  }
+  // @Get('/:id')
+  // @ApiOperation({
+  //   summary: 'Get public infors of user :id',
+  // })
+  // async getUserById(@Param() id: string) {
+  //   console.log(id);
+  //   return await this.usersService.findOne(id);
+  // }
 
   /*****************************************************************************
    *    FRIENDS
    *****************************************************************************/
 
   @Get('/friends')
-  @Serialize(User)
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
@@ -115,7 +75,6 @@ export class UsersController {
     );
   }
 
-  @Serialize(User)
   @Post('/friends')
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
@@ -131,7 +90,6 @@ export class UsersController {
     );
   }
 
-  @Serialize(User)
   @Delete('/friends')
   @ApiOperation({
     summary: 'Remove one friend to the currently logger user',
@@ -152,7 +110,6 @@ export class UsersController {
    *****************************************************************************/
 
   @Get('/block')
-  @Serialize(User)
   @ApiOperation({
     summary: 'Get list of blocked accounts of the currently logger user',
   })
@@ -164,7 +121,6 @@ export class UsersController {
   }
 
   @Post('/block')
-  @Serialize(User)
   @ApiOperation({
     summary: 'Add one blocked account to the currently logger user',
   })
@@ -180,7 +136,6 @@ export class UsersController {
   }
 
   @Delete('/block')
-  @Serialize(User)
   @ApiOperation({
     summary: 'Remove one blocked account to the currently logger user',
   })

@@ -163,7 +163,7 @@ POST http://localhost:3000/users/friends
 content-type: application/json
 
 {
-  "id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
+	"id": "691cd180-37fd-4805-aba0-c02c5bfc43ee"
 }
 
 ### remove one friends
@@ -171,9 +171,10 @@ DELETE http://localhost:3000/users/friends
 content-type: application/json
 
 {
-	"id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
+	"id": "691cd180-37fd-4805-aba0-c02c5bfc43ee"
 }
 
+#------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 #								BLOCK
 #------------------------------------------------------------------------------#
@@ -189,7 +190,7 @@ POST http://localhost:3000/users/block
 content-type: application/json
 
 {
-  "id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
+  "id": "b2e3aefe-284e-4a44-83d9-603437aef3a0"
 }
 
 ### remove one block
@@ -197,7 +198,28 @@ DELETE http://localhost:3000/users/block
 content-type: application/json
 
 {
-	"id": "34d44b49-d322-41ed-a2ba-8d8fdcc529a9"
+	"id": "b2e3aefe-284e-4a44-83d9-603437aef3a0"
+}
+
+
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#							ME ROUTES
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+### get my own infos
+GET http://localhost:3000/me
+
+
+### get my own infos
+PATCH http://localhost:3000/me
+content-type: application/json
+
+{
+	"photo_url_local": "http://welcomepage.com",
+	"use_local_photo": true
 }
 
 
@@ -208,14 +230,6 @@ content-type: application/json
 
 
 
-
-
-
-
-
-
-### get my own infos
-GET http://localhost:3000/users/me
 
 ### get ALL USERS
 GET http://localhost:3000/users

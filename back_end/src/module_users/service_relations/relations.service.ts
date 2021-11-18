@@ -8,26 +8,24 @@ import { UserDto } from '../dtos/user.dto';
 import { User } from '../entities/users.entity';
 
 export enum RelationType {
-  Friend = 'friends',
-  Block = 'blockedAccounts'
+  Friend = 'friend_list',
+  Block = 'blocked_list'
 }
 
 @Injectable()
 export class RelationsService {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
-  ) {}
+    ) {}
 
-  // @Serialize(privateUserDto)
   async getAllRelations(userId: string, relation: RelationType) {
     return await getConnection()
       .createQueryBuilder()
       .relation(User, relation)
       .of(userId)
       .loadMany()
-      .then((value) => {
+      .then((value: UserDto[]) => {
         return value;
-        // return plainToClass(UserDto, value, { excludeExtraneousValues: true });
       })
       .catch((error) => {
         throw new ConflictException(error.message); // TODO error message to be refined

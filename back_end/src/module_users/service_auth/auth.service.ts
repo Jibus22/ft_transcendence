@@ -81,7 +81,6 @@ export class AuthService {
   async updateDatabase(user: Partial<User>) {
     const users = await this.usersService.find(user.login);
     if (users.length) {
-      console.log(`USER exists: ${users[0].id}`);  // TODO REMOVE DEBUG
       return await this.usersService.update(users[0].id, {
         photo_url_42: users[0].photo_url_42,
       } as User).catch((e) => {

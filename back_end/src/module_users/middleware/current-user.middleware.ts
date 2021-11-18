@@ -22,6 +22,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
 		const { userId } = req.session || {};
 
 		if (userId) {
+			// FIXME current user is not valid after call to PATCH /me. Probably need to update session in response too ?
 			const user = await this.usersService.findOne(userId);
 			req.currentUser = user;
 		}
