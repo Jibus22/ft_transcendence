@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import {
   AfterInsert,
   AfterRemove,
@@ -6,6 +7,8 @@ import {
   Entity, JoinTable,
   ManyToMany, PrimaryGeneratedColumn
 } from 'typeorm';
+
+const conf = new ConfigService;
 
 @Entity()
 export class User {
@@ -49,16 +52,22 @@ export class User {
 
   @AfterInsert()
   logInsert() {
-    console.log('Inserted User: ', this);
+    if (conf.get('NODE_ENV') !== 'production') {
+      console.log('Inserted User: ', this);
+    }
   }
 
   @AfterRemove()
   logRemove() {
-    console.log('Removed User: ', this);
+    if (conf.get('NODE_ENV') !== 'production') {
+      console.log('Removed User: ', this);
+    }
   }
 
   @AfterUpdate()
   logUpdate() {
-    console.log('Updated User: ', this);
+    if (conf.get('NODE_ENV') !== 'production') {
+      console.log('Updated User: ', this);
+    }
   }
 }
