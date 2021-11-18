@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import {
   AfterInsert,
   AfterRemove,
@@ -10,6 +11,7 @@ import {
 
 const conf = new ConfigService;
 
+@Exclude()
 @Entity()
 export class User {
 
@@ -17,12 +19,15 @@ export class User {
   ** Data
   */
 
+  @Expose()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Expose()
   @Column({ unique: true })
   login: string;
 
+  @Expose()
   @Column({ unique: true })
   login_42: string;
 
@@ -38,13 +43,26 @@ export class User {
   @Column()
   use_local_photo: boolean;
 
+  @Expose()
   @ManyToMany(type => User, (user) => user.friends)
   @JoinTable()
   friends: User[];
 
+  @Expose()
   @ManyToMany(type => User, (user) => user.blockedAccounts)
   @JoinTable()
   blockedAccounts: User[];
+
+// ----------------------
+
+	@Expose()
+	@Transform(value => {
+		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
+			return value.obj.photo_url_42;
+		}
+		return value.obj.photo_url_local;
+	})
+	photo_url: string;
 
   /*
   ** Lifecycle functions

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { classToClass, classToPlain, plainToClass } from 'class-transformer';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { getConnection, Repository } from 'typeorm';
-import { OwnInfoUserDto } from '../dtos/ownInfoUser.dto copy';
+import { privateUserDto } from '../dtos/private-user.dto';
 import { UserDto } from '../dtos/user.dto';
 import { User } from '../entities/users.entity';
 
@@ -18,7 +18,7 @@ export class RelationsService {
     @InjectRepository(User) private repo: Repository<User>,
   ) {}
 
-  // @Serialize(OwnInfoUserDto)
+  // @Serialize(privateUserDto)
   async getAllRelations(userId: string, relation: RelationType) {
     return await getConnection()
       .createQueryBuilder()
@@ -26,7 +26,8 @@ export class RelationsService {
       .of(userId)
       .loadMany()
       .then((value) => {
-        return plainToClass(UserDto, value, { excludeExtraneousValues: true });
+        return value;
+        // return plainToClass(UserDto, value, { excludeExtraneousValues: true });
       })
       .catch((error) => {
         throw new ConflictException(error.message); // TODO error message to be refined

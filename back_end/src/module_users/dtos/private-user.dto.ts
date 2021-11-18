@@ -5,7 +5,7 @@ import { User } from "../entities/users.entity";
 import { UserDto } from "./user.dto";
 
 @Exclude()
-export class OwnInfoUserDto {
+export class privateUserDto {
 
 	@ApiProperty()
 	@Expose()

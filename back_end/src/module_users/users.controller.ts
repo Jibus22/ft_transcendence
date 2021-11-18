@@ -3,8 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
+  Query,
   Session,
   UseGuards,
 } from '@nestjs/common';
@@ -14,16 +16,16 @@ import {
   ApiOperation,
   ApiResponse,
   ApiTags,
+  PartialType,
 } from '@nestjs/swagger';
-import { stringify } from 'querystring';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { AddFriendDto } from './dtos/add-friend.dto';
-import { OwnInfoUserDto } from './dtos/ownInfoUser.dto copy';
+import { editRelationDto } from './dtos/edit-relation.dto';
+import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
 import { UserDto } from './dtos/user.dto';
 import { User } from './entities/users.entity';
-import { Serialize } from './interceptors/serialize.interceptor';
 import {
   RelationsService,
   RelationType,
@@ -33,7 +35,6 @@ import { UsersService } from './service_users/users.service';
 @ApiTags('Users')
 @ApiCookieAuth()
 @UseGuards(AuthGuard)
-// @Serialize(UserDto)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -42,38 +43,50 @@ export class UsersController {
   ) {}
 
   @Get('/')
+  @Serialize(User)
   @ApiOperation({
     summary: 'Get every users in the database',
   })
   async getAllUsers() {
     return await this.usersService.getAllUsers();
   }
-
   /*****************************************************************************
    *    CURRENTLY LOGGED USER
    *****************************************************************************/
 
   @Get('/me')
-  // @Serialize(OwnInfoUserDto)
+  @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Get infos of the currently logged user',
   })
-  @ApiResponse({ type: OwnInfoUserDto })
-  async whoAmI(@CurrentUser() user: OwnInfoUserDto) {
+  @ApiResponse({ type: User })
+  async whoAmI(@CurrentUser() user: User) {
+    await this.relationsService // TO DO move to service: separation of concerns
+    .getAllRelations(user.id, RelationType.Friend)
+    .then((value) => {
+      user.friends = value;
+    });
     await this.relationsService
-      .getAllRelations(user.id, RelationType.Friend)
-      .then((value) => {
-        user.friends_list = value;
-      });
-    await this.relationsService
-      .getAllRelations(user.id, RelationType.Block)
-      .then((value) => {
-        user.blocked_list = value;
-      });
+    .getAllRelations(user.id, RelationType.Block)
+    .then((value) => {
+      user.blockedAccounts = value;
+    });
     return user;
   }
 
+  @Get('/:id')
+  @Serialize(User)
+  @ApiOperation({
+    summary: 'Get public infors of user :id',
+  })
+  async getUserById(@Param() id: string) {
+    console.log(id);
+    return await this.usersService.findOne(id);
+  }
+
+
   @Patch('/me')
+  @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Update infos of the currently logged user',
   })
@@ -91,6 +104,7 @@ export class UsersController {
    *****************************************************************************/
 
   @Get('/friends')
+  @Serialize(User)
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
@@ -101,12 +115,13 @@ export class UsersController {
     );
   }
 
+  @Serialize(User)
   @Post('/friends')
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
   })
   async addFriend(
-    @Body() friendId: AddFriendDto,
+    @Body() friendId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.addRelation(
@@ -116,12 +131,13 @@ export class UsersController {
     );
   }
 
+  @Serialize(User)
   @Delete('/friends')
   @ApiOperation({
     summary: 'Remove one friend to the currently logger user',
   })
   async removeFriend(
-    @Body() friendId: AddFriendDto,
+    @Body() friendId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     return await this.relationsService.removeRelation(
@@ -136,6 +152,7 @@ export class UsersController {
    *****************************************************************************/
 
   @Get('/block')
+  @Serialize(User)
   @ApiOperation({
     summary: 'Get list of blocked accounts of the currently logger user',
   })
@@ -147,31 +164,33 @@ export class UsersController {
   }
 
   @Post('/block')
+  @Serialize(User)
   @ApiOperation({
     summary: 'Add one blocked account to the currently logger user',
   })
   async addBlock(
-    @Body() friendId: AddFriendDto,
+    @Body() blockId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.addRelation(
       session.userId.id,
-      friendId.id,
+      blockId.id,
       RelationType.Block,
     );
   }
 
   @Delete('/block')
+  @Serialize(User)
   @ApiOperation({
     summary: 'Remove one blocked account to the currently logger user',
   })
   async removeBlock(
-    @Body() friendId: AddFriendDto,
+    @Body() blockId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.removeRelation(
       session.userId.id,
-      friendId.id,
+      blockId.id,
       RelationType.Block,
     );
   }

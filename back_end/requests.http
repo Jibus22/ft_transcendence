@@ -214,5 +214,11 @@ content-type: application/json
 
 
 
-## get my own infos
+### get my own infos
 GET http://localhost:3000/users/me
+
+### get ALL USERS
+GET http://localhost:3000/users
+
+### get user by ID
+GET http://localhost:3000/users/a49680d0-2def-454b-b29c-e7a0bef97e14
