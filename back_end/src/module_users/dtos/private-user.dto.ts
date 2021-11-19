@@ -1,11 +1,11 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { Expose, Transform, Exclude } from "class-transformer";
+import { Expose, Transform, Exclude, classToClass, serialize, plainToClass } from "class-transformer";
 import { User } from "../entities/users.entity";
 import { UserDto } from "./user.dto";
 
 @Exclude()
-export class OwnInfoUserDto {
+export class privateUserDto {
 
 	@ApiProperty()
 	@Expose()
@@ -29,17 +29,17 @@ export class OwnInfoUserDto {
 	})
 	photo_url: string;
 
-	@ApiProperty()
-	@Transform(value => {
-		return value.obj.friends;
-	})
+	@ApiProperty({ type: UserDto })
 	@Expose()
+	@Transform(value => {
+		return plainToClass(UserDto, value.obj.friends_list);
+	})
 	friends_list: UserDto[];
 
-	@ApiProperty()
-	@Transform(value => {
-		return value.obj.blockedAccounts;
-	})
+	@ApiProperty({ type: UserDto })
 	@Expose()
+	@Transform(value => {
+		return plainToClass(UserDto, value.obj.blocked_list);
+	})
 	blocked_list: UserDto[];
 }

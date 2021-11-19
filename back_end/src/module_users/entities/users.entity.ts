@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { Transform } from 'class-transformer';
 import {
   AfterInsert,
   AfterRemove,
@@ -7,6 +8,7 @@ import {
   Entity, JoinTable,
   ManyToMany, PrimaryGeneratedColumn
 } from 'typeorm';
+import { UserDto } from '../dtos/user.dto';
 
 const conf = new ConfigService;
 
@@ -38,13 +40,23 @@ export class User {
   @Column()
   use_local_photo: boolean;
 
-  @ManyToMany(type => User, (user) => user.friends)
+  @ManyToMany(type => User, (user) => user.friend_list)
   @JoinTable()
-  friends: User[];
+  friend_list: UserDto[];
 
-  @ManyToMany(type => User, (user) => user.blockedAccounts)
+  @ManyToMany(type => User, (user) => user.blocked_list)
   @JoinTable()
-  blockedAccounts: User[];
+  blocked_list: UserDto[];
+
+// ----------------------
+
+	@Transform(value => {
+		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
+			return value.obj.photo_url_42;
+		}
+		return value.obj.photo_url_local;
+	})
+	photo_url: string;
 
   /*
   ** Lifecycle functions

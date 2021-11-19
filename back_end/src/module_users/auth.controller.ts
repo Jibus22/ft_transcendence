@@ -1,9 +1,10 @@
 import { Controller, Delete, Get, InternalServerErrorException, Query, Redirect, Session } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './service_auth/auth.service';
 
-@Controller('users')
+@ApiTags('Auth')
+@Controller('auth')
 export class AuthController {
 
 	constructor(

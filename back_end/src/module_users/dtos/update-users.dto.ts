@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class UpdateUserDto {
 
@@ -8,9 +8,9 @@ export class UpdateUserDto {
 	@IsString()
 	login: string;
 
-	@ApiPropertyOptional()
+	@ApiPropertyOptional() 			// TODO remove is upload of picture is done in backend
 	@IsOptional()
-	@IsString()
+	@IsUrl()
 	photo_url_local: string;
 
 	@ApiPropertyOptional()

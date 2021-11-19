@@ -2,6 +2,7 @@ import {
   Body, Controller, Delete, Post, Session, UseGuards
 } from '@nestjs/common';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { deserialize, serialize } from 'class-transformer';
 import { DevGuard } from '../guards/dev.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { User } from '../module_users/entities/users.entity';
@@ -19,26 +20,37 @@ export class DevelopmentController {
   @ApiProperty()
   @Post('/signin')
   async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
-    session.userId = await this.developmentService.dev_logUser(user.login);
-    return session.userId;
+    const newUser = await this.developmentService.dev_logUser(user.login);
+    session.userId = newUser.id;
+    return newUser;
   }
 
   @ApiProperty()
   @Post('/createUserBatch')
   async createUserBatch(
     @Body() body: CreateUserDto[] | CreateUserDto,
-    @Session() session: any,
     ) {
+      let successCreation = 0;
       const users: Partial<User>[] = body as CreateUserDto[];
-      return await this.developmentService.dev_createUserBatch(users);
+      for (const user of users) {
+         await this.developmentService.dev_createUserBatch(user)
+          .then((value) => { successCreation++; })
+          .catch((err) => {});
+      };
+      return await this.developmentService.dev_getAllUser();
     }
 
   @ApiProperty()
   @Delete('/deleteUserBatch')
   async deleteUserBatch(
     @Body() body: { login: string }[],
-    @Session() session: any,
   ) {
     await this.developmentService.dev_deleteUserBatch(body);
+  }
+
+  @ApiProperty()
+  @Delete('/deleteAllUsers')
+  async deleteAllUsers() {
+    await this.developmentService.dev_deleteAllUser();
   }
 }
