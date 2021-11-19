@@ -1,20 +1,17 @@
 import {
   BadRequestException,
   Body,
-  Controller,
-  ForbiddenException,
-  Get,
+  Controller, Get,
   NotFoundException,
-  Patch,
-  Session,
-  UseGuards,
+  Patch, Session,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBody,
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
@@ -22,10 +19,9 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
 import { UserDto } from './dtos/user.dto';
-import { User } from './entities/users.entity';
 import {
   RelationsService,
-  RelationType,
+  RelationType
 } from './service_relations/relations.service';
 import { UsersService } from './service_users/users.service';
 
@@ -77,6 +73,6 @@ export class MeController {
   @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ type: UserDto })
   async update(@Body() body: Partial<UpdateUserDto>, @Session() session) {
-    return this.usersService.update(session.userId.id, body);
+    return this.usersService.update(session.userId, body);
   }
 }

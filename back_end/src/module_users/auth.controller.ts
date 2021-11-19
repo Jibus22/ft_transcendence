@@ -20,7 +20,6 @@ export class AuthController {
         throw new InternalServerErrorException('Could not identify user.')
       }
       session.userId = user.id;
-      console.log(session);
       return { url: this.configService.get('AUTH_REDIRECT_URL') };
     }
 

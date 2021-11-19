@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NestMiddleware } from "@nestjs/common";
+import { ForbiddenException, Injectable, Logger, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
 import { UsersService } from "../service_users/users.service";
 import { User } from "../entities/users.entity";
@@ -20,11 +20,24 @@ export class CurrentUserMiddleware implements NestMiddleware {
 
 	async use(req: Request, res: Response, next: NextFunction) {
 		const { userId } = req.session || {};
+		const logger = new Logger( ' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
+    logger.log(userId);
 
 		if (userId) {
-			// FIXME current user is not valid after call to PATCH /me. Probably need to update session in response too ?
-			const user = await this.usersService.findOne(userId);
-			req.currentUser = user;
+			await this.usersService.findOne(userId)
+				.then( (user) => {
+					logger.log(user.login);
+					req.currentUser = user;
+				})
+				.catch( (error) => {
+					req.session.userId = null;
+					req.currentUser = null;
+					throw new ForbiddenException();
+				});
+			} else {
+			logger.log('No Userid in session');
+			req.session.userId = null;
+			req.currentUser = null;
 		}
 
 		next();

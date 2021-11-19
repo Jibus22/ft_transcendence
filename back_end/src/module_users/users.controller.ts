@@ -70,7 +70,7 @@ export class UsersController {
   })
   async getAllFriends(@Session() session: Record<string, any>) {
     return await this.relationsService.getAllRelations(
-      session.userId.id,
+      session.userId,
       RelationType.Friend,
     );
   }
@@ -84,7 +84,7 @@ export class UsersController {
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.addRelation(
-      session.userId.id,
+      session.userId,
       friendId.id,
       RelationType.Friend,
     );
@@ -99,7 +99,7 @@ export class UsersController {
     @Session() session: Record<string, any>,
   ) {
     return await this.relationsService.removeRelation(
-      session.userId.id,
+      session.userId,
       friendId.id,
       RelationType.Friend,
     );
@@ -115,7 +115,7 @@ export class UsersController {
   })
   async getAllBlocks(@Session() session: Record<string, any>) {
     return await this.relationsService.getAllRelations(
-      session.userId.id,
+      session.userId,
       RelationType.Block,
     );
   }
@@ -129,7 +129,7 @@ export class UsersController {
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.addRelation(
-      session.userId.id,
+      session.userId,
       blockId.id,
       RelationType.Block,
     );
@@ -144,7 +144,7 @@ export class UsersController {
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.removeRelation(
-      session.userId.id,
+      session.userId,
       blockId.id,
       RelationType.Block,
     );

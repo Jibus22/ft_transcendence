@@ -9,7 +9,7 @@
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
-### signin with debug session
+### SIGNIN WITH DEBUG SESSION
 
 POST http://localhost:3000/dev/signin
 content-type: application/json
@@ -18,13 +18,13 @@ content-type: application/json
 	"login": "fake-randomDude-custome"
 }
 
-### signout
+### SIGNOUT
 POST http://localhost:3000/users/signout
 
-### get my own infos
+### GET MY OWN INFOS
 GET http://localhost:3000/users/me
 
-### create 1 user
+### CREATE 1 USER
 POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
@@ -38,7 +38,7 @@ content-type: application/json
 	}
 ]
 
-### add 1 user
+### ADD 1 USER
 POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
@@ -50,7 +50,7 @@ content-type: application/json
 	"use_local_photo": false
 }
 
-### delete 1 user
+### DELETE 1 USER
 DELETE http://localhost:3000/dev/deleteUserBatch
 content-type: application/json
 
@@ -60,7 +60,7 @@ content-type: application/json
 	}
 ]
 
-### delete 1 user
+### DELETE 1 USER
 DELETE http://localhost:3000/dev/deleteUserBatch
 content-type: application/json
 
@@ -70,7 +70,7 @@ content-type: application/json
 	}
 ]
 
-### create User batch
+### CREATE USER BATCH
 POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
@@ -112,7 +112,7 @@ content-type: application/json
 	}
 ]
 
-### delete User batch
+### DELETE USER BATCH
 DELETE http://localhost:3000/dev/deleteUserBatch
 content-type: application/json
 
@@ -135,10 +135,13 @@ content-type: application/json
 ]
 
 
-### get all users
+### GET ALL USERS
 GET http://localhost:3000/users
 
-### update data of one user
+### DELETE ALL USERS
+DELETE http://localhost:3000/dev/deleteAllUsers
+
+### UPDATE DATA OF ONE USER
 PATCH http://localhost:3000/users/me
 content-type: application/json
 
@@ -155,10 +158,10 @@ content-type: application/json
 
 
 
-### get all friends
+### GET ALL FRIENDS
 GET http://localhost:3000/users/friends
 
-### add one friends
+### ADD ONE FRIENDS
 POST http://localhost:3000/users/friends
 content-type: application/json
 
@@ -166,7 +169,7 @@ content-type: application/json
 	"id": "691cd180-37fd-4805-aba0-c02c5bfc43ee"
 }
 
-### remove one friends
+### REMOVE ONE FRIENDS
 DELETE http://localhost:3000/users/friends
 content-type: application/json
 
@@ -182,10 +185,10 @@ content-type: application/json
 
 
 
-### get all block
+### GET ALL BLOCK
 GET http://localhost:3000/users/block
 
-### add one block
+### ADD ONE BLOCK
 POST http://localhost:3000/users/block
 content-type: application/json
 
@@ -193,7 +196,7 @@ content-type: application/json
   "id": "b2e3aefe-284e-4a44-83d9-603437aef3a0"
 }
 
-### remove one block
+### REMOVE ONE BLOCK
 DELETE http://localhost:3000/users/block
 content-type: application/json
 
@@ -209,11 +212,11 @@ content-type: application/json
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
-### get my own infos
+### GET MY OWN INFOS
 GET http://localhost:3000/me
 
 
-### get my own infos
+### UPDATE MY OWN INFOS
 PATCH http://localhost:3000/me
 content-type: application/json
 
@@ -231,8 +234,8 @@ content-type: application/json
 
 
 
-### get ALL USERS
+### GET ALL USERS
 GET http://localhost:3000/users
 
-### get user by ID
+### GET USER BY ID
 GET http://localhost:3000/users/a49680d0-2def-454b-b29c-e7a0bef97e14
