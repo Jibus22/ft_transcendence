@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { User } from '../module_users/entities/users.entity';
 import { UsersService } from '../module_users/service_users/users.service';
 
@@ -12,13 +12,14 @@ export class DevelopmentService {
     if ( ! users[0]) {
       throw new BadRequestException(`No user ${login}`);
     }
-    return this.usersService.create(users[0]);
+    return this.usersService.create(users[0])
+      .catch((error) => {
+        throw new InternalServerErrorException(error.message)
+      });
   }
 
-  async dev_createUserBatch(users: Partial<User> | Partial<User>[]) {
-    return await this.usersService.create(users).catch((e) => {
-      throw new BadRequestException(e.message);
-    })
+  async dev_createUserBatch(users: Partial<User>) {
+    return await this.usersService.create(users);
   }
 
   async dev_deleteUserBatch(users: Partial<User>[]) {
@@ -32,4 +33,12 @@ export class DevelopmentService {
     });
   }
 
+  async dev_getAllUser() {
+    return await this.usersService.getAllUsers();
+  }
+
+  async dev_deleteAllUser() {
+    const users = await this.usersService.getAllUsers();
+    await this.dev_deleteUserBatch(users);
+  }
 }
