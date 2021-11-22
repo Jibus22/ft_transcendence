@@ -1,9 +1,6 @@
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { classToClass, classToPlain, plainToClass } from 'class-transformer';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { getConnection, Repository } from 'typeorm';
-import { privateUserDto } from '../dtos/private-user.dto';
 import { UserDto } from '../dtos/user.dto';
 import { User } from '../entities/users.entity';
 
