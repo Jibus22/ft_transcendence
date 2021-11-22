@@ -8,7 +8,7 @@ import { UserDto } from '../dtos/user.dto';
 import { User } from '../entities/users.entity';
 
 export enum RelationType {
-  Friend = 'friend_list',
+  Friend = 'friends_list',
   Block = 'blocked_list'
 }
 

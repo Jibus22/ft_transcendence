@@ -40,9 +40,9 @@ export class User {
   @Column()
   use_local_photo: boolean;
 
-  @ManyToMany(type => User, (user) => user.friend_list)
+  @ManyToMany(type => User, (user) => user.friends_list)
   @JoinTable()
-  friend_list: UserDto[];
+  friends_list: UserDto[];
 
   @ManyToMany(type => User, (user) => user.blocked_list)
   @JoinTable()

@@ -12,8 +12,8 @@ export class AuthGuard implements CanActivate {
 		const logger = new Logger( '💂‍♂️ AuthGuard'); //TODO REMOVE LOGGER HERE
 
     const request = context.switchToHttp().getRequest();
-    logger.log(request.session.userId, serialize(request.currentUser));
+    logger.log(`User id: ${request.session.userId}`);
 
-    return request.currentUser;
+    return request.session.userId !== null;
   }
 }

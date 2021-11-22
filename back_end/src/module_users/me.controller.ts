@@ -1,9 +1,6 @@
 import {
-  BadRequestException,
   Body,
-  Controller, Get,
-  NotFoundException,
-  Patch, Session,
+  Controller, Get, NotFoundException, Patch, Session,
   UseGuards
 } from '@nestjs/common';
 import {
@@ -18,11 +15,8 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
-import { UserDto } from './dtos/user.dto';
-import {
-  RelationsService,
-  RelationType
-} from './service_relations/relations.service';
+import { User } from './entities/users.entity';
+import { MeService } from './service_me/me.service';
 import { UsersService } from './service_users/users.service';
 
 @ApiTags('Me')
@@ -32,7 +26,7 @@ import { UsersService } from './service_users/users.service';
 export class MeController {
   constructor(
     private usersService: UsersService,
-    private relationsService: RelationsService,
+    private meService: MeService,
   ) {}
 
   /*****************************************************************************
@@ -45,24 +39,11 @@ export class MeController {
     summary: 'Get infos of the currently logged user',
   })
   @ApiResponse({ type: privateUserDto })
-  async whoAmI(@CurrentUser() user: privateUserDto) {
-    if (!user) {
-      throw new BadRequestException('user session does not exist');
-    }
-    await this.relationsService // TO DO move to service: separation of concerns
-      .getAllRelations(user.id, RelationType.Friend)
-      .then((value) => {
-        user.friends_list = value;
-      })
-      .catch((e) => {
-        throw new NotFoundException(e.message);
-      });
-    await this.relationsService
-      .getAllRelations(user.id, RelationType.Block)
-      .then((value) => {
-        user.blocked_list = value;
-      });
-    return user;
+  async whoAmI(@CurrentUser() userId: string) {
+    return await this.meService.whoAmI(userId)
+
+      .then((userData: User) => userData)
+      .catch((error) => {throw new NotFoundException(error);});
   }
 
   @Patch('/')
@@ -71,7 +52,7 @@ export class MeController {
     summary: 'Update infos of the currently logged user',
   })
   @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ type: UserDto })
+  @ApiResponse({ type: privateUserDto })
   async update(@Body() body: Partial<UpdateUserDto>, @Session() session) {
     return this.usersService.update(session.userId, body);
   }

@@ -9,10 +9,12 @@ import { HttpModule } from '@nestjs/axios';
 import { RelationsService } from './service_relations/relations.service';
 import { AuthController } from './auth.controller';
 import { MeController } from './me.controller';
+import { MeService } from './service_me/me.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), HttpModule],
   providers: [
+    MeService,
     RelationsService,
     UsersService,
     AuthService

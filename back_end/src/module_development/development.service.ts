@@ -27,7 +27,9 @@ export class DevelopmentService {
       if ( ! val.login) {
         throw new BadRequestException('missing login');
       }
-      await this.usersService.remove(val.login).catch((e)=>  {
+      return await this.usersService.remove(val.login)
+      .then((val) => val)
+      .catch((e)=> {
         throw new BadRequestException(e.message);
       });
     });
