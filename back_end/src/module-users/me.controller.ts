@@ -16,8 +16,8 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
 import { User } from './entities/users.entity';
-import { MeService } from './service_me/me.service';
-import { UsersService } from './service_users/users.service';
+import { MeService } from './service-me/me.service';
+import { UsersService } from './service-users/users.service';
 
 @ApiTags('Me')
 @ApiCookieAuth()

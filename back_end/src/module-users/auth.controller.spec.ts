@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Any } from 'typeorm';
 import { AuthController } from './auth.controller';
 import { User } from './entities/users.entity';
-import { AuthService } from './service_auth/auth.service';
+import { AuthService } from './service-auth/auth.service';
 
 describe('AuthController', () => {
 

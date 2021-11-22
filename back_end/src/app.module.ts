@@ -4,11 +4,11 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DevelopmentModule } from './module_development/development.module';
-import { User } from './module_users/entities/users.entity';
-import { UsersModule } from './module_users/users.module';
-import { MeService } from './module_users/service_me/me.service';
-import { RelationsService } from './module_users/service_relations/relations.service';
+import { DevelopmentModule } from './module-development/development.module';
+import { User } from './module-users/entities/users.entity';
+import { UsersModule } from './module-users/users.module';
+import { MeService } from './module-users/service-me/me.service';
+import { RelationsService } from './module-users/service-relations/relations.service';
 const cookieSession = require('cookie-session');
 
 

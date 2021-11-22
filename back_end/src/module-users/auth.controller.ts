@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, InternalServerErrorException, Query, Redirect, Session } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthService } from './service_auth/auth.service';
+import { AuthService } from './service-auth/auth.service';
 
 @ApiTags('Auth')
 @Controller('auth')

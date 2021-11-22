@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { User } from '../module_users/entities/users.entity';
-import { UsersService } from '../module_users/service_users/users.service';
+import { User } from '../module-users/entities/users.entity';
+import { UsersService } from '../module-users/service-users/users.service';
 
 @Injectable()
 export class DevelopmentService {

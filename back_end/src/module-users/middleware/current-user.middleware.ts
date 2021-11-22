@@ -5,7 +5,7 @@ import {
   NestMiddleware,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { UsersService } from '../service_users/users.service';
+import { UsersService } from '../service-users/users.service';
 import { User } from '../entities/users.entity';
 
 declare global {

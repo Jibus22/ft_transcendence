@@ -29,8 +29,8 @@ import { User } from './entities/users.entity';
 import {
   RelationsService,
   RelationType,
-} from './service_relations/relations.service';
-import { UsersService } from './service_users/users.service';
+} from './service-relations/relations.service';
+import { UsersService } from './service-users/users.service';
 
 @ApiTags('Users')
 @ApiCookieAuth()

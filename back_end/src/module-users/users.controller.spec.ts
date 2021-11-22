@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Condition } from 'typeorm';
 import { User } from './entities/users.entity';
-import { AuthService } from './service_auth/auth.service';
-import { RelationsService } from './service_relations/relations.service';
-import { UsersService } from './service_users/users.service';
+import { AuthService } from './service-auth/auth.service';
+import { RelationsService } from './service-relations/relations.service';
+import { UsersService } from './service-users/users.service';
 import { UsersController } from './users.controller';
 
 describe('UsersController', () => {

@@ -3,8 +3,8 @@ import {
   Injectable
 } from '@nestjs/common';
 import { User } from '../entities/users.entity';
-import { RelationsService, RelationType } from '../service_relations/relations.service';
-import { UsersService } from '../service_users/users.service';
+import { RelationsService, RelationType } from '../service-relations/relations.service';
+import { UsersService } from '../service-users/users.service';
 
 @Injectable()
 export class MeService {

@@ -5,7 +5,7 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { deserialize, serialize } from 'class-transformer';
 import { DevGuard } from '../guards/dev.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
-import { User } from '../module_users/entities/users.entity';
+import { User } from '../module-users/entities/users.entity';
 import { DevelopmentService } from './development.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { devUserDto } from './dtos/devUser.dto';
