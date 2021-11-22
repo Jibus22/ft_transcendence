@@ -1,47 +1,255 @@
 
 .mainParamUser {
-    margin: 20px 0 0 550px;
-    display: flex;
-    
-    width: 40%;
-    height: 70vh;
-
+    width: 37%;
+    height: 65vh;
+    margin: 0 auto;
 
     border-radius: 23px;
-    background-color: #2E4266;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: linear-gradient(5.69deg, #E69C6A -3.67%, rgba(230, 156, 106, 0) 102.8%);
+    backdrop-filter: blur( 8px );
+    -webkit-backdrop-filter: blur( 8px );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
 
-    .userImg {
-        margin: 50px auto;
+    
+    p, h1, h2, h3 {
+        font-family: Montserrat, sans-serif;
+    }
+
+    .imgUser {
+        width: 22%;
+        height: 22%;
+        margin: 20% auto;
 
         img {
-            width: 100px;
+            width: 100%;
+            
         }
-    }
-    .userStat {
-        width: 70%;
-        margin: -15px auto;
-        justify-content: space-between;
-
-        h1 {
-            color: white;
-            font-size: 2.2em;
+        .imgFilter {
+            width: 100%;
+            filter: brightness(0.6);
         }
 
-        h2 {
-            color: white;
-            margin: -15px 0 0 0;
-            font-size: 1.6em;
-        }
-    }
-    .userLoggin {
-        margin: 80px auto;
-        width: 70%;
-        
-        .loggin .MuiInputBase-root {
-            color: white;
+        .userModif {
+            position: absolute;
+            width: 22%;
+            height: 20%;
+            margin: -22% 0% 0% 0%;
+            
+            
+            img {
+                width: 60%;
+                filter: none;
             }
+            
+        }
+
 
     }
+    .mainStatUser {
+        margin: -17% 0% 0% 0%;
+    }
+    .mainStatUserBlur {
+        margin: -17% 0% 0% 0%;
+        filter: blur(6px);
+      
+    }
+
+
+    .StatUser {
+        margin: 0 0 0 0;
+        .infoStatUser {
+            width: 50%; 
+            margin: 0 auto;    
+            justify-content: space-between;
+    
+            p {
+                color: #E6DA6A;
+                font-size: 1.3vw;
+            }
+         }
+         .statNbUser {
+            width: 45%;
+            margin: 2% auto;  
+            justify-content: space-between;
+            .middleNbUser {
+                margin: 0 3% 0 0;
+            }
+            p {
+                color: white;
+                font-size: 1.6vw;
+            }
+    
+         }
+    }
+
+    .mainMaterialUiText {
+        margin: 4% auto;
+        width: 45%;
+        
+        .formDivButton {
+
+        }
+
+        .formDivButtonAnim {
+            animation-name: shake-horizontal;
+            animation-duration: 0.6s;
+            animation-timing-function: ease;
+            animation-delay: 0s;
+            animation-iteration-count: 1;
+            animation-direction: normal;
+            animation-fill-mode: none;
+        }
+        
+       
+
+       
+        ///////////////////////////////////
+        .MuiOutlinedInput-root {
+            color: white;
+            font-family: Montserrat, sans-serif;
+            
+            
+        }
+        .MuiOutlinedInput-notchedOutline {
+            border-color: #CA6C88;
+            border-radius: 15px;
+            
+            
+        }
+        .Mui-focused {
+            color: white;
+            font-size: 1.2vw;
+        }
+        .MuiOutlinedInput-input {
+            font-size: 1vw;
+        }
+        // &:hover .MuiOutlinedInput-notchedOutline {
+        //     border: 1px solid #71DFE7;
+        // }
+        & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+           border: 1px solid #71DFE7;
+        }
+
+        .MuiFormHelperText-root {
+            position: absolute;
+            font-size: 0.9vw;
+            font-family: Montserrat, sans-serif;
+            margin: 1% auto;
+            color: red;
+            margin: 18% 0 0 25%;
+        }
+       
+        
+
+         ////////////////////////////////////////////@
+
+        .MuiIconButton-root {
+            width: 35px;
+            height: 35px;
+            margin: 0 0 0 12px;
+        }
+        .MuiIconButton-root:hover {
+            width: 37px;
+            height: 37px;
+        }
+
+        .alertValidateIcon {
+            position: absolute;
+            margin: 7% auto;
+            .MuiAlert-root {
+                
+                background: transparent;
+                margin: 0% auto;
+                color: white;
+            }
+        }
+    }
+
+    .switchMui {
+        width: 27%;
+        margin: 8% 0 0 24%;
+        .MuiFormControlLabel-label {
+            color: white;
+            font-family: Montserrat, sans-serif;
+            font-size: 1.1vw;
+        }
+        .MuiSwitch-root {
+            margin: 0 0 0 10%;
+         
+            
+        }
+        
+        
+    }
+    .disconectMui {
+        margin: 8% 0 0 0;
+        .MuiButton-root {
+            color: red;
+            font-family: Montserrat, sans-serif;
+            text-transform: none;
+            font-size: 1vw;
+            border-radius: 40px;
+        }
+    }
+
+    .mainPopUpUser {
+        width: 83%;
+        height: 43px;
+        margin: 7% 0% 0% 8%;
+        justify-content: space-around;
+        position: absolute;
+        
+        
+
+        .buttonPopUp {
+            
+            width: 12%;
+            height: 100%;
+            background-color: #E69C6A;
+            border-radius: 13px;
+
+            img {
+                width: 65%;
+            } 
+        }
+        .buttonPopUp:hover {
+            img {
+                width: 75%;
+            } 
+        }
+        .dlPop img {
+            width: 55%;
+        }
+        .dlPop:hover img {
+            width: 65%;
+        }
+
+        
+
+
+        .closePop {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: none;
+            img {
+                width: 50%;
+            
+            }
+        }
+        .closePop:hover {
+            img {
+                width: 60%;
+            }
+        }
+        
+
+
+    }
+
+    
+    
 }
+
 

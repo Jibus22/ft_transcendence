@@ -1,8 +1,5 @@
-import React, { useState } from 'react';
-
 import './game.scss'
-// import { BrowserRouter as Router, Link, Route, NavLink, Switch, useHistory } from 'react-router-dom'
-
+import React, { useState } from 'react';
 import IconGame from './img/Group.png'
 import { useSpring, animated } from 'react-spring'
 import { Button, CircularProgress   } from '@mui/material';
@@ -10,51 +7,43 @@ import { LoadingButton } from '@mui/lab';
 import FormGame from './FormGame';
 
 
-
-  
-
-
-
-
-const GameWindow = () => {
+export default function GameWindow(){
     const props = useSpring({
         opacity: 1,
         transform: "translate(0px, 0px)",
         from: { opacity: 0, transform: "translate(0px, 500px)" } ,
         config: {
-            delay: 400,
-            duration: 500,
+            delay: 300,
+            duration: 300,
         },
       });
 
-     
-        const[loading, setLoading] = useState(false);
+      const[isDisable, setIsDisable] = useState<boolean>(true)
+      const[loading, setLoading] = useState<boolean>(false);
+      const[isForm, setIsForm] = useState<boolean>(false);
+
         function handleClick() {
-                setLoading(true);
-                setInterval(() => {
-                    setLoading(false);
-                }, 2000);
-        
+            setLoading(true);
+            setIsDisable(false);
+            setTimeout(function () {
+                setLoading(false);
+                setIsDisable(true);
+            }, 5000);
+        }
+        function handleChangeWindow() {
+            setIsForm(!isForm)
         }
 
-
-        const[isLoggedIn, setisLoggedIn] = useState(false)
-        function handleLoginClick() {
-            setisLoggedIn(true)
-        }
-        function handleLogoutClick() {
-            setisLoggedIn(false)
-        }
-        let button;
-        if (!isLoggedIn) {
-            button = <div> 
-                 <Button className='buttonMui buttonMuiFriend' variant="contained" onClick={ handleLoginClick }   
-            sx={{borderRadius: 3, width: 2/2, height: 2/2, textTransform: 'none'}}>
+        let buttonFriends;
+        if (!isForm) {
+            buttonFriends = <div className=''> 
+                 <Button className='buttonMui buttonMuiFriend' variant="contained" disabled={!isDisable} onClick={ handleChangeWindow }   
+                            sx={{borderRadius: 3, width: 2/2, height: 2/2, textTransform: 'none'}}>
                 Invit a friend
             </Button  > 
             </div>
           } else {
-            button = <FormGame click={ handleLogoutClick } />
+            buttonFriends = <FormGame click={ handleClick } disable={isDisable} loading={loading} />
           }
 
     return (
@@ -68,17 +57,13 @@ const GameWindow = () => {
             <div className='iconePLayGame'>
                 <img src={IconGame} alt="" />
             </div>
-
-            <div className='playRandom '>
-           
-            <LoadingButton className='buttonMui' onClick={handleClick} disabled={loading}  variant="contained"
-                sx={{borderRadius: 3, width: 2/2, height: 2/2, textTransform: 'none'}}>
-                     {loading && <CircularProgress size={35}  />}
+            <div className='playRandom'>
+              <LoadingButton className='buttonMui' onClick={handleClick} disabled={loading}  variant="contained"
+                                sx={{borderRadius: 3, width: 2/2, height: 2/2, textTransform: 'none'}}>
+                     {loading && <CircularProgress size='1.2em' />}
                      {!loading && 'Play Now'}
             </LoadingButton>
-          {button}
-          
-       
+            {buttonFriends}  
             </div>   
         </div>
         </animated.div>
@@ -87,6 +72,4 @@ const GameWindow = () => {
     )
 }
 
-
-export default GameWindow
 
