@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs';
-import { plainToInstance } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 
 interface ClassConstructor {
 	new (...args: any[]) : {}
@@ -30,7 +30,7 @@ export class SerializeInterceptor implements NestInterceptor {
 				/*
 				** code running after
 				*/
-				return plainToInstance(this.dto, data, {
+				return plainToClass(this.dto, data, {
 					excludeExtraneousValues: true,
 				});
 			})
