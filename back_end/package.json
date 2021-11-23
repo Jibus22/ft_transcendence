@@ -33,7 +33,7 @@
     "@nestjs/typeorm": "^8.0.2",
     "@types/cookie-session": "^2.0.43",
     "axios": "^0.24.0",
-    "class-transformer": "^0.4.0",
+    "class-transformer": "<=0.4.0",
     "class-validator": "^0.13.1",
     "cookie-session": "^1.4.0",
     "npm": "^6.14.15",

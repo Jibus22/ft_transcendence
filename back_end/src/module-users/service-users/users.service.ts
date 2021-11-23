@@ -1,8 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { DeepPartial, Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/users.entity';
-import { HttpService } from '@nestjs/axios';
+import { Repository } from 'typeorm';
+import { User } from '../entities/users.entity';
 
 @Injectable()
 export class UsersService {
