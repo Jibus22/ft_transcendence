@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -51,14 +52,24 @@ export class UsersController {
     return await this.usersService.getAllUsers();
   }
 
-  // @Get('/:id')
-  // @ApiOperation({
-  //   summary: 'Get public infors of user :id',
-  // })
-  // async getUserById(@Param() id: string) {
-  //   console.log(id);
-  //   return await this.usersService.findOne(id);
-  // }
+  @Get('/:login')
+  @ApiOperation({
+    summary: 'Get public infos of user :login',
+  })
+  async getUserById(@Param() {login}) {
+    console.log(login);
+    const user = await this.usersService.find(login)
+      .then( (user) => {
+        if (user[0]) {
+          return user[0];
+        } else {
+          throw new NotFoundException();
+        }
+      })
+      .catch( (error) => {throw new NotFoundException()});
+    console.log(user);
+    return user;
+  }
 
   /*****************************************************************************
    *    FRIENDS
