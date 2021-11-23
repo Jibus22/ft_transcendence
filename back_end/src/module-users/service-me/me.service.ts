@@ -29,11 +29,11 @@ export class MeService {
           throw 'user not found in database';
         }
         user = foundUser;
-        return this.relationsService.getAllRelations(user.id, RelationType.Friend);
+        return this.relationsService.readAllRelations(user.id, RelationType.Friend);
       })
       .then((friends) => {
         user.friends_list = friends;
-        return this.relationsService.getAllRelations(user.id, RelationType.Block);
+        return this.relationsService.readAllRelations(user.id, RelationType.Block);
       })
       .then((blocked) => {
         user.blocked_list = blocked;

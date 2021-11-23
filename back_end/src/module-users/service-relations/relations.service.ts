@@ -15,7 +15,7 @@ export class RelationsService {
     @InjectRepository(User) private repo: Repository<User>,
     ) {}
 
-  async getAllRelations(userId: string, relation: RelationType) {
+  async readAllRelations(userId: string, relation: RelationType) {
     return await getConnection()
       .createQueryBuilder()
       .relation(User, relation)
@@ -29,7 +29,7 @@ export class RelationsService {
       });
   }
 
-  async addRelation(userId: string, targetId: string, relation: RelationType ) {
+  async createRelation(userId: string, targetId: string, relation: RelationType ) {
     if (targetId === userId) {
       throw new BadRequestException(`Cannot add oneself as a ${relation}`);
     }
@@ -39,18 +39,18 @@ export class RelationsService {
     .of(userId)
     .add(targetId)
     .catch((error) => {
-      throw new ConflictException(error.message); // TODO error message to be refined
+      throw new ConflictException(`${targetId} is already in ${relation}`);
     });
   }
 
-  async removeRelation(userId: string, targetId: string, relation: RelationType ) {
+  async deleteRelation(userId: string, targetId: string, relation: RelationType ) {
     await getConnection()
-      .createQueryBuilder()
-      .relation(User, relation)
-      .of(userId)
-      .remove(targetId)
-      .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+    .createQueryBuilder()
+    .relation(User, relation)
+    .of(userId)
+    .remove(targetId)
+    .catch((error) => {
+      throw new ConflictException(`${targetId} is already in ${relation}`);
       });
   }
 }

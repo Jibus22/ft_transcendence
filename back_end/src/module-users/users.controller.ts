@@ -19,7 +19,7 @@ import {
   ApiTags,
   PartialType,
 } from '@nestjs/swagger';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { AuthGuard } from '../guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { editRelationDto } from './dtos/edit-relation.dto';
@@ -79,8 +79,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
-  async getAllFriends(@Session() session: Record<string, any>) {
-    return await this.relationsService.getAllRelations(
+  async readAllFriends(@Session() session: Record<string, any>) {
+    return await this.relationsService.readAllRelations(
       session.userId,
       RelationType.Friend,
     );
@@ -90,11 +90,11 @@ export class UsersController {
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
   })
-  async addFriend(
+  async createFriend(
     @Body() friendId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
-    await this.relationsService.addRelation(
+    await this.relationsService.createRelation(
       session.userId,
       friendId.id,
       RelationType.Friend,
@@ -105,11 +105,11 @@ export class UsersController {
   @ApiOperation({
     summary: 'Remove one friend to the currently logger user',
   })
-  async removeFriend(
+  async deeleteFriend(
     @Body() friendId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
-    return await this.relationsService.removeRelation(
+    return await this.relationsService.deleteRelation(
       session.userId,
       friendId.id,
       RelationType.Friend,
@@ -124,8 +124,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get list of blocked accounts of the currently logger user',
   })
-  async getAllBlocks(@Session() session: Record<string, any>) {
-    return await this.relationsService.getAllRelations(
+  async readAllBlocks(@Session() session: Record<string, any>) {
+    return await this.relationsService.readAllRelations(
       session.userId,
       RelationType.Block,
     );
@@ -135,11 +135,11 @@ export class UsersController {
   @ApiOperation({
     summary: 'Add one blocked account to the currently logger user',
   })
-  async addBlock(
+  async createBlock(
     @Body() blockId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
-    await this.relationsService.addRelation(
+    await this.relationsService.createRelation(
       session.userId,
       blockId.id,
       RelationType.Block,
@@ -150,11 +150,11 @@ export class UsersController {
   @ApiOperation({
     summary: 'Remove one blocked account to the currently logger user',
   })
-  async removeBlock(
+  async deleteBlock(
     @Body() blockId: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
-    await this.relationsService.removeRelation(
+    await this.relationsService.deleteRelation(
       session.userId,
       blockId.id,
       RelationType.Block,

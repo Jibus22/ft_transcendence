@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller, Get, NotFoundException, Patch, Session,
   UseGuards
@@ -10,8 +11,8 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { AuthGuard } from '../guards/auth.guard';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
@@ -41,7 +42,6 @@ export class MeController {
   @ApiResponse({ type: privateUserDto })
   async whoAmI(@CurrentUser() userId: string) {
     return await this.meService.whoAmI(userId)
-
       .then((userData: User) => userData)
       .catch((error) => {throw new NotFoundException(error);});
   }
@@ -53,7 +53,8 @@ export class MeController {
   })
   @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ type: privateUserDto })
-  async update(@Body() body: Partial<UpdateUserDto>, @Session() session) {
-    return this.usersService.update(session.userId, body);
+  async update(@Body() body: UpdateUserDto, @Session() session) {
+    return this.usersService.update(session.userId, body)
+         .catch((error) => {throw new BadRequestException(error.message);});
   }
 }
