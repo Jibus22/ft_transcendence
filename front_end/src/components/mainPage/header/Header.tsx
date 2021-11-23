@@ -1,12 +1,8 @@
 import React from 'react' 
 import './header.scss'
 import {NavLink} from 'react-router-dom'
-import Logo from './src/logo.svg'
-import Icon from '@mdi/react'
-import {mdiCrownOutline, mdiGamepadVariantOutline, mdiCalendarClock } from '@mdi/js';
-
+import { Badge, Avatar } from '@mui/material';
 import FF from '../../homePage/section/photos/FF.png'
-
 
 
 const Header = () => {
@@ -19,7 +15,7 @@ const Header = () => {
 
         <div className="d-flex  mainNavMenu">
             <ul className="navbar-nav headerMenu  w-100 ">
-                <li className="nav-item  linkLogoNav">
+                <li className="nav-item  linkLogoNav ">
                     <NavLink  to='/MainPage' className='toNavLink'   activeClassName="selectedNave" >
                       
                             <h1>Games</h1>
@@ -50,11 +46,16 @@ const Header = () => {
         <div className='logHeader d-flex '>
             <NavLink style={{ textDecoration: 'none' }} to='/MainPage/setting' className='w-100 '>
             <div className="profil d-flex  " >
-                <div className='profilLoggin  '>
+                <div className='profilLoggin h1-100 w-100  '>
                     <h2 className=''>Frfrance</h2>
                 </div>
-                <div className='profilLogginImg '>
-                    <img  className=''   src={FF} alt="" /> 
+                <div className='profilLogginImg'>
+                
+                <Badge  overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"  sx={{  }}>
+                   <Avatar alt="userImg" src={FF}  />
+                </Badge>
+                    
                 </div>
             </div>
             </NavLink>

@@ -6,11 +6,35 @@
     width: 100%;
     text-align: center;
    
-    background: url('../homePage/img/flat-mountains.svg');
+    background: url('../homePage/img/flat-mountains.svg') ;
     background-size: 100%;
 
 
 
 }
 
+   ///////////////////////////////////////////////
+    //////// reponsive max-width: 1440px  /////////
+    ///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
+    .mainPageBody {
+        background: url('../homePage/img/flat-mountains.svg') ;
+        background-size: 111%;
+        
+    }
+
+}
+
+
+
+@keyframes badgeAnim{
+    0% {
+      transform: scale(.8);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  } 
 

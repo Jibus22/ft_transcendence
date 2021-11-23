@@ -3,7 +3,7 @@
     width: 50%;
     height: 70%;
     padding: 30px 0 0 30px;
-    margin: 140px 0 0 20px;
+    margin: 160px 0 0 20px;
 
     
 
@@ -25,7 +25,7 @@
 
 .profil2 {
     display: flex;
-    margin: 50px 0 0 100px;
+    margin: 65px 0 0 100px;
     width: 100%;
 
    
@@ -33,7 +33,7 @@
 .profil3 {
    
     display: flex;
-    margin: 50px 0 0 200px;
+    margin: 66px 0 0 200px;
     width: 100%;
 }
 
@@ -45,7 +45,7 @@
 .profil4 {
    
     display: flex;
-    margin: 65px 0 0 20px;
+    margin: 80px 0 0 20px;
     width: 100%;
 }
 
@@ -77,64 +77,167 @@
 }
 
 
-@media screen and (max-width: 1366px) {
+   ///////////////////////////////////////////////
+    //////// reponsive max-width: 1440px  /////////
+    ///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
     .Section {
-        width: 54%;
-        height: 50%;
+        width: 50%;
+        height: 70%;
         padding: 30px 0 0 30px;
-        margin: 110px 0 0 20px;
+        margin: 140px 0 0 20px;
     
-        .profil img {
-            width: 55px;
-            height: 55px;
-        }
-        
-        
-        .profil1{
-            margin: 5px 0 0 10px;
-           
-        }
-        .profil2 {
-            margin: 35px 0 0 80px;
-        }
-        .profil3 {
-            margin: 35px 0 0 150px;
-        }
-        
-        .listProfil2 {
-            margin: 0 100px 0 0;
-        }
-        
-        .profil4 {
-            margin: 45px 0 0 20px;
-            
-        }
-        
-        .profil5 {
-            margin: 40px 0 0 100px;
-            
-        }
-        
-        .info {
-            margin: 4px 0 0px 20px ;
-        }
-        
-        .info h3 {
-          
-           font-weight: normal;
-            font-size: 18px;
-            
-        
-        }
-        .info p {
-           font-weight: normal;
-            margin: -13px 0 0 0;
-            font-size: 18px;
-            line-height: 22px;
-        }
         
     
     }
-
-
+    
+    .profil img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    
+    .profil1{
+        display: flex;
+        margin: 5px 0 0 30px;
+        width: 100%;
+    }
+    
+    
+    
+    .profil2 {
+        display: flex;
+        margin: 50px 0 0 80px;
+        width: 100%;
+    
+       
+    }
+    .profil3 {
+       
+        display: flex;
+        margin: 50px 0 0 140px;
+        width: 100%;
+    }
+    
+    .listProfil2 {
+        margin: 0 100px 0 0;
+    }
+    
+    
+    .profil4 {
+       
+        display: flex;
+        margin: 55px 0 0 70px;
+        width: 100%;
+    }
+    
+    .profil5 {
+       
+        display: flex;
+        margin: 50px 0 0 130px;
+        width: 100%;
+    }
+    
+    .info {
+        margin: 5px 0 0px 27px ;
+    }
+    
+    .info h3 {
+   
+       font-weight: normal;
+        font-size: 19px;
+    
+    
+    }
+    .info p {
+        
+       font-weight: normal;
+        margin: -15px 0 0 0;
+        font-size: 19px;
+        line-height: 30px;
+    }
+    
 }
+
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1366px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1366px) {
+    .Section {
+        width: 50%;
+        height: 70%;
+        padding: 30px 0 0 30px;
+        margin: 110px 0 0 20px;
+    
+    }
+    
+    .profil img {
+        width: 55px;
+        height: 55px;
+    }
+    
+    
+    .profil1{
+        display: flex;
+        margin: 5px 0 0 30px;
+        width: 100%;
+    }
+    
+    
+    
+    .profil2 {
+        display: flex;
+        margin: 40px 0 0 80px;
+        width: 100%;
+    
+       
+    }
+    .profil3 {
+       
+        display: flex;
+        margin: 40px 0 0 140px;
+        width: 100%;
+    }
+    
+    .listProfil2 {
+        margin: 0 100px 0 0;
+    }
+    
+    
+    .profil4 {
+       
+        display: flex;
+        margin: 45px 0 0 40px;
+        width: 100%;
+    }
+    
+    .profil5 {
+       
+        display: flex;
+        margin: 50px 0 0 100px;
+        width: 100%;
+    }
+    
+    .info {
+        margin: 5px 0 0px 19px ;
+    }
+    
+    .info h3 {
+   
+       font-weight: normal;
+        font-size: 16px;
+    
+    
+    }
+    .info p {
+        
+       font-weight: normal;
+        margin: -15px 0 0 0;
+        font-size: 16px;
+        line-height: 30px;
+    }
+    
+}
+

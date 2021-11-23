@@ -1,8 +1,8 @@
-import React, { useState, useEffect, lazy } from 'react' 
+
 import  './mainPage.scss'
 import { BrowserRouter as Router, Route} from 'react-router-dom'
-import { Header, LoadingBarre, GameWindow, ParamUser, UserRank, HistoryGame, ChatRoom, OnlineGame} from '..';
-import { Fade } from "react-awesome-reveal";
+import { Header, GameWindow, ParamUser, UserRank, HistoryGame, OnlineGame} from '..';
+
 
 const MainPage = () => {
     // var [loading, setLoading] = useState(true);
@@ -21,11 +21,13 @@ const MainPage = () => {
     // if (loading == true) {
     //     return <LoadingBarre/>
     // }
+
+    
    
 
         return (
             
-            <div className='mainPageBody d-flex flex-column' >
+            <div className='mainPageBody d-flex flex-column border' >
             <Router> 
                 <div>
                     <Route  path='/MainPage'  component={ Header }></Route>
@@ -33,10 +35,10 @@ const MainPage = () => {
                 </div>
                 <div className='d-flex '>
                    
+                    
+           
                     <Route exact path='/MainPage' component={ GameWindow }></Route>
                     <Route exact path='/MainPage' component={ OnlineGame }></Route>
-           
-
                   
 
                     <Route exact path='/MainPage/historyGame' component={ HistoryGame } ></Route>
@@ -47,7 +49,7 @@ const MainPage = () => {
                     <Route exact path={'/MainPage/Rank-Friends'} component={UserRank} />
 
 
-                    <Route path='/MainPage'    component={ ChatRoom }></Route>
+                    
 
               
                 </div>

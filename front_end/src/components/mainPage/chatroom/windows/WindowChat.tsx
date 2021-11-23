@@ -1,6 +1,6 @@
-import React, { useState, useEffect, lazy } from 'react' 
+import React, { useState} from 'react' 
 import './windowChat.scss'
-import { useSpring, animated } from 'react-spring'
+// import { useSpring } from 'react-spring'
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { pink } from '@mui/material/colors';
@@ -9,7 +9,6 @@ import {styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
-import OutlinedInput from '@mui/material/OutlinedInput';
 
 const CssTextField = styled(TextField)({
  
@@ -28,15 +27,15 @@ const CssTextField = styled(TextField)({
 
 
 const WindowChat = () => {
-    const props = useSpring({
-        opacity: 1,
-        transform: "translate(0px, 0px)",
-        from: { opacity: 0, transform: "translate(0px, 0px)" } ,
-        config: {
-          delay: 500,
-          duration: 500,
-        },
-      });
+    // const props = useSpring({
+    //     opacity: 1,
+    //     transform: "translate(0px, 0px)",
+    //     from: { opacity: 0, transform: "translate(0px, 0px)" } ,
+    //     config: {
+    //       delay: 500,
+    //       duration: 500,
+    //     },
+    //   });
 
     var [window, setWindow] = useState(true);
 
@@ -44,7 +43,7 @@ const WindowChat = () => {
        setWindow(window = false)
     }
 
-    if (window == false) {
+    if (window === false) {
         return (
             
                  <ChatRoom/>

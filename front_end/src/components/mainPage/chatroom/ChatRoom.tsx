@@ -1,9 +1,8 @@
-import React, { useState, useEffect, lazy } from 'react' 
+import React, { useState } from 'react' 
 import './chatRoom.scss'
 import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import { pink } from '@mui/material/colors';
+
 import { WindowChat } from '../..';
 // import { BrowserRouter as Router, Link, Route, NavLink, Switch } from 'react-router-dom'
 import { useSpring, animated } from 'react-spring'
@@ -27,7 +26,7 @@ const ChatRoom = () => {
        setWindow(window = true)
     }
 
-    if (window == true) {
+    if (window === true) {
         return <WindowChat/>
     }
 
