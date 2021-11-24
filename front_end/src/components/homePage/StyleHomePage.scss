@@ -8,7 +8,7 @@
 
 .mainHome {
   background: url('./img/flat-mountains.svg');
-  background-size: 100%;
+  background-size: 102%;
 }
 
 .Home {
@@ -48,7 +48,17 @@
 }
 
 
-@media screen and (max-width: 1357px) {
-  
+   ///////////////////////////////////////////////
+    //////// reponsive max-width: 1440px  /////////
+    ///////////////////////////////////////////////
+    @media screen and (max-width: 1440px) { 
+      .mainHome {
+        background: url('./img/flat-mountains.svg');
 
-}
+        background-size: 111% auto;
+        background-position: bottom;
+      }
+      
+  
+  }
+  

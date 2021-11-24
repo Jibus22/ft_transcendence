@@ -111,45 +111,79 @@
   }
  }
 
-        ////////////////////////
-        ////// reponsive ///////
-        ////////////////////////
- 
+
+    ///////////////////////////////////////////////
+    //////// reponsive max-width: 1440px  /////////
+    ///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
+  .MainTitle {
+    position: absolute;
+    width: 690px;
+    height: 88px;
+    left: 40px;
+    top: 120px;
+   
+    .Title{
+      
+
+      h1 {
+      font-size: 70px;
+      line-height: 50px;
+      }  
+  }
+
+    .TitleText {
+      text-align: center;
+
+      h5 {
+        font-size: 23px;
+        line-height: 60px;
+    }
+  }
+    .sepTitle {
+      hr {
+        height: 3px;
+        width: 80%;
+        margin: 0px auto ;
+      }
+  }
+} 
+
+}
 
 
+    ///////////////////////////////////////////////
+    //////// reponsive max-width: 1366px  /////////
+    ///////////////////////////////////////////////
 @media screen and (max-width: 1366px) {
   .MainTitle {
-    width: 400px;
+    width: 600px;
     height: 88px;
-    left: 130px;
+    left: 60px;
     top: 80px;
 
 
 
     .Title{
-      text-align: center;
-      
-
       h1 {
-      font-size: 55px;
-      line-height: 88px;
-  
-   
-
+      font-size: 62px;
+      line-height: 82px;
       }  
   }
   .TitleText {
+    
     h5 {
-      font-weight: 500;
-      font-size: 20px;
+      
+      font-size: 18px;
       line-height: 20px;
      
   }
 }
     .sepTitle {
     hr {
+     
       height: 2px;
-      margin: 25px auto ;
+      margin: 15px auto ;
     }
 }
 

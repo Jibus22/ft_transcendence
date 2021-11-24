@@ -21,7 +21,6 @@ export {default as GameWindow} from './mainPage/game/Game'
 export {default as ParamUser} from './mainPage/paramUser/ParamUser'
 // export {default as HistoryGame} from './mainPage/paramUser/histGame/HistoryGame'
 export {default as HistoryGame} from './mainPage/historyGame/HistoryGame'
-export {default as PersoInfo} from './mainPage/paramUser/persoInfo/PersoInfo'
 
 export {default as UserRank} from './mainPage/rank/UserRank'
 export {default as RankFriends} from './mainPage/rank/friends/RankFriends'

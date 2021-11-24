@@ -143,3 +143,5 @@ dist
 back_end/dbDev.sqlite
 .gitignore
 back_end/package-lock.json
+back_end/.TODO
+TODO

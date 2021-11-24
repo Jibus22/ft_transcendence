@@ -1,34 +1,17 @@
-import React, { useState } from 'react';
-import { Formik, Field } from 'formik';
-import { IconButton , CircularProgress   } from '@mui/material';
+import React, { } from 'react';
+import { useFormik } from 'formik';
+import { IconButton , CircularProgress, TextField} from '@mui/material';
 import { useSpring, animated } from 'react-spring'
 import IconMess from './img/carbon_send-alt-filled.png'
+import * as yup from 'yup';
 
-const style = {
-    width: '90%',
-    height: '100%',
-    border: 'none',
-    backgroundColor: 'rgba(202,108,136, 0.7)',
-    borderRadius: '10px 0px 0px 10px',
-    borderTop: '1px solid  rgba(255, 255, 255, 0.7)',
-    borderBottom: '1px solid  rgba(255, 255, 255, 0.7)',
-    borderLeft: '1px solid  rgba(255, 255, 255, 0.7)',
-    paddingLeft: '20px',
-    paddingRight: '15px',
-    fontFamily: 'Montserrat, sans-serif',
-    fontSize: '25px',
-    color: 'white',
-    outline: 'none',
-  };
+interface Props {
+  click: () => void;
+  disable: boolean;
+  loading: boolean;
+}
 
-  interface Values {
-    loggin: string,
-
-  }
-
-  
-
-  export default function FormGame(props : any) {
+export default function FormGame({ click, disable, loading }: Props) {
 
     const anim = useSpring({
         opacity: 1,
@@ -40,45 +23,70 @@ const style = {
         },
       });
 
-    const[loading, setLoading] = useState(false);
-        
-    const submit = (values: Values) => {
-        setLoading(true);
-        setInterval(() => {
-            setLoading(false);
-        }, 2000);
-        console.log(values);
       
-       
-      };
+      
+
+      const validationSchema = yup.object({
+        loggin: yup.string().required('Enter a Nickname')
+        
+        
+      });
+      
+  
+    
+      const formik = useFormik({
+        initialValues: {
+          loggin: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+          
+          click()
+          console.log(values)
+        },
+      });
+
+      
+
+      
+
+     
+      
 
     return (
         <div className='before '>
-
-            
-        <Formik  initialValues={{ 
-            loggin: '', 
-        }}
-        onSubmit={ submit }
-        enableReinitialize={ true }
-      >
-        { ({ handleSubmit}) => (
-        <animated.div  style={anim} className='w-100'> 
+         {/* style={ someCondition ? { textAlign:'center', paddingTop: '50%'} : {}} */}
+        <animated.div style={anim}  className='w-100'> 
+      
         <div className='formDivButton'>
-          <form onSubmit={ handleSubmit } className="d-flex w-100 h-100  formDiv  ">
-            <Field style={style} name="loggin" placeholder="Nickname" autoComplete="off" />
+            
+            <form onSubmit={formik.handleSubmit} className={`${!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '} d-flex w-100 h-100`}>
+       
+              
+              <TextField className="muiButtonInput" name="loggin" placeholder='Nickname' autoComplete='off'
+             
+            value={formik.values.loggin}
+            onChange={formik.handleChange}
+            error={formik.touched.loggin && Boolean(formik.errors.loggin)}
+            helperText={formik && formik.errors.loggin}
+            disabled={!disable}
+          />
+        
+          
             <div className='buttonDiv'  >     
-            {loading &&  <CircularProgress size={25} sx={{mt: 2}}  /> }
+            {loading &&  <CircularProgress size='1.4em' sx={{mt: '40%'}}  /> }
             {!loading &&  <IconButton type="submit" className='w-100 h-100'   >
                 <img  src={IconMess} alt="" />
             </IconButton>
             }
             </div>
-          </form>
+            
+            </form>
+            
+           
+          
           </div>
         </animated.div>
-        ) }
-      </Formik>
       </div>
     )
 }
