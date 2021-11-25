@@ -52,12 +52,11 @@ export class UsersController {
     return await this.usersService.getAllUsers();
   }
 
-  @Get('/:login')
+  @Get('/id/:login')
   @ApiOperation({
     summary: 'Get public infos of user :login',
   })
   async getUserById(@Param() {login}) {
-    console.log(login);
     const user = await this.usersService.find(login)
       .then( (user) => {
         if (user[0]) {
@@ -67,7 +66,6 @@ export class UsersController {
         }
       })
       .catch( (error) => {throw new NotFoundException()});
-    console.log(user);
     return user;
   }
 
