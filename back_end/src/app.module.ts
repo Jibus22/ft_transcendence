@@ -18,7 +18,7 @@ const cookieSession = require('cookie-session');
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
+      type: 'better-sqlite3',
       database: process.env.DB_NAME,
       entities: [User],
       synchronize: true,
