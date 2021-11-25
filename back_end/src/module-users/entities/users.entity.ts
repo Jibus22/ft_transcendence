@@ -64,21 +64,21 @@ export class User {
 
   @AfterInsert()
   logInsert() {
-    if (conf.get('NODE_ENV') !== 'production') {
+    if (conf.get('NODE_ENV') === 'dev') {
       console.log('Inserted User: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
-    if (conf.get('NODE_ENV') !== 'production') {
+    if (conf.get('NODE_ENV') === 'dev') {
       console.log('Removed User: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
-    if (conf.get('NODE_ENV') !== 'production') {
+    if (conf.get('NODE_ENV') === 'dev') {
       console.log('Updated User: ', this);
     }
   }

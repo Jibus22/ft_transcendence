@@ -1,16 +1,19 @@
 
-import React from 'react'
+import React, {  } from 'react';
 import './onlineGame.scss'
 import { useSpring, animated } from 'react-spring'
-import Button from '@mui/material/Button';
-import FF from '../../homePage/section/photos/FF.png'
-import JB from '../../homePage/section/photos/jb.png'
-import {AvatarGroup, Avatar, Badge} from '@mui/material';
+import FF from '../../../homePage/section/photos/FF.png'
+import JB from '../../../homePage/section/photos/jb.png'
+import {AvatarGroup, Avatar, Badge, CircularProgress} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
+interface Props {
+    Loadingclick: () => void;
+    loading: boolean;
+}
 
 
-const OnlineGame = () =>  {
+export default function OnlineGame({Loadingclick, loading } : Props){
     const props = useSpring({
         opacity: 1,
         transform: "translate(0px, 0px)",
@@ -21,7 +24,7 @@ const OnlineGame = () =>  {
         },
       });
 
-
+     
       let divTest =   <div className='partyOnline d-flex '>
                 <div className='userImg d-flex'>
                     <AvatarGroup max={2}   >
@@ -49,7 +52,12 @@ const OnlineGame = () =>  {
                     </div> 
                 </div>
                 <div className='userWatch d-flex '>
-                <Button className='muiButton' variant="contained"   sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>Watch</Button>
+                {/* <Button className='muiButton' variant="contained"   sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>Watch</Button> */}
+                <LoadingButton className='muiButton' onClick={Loadingclick}  disabled={loading}  variant="contained"
+                                sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>
+                     {loading && <CircularProgress size='1.2em' />}
+                     {!loading && 'Watch'}
+            </LoadingButton>
                 </div>
                   </div>
 
@@ -77,4 +85,3 @@ const OnlineGame = () =>  {
     )
 }
 
-export default OnlineGame

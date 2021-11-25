@@ -1,4 +1,4 @@
-FROM node:16 as base
+FROM node:17 as base
 
 # Up one directory regarding the app, we set the node_modules
 WORKDIR /usr/src

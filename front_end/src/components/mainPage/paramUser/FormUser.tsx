@@ -6,13 +6,14 @@ import {TextField, InputAdornment, IconButton, Alert } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CheckIcon from '@mui/icons-material/Check';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-
+import axios from 'axios';
 
 export interface Props {
     isPop:  boolean;
+    userName : string;
 }
 
-export default function FormUser({ isPop }: Props) {
+export default function FormUser({ isPop, userName }: Props) {
     
     const[isValidate, setIsValidate] = useState(false)
     const[isDisable, setIsDisable] = useState(true)
@@ -39,6 +40,11 @@ export default function FormUser({ isPop }: Props) {
         }, 
         validationSchema: validationSchema,
         onSubmit: (values) => {
+            axios.patch('http://localhost:3000/me', values)
+        
+            console.log(values)
+
+
             if (Boolean(formik.errors.nickname)) {
                 setIsDisable(false)
             } 
@@ -49,12 +55,14 @@ export default function FormUser({ isPop }: Props) {
                     }, 2200);
         },
       });
-
+     
+      
 
     return (
         <div className='w-100 h-100  d-flex flex-column' >
+            
             <form onSubmit={formik.handleSubmit} className={`${Boolean(formik.errors.nickname) ? 'formDivButtonAnim' : 'none'} w-100 h-100 `}  >
-            <TextField sx={{width: 2/2}} name='nickname' id="outlined-basic" label="Nickname"  autoComplete='off'  
+            <TextField sx={{width: 2/2}} name='nickname' id="outlined-disabled" label="Nickname"  autoComplete='off'  
             
             size={'small'}
             rows={1.2}

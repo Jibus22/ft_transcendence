@@ -16,7 +16,7 @@
 # # CMD [ "node", "server.js" ]
 # CMD [ "npm", "run", "start" ]
 
-FROM node:14
+FROM node:17
 
 # Up one directory regarding the app, we set the node_modules
 WORKDIR /usr/src

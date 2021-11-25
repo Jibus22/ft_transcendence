@@ -6,12 +6,12 @@ import IconMess from './img/carbon_send-alt-filled.png'
 import * as yup from 'yup';
 
 interface Props {
-  click: () => void;
+  Loadingclick: () => void;
   disable: boolean;
   loading: boolean;
 }
 
-export default function FormGame({ click, disable, loading }: Props) {
+export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 
     const anim = useSpring({
         opacity: 1,
@@ -41,8 +41,8 @@ export default function FormGame({ click, disable, loading }: Props) {
         validationSchema: validationSchema,
         onSubmit: (values) => {
           
-          click()
-          console.log(values)
+          Loadingclick()
+          // console.log(values)
         },
       });
 
@@ -55,14 +55,10 @@ export default function FormGame({ click, disable, loading }: Props) {
 
     return (
         <div className='before '>
-         {/* style={ someCondition ? { textAlign:'center', paddingTop: '50%'} : {}} */}
         <animated.div style={anim}  className='w-100'> 
-      
         <div className='formDivButton'>
-            
             <form onSubmit={formik.handleSubmit} className={`${!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '} d-flex w-100 h-100`}>
-       
-              
+  
               <TextField className="muiButtonInput" name="loggin" placeholder='Nickname' autoComplete='off'
              
             value={formik.values.loggin}

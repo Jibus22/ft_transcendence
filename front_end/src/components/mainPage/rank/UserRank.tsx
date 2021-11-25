@@ -1,9 +1,9 @@
 import React from 'react' 
 import './userRank.scss'
-import {RankFriends, RankWorld} from '../..'
+// import {RankFriends, RankWorld} from '../..'
 import { useSpring, animated } from 'react-spring'
-import { BrowserRouter as Router, Route, NavLink} from 'react-router-dom'
-import {ToggleButton } from '@mui/material';
+// import { BrowserRouter as Router, Route, NavLink} from 'react-router-dom'
+// import {ToggleButton } from '@mui/material';
 
 const UserRank = () => {
 
@@ -18,10 +18,10 @@ const UserRank = () => {
       });
 
     return (
-        <Router>
+        // <Router>
         <animated.div  style={props} className='w-100'> 
         <div className='mainUserRank d-flex flex-column  '>
-            <div className='mainTitleRank d-flex  '>
+            {/* <div className='mainTitleRank d-flex  '>
                 <div>
                      <h1>Leaderboard</h1>
                 </div>
@@ -38,7 +38,7 @@ const UserRank = () => {
                 </NavLink>
                 </div>
             
-            </div>
+            </div> */}
             <div className='rankInfo d-flex '>
                 <h3 className='nbRank'>Rank</h3>
                 <h3 className='nbUser' >User</h3>
@@ -49,8 +49,8 @@ const UserRank = () => {
             </div>
            
             <div className='userPrintDIv'>
-                <Route exact path='/MainPage/Rank-Friends' component={ RankFriends }></Route>
-                <Route exact path='/MainPage/Rank-World' component={ RankWorld}></Route>
+                {/* <Route exact path='/MainPage/Rank-Friends' component={ RankFriends }></Route>
+                <Route exact path='/MainPage/Rank-World' component={ RankWorld}></Route> */}
 
             </div>
             
@@ -60,7 +60,7 @@ const UserRank = () => {
 
         </div>
         </animated.div>
-        </Router>
+        // </Router>
     )
 }
 

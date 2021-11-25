@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, {  } from 'react';
 import './paramUser.scss'
-import {Switch, FormControlLabel, Button, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import {IconButton } from '@mui/material';
 import LCB from './photos/Corbeille.png'
 import LUP from './photos/bi_upload.png'
 import L42 from './photos/Logo42.png'
 import LDE from './photos/LogoDee.png'
 import LCL from './photos/close-icon.png'
-import { styled } from '@mui/material/styles';
 
 export interface Props {
     printPopup: () => void;
@@ -15,17 +13,6 @@ export interface Props {
 }
 
 export default function PopUpUser({ printPopup }: Props) {
-
-
-    const [ isPicture, setIsPicture] = useState('');
-    const [isSrc, setIsSrc] = useState('');
-
-   
-
-
-    const Input = styled('input')({
-        display: 'none',
-      });
 
     return (
         <div className="mainPopUpUser d-flex">
