@@ -12,5 +12,6 @@ RUN yarn && yarn cache clean
 
 # In the app directory
 WORKDIR /usr/src/app
+RUN apt-get update && apt-get upgrade && apt-get -yq install inotify-tools
 
 EXPOSE 3000
