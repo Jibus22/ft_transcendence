@@ -62,10 +62,9 @@ export class UsersController {
         if (user[0]) {
           return user[0];
         } else {
-          throw new NotFoundException();
+          throw new NotFoundException('user not found');
         }
-      })
-      .catch( (error) => {throw new NotFoundException()});
+      });
     return user;
   }
 
