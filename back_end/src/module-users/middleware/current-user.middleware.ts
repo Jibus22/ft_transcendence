@@ -1,12 +1,12 @@
 import {
-  ForbiddenException,
   Injectable,
   Logger,
   NestMiddleware,
+  UnauthorizedException
 } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { UsersService } from '../service-users/users.service';
+import { NextFunction, Request, Response } from 'express';
 import { User } from '../entities/users.entity';
+import { UsersService } from '../service-users/users.service';
 
 declare global {
   namespace Express {
@@ -34,11 +34,11 @@ export class CurrentUserMiddleware implements NestMiddleware {
           req.currentUser = user;
         })
         .catch((error) => {
-					throw new ForbiddenException();
+					throw new UnauthorizedException();
         });
 			} else {
-				logger.log('No user id in session');
-		}
+        logger.log('No user id in session');
+      }
 
     next();
   }

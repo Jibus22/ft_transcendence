@@ -4,32 +4,20 @@ import {
   Delete,
   Get,
   NotFoundException,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Session,
-  UseGuards,
+  Param, Post, Session,
+  UseGuards
 } from '@nestjs/common';
 import {
-  ApiBody,
   ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  PartialType,
+  ApiOperation, ApiTags
 } from '@nestjs/swagger';
-import { Serialize } from '../interceptors/serialize.interceptor';
 import { AuthGuard } from '../guards/auth.guard';
-import { CurrentUser } from './decorators/current-user.decorator';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { editRelationDto } from './dtos/edit-relation.dto';
-import { privateUserDto } from './dtos/private-user.dto';
-import { UpdateUserDto } from './dtos/update-users.dto';
 import { UserDto } from './dtos/user.dto';
-import { User } from './entities/users.entity';
 import {
   RelationsService,
-  RelationType,
+  RelationType
 } from './service-relations/relations.service';
 import { UsersService } from './service-users/users.service';
 
@@ -72,7 +60,7 @@ export class UsersController {
    *    FRIENDS
    *****************************************************************************/
 
-  @Get('/friends')
+  @Get('/friend')
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
@@ -83,7 +71,7 @@ export class UsersController {
     );
   }
 
-  @Post('/friends')
+  @Post('/friend')
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
   })
@@ -98,7 +86,7 @@ export class UsersController {
     );
   }
 
-  @Delete('/friends')
+  @Delete('/friend')
   @ApiOperation({
     summary: 'Remove one friend to the currently logger user',
   })
