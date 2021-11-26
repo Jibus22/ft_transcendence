@@ -51,27 +51,15 @@ describe('user controller: users basic features (e2e)', () => {
 
   it('tries all cookie protected routes without cookie', async () => {
     const serv = app.getHttpServer();
-    await request(serv).get('/me').expect(HttpStatus.FORBIDDEN);
-    await request(serv).patch('/me').expect(HttpStatus.FORBIDDEN);
-
-    await request(serv).get('/users').expect(HttpStatus.FORBIDDEN);
-    await request(serv)
-      .get('/users/id/test_fake_user_id')
-      .expect(HttpStatus.FORBIDDEN);
-    await request(serv).get('/users/friends').expect(HttpStatus.FORBIDDEN);
-    await request(serv).post('/users/friends').expect(HttpStatus.FORBIDDEN);
-    await request(serv).delete('/users/friends').expect(HttpStatus.FORBIDDEN);
-    await request(serv).get('/users/block').expect(HttpStatus.FORBIDDEN);
-    await request(serv).post('/users/block').expect(HttpStatus.FORBIDDEN);
-    await request(serv).delete('/users/block').expect(HttpStatus.FORBIDDEN);
-
-    /*     ---- UNPROTECTED ROUTES
-    await request(app.getHttpServer()).get('/auth/callback').expect(HttpStatus.FORBIDDEN);
-    await request(app.getHttpServer()).delete('/auth/signout').expect(HttpStatus.FORBIDDEN);
-    await request(app.getHttpServer()).post('/dev/signin').expect(HttpStatus.FORBIDDEN);
-    await request(app.getHttpServer()).post('/dev/createUserBatch').expect(HttpStatus.FORBIDDEN);
-    await request(app.getHttpServer()).delete('/dev/deleteUserBatch').expect(HttpStatus.FORBIDDEN);
-    await request(app.getHttpServer()).delete('/dev/deleteAllUsers').expect(HttpStatus.FORBIDDEN);
-    */
+    await request(serv).get('/me').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).patch('/me').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).get('/users').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).get('/users/id/test_fake_user_id').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).get('/users/friend').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).post('/users/friend').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).delete('/users/friend').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).get('/users/block').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).post('/users/block').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).delete('/users/block').expect(HttpStatus.UNAUTHORIZED);
   });
 });

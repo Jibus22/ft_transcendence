@@ -53,7 +53,7 @@ describe('user controller: /me routes (e2e)', () => {
     await request(app.getHttpServer())
       .get('/me')
       .set('Cookie', cookies)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.UNAUTHORIZED);
   });
 
   it('tries to get user own infos after logging without cookie', async () => {
@@ -63,7 +63,7 @@ describe('user controller: /me routes (e2e)', () => {
       .then((response) => commons.getCookies(response));
 
     expect(cookies.length).toBeGreaterThanOrEqual(1);
-    await request(app.getHttpServer()).get('/me').expect(HttpStatus.FORBIDDEN);
+    await request(app.getHttpServer()).get('/me').expect(HttpStatus.UNAUTHORIZED);
   });
 
   it('tries to get user own infos after logging, with a cookie, after user was deleted', async () => {
@@ -82,9 +82,9 @@ describe('user controller: /me routes (e2e)', () => {
     await request(app.getHttpServer())
       .get('/me')
       .set('Cookie', cookies)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.UNAUTHORIZED);
 
-    await request(app.getHttpServer()).get('/me').expect(HttpStatus.FORBIDDEN);
+    await request(app.getHttpServer()).get('/me').expect(HttpStatus.UNAUTHORIZED);
   });
 
   it('tries to log with non existing user login', async () => {

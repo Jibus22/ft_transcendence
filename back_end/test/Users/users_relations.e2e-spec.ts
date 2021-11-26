@@ -1,7 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { randomUUID } from 'crypto';
-import { repeat } from 'rxjs';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CommonTest } from '../helpers';
@@ -19,20 +18,11 @@ enum RelationType {
   block,
 }
 
-const relBodyResponse = [
-  'friends_list',
-  'blocked_list',
-]
+const relBodyResponse = ['friends_list', 'blocked_list'];
 
-const relRoute = [
-  'friends',
-  'block',
-]
+const relRoute = ['friend', 'block'];
 
-const relDescription = [
-  'friend',
-  'blocked account',
-]
+const relDescription = ['friend', 'blocked account'];
 
 /*
   ===================================================================
@@ -47,6 +37,7 @@ const testSet = async (relation: RelationType) => {
   describe(`user controller: users relations routes (e2e): ${relDescription[relation]} `, () => {
     let app: INestApplication;
     let commons: CommonTest;
+    const relationProperty = relBodyResponse[relation];
 
     beforeEach(async () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -90,18 +81,6 @@ const testSet = async (relation: RelationType) => {
           .send(reqBody);
       };
 
-      const getBodyProperty = (relation: RelationType, body: Object): Object => {
-        switch(relation) {
-
-          case RelationType.friend:
-            return body.friends_list;
-
-          case RelationType.block:
-            return body.blocked_list;
-        }
-      };
-
-
       /*
         ===================================================================
         -------------------------------------------------------------------
@@ -115,9 +94,8 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            console.log(getBodyProperty(relation, resp.body));
-            expect(getBodyProperty(relation, resp.body)).toHaveLength(0);
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(0);
           });
       });
 
@@ -130,9 +108,9 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(1);
-            expect(resp.body.friends_list[0]).toHaveProperty(
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
               'login',
               users[1].login,
             );
@@ -144,12 +122,12 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
           })
           .then(
             async () =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({
                   id: users[1].id,
@@ -162,9 +140,9 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(1);
-            expect(resp.body.friends_list[0]).toHaveProperty(
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty].length).toEqual(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
               'login',
               users[1].login,
             );
@@ -172,7 +150,7 @@ const testSet = async (relation: RelationType) => {
           .then(
             async () =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({
                   id: users[1].id,
@@ -185,9 +163,9 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(1);
-            expect(resp.body.friends_list[0]).toHaveProperty(
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
               'login',
               users[1].login,
             );
@@ -199,12 +177,12 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
           })
           .then(
             async () =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({
                   id: users[1].login,
@@ -217,8 +195,8 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(0);
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(0);
           });
       });
 
@@ -227,12 +205,12 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
           })
           .then(
             async () =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({
                   id: randomUUID(),
@@ -245,8 +223,8 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(0);
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(0);
           });
       });
 
@@ -255,12 +233,12 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
           })
           .then(
             async () =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({}),
           )
@@ -271,8 +249,8 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(0);
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(0);
           });
       });
 
@@ -281,12 +259,12 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
           })
           .then(
             async () =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({
                   id: users[1].id,
@@ -301,9 +279,9 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
-            expect(resp.body.friends_list).toHaveLength(1);
-            expect(resp.body.friends_list[0]).toHaveProperty(
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
               'login',
               users[1].login,
             );
@@ -324,13 +302,13 @@ const testSet = async (relation: RelationType) => {
           .get('/me')
           .set('Cookie', cookies)
           .then((resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
             expect(resp.body.friends_list).toHaveLength(0);
           })
           .then(
             async (resp) =>
               await request(app.getHttpServer())
-                .post('/users/friends')
+                .post(`/users/${relRoute[relation]}`)
                 .set('Cookie', cookies)
                 .send({
                   id: users[0].id,
@@ -343,29 +321,23 @@ const testSet = async (relation: RelationType) => {
               .set('Cookie', cookies);
           })
           .then(async (resp) => {
-            expect(resp.body).toHaveProperty('friends_list');
+            expect(resp.body).toHaveProperty(relationProperty);
             expect(resp.body.friends_list).toHaveLength(0);
           });
       });
     });
+  });
+};
 
-    /*
+/*
   ===================================================================
   -------------------------------------------------------------------
-  test /friends
+        Here are called test sets with each relation type available
+        If any new relation are implemented, simply add them to
+        the enum and make a call here.
   -------------------------------------------------------------------
   ===================================================================
   */
-
-    /*
- ===================================================================
- -------------------------------------------------------------------
- test /blocked
- -------------------------------------------------------------------
- ===================================================================
- */
-  });
-};
 
 testSet(RelationType.friend);
 testSet(RelationType.block);
