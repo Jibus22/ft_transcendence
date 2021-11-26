@@ -16,13 +16,17 @@
         font-family: Montserrat, sans-serif;
     }
 
+
+    
+
     .imgUser {
-        width: 22%;
+        width: 24%;
         height: 22%;
-        margin: 20% auto;
+        margin: 18% auto;
 
         img {
             width: 100%;
+            border-radius: 45%;
             
         }
         .imgFilter {
@@ -57,7 +61,7 @@
 
 
     .StatUser {
-        margin: 0 0 0 0;
+        margin: 4% 0 0 0;
         .infoStatUser {
             width: 50%; 
             margin: 0 auto;    

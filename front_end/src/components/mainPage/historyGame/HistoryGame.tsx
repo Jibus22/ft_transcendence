@@ -100,7 +100,7 @@ const HistoryGame= () => {
                 <div className='d-flex'>
                 
                 <div className='myGameDIv d-flex'>
-                <Button onClick={handleIsActive}  className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton`} variant="contained" sx={{width: 2/2, textTransform: 'none'}}>My game</Button>
+                <Button onClick={handleIsActive}   className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton`} variant="contained" sx={{width: 2/2, textTransform: 'none'}}>My game</Button>
                 </div>
                 <div>
                 <CssTextField sx={{textDecoration: 'none', height: 2/2}} autoComplete='off' 

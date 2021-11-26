@@ -1,69 +1,49 @@
 
+import React, {useState, useEffect} from 'react';
 import  './mainPage.scss'
-import { BrowserRouter as Router, Route} from 'react-router-dom'
-import { Header, GameWindow, ParamUser, UserRank, HistoryGame, OnlineGame} from '..';
+import { Routes, Route} from "react-router-dom";
+import { Header, ParamUser, UserRank, HistoryGame, Game} from '..';
+// import ErrorPage from '../errorPage/ErrorPage';
+import axios from 'axios';
 
 
 const MainPage = () => {
-    // var [loading, setLoading] = useState(true);
-    
-  
 
-    // useEffect(() => {
-        
-    //     setTimeout(() => {
-            
-    //         setLoading(loading = false)
-    //     }, 2900);
-    //   });
-
-
-    // if (loading == true) {
-    //     return <LoadingBarre/>
-    // }
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await axios (
+                'http://localhost:3000/users', {withCredentials: true}
+            );
+            setData(result.data)
+            console.log(result)
+        }
+        fetchData()
+    }, [])
 
     
-   
 
+
+    
+
+
+
+
+    
         return (
             
             <div className='mainPageBody d-flex flex-column border' >
-            <Router> 
                 <div>
-                    <Route  path='/MainPage'  component={ Header }></Route>
-                    
+                    <Header data={data}/>
                 </div>
-                <div className='d-flex '>
-                   
-                    
-           
-                    <Route exact path='/MainPage' component={ GameWindow }></Route>
-                    <Route exact path='/MainPage' component={ OnlineGame }></Route>
-                  
-
-                    <Route exact path='/MainPage/historyGame' component={ HistoryGame } ></Route>
-                        
-                    {/* <Route path={["/MainPage/setting", "/MainPage/historyGame"]} component={ParamUser} /> */}
-                    <Route exact path={"/MainPage/setting"} component={ParamUser} />
-                    
-                    <Route exact path={'/MainPage/Rank-Friends'} component={UserRank} />
-
-
-                    
-
-              
-                </div>
-              
-                    
-               
-                </Router>
+                <Routes>
+                    <Route path='/MainPage' element={ <Game/> }/>
+                    <Route path='/History-Game' element={ <HistoryGame/> }/>
+                    <Route path="/Setting" element={ <ParamUser data={data}/> }/>
+                    <Route path='/Rank'element={ <UserRank/> }/>
+                </Routes>
             </div>
-          
         );
-
-    
-    
-
 }
 
 export default MainPage

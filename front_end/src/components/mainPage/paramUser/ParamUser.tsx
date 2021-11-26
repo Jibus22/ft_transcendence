@@ -3,13 +3,18 @@ import './paramUser.scss'
 import PopUpUser from './PopUpUser';
 import { useSpring, animated } from 'react-spring'
 import {Switch, FormControlLabel, Button, IconButton } from '@mui/material';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import FF from './photos/FF.png'
 import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png'
 
+interface TypeCategoriesProps {
+  data: Array<Type>;
+}
+interface Type {
+  id: number; login: string; photo_url: string;
+}
 
-export default function ParamUser() {
+
+export default function ParamUser({data} : TypeCategoriesProps ) {
   const props = useSpring({
     opacity: 1,
     transform: "translate(0px, 0px)",
@@ -23,17 +28,20 @@ export default function ParamUser() {
     const[isModif, setIsModif] = useState<boolean>(false)
     const[isPop, setIsPop] = useState<boolean>(false)
 
+    const [userName, setUserName] = useState('');
+    const [userImg, setUserImg] = useState('');
+    useEffect(() => {
+        data.map(item => (
+            setUserName(item.login),
+            setUserImg(item.photo_url)
+        ))
+      });
+
     function toggleModif() {
       setIsModif(!isModif)
     }
-
-
-    console.log('isPop', isPop)
-
-    
     function printPopup()  {
       setIsPop(!isPop)
-      
     }
 
     return (
@@ -44,8 +52,8 @@ export default function ParamUser() {
              <PopUpUser printPopup={printPopup}/>
           ) : null}
 
-          <div onMouseEnter={toggleModif} onMouseLeave={toggleModif} className='imgUser'>
-            <img src={FF} alt="" className={`${ isModif &&  !isPop ?  'imgFilter ' : 'none'} `} />
+          <div onMouseEnter={toggleModif} onMouseLeave={toggleModif} className='imgUser '>
+            <img src={userImg} alt="" className={`${ isModif &&  !isPop ?  'imgFilter ' : 'none'} `} />
             {isModif && !isPop ? (
                 <div className='userModif'>
                   <IconButton sx={{width: 2/2, height: 2/2}} className="" onClick={printPopup} >
@@ -57,7 +65,7 @@ export default function ParamUser() {
           <div className={`${isPop ?  'mainStatUserBlur' : 'mainStatUser'} `} >
 
               
-            <div className="StatUser d-flex flex-column ">
+            <div className="StatUser d-flex flex-column">
               <div className='infoStatUser d-flex '>
                 <div className=''><p>Game</p></div>
                 <div className=''><p>Win</p></div>
@@ -70,7 +78,7 @@ export default function ParamUser() {
               </div>
             </div>
             <div className='mainMaterialUiText '>
-                 <FormUser isPop={isPop}/>
+                 <FormUser isPop={isPop} userName={userName}/>
             </div>
             <div className='switchMui '>
             <FormControlLabel disabled={isPop} control={
