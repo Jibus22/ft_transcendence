@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { randomUUID } from 'crypto';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CommonTest } from '../helpers';
@@ -18,50 +19,229 @@ describe('user controller: users relations routes (e2e)', () => {
     await app.init();
   });
 
-  /*
-    ===================================================================
-    -------------------------------------------------------------------
-          test /friends
-    -------------------------------------------------------------------
-    ===================================================================
-    */
+  describe('friends list manipulation', () => {
+    let users;
+    let cookies;
 
-  it('GET + POST + DELETE /users/friends', async () => {
-    const users = await commons
-      .createFakeUsers()
-      .then((response) => response.body);
+    beforeEach(async () => {
+      users = await commons
+        .createFakeUsers()
+        .then((response) => response.body)
+        .catch((error) => {
+        });
+      expect(users.length).toEqual(commons.testUserBatch.length);
 
-    const cookies = await commons
-      .logUser(commons.testUserBatch[0].login)
-      .then((response) => commons.getCookies(response));
-    expect(cookies.length).toBeGreaterThanOrEqual(1);
+      cookies = await commons
+        .logUser(commons.testUserBatch[0].login)
+        .then((response) => commons.getCookies(response));
+      expect(cookies.length).toBeGreaterThanOrEqual(1);
+    });
 
-    await request(app.getHttpServer())
+
+    it('gets friends list of a newly created user', async () => {
+      await request(app.getHttpServer())
       .get('/me')
       .set('Cookie', cookies)
       .then((resp) => {
         expect(resp.body).toHaveProperty('friends_list');
         expect(resp.body.friends_list).toHaveLength(0);
       })
-      .then(
-        async (resp) =>
-          await request(app.getHttpServer())
-            .post('/users/friends')
-            .set('Cookie', cookies)
-            .send({
-              id: users[1].id,
-            }),
+    });
+
+    it('adds a friend and gets list of friends', async () => {
+      await request(app.getHttpServer())
+      .post('/users/friends')
+      .set('Cookie', cookies)
+      .send({
+        id: users[1].id,
+      })
+      .then(async (resp) => {
+        expect(resp.status).toEqual(HttpStatus.CREATED);
+        return await request(app.getHttpServer())
+        .get('/me')
+        .set('Cookie', cookies);
+      })
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+        expect(resp.body.friends_list).toHaveLength(1);
+        expect(resp.body.friends_list[0]).toHaveProperty('login', users[1].login);
+      })
+    });
+
+    it('adds a friend which already is in friends list', async () => {
+
+      await request(app.getHttpServer())
+      .get('/me')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+      })
+      .then(async () =>
+        await request(app.getHttpServer())
+        .post('/users/friends')
+        .set('Cookie', cookies)
+        .send({
+          id: users[1].id,
+        })
       )
       .then(async (resp) => {
         expect(resp.status).toEqual(HttpStatus.CREATED);
         return await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies);
+        .get('/me')
+        .set('Cookie', cookies);
       })
-      .then(async (resp) => {
+      .then((resp) => {
         expect(resp.body).toHaveProperty('friends_list');
         expect(resp.body.friends_list).toHaveLength(1);
+        expect(resp.body.friends_list[0]).toHaveProperty('login', users[1].login);
+      })
+      .then(async () =>
+        await request(app.getHttpServer())
+        .post('/users/friends')
+        .set('Cookie', cookies)
+        .send({
+          id: users[1].id,
+        })
+      )
+      .then(async (resp) => {
+        expect(resp.status).toEqual(HttpStatus.CONFLICT);
         return await request(app.getHttpServer())
+        .get('/me')
+        .set('Cookie', cookies);
+      })
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+        expect(resp.body.friends_list).toHaveLength(1);
+        expect(resp.body.friends_list[0]).toHaveProperty('login', users[1].login);
+      })
+    });
+
+
+    it('adds a friend with a login instead of a UUID', async () => {
+
+      await request(app.getHttpServer())
+      .get('/me')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+      })
+      .then(async () =>
+        await request(app.getHttpServer())
+        .post('/users/friends')
+        .set('Cookie', cookies)
+        .send({
+          id: users[1].login,
+        })
+      )
+      .then(async (resp) => {
+        expect(resp.status).toEqual(HttpStatus.BAD_REQUEST);
+        return await request(app.getHttpServer())
+        .get('/me')
+        .set('Cookie', cookies);
+      })
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+        expect(resp.body.friends_list).toHaveLength(0);
+      })
+    });
+
+    it('adds a friend with a non existing UUID', async () => {
+
+      await request(app.getHttpServer())
+      .get('/me')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+      })
+      .then(async () =>
+        await request(app.getHttpServer())
+        .post('/users/friends')
+        .set('Cookie', cookies)
+        .send({
+          id: randomUUID(),
+        })
+      )
+      .then(async (resp) => {
+        expect(resp.status).toEqual(HttpStatus.CONFLICT);
+        return await request(app.getHttpServer())
+        .get('/me')
+        .set('Cookie', cookies);
+      })
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+        expect(resp.body.friends_list).toHaveLength(0);
+      })
+    });
+
+    it('adds a friend with an empty body request', async () => {
+
+      await request(app.getHttpServer())
+      .get('/me')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+      })
+      .then(async () =>
+        await request(app.getHttpServer())
+        .post('/users/friends')
+        .set('Cookie', cookies)
+        .send({
+        })
+      )
+      .then(async (resp) => {
+        expect(resp.status).toEqual(HttpStatus.BAD_REQUEST);
+        return await request(app.getHttpServer())
+        .get('/me')
+        .set('Cookie', cookies);
+      })
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+        expect(resp.body.friends_list).toHaveLength(0);
+      })
+    });
+
+    it('adds a friend with an extra key in body request', async () => {
+
+      await request(app.getHttpServer())
+      .get('/me')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+      })
+      .then(async () =>
+        await request(app.getHttpServer())
+        .post('/users/friends')
+        .set('Cookie', cookies)
+        .send({
+          id: users[1].id,
+          login: users[1].login,
+          extraKey: 'test'
+        })
+      )
+      .then(async (resp) => {
+        expect(resp.status).toEqual(HttpStatus.CREATED);
+        return await request(app.getHttpServer())
+        .get('/me')
+        .set('Cookie', cookies);
+      })
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('friends_list');
+        expect(resp.body.friends_list).toHaveLength(1);
+        expect(resp.body.friends_list[0]).toHaveProperty('login', users[1].login);
+      })
+    });
+
+
+
+
+
+
+
+
+    /*
+
+    it('delete a friend and gets list of friends', async () => {
+       await request(app.getHttpServer())
           .delete('/users/friends')
           .set('Cookie', cookies)
           .send({
@@ -78,7 +258,75 @@ describe('user controller: users relations routes (e2e)', () => {
         expect(resp.body).toHaveProperty('friends_list');
         expect(resp.body.friends_list).toHaveLength(0);
       });
-  });
+    */
+
+    });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+  test /friends
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  // describe('', () => {
+
+  // it('gets friends list of a newly created user', async () => {
+  //   const users = await commons
+  //     .createFakeUsers()
+  //     .then((response) => response.body);
+  //   expect(users.length).toEqual(commons.testUserBatch.length);
+
+  //   const cookies = await commons
+  //     .logUser(commons.testUserBatch[0].login)
+  //     .then((response) => commons.getCookies(response));
+  //   expect(cookies.length).toBeGreaterThanOrEqual(1);
+
+  //   await request(app.getHttpServer())
+  //     .get('/me')
+  //     .set('Cookie', cookies)
+  //     .then((resp) => {
+  //       expect(resp.body).toHaveProperty('friends_list');
+  //       expect(resp.body.friends_list).toHaveLength(0);
+  //     })
+  //     .then(
+  //       async (resp) =>
+  //         await request(app.getHttpServer())
+  //           .post('/users/friends')
+  //           .set('Cookie', cookies)
+  //           .send({
+  //             id: users[1].id,
+  //           }),
+  //     )
+  //     .then(async (resp) => {
+  //       expect(resp.status).toEqual(HttpStatus.CREATED);
+  //       return await request(app.getHttpServer())
+  //         .get('/me')
+  //         .set('Cookie', cookies);
+  //     })
+  //     .then(async (resp) => {
+  //       expect(resp.body).toHaveProperty('friends_list');
+  //       expect(resp.body.friends_list).toHaveLength(1);
+  //       return await request(app.getHttpServer())
+  //         .delete('/users/friends')
+  //         .set('Cookie', cookies)
+  //         .send({
+  //           id: users[1].id,
+  //         });
+  //     })
+  //     .then(async (resp) => {
+  //       expect(resp.status).toEqual(HttpStatus.OK);
+  //       return await request(app.getHttpServer())
+  //         .get('/me')
+  //         .set('Cookie', cookies);
+  //     })
+  //     .then(async (resp) => {
+  //       expect(resp.body).toHaveProperty('friends_list');
+  //       expect(resp.body.friends_list).toHaveLength(0);
+  //     });
+  // });
+  // });
 
   it('tries to add oneself to friends list and fails', async () => {
     const users = await commons

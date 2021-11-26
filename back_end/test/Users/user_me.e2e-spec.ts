@@ -27,7 +27,7 @@ describe('user controller: /me routes (e2e)', () => {
   ===================================================================
   */
 
-  it('GET /me after logging', async () => {
+  it('gets user own infos after logging', async () => {
     await commons.createFakeUsers();
     const cookies = await commons
       .logUser(commons.testUserBatch[0].login)
@@ -42,7 +42,7 @@ describe('user controller: /me routes (e2e)', () => {
       });
   });
 
-  it('GET /me after logging and using corrupted cookie', async () => {
+  it('tries to get user own infos after logging with corrupted cookie', async () => {
     await commons.createFakeUsers();
     const cookies = await commons
       .logUser(commons.testUserBatch[0].login)
@@ -56,7 +56,7 @@ describe('user controller: /me routes (e2e)', () => {
       .expect(HttpStatus.FORBIDDEN);
   });
 
-  it('GET /me after logging and without cookie', async () => {
+  it('tries to get user own infos after logging without cookie', async () => {
     await commons.createFakeUsers();
     const cookies = await commons
       .logUser(commons.testUserBatch[0].login)
@@ -66,7 +66,7 @@ describe('user controller: /me routes (e2e)', () => {
     await request(app.getHttpServer()).get('/me').expect(HttpStatus.FORBIDDEN);
   });
 
-  it('GET /me with a cookie after logging and delete user', async () => {
+  it('tries to get user own infos after logging, with a cookie, after user was deleted', async () => {
     await commons.createFakeUsers();
     const cookies = await commons
       .logUser(commons.testUserBatch[0].login)
@@ -87,7 +87,7 @@ describe('user controller: /me routes (e2e)', () => {
     await request(app.getHttpServer()).get('/me').expect(HttpStatus.FORBIDDEN);
   });
 
-  it('GET /me login with non existing user', async () => {
+  it('tries to log with non existing user login', async () => {
     await commons.createFakeUsers();
     const cookies = await commons
       .logUser('no_use_with_this_login')
@@ -95,7 +95,15 @@ describe('user controller: /me routes (e2e)', () => {
     expect(cookies).toBeUndefined();
   });
 
-  it('PATCH /me with login', async () => {
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        PATCH /me routes tests
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  it('updates user login and check if change is made', async () => {
     let cookies: string[];
 
     await commons
@@ -133,7 +141,7 @@ describe('user controller: /me routes (e2e)', () => {
       });
   });
 
-  it('PATCH /me with use_photo_url boolean to false', async () => {
+  it('updates use_local_photo boolean', async () => {
     let cookies: string[];
 
     await commons

@@ -39,7 +39,7 @@ export class RelationsService {
     .of(userId)
     .add(targetId)
     .catch((error) => {
-      throw new ConflictException(`${targetId} is already in ${relation}`);
+      throw new ConflictException(error.message);
     });
   }
 

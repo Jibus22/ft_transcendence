@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Injectable } from '@nestjs/common';
 import * as request from 'supertest';
 
 export class CommonTest {
@@ -71,4 +71,5 @@ export class CommonTest {
       .delete('/dev/deleteUserBatch')
       .send(users);
   };
+
 }
