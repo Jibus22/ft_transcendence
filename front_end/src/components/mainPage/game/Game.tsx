@@ -19,7 +19,7 @@ export default function Game() {
     
 
     return (
-        <div className='d-flex'>
+        <div className='d-flex MainGame'>
             <Play Loadingclick={handleClick} disable={isDisable} loading={loading} />
             <OnlineGame Loadingclick={handleClick} loading={loading}/>
           

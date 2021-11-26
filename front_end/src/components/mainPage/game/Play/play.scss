@@ -1,12 +1,11 @@
 
 
 .mainGameWindow {
-
-
-    margin: -20px 0 0 190px;
-  
+    margin: 90px 0 0 190px;
     width: 78%;
-    height: 65vh;
+    height: 63vh;
+
+   
 
     border-radius: 23px;
     // background-color: #2E4266;
@@ -197,9 +196,9 @@
 
     @media screen and (max-width: 1440px) { 
         .mainGameWindow {
-            margin: 0px 0 0 138px;
+            margin: 8% 0 0 138px;
             width: 78%;
-            height: 63vh;
+            height: 560px;
             border-radius: 23px;
            
             .msgPlay {

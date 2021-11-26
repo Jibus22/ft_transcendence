@@ -1,8 +1,8 @@
 
 .mainParamUser {
     width: 37%;
-    height: 65vh;
-    margin: 0 auto;
+    height: 560px;
+    margin: 4% auto;
 
     border-radius: 23px;
     border: 1px solid rgba(255, 255, 255, 0.7);
@@ -188,12 +188,14 @@
     }
     .disconectMui {
         margin: 8% 0 0 0;
+        text-align: center;
         .MuiButton-root {
             color: red;
             font-family: Montserrat, sans-serif;
             text-transform: none;
             font-size: 1vw;
             border-radius: 40px;
+            
         }
     }
 

@@ -2,7 +2,7 @@
 
 .mainHisUser {
     width: 80%;
-    height: 64vh;
+    height: 700px;
     margin: -15px 0 0 190px;
     border-radius: 23px;
     border: 1px solid rgba(255, 255, 255, 0.7);
@@ -118,7 +118,7 @@
 
     .pageOverflow {
         overflow: auto;
-        height: 42vh;
+        height: 460px;
         
         width: 95%;
         margin: 10px 0 0 0;
@@ -277,8 +277,8 @@
 @media screen and (max-width: 1440px) { 
     .mainHisUser {
         width: 80.5%;
-        height: 64vh;
-        margin: 0px 0 0 140px;
+        height: 560px;
+        margin: 4% 0 0 140px;
         border-radius: 23px;
         
         h1, h3 {
@@ -387,10 +387,11 @@
     
         .pageOverflow {
             overflow: auto;
-            height: 44vh;
+            height: 390px;
             
             width: 95%;
             margin: 10px 0 0 0;
+           
     
             
             

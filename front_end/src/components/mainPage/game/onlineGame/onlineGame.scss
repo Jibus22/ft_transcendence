@@ -1,11 +1,9 @@
 
 
 .mainOnlineGame {
-   
-    
     width: 78%;
-    height: 65vh;
-    margin: -20px 0 0 20px;
+    height: 63vh;
+    margin: 90px 0 0 20px;
     padding: 0 20px 20px 20px;
     border-radius: 23px;
     border: 1px solid rgba(255, 255, 255, 0.7);
@@ -174,8 +172,8 @@
     @media screen and (max-width: 1440px) { 
         .mainOnlineGame {
             width: 79%;
-            height: 63vh;
-            margin: 0px 0 0 13px;
+            height: 560px;
+            margin: 8% 0 0 13px;
             
             .title {
                 width: 100%;

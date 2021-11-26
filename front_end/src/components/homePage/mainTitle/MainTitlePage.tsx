@@ -4,8 +4,8 @@ import  './StyleTitle.scss'
 
 export default function MainTitlePage() {
     return (
-        <div className='d-flex flex-column  w-75 Header  '>
-             <div className='MainTitle '>
+        <div className='MainTitlePage d-flex flex-column'>
+             <div className='MainTitle'>
                 <div className='Title  '>
                     <h1>Transcendence</h1>
                 </div> 

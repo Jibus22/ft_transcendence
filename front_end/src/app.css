@@ -1,0 +1,21 @@
+
+.App {
+    min-height: 100vh;
+    min-width: 100vh;
+    background: url('./components/homePage/img/flat-mountains.png');
+    background-size: 100% 100%;
+    
+
+
+    
+}
+
+.HomePage {
+  min-height: 100vh;
+  min-width: 100vh;
+ 
+  
+}
+
+
+
