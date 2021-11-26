@@ -13,14 +13,15 @@ const MainPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             const result = await axios (
-                'http://localhost:3000/users',
+                'http://localhost:3000/users', {withCredentials: true}
             );
             setData(result.data)
+            console.log(result)
         }
         fetchData()
     }, [])
 
-
+    
 
 
     
