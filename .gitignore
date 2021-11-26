@@ -6,6 +6,8 @@ package-lock.json
 back_end/documentation
 back_end/*.sqlite
 back_end/*.sqlite*
+back_end/*.sqlite-shm
+back_end/*.sqlite-wal
 
 # Logs
 logs
