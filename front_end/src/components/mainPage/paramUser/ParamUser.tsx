@@ -93,10 +93,7 @@ export default function ParamUser({data} : TypeCategoriesProps ) {
             
              
         </div>  
- 
 
-      
-       
         </animated.div>
     
       
