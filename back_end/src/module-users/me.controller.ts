@@ -1,9 +1,12 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, NotFoundException, Patch, Session,
-  UseGuards
+  Controller, Get, NotFoundException, Patch, Post, Session,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBody,
   ApiCookieAuth,
@@ -55,6 +58,18 @@ export class MeController {
   @ApiResponse({ type: privateUserDto })
   async update(@Body() body: UpdateUserDto, @Session() session) {
     return this.usersService.update(session.userId, body)
-         .catch((error) => {throw new BadRequestException(error.message);});
+    .catch((error) => {throw new BadRequestException(error.message);});
   }
+
+  @Post('/photo')
+  @UseInterceptors(FileInterceptor('file'))
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Post a new profile picture and set use_local_photo to true',
+  })
+  @ApiResponse({ type: privateUserDto })
+  uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
+    return this.meService.uploadPhoto(file);
+  }
+
 }
