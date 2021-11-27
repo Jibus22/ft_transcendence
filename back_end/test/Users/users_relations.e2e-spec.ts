@@ -34,10 +34,13 @@ const relDescription = ['friend', 'blocked account'];
   */
 
 const testSet = async (relation: RelationType) => {
-  describe(`user controller: users relations routes (e2e): ${relDescription[relation]} `, () => {
-    let app: INestApplication;
-    let commons: CommonTest;
-    const relationProperty = relBodyResponse[relation];
+
+  let app: INestApplication;
+  let commons: CommonTest;
+  const relationProperty = relBodyResponse[relation];
+  const relationDesc = relDescription[relation];
+
+  describe(`user controller: users relations routes (e2e): ${relationDesc} `, () => {
 
     beforeEach(async () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -49,7 +52,7 @@ const testSet = async (relation: RelationType) => {
       await app.init();
     });
 
-    describe(`${relDescription[relation]} list manipulation`, () => {
+    describe(`${relationDesc} list manipulation`, () => {
       let users;
       let cookies;
 
@@ -81,31 +84,32 @@ const testSet = async (relation: RelationType) => {
           .send(reqBody);
       };
 
+      const getMe = async () => {
+        return await request(app.getHttpServer())
+          .get(`/me`)
+          .set('Cookie', cookies);
+      };
+
       /*
         ===================================================================
         -------------------------------------------------------------------
-              Relations test
+              Relations tests
         -------------------------------------------------------------------
         ===================================================================
         */
 
-      it(`gets ${relDescription[relation]} list of a newly created user`, async () => {
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
-          .then((resp) => {
-            expect(resp.body).toHaveProperty(relationProperty);
-            expect(resp.body[relationProperty]).toHaveLength(0);
-          });
+      it(`gets ${relationDesc} list of a newly created user`, async () => {
+        await getMe().then((resp) => {
+          expect(resp.body).toHaveProperty(relationProperty);
+          expect(resp.body[relationProperty]).toHaveLength(0);
+        });
       });
 
-      it(`adds a ${relDescription[relation]} and gets list of friends`, async () => {
+      it(`adds a relation: ${relationDesc} and get list of relations`, async () => {
         await addRelation({ id: users[1].id })
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.CREATED);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -117,27 +121,16 @@ const testSet = async (relation: RelationType) => {
           });
       });
 
-      it(`adds a ${relDescription[relation]} which already is in friends list`, async () => {
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
+      it(`adds a relation: ${relationDesc} which already exists and
+          get list of relations`, async () => {
+        await getMe()
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
           })
-          .then(
-            async () =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({
-                  id: users[1].id,
-                }),
-          )
+          .then(async () => await addRelation({ id: users[1].id }))
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.CREATED);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -147,20 +140,10 @@ const testSet = async (relation: RelationType) => {
               users[1].login,
             );
           })
-          .then(
-            async () =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({
-                  id: users[1].id,
-                }),
-          )
+          .then(async () => await addRelation({ id: users[1].id }))
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.CONFLICT);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -172,27 +155,15 @@ const testSet = async (relation: RelationType) => {
           });
       });
 
-      it(`adds a ${relDescription[relation]} with a login instead of a UUID`, async () => {
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
+      it(`adds a ${relationDesc} with a login instead of a UUID`, async () => {
+        await getMe()
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
           })
-          .then(
-            async () =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({
-                  id: users[1].login,
-                }),
-          )
+          .then(async () => await addRelation({ id: users[1].login }))
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.BAD_REQUEST);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -200,27 +171,15 @@ const testSet = async (relation: RelationType) => {
           });
       });
 
-      it(`adds a ${relDescription[relation]} with a non existing UUID`, async () => {
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
+      it(`adds a ${relationDesc} with a non existing UUID`, async () => {
+        await getMe()
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
           })
-          .then(
-            async () =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({
-                  id: randomUUID(),
-                }),
-          )
+          .then(async () => await addRelation({ id: randomUUID() }))
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.CONFLICT);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -228,25 +187,15 @@ const testSet = async (relation: RelationType) => {
           });
       });
 
-      it(`adds a ${relDescription[relation]} with an empty body request`, async () => {
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
+      it(`adds a ${relationDesc} with an empty body request`, async () => {
+        await getMe()
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
           })
-          .then(
-            async () =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({}),
-          )
+          .then(async () => await addRelation({}))
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.BAD_REQUEST);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -254,29 +203,22 @@ const testSet = async (relation: RelationType) => {
           });
       });
 
-      it(`adds a ${relDescription[relation]} with an extra key in body request`, async () => {
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
+      it(`adds a ${relationDesc} with an extra key in body request`, async () => {
+        await getMe()
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
           })
           .then(
             async () =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({
-                  id: users[1].id,
-                  login: users[1].login,
-                  extraKey: 'test',
-                }),
+              await addRelation({
+                id: users[1].id,
+                login: users[1].login,
+                extraKey: 'test',
+              }),
           )
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.CREATED);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
@@ -288,7 +230,7 @@ const testSet = async (relation: RelationType) => {
           });
       });
 
-      it('tries to add oneself to friends list and fails', async () => {
+      it(`tries to add oneself to ${relationDesc} and fails`, async () => {
         const users = await commons
           .createFakeUsers()
           .then((response) => response.body);
@@ -298,36 +240,113 @@ const testSet = async (relation: RelationType) => {
           .then((response) => commons.getCookies(response));
         expect(cookies.length).toBeGreaterThanOrEqual(1);
 
-        await request(app.getHttpServer())
-          .get('/me')
-          .set('Cookie', cookies)
+        await getMe()
           .then((resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
-            expect(resp.body.friends_list).toHaveLength(0);
+            expect(resp.body[relationProperty]).toHaveLength(0);
           })
-          .then(
-            async (resp) =>
-              await request(app.getHttpServer())
-                .post(`/users/${relRoute[relation]}`)
-                .set('Cookie', cookies)
-                .send({
-                  id: users[0].id,
-                }),
-          )
+          .then(async () => await addRelation({ id: users[0].id }))
           .then(async (resp) => {
             expect(resp.status).toEqual(HttpStatus.BAD_REQUEST);
-            return await request(app.getHttpServer())
-              .get('/me')
-              .set('Cookie', cookies);
+            return await getMe();
           })
           .then(async (resp) => {
             expect(resp.body).toHaveProperty(relationProperty);
-            expect(resp.body.friends_list).toHaveLength(0);
+            expect(resp.body[relationProperty]).toHaveLength(0);
           });
       });
-    });
+
+      it(`adds a relation: ${relationDesc} and delete it`, async () => {
+        await getMe()
+          .then((resp) => {
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty].length).toEqual(0);
+          })
+          // ADD relation
+          .then(async () => await addRelation({ id: users[1].id }))
+          // check user relations
+          .then(async (resp) => {
+            expect(resp.status).toEqual(HttpStatus.CREATED);
+            return await getMe();
+          })
+          .then((resp) => {
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty].length).toEqual(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
+              'login',
+              users[1].login,
+            );
+          })
+          // DELETE relation
+          .then(
+            async () =>
+              await request(app.getHttpServer())
+                .delete(`/users/${relRoute[relation]}`)
+                .set('Cookie', cookies)
+                .send({
+                  id: users[1].id,
+                }),
+          )
+          // check user relations
+          .then(async (resp) => {
+            expect(resp.status).toEqual(HttpStatus.OK);
+            return await getMe();
+          })
+          .then((resp) => {
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty]).toHaveLength(0);
+          });
+      });
+
+      it(`tries to delete a non existing relation: ${relationDesc}`, async () => {
+        await getMe()
+          .then((resp) => {
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty].length).toEqual(0);
+          })
+          // ADD relation
+          .then(async () => await addRelation({ id: users[1].id }))
+          // check user relations
+          .then(async (resp) => {
+            expect(resp.status).toEqual(HttpStatus.CREATED);
+            return await getMe();
+          })
+          .then((resp) => {
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty].length).toEqual(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
+              'login',
+              users[1].login,
+            );
+          })
+          // tries to DELETE relation with user 2 which does not exist
+          .then(
+            async () =>
+              await request(app.getHttpServer())
+                .delete(`/users/${relRoute[relation]}`)
+                .set('Cookie', cookies)
+                .send({
+                  id: users[2].id,
+                }),
+          )
+          // check user relations
+          .then(async (resp) => {
+            expect(resp.status).toEqual(HttpStatus.OK);
+            return await getMe();
+          })
+          .then((resp) => {
+            expect(resp.body).toHaveProperty(relationProperty);
+            expect(resp.body[relationProperty].length).toEqual(1);
+            expect(resp.body[relationProperty][0]).toHaveProperty(
+              'login',
+              users[1].login,
+            );
+          });
+      });
+    }); // <----- end testSet
   });
 };
+
 
 /*
   ===================================================================
