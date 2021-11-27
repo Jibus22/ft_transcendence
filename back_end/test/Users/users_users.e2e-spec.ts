@@ -7,6 +7,8 @@ import { CommonTest } from '../helpers';
 describe('user controller: users infos routes (e2e)', () => {
   let app: INestApplication;
   let commons: CommonTest;
+  let users;
+  let cookies: string[];
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -15,8 +17,42 @@ describe('user controller: users infos routes (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     commons = new CommonTest(app);
+
     await app.init();
+
+    users = await commons
+      .createFakeUsers()
+      .then((response) => response.body)
+      .catch((error) => {});
+    expect(users.length).toEqual(commons.testUserBatch.length);
+
+    cookies = await commons
+      .logUser(loggedUser.login)
+      .then((response) => commons.getCookies(response));
+    expect(cookies.length).toBeGreaterThanOrEqual(1);
   });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        Auxiliary functions
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  const checkBodyAgainstUsers = (body: any) => {
+    expect(body.length).toEqual(users.length);
+    for (let i = 0; i < body.length; i++) {
+      expect(body[i]['id']).toEqual(users[i]['id']);
+      expect(body[i]['login']).toEqual(users[i]['login']);
+      expect(body[i]['photo_url']).toEqual(users[i]['photo_url']);
+      expect(body[i]['photo_url_42']).not.toBeDefined();
+      expect(body[i]['photo_url_local']).not.toBeDefined();
+      expect(body[i]['use_local_photo']).not.toBeDefined();
+      expect(body[i]['friends_list']).not.toBeDefined();
+      expect(body[i]['blocked_list']).not.toBeDefined();
+    }
+  };
 
   /*
     ===================================================================
@@ -26,16 +62,20 @@ describe('user controller: users infos routes (e2e)', () => {
     ===================================================================
    */
 
-  it('GET /users/id/:user_id', async () => {
-    const users = await commons
-      .createFakeUsers()
-      .then((response) => response.body);
+  it('gets all users', async () => {
+    await request(app.getHttpServer())
+      .get('/users/')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.status).toEqual(HttpStatus.OK);
+        expect(resp.body).toBeDefined();
+        expect(resp.body.length).toBeGreaterThanOrEqual(1);
+        return resp.body;
+      })
+      .then((body) => checkBodyAgainstUsers(body));
+  });
 
-    const cookies = await commons
-      .logUser(commons.testUserBatch[0].login)
-      .then((response) => commons.getCookies(response));
-    expect(cookies.length).toBeGreaterThanOrEqual(1);
-
+  it('gets data for each user of the user test array', async () => {
     for (let i = 0; i < users.length; i++) {
       await request(app.getHttpServer())
         .get('/users/id/' + users[i].login)
@@ -53,24 +93,13 @@ describe('user controller: users infos routes (e2e)', () => {
     }
   });
 
-  it('GET /users/id/:user_id with non existing user', async () => {
-    const users = await commons
-      .createFakeUsers()
-      .then((response) => response.body);
-
-    const cookies = await commons
-      .logUser(commons.testUserBatch[0].login)
-      .then((response) => commons.getCookies(response));
-    expect(cookies.length).toBeGreaterThanOrEqual(1);
-
-    for (let i = 0; i < users.length; i++) {
-      await request(app.getHttpServer())
-        .get('/users/id/' + users[i].login + '42_non_existing_user_login')
-        .set('Cookie', cookies)
-        .then((resp) => {
-          expect(resp.status).toEqual(HttpStatus.NOT_FOUND);
-          expect(resp.body).toHaveProperty('message', 'user not found');
-        });
-    }
+  it('gets data a non existing user', async () => {
+    await request(app.getHttpServer())
+      .get('/users/id/' + '42_non_existing_user_login')
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.status).toEqual(HttpStatus.NOT_FOUND);
+        expect(resp.body).toHaveProperty('message', 'user not found');
+      });
   });
 });
