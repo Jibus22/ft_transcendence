@@ -1,21 +1,23 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { User } from '../module-users/entities/users.entity';
 import { UsersService } from '../module-users/service-users/users.service';
 
 @Injectable()
 export class DevelopmentService {
+  constructor(private usersService: UsersService) {}
 
-	constructor( private usersService: UsersService ) {}
-
-	async dev_logUser(login: string) {
+  async dev_logUser(login: string) {
     const users = await this.usersService.find(login);
-    if ( ! users[0]) {
+    if (!users[0]) {
       throw new BadRequestException(`No user ${login}`);
     }
-    return this.usersService.create(users[0])
-      .catch((error) => {
-        throw new InternalServerErrorException(error.message)
-      });
+    return this.usersService.create(users[0]).catch((error) => {
+      throw new InternalServerErrorException(error.message);
+    });
   }
 
   async dev_createUserBatch(users: Partial<User>) {
@@ -24,18 +26,19 @@ export class DevelopmentService {
 
   async dev_deleteUserBatch(users: Partial<User>[]) {
     users.forEach(async (val) => {
-      if ( ! val.login) {
+      if (!val.login) {
         throw new BadRequestException('missing login');
       }
-      return await this.usersService.remove(val.login)
-      .then((val) => val)
-      .catch((e)=> {
-        throw new BadRequestException(e.message);
-      });
+      return await this.usersService
+        .remove(val.login)
+        .then((val) => val)
+        .catch((e) => {
+          throw new BadRequestException(e.message);
+        });
     });
   }
 
-  async dev_getAllUser() {
+  async dev_getAllUsers() {
     return await this.usersService.getAllUsers();
   }
 

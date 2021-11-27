@@ -1,5 +1,5 @@
 import {
-  Body, Controller, Delete, Post, Session, UseGuards
+  Body, Controller, Delete, Get, Post, Session, UseGuards
 } from '@nestjs/common';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { deserialize, serialize } from 'class-transformer';
@@ -26,6 +26,13 @@ export class DevelopmentController {
   }
 
   @ApiProperty()
+  @Get('/users')
+  async getAllUsers() {
+    return this.developmentService.dev_getAllUsers();
+
+  }
+
+  @ApiProperty()
   @Post('/createUserBatch')
   async createUserBatch(
     @Body() body: CreateUserDto[] | CreateUserDto,
@@ -37,7 +44,7 @@ export class DevelopmentController {
           .then((value) => { successCreation++; })
           .catch((err) => {});
       };
-      return await this.developmentService.dev_getAllUser();
+      return await this.developmentService.dev_getAllUsers();
     }
 
   @ApiProperty()
