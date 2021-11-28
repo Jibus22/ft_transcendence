@@ -15,6 +15,7 @@ export {default as MainPage} from './mainPage/MainPage'
 export {default as Header} from './mainPage/header/Header'
 
 
+export {default as Chat} from './chat/Chat.component'
 export {default as ChatRoom} from './mainPage/chatroom/ChatRoom'
 export {default as WindowChat} from './mainPage/chatroom/windows/WindowChat'
 
