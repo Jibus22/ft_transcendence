@@ -21,3 +21,7 @@ code {
   --colorBlueF: #303a52;
   
 }
+
+*:focus {
+  outline: none;
+}

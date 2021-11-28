@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Homepage, MainPage } from './components';
+import { Homepage, MainPage, Chat } from './components';
 // import ErrorPage from "./components/errorPage/ErrorPage";
 import { Routes, Route} from "react-router-dom";
 import './app.css'
@@ -17,6 +17,8 @@ const App = () => {
            <Route path='/' element={ <Homepage/> }/>
            <Route path='/*' element={ <MainPage/> }/>
        </Routes>
+
+       <Chat />
     
       </div>
   )
