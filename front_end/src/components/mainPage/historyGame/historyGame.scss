@@ -1,30 +1,35 @@
 @use "@material/tab-bar/mdc-tab-bar";
 
 .mainHisUser {
-    width: 76%;
-    height: 70vh;
-    margin: 20px 0 0 200px;
-    border: 1px solid var(--borderLight) ;
-    border-radius: 30px;
-    background-color: var(--colorBlueC);
+    width: 80%;
+    height: 700px;
+    margin: -15px 0 0 190px;
+    border-radius: 23px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: linear-gradient(5.69deg, #E69C6A -3.67%, rgba(230, 156, 106, 0) 102.8%);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 8px );
+    -webkit-backdrop-filter: blur( 8px );
    
-
-    h1 {
+    h1, h3 {
+        font-family: Montserrat, sans-serif;
         color: white;
-        font-size: 2em;
+        
+        
     }
 
     .searchCase {
-        width: 90%;
+        width: 85%;
         height: 40px;
-        margin: 30px 0 0 0 ;
+        margin: 50px auto ;
         display: flex;
-        flex-direction: row;
-        justify-content: end;
+        justify-content: space-between;
+        
 
         h1 {
-            font-size: 2em;
-            margin: 0 400px 0 0;
+            font-size: 38px;
+            font-weight: 500;
+           
         }
 
         h2 {
@@ -33,92 +38,90 @@
             margin-left: 20px;
         }
         
-        .myGame {
+        .myGameDIv {
             margin: 0 50px 0 0;
-            
-            .MuiInputBase-root {
-                height: 100px;
-                 color: white;
-                
-            }
-            
-            .MuiOutlinedInput-root {
-                border-color: red;
-                
-            }
-            .MuiOutlinedInput{
-                border-color: grey;
-            }
-            
-            
-            
-           
-        }
+            .muiButtonActive {
+                height: 37px;
+                width: 130px;
+                border: white 1px solid;
+                background-color: #E69C6A;
+                font-family: Montserrat, sans-serif;
+                font-weight: 500;
+                font-size: 19px;
+                border-radius: 15px;
 
+            }
+            .muiButtonInactiv {
+                height: 37px;
+                    width: 130px;
+                    border: #E69C6A 1px solid;
+                    font-family: Montserrat, sans-serif;
+                    font-weight: 500;
+                    font-size: 19px;
+                    background-color: transparent;
+                    border-radius: 15px;
+            }
+            .muiButton:hover {
+                font-size: 21px;
+            }
+        }
+       
+       
+       
 
 
         .searchBarre .MuiInputBase-root {
             border-radius: 20px;
             width: 250px;
+            height: 40px;
+            
             color: white;
+        }
+        .MuiInputLabel-root {
+            
+            color: white;
+            font-size: 16px;
             
             
         }
-        .searchBarre .MuiInputAdornment-root {
-            width: 15px;
-           
-        }
-        .searchBarre .MuiIcon-colorPrimary {
-            color: white;
-        }
-        .searchBarre .MuiInputLabel-root {
-            margin: 5px 0 0 5px;
-        }
+        
+        
 
-        .searchBar {
-            border-radius: 30px;
-            border: 1px solid var(--borderLight) ;
-            width: 26%;
-        }
-        .myGameBar {
-            border: 1px solid var(--borderLight) ;
-            width: 15%;
-            margin: 0 50px 0 0px;
-            ;
-        }
-
-        .ui.input input {
-            color: white;
-          }
 
               
     } 
     .dpdInfo {
         display: flex;
-        width: 90%;
-        margin: 20px auto;
+        width: 80%;
+        margin: -10px auto;
+        padding-bottom: 20px;
        
 
         h3 {
-       
-            font-size: 1em;
+            color: #E69C6A;
+            font-size: 19px;
+            font-weight: 300;
         }
-        .date {
-            margin: 15px 0 0 107px;
+        .infoPlayer {
+            margin: 0px 0 0 35px;
         }
-        .score {
-            margin: 15px 0 0 474px;
+        .infoScore{
+            margin: 0px 0 0 493px;
         }
-        .time {
-            margin: 15px 0 0 243px;
+        .infoDate{
+            margin: 0px 0 0 225px;
+        }
+        .infoDuration {
+            margin: 0px 0 0 165px;
         }
     }
 
     .pageOverflow {
         overflow: auto;
+        height: 460px;
         
         width: 95%;
-        margin: 0px 0 0 0;
+        margin: 10px 0 0 0;
 
         
         
@@ -145,58 +148,394 @@
        
         .infoHistory {
             display: flex;
-            color: grey;
-            margin: 40px 0 0 0;
+            color: white;
+            margin: 27px auto;
 
-            .date {
-                margin: 15px 0 0 30px;
-                
-                .time {
-                    margin: -10px 0 0 0
-                }
-                
-            }
+            
 
             .userImg {
-                margin: 10px 0 0 70px;
-                img {
-                    width: 70px;
+                margin: 0px ;
+                
+                .MuiAvatarGroup-root {
+                
+                    width: 100%;
                 }
+                .MuiAvatar-root {
+                    width: 86px;
+                    height: 85px;
+                    border: none;
+                    
+                }
+    
+                .MuiBadge-badge {
+                    width: 17%;
+                    height: 16%;
+                    background-color: #E6DA6A;
+                    color: #E6DA6A;
+                    border-radius: 100%;
+                    box-shadow: 0 0 0 0.5px #E6DA6A;
+                    z-index: 3;
+                }.MuiBadge-badge::after {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 50%;
+                    animation: badgeAnim 1.2s infinite ease-in-out;
+                    border: 1px solid #E6DA6A;
+                    content: "";
+                    
+                }
+                .domUser {
+                    z-index: 1;
+                }
+                .extUser{
+                    z-index: 2;
+                }
+            } 
                
-            }
+            
 
-            .playerScore {
-                width: 400px;
-                margin: 0 0 0 60px;
+            .playerName{
+                width: 300px;
+                margin: 0 0 0 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                p {
+                    font-size: 20px;
+                    margin: 2px 0 0 0;
+                }
            
 
                 .player {
-                    margin: 10px 0 0 0;
-                    display: flex;
-                    justify-content: center;
-
+            
                     .vs {
-                        margin: 0 9px 0 9px;
+                        margin: 2px 10px 0 10px;
+                        color: #CA6C88;
+                        font-weight: 800;
+                        font-size: 20px;
+                        font-family: Montserrat, sans-serif;
+                
                     }
+                 
                 }
-                .score {
-                    display: flex;
-                    justify-content: center;
-                    margin: -10px 0 0 7px;
+            
+            }
+            .playerScore {
+                width: 200px;
+                margin: 0 0 0 10px;
+                justify-content: center;
+                align-items: center;
+                p {
+                    font-size: 20px;
+                }
+                
+            }
+            .semilicon {
+                margin: 0 8px 0 8px;
+                
+                
+            }
+            .date {
+                width: 200px;
+                margin: 0 0 0 70px;
+                justify-content: center;
+                align-items: center;
+                p {
+                    font-size: 18px;
+                }
+                .timeHours{
+                    margin: -15px 0 0 0;
                 }
             }
             .duration {
-                margin: 10px 0 0 60px;
+                margin: 0 0 0 70px;
+                justify-content: center;
+                align-items: center;
+
+                p {
+                    font-size: 18px;
+                    letter-spacing: 3px
+                }
             }
+
+        
 
            
         }
-        hr {
-            width: 90%;
-            margin: 30px 0 0 0;
-
-            
-        }
+       
     }
   
 }
+
+
+    ///////////////////////////////////////////////
+    //////// reponsive max-width: 1440px  /////////
+    ///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
+    .mainHisUser {
+        width: 80.5%;
+        height: 560px;
+        margin: 4% 0 0 140px;
+        border-radius: 23px;
+        
+        h1, h3 {
+            font-family: Montserrat, sans-serif;
+            color: white;
+            
+            
+        }
+    
+        .searchCase {
+            width: 85%;
+            height: 40px;
+            margin: 35px auto ;
+            display: flex;
+            justify-content: space-between;
+            
+    
+            h1 {
+                font-size: 30px;
+                font-weight: 500;
+               
+            }
+    
+            h2 {
+                color: white;
+                font-size: 1.3em;
+                margin-left: 20px;
+            }
+            
+            .myGameDIv {
+                margin: 0 40px 0 0;
+                .muiButtonActive {
+                    height: 30px;
+                    width: 110px;
+                    border: white 1px solid;
+                    font-size: 14px;
+                    border-radius: 12px;
+                }
+                .muiButtonInactiv {
+                    height: 30px;
+                    width: 110px;
+                    border: #E69C6A 1px solid;
+                    font-size: 14px;
+                    border-radius: 12px;
+                        
+                }
+                .muiButton:hover {
+                    font-size: 16px;
+                }
+            }
+           
+           
+            .searchBarre {
+                margin: 0 85px 0 0px;
+                height: 30px;
+            }
+    
+    
+            .searchBarre .MuiInputBase-root {
+                border-radius: 20px;
+                width: 210px;
+                height: 100%;
+                
+                color: white;
+              
+            }
+            .MuiInputLabel-root {
+                
+                color: white;
+                font-size: 13px;
+                margin: -3px auto
+                
+                
+            }
+            
+            
+    
+    
+                  
+        } 
+        .dpdInfo {
+            display: flex;
+            width: 80%;
+            margin: -10px auto;
+            padding-bottom: 20px;
+           
+    
+            h3 {
+                color: #E69C6A;
+                font-size: 15px;
+                font-weight: 300;
+            }
+            .infoPlayer {
+                margin: 0px 0 0 10px;
+            }
+            .infoScore{
+                margin: 0px 0 0 382px;
+            }
+            .infoDate{
+                margin: 0px 0 0 160px;
+            }
+            .infoDuration {
+                margin: 0px 0 0 125px;
+            }
+        }
+    
+        .pageOverflow {
+            overflow: auto;
+            height: 390px;
+            
+            width: 95%;
+            margin: 10px 0 0 0;
+           
+    
+            
+            
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            
+          }
+          ::-webkit-scrollbar-track {
+            margin-top: 30px;
+            margin-bottom: 60px;
+            border-radius: 20px;
+          
+        }
+        
+       
+    
+        .histUser {
+            width: 80%;
+            height: 90%;
+            margin: 0px auto;
+            
+    
+           
+            .infoHistory {
+                display: flex;
+                color: white;
+                margin: 28px auto;
+    
+                
+    
+                .userImg {
+                    margin: 0px ;
+                    .MuiAvatarGroup-root {
+                
+                        width: 100%;
+                    }
+                    .MuiAvatar-root {
+                        width: 69px;
+                        height: 69px;
+                        border: none;
+                        
+                    }
+        
+                    .MuiBadge-badge {
+                        width: 17%;
+                        height: 16%;
+                        background-color: #E6DA6A;
+                        color: #E6DA6A;
+                        border-radius: 100%;
+                        box-shadow: 0 0 0 0.5px #E6DA6A;
+                        z-index: 3;
+                    }.MuiBadge-badge::after {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 50%;
+                        animation: badgeAnim 1.2s infinite ease-in-out;
+                        border: 1px solid #E6DA6A;
+                        content: "";
+                        
+                    }
+                    .domUser {
+                        z-index: 1;
+                    }
+                    .extUser{
+                        z-index: 2;
+                    }
+                   
+                }
+    
+                .playerName{
+                    width: 300px;
+                    margin: 0 0 0 45px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    p {
+                        font-size: 17px;
+                        margin: 2px 0 0 0;
+                    }
+               
+    
+                    .player {
+                
+                        .vs {
+                            margin: 2px 10px 0 10px;
+                            color: #CA6C88;
+                            font-weight: 800;
+                            font-size: 18px;
+                            font-family: Montserrat, sans-serif;
+                    
+                        }
+                     
+                    }
+                
+                }
+                .playerScore {
+                    width: 200px;
+                    margin: 0 0 0 50px;
+                    justify-content: center;
+                    align-items: center;
+                    p {
+                        font-size: 15px;
+                    }
+                    
+                }
+                .semilicon {
+                    margin: 0 8px 0 8px;
+                    
+                    
+                }
+                .date {
+                    width: 200px;
+                    margin: 0 0 0 70px;
+                    justify-content: center;
+                    align-items: center;
+                    p {
+                        font-size: 15px;
+                    }
+                    .timeHours{
+                        margin: -15px 0 0 0;
+                    }
+                }
+                .duration {
+                    margin: 0 0 0 70px;
+                    justify-content: center;
+                    align-items: center;
+    
+                    p {
+                        font-size: 15px;
+                        letter-spacing: 3px
+                    }
+                }
+    
+            
+    
+               
+            }
+           
+        }
+      
+    }
+}
+

@@ -1,140 +1,223 @@
 
 .Section {
-    width: 50%;
-    height: 70%;
+    width: 83%;
     padding: 30px 0 0 30px;
-    margin: 140px 0 0 20px;
+    margin: 7% 0 0% 40px;
+   
 
+    h3 {
+        font-family: Montserrat, sans-serif;
+        font-weight: normal;
+    }
+
+    .profil img {
+        width: 85px;
+        height: 85px;
+    }
+
+    .listProfil-1 {
+        height: 100%; 
+    }
+    .listProfil-2 {
+        margin: 0 100px 0 0;
+        height: 100%; 
+        margin: 0 100px 0 0; 
+    }
+
+    .info {
+        margin: 10px 0 0px 30px ;
+        h3 {
+            font-size: 24px;
+            color: white;
+        }
+        p {
+            color: #CA6C88;
+            margin: -13px 0 0 0;
+            font-size: 23px;
+            line-height: 30px;
+        }
+    }
+    .profil {
+        display: flex;
+        width: 100%;
+    }
+    .profil1{
+        margin: 5px 0 0 30px;
+    }
+    .profil2 {
+        margin: 65px 0 0 100px;
+    }
+    .profil3 {
+        margin: 66px 0 0 200px;
+    }
     
-
-}
-
-.profil img {
-    width: 85px;
-    height: 85px;
-}
-
-
-.profil1{
-    display: flex;
-    margin: 5px 0 0 30px;
-    width: 100%;
+    .profil4 {
+        margin: 80px 0 0 90px;
+    }
+    
+    .profil5 {
+        margin: 60px 0 0 180px;
+    }
+    
 }
 
 
-
-.profil2 {
-    display: flex;
-    margin: 50px 0 0 100px;
-    width: 100%;
-
-   
-}
-.profil3 {
-   
-    display: flex;
-    margin: 50px 0 0 200px;
-    width: 100%;
-}
-
-.listProfil2 {
-    margin: 0 100px 0 0;
-}
-
-
-.profil4 {
-   
-    display: flex;
-    margin: 65px 0 0 20px;
-    width: 100%;
-}
-
-.profil5 {
-   
-    display: flex;
-    margin: 60px 0 0 120px;
-    width: 100%;
-}
-
-.info {
-    margin: 10px 0 0px 30px ;
-}
-
-.info h3 {
-   font-family: Montserrat, sans-serif;
-   font-weight: normal;
-    font-size: 24px;
-    color: white;
-
-}
-.info p {
-    color: #CA6C88;
-    font-family: Montserrat, sans-serif;
-   font-weight: normal;
-    margin: -13px 0 0 0;
-    font-size: 23px;
-    line-height: 30px;
-}
-
-
-@media screen and (max-width: 1366px) {
+///////////////////////////////////////////////
+//////// reponsive max-width: 1566px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1566px) { 
     .Section {
-        width: 54%;
-        height: 50%;
+        width: 83%;
         padding: 30px 0 0 30px;
-        margin: 110px 0 0 20px;
+        margin: 6% 0 0% 40px;
+       
     
         .profil img {
-            width: 55px;
-            height: 55px;
+            width: 75px;
+            height: 75px;
         }
-        
-        
-        .profil1{
-            margin: 5px 0 0 10px;
+    
+        .listProfil-2 {
+            margin: 0 100px 0 0;
            
         }
+    
+        .info {
+            margin: 10px 0 0px 27px ;
+            h3 {
+                font-size: 20px;
+            }
+            p {
+                margin: -13px 0 0 0;
+                font-size: 20px;
+                line-height: 30px;
+            }
+        }
+        .profil1{
+            margin: 5px 0 0 30px;
+        }
         .profil2 {
-            margin: 35px 0 0 80px;
+            margin: 55px 0 0 90px;
         }
         .profil3 {
-            margin: 35px 0 0 150px;
-        }
-        
-        .listProfil2 {
-            margin: 0 100px 0 0;
+            margin: 45px 0 0 170px;
         }
         
         .profil4 {
-            margin: 45px 0 0 20px;
-            
+            margin: 60px 0 0 40px;
         }
         
         .profil5 {
-            margin: 40px 0 0 100px;
-            
+            margin: 60px 0 0 120px;
         }
         
-        .info {
-            margin: 4px 0 0px 20px ;
-        }
-        
-        .info h3 {
-          
-           font-weight: normal;
-            font-size: 18px;
-            
-        
-        }
-        .info p {
-           font-weight: normal;
-            margin: -13px 0 0 0;
-            font-size: 18px;
-            line-height: 22px;
-        }
-        
-    
     }
-
-
+    
 }
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1440px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
+    .Section {
+        width: 83%;
+        padding: 30px 0 0 30px;
+        margin: 6% 0 0% 40px;
+       
+    
+        .profil img {
+            width: 75px;
+            height: 75px;
+        }
+    
+        .listProfil-2 {
+            margin: 0 100px 0 0;
+           
+        }
+    
+        .info {
+            margin: 10px 0 0px 27px ;
+            h3 {
+                font-size: 20px;
+            }
+            p {
+                margin: -13px 0 0 0;
+                font-size: 20px;
+                line-height: 30px;
+            }
+        }
+        .profil1{
+            margin: 5px 0 0 0px;
+        }
+        .profil2 {
+            margin: 55px 0 0 60px;
+        }
+        .profil3 {
+            margin: 45px 0 0 140px;
+        }
+        
+        .profil4 {
+            margin: 50px 0 0 30px;
+        }
+        
+        .profil5 {
+            margin: 60px 0 0 110px;
+        }  
+    }
+}
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1366px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1366px) { 
+    .Section {
+        width: 83%;
+        padding: 30px 0 0 30px;
+        margin: 6% 0 0% 40px;
+       
+    
+        .profil img {
+            width: 60px;
+            height: 60px;
+        }
+    
+        .listProfil-2 {
+            margin: 0 100px 0 0;
+           
+        }
+    
+        .info {
+            margin: 7px 0 0px 22px ;
+            h3 {
+                font-size: 18px;
+            }
+            p {
+                margin: -17px 0 0 0;
+                font-size: 18px;
+                line-height: 30px;
+            }
+        }
+        .profil1{
+            margin: 5px 0 0 0px;
+        }
+        .profil2 {
+            margin: 55px 0 0 60px;
+        }
+        .profil3 {
+            margin: 45px 0 0 140px;
+        }
+        
+        .profil4 {
+            margin: 50px 0 0 30px;
+        }
+        
+        .profil5 {
+            margin: 60px 0 0 110px;
+        }  
+    }
+}
+
+
+

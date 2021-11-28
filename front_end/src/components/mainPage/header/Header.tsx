@@ -1,63 +1,75 @@
-import React from 'react' 
+import React, {useState, useEffect} from 'react';
 import './header.scss'
-import {NavLink} from 'react-router-dom'
-import Logo from './src/logo.svg'
-import Icon from '@mdi/react'
-import {mdiCrownOutline, mdiGamepadVariantOutline, mdiCalendarClock } from '@mdi/js';
 
-import FF from '../../homePage/section/photos/FF.png'
+import {NavLink as Link } from "react-router-dom"
+import { Badge, Avatar } from '@mui/material';
 
 
+interface TypeCategoriesProps {
+    data: Array<Type>;
+}
+interface Type {
+    id: number; login: string; photo_url: string;
+  }
 
-const Header = () => {
+export default function Header({ data }: TypeCategoriesProps){
 
- 
+    const [userName, setUserName] = useState('');
+    const [userImg, setUserImg] = useState('');
+    
+    useEffect(() => {
+        data.map(item => (
+            setUserName(item.login),
+            setUserImg(item.photo_url)
+        
+        ))
+    });
+
+   
     return (
       
     <div className=' d-flex flex-column mainHeader '>
     <nav className="navbar navbar-expand-lg  menuHeader ">
-
         <div className="d-flex  mainNavMenu">
             <ul className="navbar-nav headerMenu  w-100 ">
                 <li className="nav-item  linkLogoNav">
-                    <NavLink  to='/MainPage' className='toNavLink'   activeClassName="selectedNave" >
-                      
+                    <Link className={(navData) => navData.isActive ? "selectedNave" : "" } to="/MainPage" >
                             <h1>Games</h1>
-                            
-                    </NavLink>
+                    </Link>
                 </li>
                 
                 <li className="nav-item leaderDiv  " >
-                    <NavLink to="/MainPage/Rank-Friends" className='toNavLink'   activeClassName="selectedNave" > 
-                      
+                    <Link className={(navData) => navData.isActive ? "selectedNave" : "" } to="/Rank" >
                          <h1>LeaderBoard</h1>
-                    </NavLink>
+                    </Link>
                 </li>
 
-    
                 <li className="nav-item linkLogoNav " >
-                    <NavLink  to='/MainPage/historyGame' className='toNavLink'     activeClassName="selectedNave"> 
-                        
+                    <Link className={(navData) => navData.isActive ? "selectedNave" : "" } to="/History-Game" >
                          <h1>History</h1>
-                    </NavLink>
+                    </Link>
                 </li>
-
             </ul>
-            
             </div>
-        
         
         <div className='logHeader d-flex '>
-            <NavLink style={{ textDecoration: 'none' }} to='/MainPage/setting' className='w-100 '>
-            <div className="profil d-flex  " >
+          
+            <Link className={(navData) => navData.isActive ? "active" : "" } to="/Setting" >
+            <div className="profil d-flex   " >
                 <div className='profilLoggin  '>
-                    <h2 className=''>Frfrance</h2>
+                    <h2 className=''>{userName}</h2>
                 </div>
                 <div className='profilLogginImg '>
-                    <img  className=''   src={FF} alt="" /> 
+                
+                <Badge  overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                variant="dot"  sx={{  }}>
+                   <Avatar alt="userImg" src={userImg}  />
+                </Badge>
+                    
                 </div>
             </div>
-            </NavLink>
+            </Link>
+            
         </div>
    
     </nav>
@@ -74,5 +86,3 @@ const Header = () => {
    
     )
 }
-
-export default Header

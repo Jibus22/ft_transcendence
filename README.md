@@ -20,6 +20,19 @@ docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_ser
 ### Run production mode:
 docker-compose up [--build]
 
+### Documentation for the backend routes:
+http://localhost:3000/api/
+
+## Tests
+
+### Test specific unit test
+
+For auth.controller:
+
+`docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'jest --watchAll --maxWorkers=1 --testPathPattern=auth.controller'`
+
+With:
+`--testPathPattern=[regex]`
 
 ### DEBUG conf to attach vscode to docker container:
 ```

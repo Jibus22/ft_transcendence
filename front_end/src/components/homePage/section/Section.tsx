@@ -5,65 +5,62 @@ import MA from './photos/mateo.png'
 import JB from './photos/jb.png'
 import VG from './photos/VG.png'
 import BG from './photos/BG.png'
+import { useSpring, animated } from 'react-spring'
 
-import { Fade } from "react-awesome-reveal";
+interface Props {
+    img: string;
+    name: string;
+    info: string;
+    translate: string;
+    duration: number;
+}
 
-const Section = () => {
+const UserInfo = ({img, name, info, translate, duration}: Props) => {
+    const anim  = useSpring({
+        opacity: 1,
+        transform: "translate(0px, 0px)",
+        from: { opacity: 0, transform: translate} ,
+        config: {
+          delay: 300,
+          duration: duration,
+        },});
+    
     return (
-        <div className="Section d-flex">
-        <div className=" listProfil  d-flex flex-column ">
+        <animated.div  style={anim} className='w-100'> 
+        <div className='w-100 h-100 d-flex'>
+            <img src={img} alt="" />
+            <div className='info '>
+                    <h3>{name}</h3>
+                    <p>{info}</p>
+            </div>
+        </div>
+        </animated.div>
+    )
+}
+
+export default function  Section() {
+    return (
+        <div className="Section d-flex ">
+        <div className=" listProfil-1  d-flex flex-column ">
             <div className=" profil profil1  ">
-            
-                <img  src={FF} alt="" /> 
-                <div className='info '>
-                    <h3>Frfrance</h3>
-                    <p>Front-end Developer</p>
-                </div>
-              
-             </div>
-             
+                 <UserInfo img={FF} name={'Frfrance'} info={'Front-end Developer'} duration={1000} translate={'translate(-500px, 0px)'}/>
+             </div> 
              <div className=" profil profil2  ">
-        
-                <img src={JB} alt="" /> 
-                <div className='info'>
-                    <h3>Jle-corr</h3>
-                    <p>Back-end Developer</p>
-                </div>
-            
+                 <UserInfo img={JB} name={'Jle-corr'} info={'Back-end Developer'}  duration={1500} translate={'translate(-1000px, 0px)'}/>
              </div>
              <div className=" profil profil3  ">
-             
-                <img  src={MA} alt="" /> 
-                <div className='info'>
-                    <h3>Mrouchy</h3>
-                    <p>Back-end  Developer</p>
-                </div>
-           
+                <UserInfo img={MA} name={'Mrouchy'} info={'Back-end Developer'}  duration={2000} translate={'translate(-1500px, 0px)'}/>
              </div>
-             
         </div>
-        <div className='listProfil2'>
+        <div className='listProfil-2'>
             <div className=" profil profil4  ">
-             
-                <img  src={VG} alt="" /> 
-                <div className='info'>
-                    <h3>Vgoldman</h3>
-                    <p>Front-end Developer</p>
-                </div>
-                
+                <UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'}  duration={2400} translate={'translate(0px, 0px)'}/> 
              </div>
-             <div className=" profil profil5  ">
-             
-                <img  src={BG} alt="" /> 
-                <div className='info'>
-                    <h3>Bvalette</h3>
-                    <p>Back-end Developer</p>
-                </div>
-                
-             </div>
+             <div className=" profil profil5 ">
+                <UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={2400} translate={'translate(0px, 0px)'}/> 
+             </div> 
         </div>
     </div>
 )
 }
 
-export default Section
