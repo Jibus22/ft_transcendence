@@ -14,8 +14,8 @@ const Chat = () => {
 
 	return (<>
 		<ChatButton onClick={toggle}>
-			<PeopleIcon style={{ color: "#CA6C88", fontSize: "38px" }} className={`icon ${open ? 'open' : ''}`} />
-			<CloseIcon style={{ color: "#CA6C88", fontSize: "42px" }}  className={`icon ${!open ? 'open' : ''}`}/>
+			<PeopleIcon style={{ color: "#CA6C88", fontSize: "38px" }} className={`icon ${!open ? 'open' : ''}`} />
+			<CloseIcon style={{ color: "#CA6C88", fontSize: "42px" }}  className={`icon ${open ? 'open' : ''}`}/>
 		</ChatButton>
 		<ChatContainer open={open} />
 	</>);
