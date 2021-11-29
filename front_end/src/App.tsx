@@ -2,14 +2,14 @@ import * as React from "react";
 import { Homepage, MainPage } from './components';
 // import ErrorPage from "./components/errorPage/ErrorPage";
 import { Routes, Route} from "react-router-dom";
-
+import './app.css'
 
 
 const App = () => {
   return (
     
-      <div className='home'>
-   
+      <div className='home App'>
+        
 
         
         <Routes> 

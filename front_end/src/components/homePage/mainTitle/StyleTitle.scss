@@ -1,63 +1,132 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Roboto:300');
 
-.MainTitle {
-    position: absolute;
-    width: 690px;
-    height: 88px;
-    left: 130px;
-    top: 117px;
-   
-    .Title{
-      text-align: center;
-      
+.MainTitlePage {
+    margin: 5% 0% 0% 10%;
+    width: 65%;
+    height: 20%;
 
-      h1 {
+    h1 {
       font-family: Montserrat, sans-serif;
       font-style: normal;
-      font-weight: bold;
-      font-size: 95px;
-      line-height: 88px;
-      color: #FFFFFF;
-      text-align: center;
-
-      }  
   }
 
-    .TitleText {
+  .MainTitle {
       text-align: center;
 
-      h5 {
-        font-family: Montserrat, sans-serif;
-        font-style: normal;
-        font-weight: 500;
-        font-size: 30px;
-        line-height: 60px;
+      h1 {
+        font-weight: 900;
+        color: #FFFFFF;
+        letter-spacing: 4px;
+        font-size: 95px;    
         text-align: center;
-        color: #E69C6A;
+        line-height: 88px;
+      }
+
+      .TitleText {
+        text-align: center;
+
+        h5 {
+          font-weight: 500;
+          font-size: 30px;
+          line-height: 60px;
+          color: #E69C6A;
+        }
+      }
+      .sepTitle {
+        hr {
+          height: 3px;
+          width: 100%;
+          margin: 20px auto ;
+          animation-name: slideHr;
+          animation-delay: 0s;
+          animation-duration: 4s;
+          color: #CA6C88;
+          
+        }
     }
   }
-    
-  
-    .sepTitle {
-      hr {
-        height: 3px;
-        width: 100%;
-        margin: 20px auto ;
-        animation-name: slideHr;
-        animation-delay: 0s;
-        animation-duration: 4s;
-        color: #CA6C88;
-        
+}
+
+
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1566px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1566px) { 
+  .MainTitlePage {
+    margin: 5% 0% 0% 10%;
+    width: 65%;
+    height: 20%;
+
+  .MainTitle {
+      h1 {
+        letter-spacing: 4px;
+        font-size: 77px;    
+        line-height: 78px;
       }
+      .TitleText {
+        h5 {
+          font-size: 25px;
+          line-height: 50px;
+        }
+      }
+      .sepTitle {
+        hr {
+          height: 3px;
+          width: 100%;
+          margin: 20px auto ;
+        }
+    }
   }
-} 
+}
+}
 
 
-            ////////////////////////
-            /// animation titre ////
-            ////////////////////////
+///////////////////////////////////////////////
+//////// reponsive max-width: 1440px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
 
+}
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1366px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1366px) { 
+  .MainTitlePage {
+    margin: 3% 0% 0% 10%;
+    width: 55%;
+    height: 20%;
+
+  .MainTitle {
+      h1 {
+        letter-spacing: 4px;
+        font-size: 64px;    
+        line-height: 64px;
+      }
+      .TitleText {
+        h5 {
+          font-size: 21px;
+          line-height: 33px;
+        }
+      }
+      .sepTitle {
+        hr {
+          height: 3px;
+          width: 100%;
+          margin: 20px auto ;
+        }
+    }
+  }
+}
+}
+
+
+
+///////////////////////////////////////////////
+///////////////// Animation  //////////////////
+///////////////////////////////////////////////
 .MainTitle:first-of-type h1, h5 {   
   animation: showup 7s;
   animation-iteration-count: 1;
@@ -110,89 +179,3 @@
     width: 100%;
   }
  }
-
-
-    ///////////////////////////////////////////////
-    //////// reponsive max-width: 1440px  /////////
-    ///////////////////////////////////////////////
-@media screen and (max-width: 1440px) { 
-  .MainTitle {
-    position: absolute;
-    width: 690px;
-    height: 88px;
-    left: 40px;
-    top: 120px;
-   
-    .Title{
-      
-
-      h1 {
-      font-size: 70px;
-      line-height: 50px;
-      }  
-  }
-
-    .TitleText {
-      text-align: center;
-
-      h5 {
-        font-size: 23px;
-        line-height: 60px;
-    }
-  }
-    .sepTitle {
-      hr {
-        height: 3px;
-        width: 80%;
-        margin: 0px auto ;
-      }
-  }
-} 
-
-}
-
-
-    ///////////////////////////////////////////////
-    //////// reponsive max-width: 1366px  /////////
-    ///////////////////////////////////////////////
-@media screen and (max-width: 1366px) {
-  .MainTitle {
-    width: 600px;
-    height: 88px;
-    left: 60px;
-    top: 80px;
-
-
-
-    .Title{
-      h1 {
-      font-size: 62px;
-      line-height: 82px;
-      }  
-  }
-  .TitleText {
-    
-    h5 {
-      
-      font-size: 18px;
-      line-height: 20px;
-     
-  }
-}
-    .sepTitle {
-    hr {
-     
-      height: 2px;
-      margin: 15px auto ;
-    }
-}
-
-  }
-
-  
-
-}
-
-
-
- 

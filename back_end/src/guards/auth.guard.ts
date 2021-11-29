@@ -2,7 +2,7 @@
 https://docs.nestjs.com/guards#guards
 */
 
-import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { serialize } from 'class-transformer';
 
 @Injectable()
@@ -14,6 +14,8 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     logger.log(`User id: ${request.session.userId}`);
 
-    return request.session.userId;
+    if (request.session.userId)
+      return true;
+    throw new UnauthorizedException();
   }
 }

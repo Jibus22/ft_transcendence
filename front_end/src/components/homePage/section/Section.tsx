@@ -40,10 +40,10 @@ const UserInfo = ({img, name, info, translate, duration}: Props) => {
 
 export default function  Section() {
     return (
-        <div className="Section d-flex">
-        <div className=" listProfil  d-flex flex-column ">
+        <div className="Section d-flex ">
+        <div className=" listProfil-1  d-flex flex-column ">
             <div className=" profil profil1  ">
-                 <UserInfo img={FF} name={'frfrance'} info={'Front-end Developer'} duration={1000} translate={'translate(-500px, 0px)'}/>
+                 <UserInfo img={FF} name={'Frfrance'} info={'Front-end Developer'} duration={1000} translate={'translate(-500px, 0px)'}/>
              </div> 
              <div className=" profil profil2  ">
                  <UserInfo img={JB} name={'Jle-corr'} info={'Back-end Developer'}  duration={1500} translate={'translate(-1000px, 0px)'}/>
@@ -52,7 +52,7 @@ export default function  Section() {
                 <UserInfo img={MA} name={'Mrouchy'} info={'Back-end Developer'}  duration={2000} translate={'translate(-1500px, 0px)'}/>
              </div>
         </div>
-        <div className='listProfil2'>
+        <div className='listProfil-2'>
             <div className=" profil profil4  ">
                 <UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'}  duration={2400} translate={'translate(0px, 0px)'}/> 
              </div>

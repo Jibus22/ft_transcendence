@@ -21,27 +21,22 @@ const MainPage = () => {
         fetchData()
     }, [])
 
-    
-
-
-    
-
-
-
-
-    
+  
         return (
             
-            <div className='mainPageBody d-flex flex-column border' >
+            <div className='mainPageBody d-flex flex-column ' >
                 <div>
                     <Header data={data}/>
                 </div>
-                <Routes>
+            
+                <Routes >
                     <Route path='/MainPage' element={ <Game/> }/>
                     <Route path='/History-Game' element={ <HistoryGame/> }/>
                     <Route path="/Setting" element={ <ParamUser data={data}/> }/>
                     <Route path='/Rank'element={ <UserRank/> }/>
                 </Routes>
+            
+                
             </div>
         );
 }

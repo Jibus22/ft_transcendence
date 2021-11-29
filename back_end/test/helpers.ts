@@ -2,8 +2,7 @@ import { INestApplication, Injectable } from '@nestjs/common';
 import * as request from 'supertest';
 
 export class CommonTest {
-
-  constructor (private app: INestApplication) {}
+  constructor(private app: INestApplication) {}
 
   testUserBatch = [
     {
@@ -54,22 +53,27 @@ export class CommonTest {
     return await request(this.app.getHttpServer()).post('/dev/signin').send({
       login,
     });
-  };
+  }
 
   getCookies(response: request.Response): string[] {
     return response.get('Set-Cookie');
+  }
+
+  async getMe(cookies: string[]) {
+    return await request(this.app.getHttpServer())
+      .get(`/me`)
+      .set('Cookie', cookies);
   };
 
   async createFakeUsers() {
     return await request(this.app.getHttpServer())
       .post('/dev/createUserBatch')
       .send(this.testUserBatch);
-  };
+  }
 
   async deleteFakeUsers(users: { login: string }[]) {
     return await request(this.app.getHttpServer())
       .delete('/dev/deleteUserBatch')
       .send(users);
-  };
-
+  }
 }
