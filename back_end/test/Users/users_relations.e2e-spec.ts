@@ -39,6 +39,7 @@ const testSet = async (relation: RelationType) => {
   let commons: CommonTest;
   const relationProperty = relBodyResponse[relation];
   const relationDesc = relDescription[relation];
+  let loggedUser;
 
   describe(`user controller: users relations routes (e2e): ${relationDesc} `, () => {
 
@@ -49,6 +50,7 @@ const testSet = async (relation: RelationType) => {
 
       app = moduleFixture.createNestApplication();
       commons = new CommonTest(app);
+      loggedUser = commons.testUserBatch[0];
       await app.init();
     });
 
