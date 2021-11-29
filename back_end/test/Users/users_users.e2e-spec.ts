@@ -9,6 +9,7 @@ describe('user controller: users infos routes (e2e)', () => {
   let commons: CommonTest;
   let users;
   let cookies: string[];
+  let loggedUser;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -17,7 +18,7 @@ describe('user controller: users infos routes (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     commons = new CommonTest(app);
-
+    loggedUser = commons.testUserBatch[0];
     await app.init();
 
     users = await commons
