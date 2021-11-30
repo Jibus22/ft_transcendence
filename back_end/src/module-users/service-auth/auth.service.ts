@@ -1,14 +1,18 @@
 import { AxiosRequestConfig } from 'axios';
-import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { UsersService } from '../service-users/users.service';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { User } from '../entities/users.entity';
 import { map, lastValueFrom } from 'rxjs';
+import { isError } from 'util';
 
 @Injectable()
 export class AuthService {
-
   constructor(
     private usersService: UsersService,
     private configService: ConfigService,
@@ -38,11 +42,7 @@ export class AuthService {
 
     return lastValueFrom(
       this.httpService
-        .post(
-          this.configService.get('AUTH_API_TOKEN_URL'),
-          null,
-          requestConfig,
-        )
+        .post(this.configService.get('AUTH_API_TOKEN_URL'), null, requestConfig)
         .pipe(
           map((resp) => {
             return resp.data.access_token;
@@ -67,7 +67,6 @@ export class AuthService {
         .pipe(
           map((resp) => {
             return {
-              login: resp.data.login,
               login_42: resp.data.login,
               photo_url_42: resp.data.image_url,
             };
@@ -79,18 +78,20 @@ export class AuthService {
   }
 
   async updateDatabase(user: Partial<User>) {
-    const users = await this.usersService.find(user.login);
+    const users = await this.usersService.findByLogin42(user.login_42);
     if (users.length) {
-      return await this.usersService.update(users[0].id, {
-        photo_url_42: users[0].photo_url_42,
-      } as User).catch((e) => {
-        throw new BadGatewayException(e.message);
-      });
+      return await this.usersService
+        .update(users[0].id, {
+          photo_url_42: users[0].photo_url_42,
+        } as User)
+        .catch((e) => {
+          throw new BadGatewayException(e.message);
+        });
     }
+    user.login = user.login_42;
     user.use_local_photo = false;
     return await this.usersService.create(user).catch((e) => {
       throw new BadGatewayException(e.message);
     });
   }
-
 }
