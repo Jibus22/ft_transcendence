@@ -1,6 +1,6 @@
-import { Controller, Delete, Get, InternalServerErrorException, Query, Redirect, Session } from '@nestjs/common';
+import { Controller, Delete, Get, HttpStatus, InternalServerErrorException, Query, Redirect, Session } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './service-auth/auth.service';
 
 @ApiTags('Auth')
@@ -27,6 +27,7 @@ export class AuthController {
     @ApiOperation({
       summary: 'Remove userId from user\'s session cookie'
     })
+    @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
     signOut(@Session() session: any) {
       session.userId = null;
     }

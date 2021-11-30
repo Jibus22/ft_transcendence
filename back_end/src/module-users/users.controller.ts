@@ -2,18 +2,15 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
-  HttpException,
-  HttpStatus,
+  Get, HttpStatus,
   NotFoundException,
   Param, Post, Session,
   UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
-  ApiOperation, ApiParam, ApiResponse, ApiTags
+  ApiOperation, ApiResponse, ApiTags
 } from '@nestjs/swagger';
-import { type } from 'os';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { editRelationDto } from './dtos/edit-relation.dto';
@@ -26,6 +23,7 @@ import { UsersService } from './service-users/users.service';
 
 @ApiTags('Users')
 @ApiCookieAuth()
+@ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not logged' })
 @UseGuards(AuthGuard)
 @Serialize(UserDto)
 @Controller('users')
@@ -51,7 +49,7 @@ export class UsersController {
     summary: 'Get public infos of user :login',
   })
   @ApiResponse({ type: UserDto, isArray: false })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Users public data' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'User\'s public data' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
   async getUserById(@Param() { login }) {
     return await this.usersService.find(login).then((user) => {

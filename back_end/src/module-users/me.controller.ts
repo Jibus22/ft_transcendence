@@ -1,11 +1,10 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, NotFoundException, Patch, Session,
+  Controller, Get, HttpStatus, NotFoundException, Patch, Session,
   UseGuards
 } from '@nestjs/common';
 import {
-  ApiBody,
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
@@ -22,6 +21,7 @@ import { UsersService } from './service-users/users.service';
 
 @ApiTags('Me')
 @ApiCookieAuth()
+@ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not logged' })
 @UseGuards(AuthGuard)
 @Controller('me')
 export class MeController {
@@ -40,6 +40,7 @@ export class MeController {
     summary: 'Get infos of the currently logged user',
   })
   @ApiResponse({ type: privateUserDto })
+  @ApiResponse({ status: HttpStatus.OK, description: 'User private informations' })
   async whoAmI(@CurrentUser() userId: string) {
     return await this.meService.whoAmI(userId)
       .then((userData: User) => userData)
@@ -51,8 +52,8 @@ export class MeController {
   @ApiOperation({
     summary: 'Update infos of the currently logged user',
   })
-  @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ type: privateUserDto })
+  @ApiResponse({ status: HttpStatus.OK, description: 'User private informations updated' })
   async update(@Body() body: UpdateUserDto, @Session() session) {
     return this.usersService.update(session.userId, body)
          .catch((error) => {throw new BadRequestException(error.message);});
