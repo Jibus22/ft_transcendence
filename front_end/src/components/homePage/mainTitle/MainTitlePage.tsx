@@ -1,34 +1,23 @@
 import React from 'react' 
-import  './StyleTitle.css'
+import  './StyleTitle.scss'
 
 
-const MainTitlePage = () => {
+export default function MainTitlePage() {
     return (
-        <div className='d-flex flex-column p-4  w-75 Header  '>
-                <div className='MainTitle '>
-                    <div className='Sep'>
-                        <hr />
-                    </div>
-                   
-                    <div className='Title'>
-                        <h1>Transcendence</h1>
-                    </div> 
-                    <div className=''>
-                        <hr/>
-                    </div>
-                    
-                    <div className='TitleText'> 
-                        <h5>The most expensive experience</h5>
-                    </div>        
+        <div className='MainTitlePage d-flex flex-column'>
+             <div className='MainTitle'>
+                <div className='Title  '>
+                    <h1>Transcendence</h1>
+                </div> 
+                <div className='TitleText'> 
+                    <h5>Let's play</h5>
+                 </div>        
+                 <div className='sepTitle'>
+                    <hr/>
                 </div>
-
-                <footer className=''>
-
-                </footer>
+                </div>
             </div>
     )
 }
-
-export default MainTitlePage
 
 

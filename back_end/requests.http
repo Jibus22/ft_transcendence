@@ -3,98 +3,239 @@
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#								DEBUG __	USER AUTH
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
 
-### create new user
+### SIGNIN WITH DEBUG SESSION
 
-POST http://localhost:3000/auth/signup
+POST http://localhost:3000/dev/signin
 content-type: application/json
 
 {
-	"email": "hello@coucou.com",
-	"password": "string"
+	"login": "fake-randomDude-custome"
 }
 
-### login with same user
-POST http://localhost:3000/auth/signin
+### SIGNOUT
+POST http://localhost:3000/users/signout
+
+### GET MY OWN INFOS
+GET http://localhost:3000/users/me
+
+### CREATE 1 USER
+POST http://localhost:3000/dev/createUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-bvalette-custome",
+		"login_42": "fake-bvalette",
+		"photo_url_42": "https://cdn.intra.42.fr/users/bvalette.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	}
+]
+
+### ADD 1 USER
+POST http://localhost:3000/dev/createUserBatch
 content-type: application/json
 
 {
-	"email": "hello@coucou.com",
-	"password": "string"
+	"login": "fake-bvalette-custome",
+	"login_42": "fake-bvalette",
+	"photo_url_42": "https://cdn.intra.42.fr/users/vgoldman.jpg",
+	"photo_url_local": null,
+	"use_local_photo": false
 }
 
-### signout
-POST http://localhost:3000/auth/signout
+### DELETE 1 USER
+DELETE http://localhost:3000/dev/deleteUserBatch
+content-type: application/json
 
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#									TEST
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
+[
+	{
+		"login": "bvalette"
+	}
+]
 
-### hello string
-GET http://localhost:3000/hello
+### DELETE 1 USER
+DELETE http://localhost:3000/dev/deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-bvalette-custome"
+	}
+]
+
+### CREATE USER BATCH
+POST http://localhost:3000/dev/createUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-vgoldman-custome",
+		"login_42": "fake-vgoldman",
+		"photo_url_42": "https://cdn.intra.42.fr/users/vgoldman.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-frfrancd-custome",
+		"login_42": "fake-frfrancd",
+		"photo_url_42": "https://cdn.intra.42.fr/users/frfrancd.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-jle-corr-custome",
+		"login_42": "fake-jle-corr",
+		"photo_url_42": "https://cdn.intra.42.fr/users/jle-corr.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-mrouchy-custome",
+		"login_42": "fake-mrouchy",
+		"photo_url_42": "https://cdn.intra.42.fr/users/mrouchy.jpg",
+		"photo_url_local": null,
+		"use_local_photo": false
+	},
+	{
+		"login": "fake-randomDude-custome",
+		"login_42": "fake-randomDude",
+		"photo_url_42": "https://cdn.intra.42.fr/users/medium_default.png",
+		"photo_url_local": null,
+		"use_local_photo": false
+	}
+]
+
+### DELETE USER BATCH
+DELETE http://localhost:3000/dev/deleteUserBatch
+content-type: application/json
+
+[
+	{
+		"login": "fake-vgoldman-custome"
+	},
+	{
+		"login": "fake-frfrancd-custome"
+	},
+	{
+		"login": "fake-jle-corr-custome"
+	},
+	{
+		"login": "fake-mrouchy-custome"
+	},
+	{
+		"login": "fake-randomDude-custome"
+	}
+]
 
 
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#									USER AUTH
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
+### GET ALL USERS
+GET http://localhost:3000/users
 
+### DELETE ALL USERS
+DELETE http://localhost:3000/dev/deleteAllUsers
 
-### whoAmI
-GET http://localhost:3000/auth/whoami
-
-
-### find one user by id
-GET http://localhost:3000/auth/3
-
-### find all users by email
-GET http://localhost:3000/auth?email=hello@coucou.com
-
-### remove user by id
-DELETE http://localhost:3000/auth/1
-
-### update user email
-PATCH http://localhost:3000/auth/2
+### UPDATE DATA OF ONE USER
+PATCH http://localhost:3000/users/me
 content-type: application/json
 
 {
-	"email": "E@MAIL.com"
+	"login": "me_account_brian"
 }
 
-### find all users by email
-GET http://localhost:3000/auth?email=E@MAIL.com
-
 
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
-#								REPORTS
+#								FRIENDS
 #------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
-### Send a report
-POST http://localhost:3000/reports
+
+
+### GET ALL FRIENDS
+GET http://localhost:3000/users/friends
+
+### ADD ONE FRIENDS
+POST http://localhost:3000/users/friends
 content-type: application/json
 
 {
-	"price": 23500,
-	"make": "honda",
-	"model": "civic",
-	"year": 1994,
-	"lng": 0,
-	"lat": 0,
-	"mileage": 130150
+	"id": "691cd180-37fd-4805-aba0-c02c5bfc43ee"
 }
 
-### change approved status of a report by its id
-PATCH http://localhost:3000/reports/2
+### REMOVE ONE FRIENDS
+DELETE http://localhost:3000/users/friends
 content-type: application/json
 
 {
-	"approved": true
+	"id": "691cd180-37fd-4805-aba0-c02c5bfc43ee"
 }
 
-### get estimate for existing vehicule
-GET http://localhost:3000/reports?make=honda&model=civic&lng=0&lat=0&mileage=120000&year=1993
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#								BLOCK
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+
+
+### GET ALL BLOCK
+GET http://localhost:3000/users/block
+
+### ADD ONE BLOCK
+POST http://localhost:3000/users/block
+content-type: application/json
+
+{
+  "id": "b2e3aefe-284e-4a44-83d9-603437aef3a0"
+}
+
+### REMOVE ONE BLOCK
+DELETE http://localhost:3000/users/block
+content-type: application/json
+
+{
+	"id": "b2e3aefe-284e-4a44-83d9-603437aef3a0"
+}
+
+
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#							ME ROUTES
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+### GET MY OWN INFOS
+GET http://localhost:3000/me
+
+
+### UPDATE MY OWN INFOS
+PATCH http://localhost:3000/me
+content-type: application/json
+
+{
+	"photo_url_local": "http://welcomepage.com",
+	"use_local_photo": true
+}
+
+
+
+
+
+
+
+
+
+
+### GET ALL USERS
+GET http://localhost:3000/users
+
+### GET USER BY ID
+GET http://localhost:3000/users/a49680d0-2def-454b-b29c-e7a0bef97e14

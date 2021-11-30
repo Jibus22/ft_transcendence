@@ -2,7 +2,8 @@
 .mainHeader {
     width: 100%;
     justify-content: center;
-
+    height: 100px;
+    margin: 6% 0 0 0;
     
    .logo{
        width: 50px;
@@ -10,103 +11,436 @@
        margin: 0 0 0 20px ;
    }
    
-
-}
-
-.menuHeader {
-   width: 75%;
-   height: 70px;
-   border-radius: 23px;
-   border: 1px solid var(--borderLight) ;
-   margin: 20px auto;
-   display: flex;
+   .menuHeader {
+    width: 80%;
+    height: 85px;
+   
+    margin: 100px auto;
+    display: flex;
+  
+    background: rgba(230, 156, 106, 0.2);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 7.5px );
+    -webkit-backdrop-filter: blur( 7.5px );
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
  
-   background-color: var(--colorBlueC);
+   
+    .selectedNave{
+     
+     border-bottom: 2px #E6DA6A solid;
+ 
+     
+     
+     
+ }
+     
+ 
+ }
 
-
-
-
-   .selectedNave{
-       
-    border-bottom: 1px #e6c073 solid;
-
+ .mainNavMenu {
+     width: 80%;
+ }
+ 
+ .headerMenu {
+     margin: 0 auto;
+     display: flex;
+     justify-content: space-around;
     
-    
-    
-}
-    
-
-}
-
-.headerMenu {
-    margin: 0 0 0 25%;
-    width: 50%;
-    
-    display: flex;
-    justify-content: center;
-
-   .linkLogoNav {
-       width: 30px;
-    
-       margin: 0 80px 0 80px;
-       
-   }
-
-    .iconHeader {
-        color: rgba(255, 255, 255, .2);
-       
-        // margin: 0 80px 0 80px;
-       
-        
-      
+ 
+    .toNavLink {
+        width: 100%;
     }
-}
+ 
+     .iconHeader {
+         color: rgba(255, 255, 255, .2);
+        
+         // margin: 0 80px 0 80px;
+        
+         
+       
+     }
+     li {
+         width: 90px;
+     }
+     .leaderDiv {
+         width: 155px;
+     }  
+ 
+ 
+     h1 {
+         font-family: Montserrat, sans-serif;
+         color: white;
+         font-weight: 500;
+         font-size: 23px;
+         line-height: 35px;
+         margin: 0 auto;
+     }
+     h1:hover {
+        font-size: 26px;
+     }
+     
+ }
+ 
 
-.iconeSetting:hover, .iconeRank:hover, .iconeNewGame:hover  {
-    color: var(--colorHover);
+ 
+ 
+ 
+ .nav-item  {
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     
+     
+ }
+     
+ 
+ 
+ 
+ .logHeader {
+     width: 15%;
+     margin: 0 0 0 0px;
 
-}
 
-
-
-
-.nav-item  {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    
-    
-}
-    
-
-
-
-.logHeader {
-    margin: 0 20px 0 0;
     .profil {
-        align-self: end;
-        margin: 0 0 0 0;
+        .profilLoggin {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            
+
+            h2 {
+                font-family: Montserrat, sans-serif;
+                color: white;
+                font-weight: 500;
+                font-size: 23px;
+                text-align: center;
+            }
+        }
+
+        .profilLogginImg {
+            
+            .MuiBadge-badge {
+                width: 17%;
+                height: 19%;
+                background-color: #44b700;
+                color: #44b700;
+                border-radius: 100%;
+                box-shadow: 0 0 0 0.5px green;
+            }.MuiBadge-badge::after {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                animation: badgeAnim 1.2s infinite ease-in-out;
+                border: 1px solid #44b700;
+                content: "";
+                
+            }
+           
+
+            .MuiAvatar-root {
+                width: 90px;
+                height: 80px
+                
+            }
+
+        }
+        
+    }
+
+     
+    
+ 
+     .profil:hover {
+         h2 {
+            font-size: 26px;
+         }
+        
+     }
+     
+ }
+}
+
+            ///////////////////////////////////////////////
+            //////// reponsive max-width: 1440px  /////////
+            ///////////////////////////////////////////////
+
+
+@media screen and (max-width: 1440px) {
+    .mainHeader {
+    width: 100%;
+    justify-content: center;
+    
+    
+   .menuHeader {
+    width: 81%;
+    height: 66px;
+    margin: 90px auto;
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+
+
+    .selectedNave{
+    
+     border-bottom: 1px #E6DA6A solid; 
+ }
+     
+ 
+ }
+
+ .mainNavMenu {
+     width: 80%;
+ }
+ 
+ .headerMenu {
+     margin: 0 auto;
+  
+    
+
+    .toNavLink {
+        width: 100%;
+    }
+
+     li {
+         
+         width: 70px;
+     }
+     .leaderDiv {
+        width: 105px;
+    }  
+
      
 
-        h2 {
-            color: white;
-            font-size: 1em;
-            margin: 14px 18px 0 0
+     h1 {
+       
+         font-size: 17px;
+         line-height: 25px;
+         margin: 0 auto;
+     }
+     h1:hover {
+        font-size: 19px;
+     }
+     
+ }
+ 
+
+ 
+ 
+ 
+ .nav-item  {
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     
+     
+ }
+  
+ .logHeader {
+     width: 15%;
+     margin: 0 0 0 0px;
+
+
+    .profil {
+        margin: 0 0 0 20px;
+        .profilLoggin {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90px;
+            
+            h2 {
+                font-size: 17px;
+                text-align: center;
+            }
         }
-    }
-
-    img {
-        width: 50px;
-        height: 50px;
-        align-self: end;
-        margin: 0 0px 0 0;
-    }
-
-    .profil:hover {
-        padding: 0 0 0 10px;
-        border-radius: 20px;
-        background-color: #364f6b;
-    }
     
+        .profilLogginImg {
+            
+            width: 60px;
+            height: 60px;
+          
+        
+            .MuiBadge-colorPrimary {
+                color: #ff0000;   
+            }
+        
+        }
+        .profilLogginImg {
+            
+            .MuiBadge-badge {
+                width: 18%;
+                height: 15%;
+                background-color: #44b700;
+                color: #44b700;
+                border-radius: 100%;
+                box-shadow: 0 0 0 0.5px green;
+            }.MuiBadge-badge::after {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                animation: badgeAnim 1.2s infinite ease-in-out;
+                border: 1px solid #44b700;
+                content: "";
+                
+            }
+            .MuiAvatar-root {
+                width: 60px;
+                height: 60px
+                
+            }
+
+        }
+        
+    }
+
+     
+    
+
+     .profil:hover {
+         h2 {
+            font-size: 19px;
+         }
+        
+     }
+    }
+     
+ }
+}
+
+
+            ///////////////////////////////////////////////
+            //////// reponsive max-width: 1366px  /////////
+            ///////////////////////////////////////////////
+ 
+
+ @media screen and (max-width: 1366px) {
+    .mainHeader {
+    width: 100%;
+    justify-content: center;
+   
+   .menuHeader {
+    width: 80%;
+    height: 60px;
+   
+    margin: 70px auto;
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+ 
+   
+    .selectedNave{
+     
+     border-bottom: 1px #E6DA6A solid; 
+ }
+     
+ 
+ }
+
+ .mainNavMenu {
+     width: 80%;
+ }
+ 
+ .headerMenu {
+     margin: 0 auto;
+     display: flex;
+     justify-content: space-around;
+    
+ 
+    .toNavLink {
+        width: 100%;
+    }
+ 
+     li {
+         
+         width: 70px;
+     }
+     .leaderDiv {
+        width: 105px;
+    }  
+
+     
+ 
+     h1 {
+         font-weight: 500;
+         font-size: 16px;
+         line-height: 25px;
+         margin: 0 auto;
+     }
+     h1:hover {
+        font-size: 18px;
+     }
+     
+ }
+ 
+
+ 
+ 
+ 
+ .nav-item  {
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     
+     
+ }
+     
+ 
+ 
+ 
+ .logHeader {
+     width: 15%;
+     margin: 0 0 0 0px;
+
+
+    .profil {
+        .profilLoggin {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            h2 {
+                font-family: Montserrat, sans-serif;
+                color: white;
+                font-weight: 500;
+                font-size: 15px;
+                text-align: center;
+            }
+        }
+
+        .profilLogginImg {
+            // margin: 0 0 0 45px;
+            
+
+            img {
+                width: 50px;
+                height: 50px;
+            }
+            .MuiBadge-colorPrimary {
+                color: #ff0000;   
+            }
+
+        }
+        
+    }
+
+     
+    
+ 
+     .profil:hover {
+         h2 {
+            font-size: 26px;
+         }
+        
+     }
+    }
+     
+ }
 }
 

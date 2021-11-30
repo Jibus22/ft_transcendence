@@ -1,74 +1,66 @@
 import React from 'react' 
-import './StyleSection.css'
+import './StyleSection.scss'
 import FF from './photos/FF.png'
 import MA from './photos/mateo.png'
 import JB from './photos/jb.png'
 import VG from './photos/VG.png'
 import BG from './photos/BG.png'
+import { useSpring, animated } from 'react-spring'
 
-import { Fade } from "react-awesome-reveal";
+interface Props {
+    img: string;
+    name: string;
+    info: string;
+    translate: string;
+    duration: number;
+}
 
-const Section = () => {
+const UserInfo = ({img, name, info, translate, duration}: Props) => {
+    const anim  = useSpring({
+        opacity: 1,
+        transform: "translate(0px, 0px)",
+        from: { opacity: 0, transform: translate} ,
+        config: {
+          delay: 300,
+          duration: duration,
+        },});
+    
+    return (
+        <animated.div  style={anim} className='w-100'> 
+        <div className='w-100 h-100 d-flex'>
+            <img src={img} alt="" />
+            <div className='info '>
+                    <h3>{name}</h3>
+                    <p>{info}</p>
+            </div>
+        </div>
+        </animated.div>
+    )
+}
+
+export default function  Section() {
     return (
         <div className="Section d-flex ">
-        <div className=" listProfil  d-flex flex-column ">
+        <div className=" listProfil-1  d-flex flex-column ">
             <div className=" profil profil1  ">
-            <Fade direction='left' delay={2200}>  
-                <img  src={FF} alt="" /> 
-                <div className='info'>
-                    <p>Frfrance</p>
-                    <hr />
-                    <p>Front-end developper</p>
-                </div>
-                </Fade>   
-             </div>
-             
+                 <UserInfo img={FF} name={'Frfrance'} info={'Front-end Developer'} duration={1000} translate={'translate(-500px, 0px)'}/>
+             </div> 
              <div className=" profil profil2  ">
-             <Fade direction='left' delay={2800}> 
-                <img src={JB} alt="" /> 
-                <div className='info'>
-                    <p>Jle-corr</p>
-                    <hr />
-                    <p>Back-end developper</p>
-                </div>
-                </Fade>
+                 <UserInfo img={JB} name={'Jle-corr'} info={'Back-end Developer'}  duration={1500} translate={'translate(-1000px, 0px)'}/>
              </div>
              <div className=" profil profil3  ">
-             <Fade direction='left' delay={3200}> 
-                <img  src={MA} alt="" /> 
-                <div className='info'>
-                    <p>Mrouchy</p>
-                    <hr />
-                    <p>Back-end  developper</p>
-                </div>
-                </Fade>
+                <UserInfo img={MA} name={'Mrouchy'} info={'Back-end Developer'}  duration={2000} translate={'translate(-1500px, 0px)'}/>
              </div>
-             
         </div>
-        <div className='listProfil2'>
+        <div className='listProfil-2'>
             <div className=" profil profil4  ">
-             <Fade direction='left' delay={3200}> 
-                <img  src={VG} alt="" /> 
-                <div className='info'>
-                    <p>Vgoldman</p>
-                    <hr />
-                    <p>Front-end  developper</p>
-                </div>
-                </Fade>
+                <UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'}  duration={2400} translate={'translate(0px, 0px)'}/> 
              </div>
-             <div className=" profil profil5  ">
-             <Fade direction='left' delay={3200}> 
-                <img  src={BG} alt="" /> 
-                <div className='info'>
-                    <p>Bvalette</p>
-                    <hr />
-                    <p>Back-end  developper</p>
-                </div>
-                </Fade>
-             </div>
+             <div className=" profil profil5 ">
+                <UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={2400} translate={'translate(0px, 0px)'}/> 
+             </div> 
         </div>
     </div>
 )
 }
 
-export default Section

@@ -1,0 +1,16 @@
+
+### This docker-compose runs end to end tests, but is more convenient when run with:
+###   docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'npm run test:e2e'
+
+version: '3.8'
+
+services:
+
+  back_end_server:
+    env_file:
+      - .env
+      - .env_test.env
+    volumes:
+      ## in order to run test:watch, git is required to check files changes
+      - ./.git:/usr/src/app/.git
+    command: npm run test:e2e

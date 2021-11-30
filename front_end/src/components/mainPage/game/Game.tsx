@@ -1,24 +1,28 @@
+import React, {useState } from 'react';
 
-import React from 'react'
-import './game.scss'
-// import { BrowserRouter as Router, Link, Route, NavLink, Switch, useHistory } from 'react-router-dom'
+import { Play, OnlineGame } from '../..';
 
-import { Fade } from "react-awesome-reveal";
 
-const GameWindow = () => {
+export default function Game() {
+
+    const[loading, setLoading] = useState<boolean>(false);
+    const[isDisable, setIsDisable] = useState<boolean>(true)
+    function handleClick() {
+        setLoading(true);
+        setIsDisable(false);
+        setTimeout(function () {
+            setLoading(false);
+            setIsDisable(true);
+        }, 5000);
+    }
+
+    
 
     return (
-
-        <Fade direction='up' duration={400} className='w-100'> 
-        <div className='mainGameWindow'>
-            
+        <div className='d-flex MainGame'>
+            <Play Loadingclick={handleClick} disable={isDisable} loading={loading} />
+            <OnlineGame Loadingclick={handleClick} loading={loading}/>
+          
         </div>
-        </Fade>
- 
-     
     )
 }
-
-
-export default GameWindow
-
