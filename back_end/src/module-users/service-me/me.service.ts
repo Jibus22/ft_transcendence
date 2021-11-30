@@ -13,16 +13,12 @@ export class MeService {
     private relationsService: RelationsService,
     ) {}
 
-  create() {}
-  update() {}
-  delete() {}
-
-  async whoAmI(userId: string): Promise<User> {
-    if (!userId) {
-      throw new BadRequestException('user session does not exist');
-    }
-    let user: User;
-    return await this.userService
+    async whoAmI(userId: string): Promise<User> {
+      if (!userId) {
+        throw new BadRequestException('user session does not exist');
+      }
+      let user: User;
+      return await this.userService
       .findOne(userId)
       .then((foundUser) => {
         if (! foundUser ) {
@@ -39,5 +35,9 @@ export class MeService {
         user.blocked_list = blocked;
         return user;
       })
-  }
+    }
+
+    uploadPhoto(file: Express.Multer.File) {
+      console.log(file);
+    }
 }
