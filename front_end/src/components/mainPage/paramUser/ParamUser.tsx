@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import './paramUser.scss'
-import PopUpUser from './PopUpUser';
+import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring'
 import {Switch, FormControlLabel, Button, IconButton } from '@mui/material';
 import FormUser from './FormUser';
@@ -8,13 +8,16 @@ import PencilIcon from './photos/pencil-icon.png'
 
 interface TypeCategoriesProps {
   data: Array<Type>;
+  fetchData: () => void;
+ 
+ 
 }
 interface Type {
   id: number; login: string; photo_url: string;
 }
 
 
-export default function ParamUser({data} : TypeCategoriesProps ) {
+export default function ParamUser({data, fetchData} : TypeCategoriesProps ) {
   const props = useSpring({
     opacity: 1,
     transform: "translate(0px, 0px)",
@@ -49,7 +52,7 @@ export default function ParamUser({data} : TypeCategoriesProps ) {
        <div className="mainParamUser d-flex flex-column">
           
           { isPop ? (
-             <PopUpUser printPopup={printPopup}/>
+             <PopUpUser printPopup={printPopup} userImg={userImg}/>
           ) : null}
 
           <div onMouseEnter={toggleModif} onMouseLeave={toggleModif} className='imgUser '>
@@ -78,7 +81,7 @@ export default function ParamUser({data} : TypeCategoriesProps ) {
               </div>
             </div>
             <div className='mainMaterialUiText '>
-                 <FormUser isPop={isPop} userName={userName}/>
+                 <FormUser isPop={isPop} userName={userName} fetchData={fetchData} />
             </div>
             <div className='switchMui '>
             <FormControlLabel disabled={isPop} control={

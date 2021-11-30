@@ -21,7 +21,6 @@ export default function Header({ data }: TypeCategoriesProps){
         data.map(item => (
             setUserName(item.login),
             setUserImg(item.photo_url)
-        
         ))
     });
 
@@ -39,7 +38,7 @@ export default function Header({ data }: TypeCategoriesProps){
                 </li>
                 
                 <li className="nav-item leaderDiv  " >
-                    <Link className={(navData) => navData.isActive ? "selectedNave" : "" } to="/Rank" >
+                    <Link className={(navData) => navData.isActive ? "selectedNave" : "" } to="/Rank/World" >
                          <h1>LeaderBoard</h1>
                     </Link>
                 </li>

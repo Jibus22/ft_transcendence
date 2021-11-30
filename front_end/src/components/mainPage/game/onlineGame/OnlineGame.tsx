@@ -54,7 +54,7 @@ export default function OnlineGame({Loadingclick, loading } : Props){
                 <div className='userWatch d-flex '>
                 {/* <Button className='muiButton' variant="contained"   sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>Watch</Button> */}
                 <LoadingButton className='muiButton' onClick={Loadingclick}  disabled={loading}  variant="contained"
-                                sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>
+                                sx={{borderRadius: 4, width: 2/2, height: 2/2, textTransform: 'none', backgroundColor: '#E69C6A'}}>
                      {loading && <CircularProgress size='1.2em' />}
                      {!loading && 'Watch'}
             </LoadingButton>

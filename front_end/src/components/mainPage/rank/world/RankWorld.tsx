@@ -59,10 +59,6 @@ const RankWorld = () => {
             {divUser}
             {divUser}
             {divUser}
-           
-            
-          
-
         </div>
         </animated.div>
      
