@@ -17,27 +17,64 @@ export class Ball {
 		console.log(this.y);
 	}
 
-	_update(playerOne: Player, playerTwo: Player): Number{
+	_intersect_segment(
+			xa : number,
+			ya : number,
+			xb : number,
+			yb : number,
+			xc : number,
+			yc : number,
+			xd : number,
+			yd : number,
+		):boolean
+	{
+		let det:number = (xb - xa) * (yc -yd) - ((xc - xd) * (yb - ya));
+		if (det === 0)
+			return false;
+		else
+		{
+			let t1 =(((xc - xa) * (yc - yd)) - ((xc - xd) * (yc - ya))) / det;
+			let t2 =(((xb - xa) * (yc - ya)) - ((xc - xa) * (yb - ya))) / det;
+			if (t1 > 1 || t1 < 0 || t2 > 1 || t2 < 0)
+				return false;
+			else
+				return true;
+		}
+	}
+
+	_update(playerOne: Player, playerTwo: Player): number{
 		//collision avec le haut et le bas 
 		if (this.y + this.y_dir - this.size < 0 || this.y + this.y_dir + this.size > this.windowHeigth)
 			this.y_dir *= -1;
+
 		//collision avec le player two
-		if (this.x + this.x_dir + this.size > playerTwo.x) {
-			if (this.y + this.y_dir + this.size > playerTwo.y
-				&& this.y + this.y_dir + this.size < playerTwo.y + playerTwo.size)
-				this.x_dir *= -1;
-			else
-				;//return 2;
-		}
+		if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x + this.size + this.x_dir, this.y + this.size + this.y_dir,
+				playerTwo.x, playerTwo.y, playerTwo.x, playerTwo.y + playerTwo.size)
+		)
+			this.x_dir *= -1;
+		else if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x + this.x_dir, this.y + this.size + this.y_dir,
+			playerTwo.x, playerTwo.y, playerTwo.x +playerTwo.width, playerTwo.y)
+		)
+			this.y_dir *= -1;
+		else if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x + this.x_dir, this.y - this.size + this.y_dir,
+			playerTwo.x, playerTwo.y + playerTwo.size, playerTwo.x +playerTwo.width, playerTwo.y + playerTwo.size)
+		)
+			this.y_dir *= -1;
 
 		//collision avec le player One
-		if (this.x + this.x_dir - this.size < playerOne.x + playerOne.width) {
-			if (this.y + this.y_dir + this.size > playerOne.y
-				&& this.y + this.y_dir + this.size < playerOne.y + playerOne.size)
-				this.x_dir *= -1;
-			else
-				;//return 1;
-		}
+		if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x - this.size + this.x_dir, this.y - this.size + this.y_dir,
+			playerOne.x + playerOne.width , playerOne.y, playerOne.x + playerOne.width, playerOne.y + playerOne.size)
+	
+		)
+			this.x_dir *= -1;
+		else if (this._intersect_segment(this.x, this.y, this.x+ this.x_dir, this.y + this.size + this.y_dir,
+			playerOne.x , playerOne.y, playerOne.x +playerOne.width, playerOne.y)
+		)
+			this.y_dir *= -1;
+		else if (this._intersect_segment(this.x, this.y, this.x+ this.x_dir, this.y - this.size + this.y_dir,
+			playerOne.x, playerOne.y + playerOne.size, playerOne.x +playerOne.width, playerOne.y + playerOne.size)
+		)
+			this.y_dir *= -1;
 
 		//collision avec le droite et le gauche 
 		//if (this.x + this.x_dir - this.size < 0 || this.x + this.x_dir + this.size > this.windowWidth)

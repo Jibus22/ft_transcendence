@@ -5,7 +5,6 @@ import { Player } from './Player';
 import "./PongGame.css"
 
 class PongGame extends React.Component {
-	//ctx:CanvasRenderingContext2D;
 	width = 700;
 	height = 600;
 	_canvasStyle = {
@@ -45,10 +44,6 @@ class PongGame extends React.Component {
 		this._playerTwo._update(this._keystate, this.height);
 		let ret = this._ball._update(this._playerOne, this._playerTwo);
 		
-		//if (ret === 1)
-		//	;
-		//else if (ret ===2)
-		//	;
 		if (ret > 0)
 		{
 			//TODO score 
@@ -93,8 +88,6 @@ class PongGame extends React.Component {
 			this._update();
 			this._draw();
 		}, 1);
-		//this._update();
-		//this._draw();
 	}
 
 	componentDidMount() {
@@ -107,7 +100,6 @@ class PongGame extends React.Component {
 		e.preventDefault()
 		var yPos = e.touches[0].pageY - e.touches[0].target.offsetTop - this._playerOne.size/2;
     	this._playerOne.y = yPos;
-		//document.querySelector('div')!.innerHTML += '<p>test</p>';
 	}
 
 	render() {
@@ -121,15 +113,6 @@ class PongGame extends React.Component {
 	}
 
 }
-
-/*const PongGame = () => {
-
-  
-	const canvas = new Canvas();
-
-	return canvas.render();
-
-}*/
 
 
 export default PongGame
