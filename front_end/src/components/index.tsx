@@ -13,7 +13,7 @@ export {default as Header} from './mainPage/header/Header'
 export {default as ChatRoom} from './mainPage/chatroom/ChatRoom'
 export {default as WindowChat} from './mainPage/chatroom/windows/WindowChat'
 
-export {default as Play} from './mainPage/Game/Play/Play'
+export {default as Play} from './mainPage/game/Play/Play'
 
 export {default as ParamUser} from './mainPage/paramUser/ParamUser'
 // export {default as HistoryGame} from './mainPage/paramUser/histGame/HistoryGame'
@@ -23,6 +23,6 @@ export {default as UserRank} from './mainPage/rank/UserRank'
 export {default as RankFriends} from './mainPage/rank/friends/RankFriends'
 export {default as RankWorld} from './mainPage/rank/world/RankWorld'
 
-export {default as OnlineGame} from  './mainPage/Game/onlineGame/OnlineGame'
-export {default as Game} from  './mainPage/Game/Game'
+export {default as OnlineGame} from  './mainPage/game/onlineGame/OnlineGame'
+export {default as Game} from  './mainPage/game/Game'
 // export {default as ErrorPage} from './errorPage/ErrorPage'
