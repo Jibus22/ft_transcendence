@@ -69,8 +69,8 @@ export class MeController {
     summary: 'Post a new profile picture and set use_local_photo to true',
   })
   @ApiResponse({ type: privateUserDto })
-  uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
-    return this.meService.uploadPhoto(file);
+  async uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
+    return await this.meService.uploadPhoto(userId, file);
   }
 
 }

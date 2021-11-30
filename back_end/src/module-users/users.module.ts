@@ -10,9 +10,10 @@ import { RelationsService } from './service-relations/relations.service';
 import { AuthController } from './auth.controller';
 import { MeController } from './me.controller';
 import { MeService } from './service-me/me.service';
+import { UserPhoto } from './entities/users_photo.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), HttpModule],
+  imports: [TypeOrmModule.forFeature([User, UserPhoto]), HttpModule],
   providers: [
     MeService,
     RelationsService,
