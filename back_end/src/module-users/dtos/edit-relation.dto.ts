@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsString, IsUUID } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class editRelationDto {
 
+	@ApiProperty()
 	@IsUUID()
 	id: string;
 

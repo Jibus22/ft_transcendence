@@ -28,14 +28,14 @@ export class privateUserDto {
 	})
 	photo_url: string;
 
-	@ApiProperty({ type: UserDto })
+	@ApiProperty({ type: UserDto, isArray: true })
 	@Expose()
 	@Transform(value => {
 		return plainToClass(UserDto, value.obj.friends_list);
 	})
 	friends_list: UserDto[];
 
-	@ApiProperty({ type: UserDto })
+	@ApiProperty({ type: UserDto, isArray: true })
 	@Expose()
 	@Transform(value => {
 		return plainToClass(UserDto, value.obj.blocked_list);

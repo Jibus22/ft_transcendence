@@ -3,11 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import * as request from 'supertest';
 import { CommonTest } from '../helpers';
+import { UsersService } from 'src/module-users/service-users/users.service';
+import { User } from 'src/module-users/entities/users.entity';
 
 describe('user controller: users infos routes (e2e)', () => {
   let app: INestApplication;
   let commons: CommonTest;
-  let users;
+  let users: User[];
   let cookies: string[];
   let loggedUser;
 
@@ -65,7 +67,7 @@ describe('user controller: users infos routes (e2e)', () => {
 
   it('gets all users', async () => {
     await request(app.getHttpServer())
-      .get('/users/')
+      .get('/users')
       .set('Cookie', cookies)
       .then((resp) => {
         expect(resp.status).toEqual(HttpStatus.OK);
@@ -79,24 +81,24 @@ describe('user controller: users infos routes (e2e)', () => {
   it('gets data for each user of the user test array', async () => {
     for (let i = 0; i < users.length; i++) {
       await request(app.getHttpServer())
-        .get('/users/id/' + users[i].login)
-        .set('Cookie', cookies)
-        .then((resp) => {
-          expect(resp.body).toHaveProperty('id');
-          expect(resp.body).toHaveProperty('login');
-          expect(resp.body).toHaveProperty('photo_url');
-          expect(resp.body).not.toHaveProperty('photo_url_42');
-          expect(resp.body).not.toHaveProperty('photo_url_local');
-          expect(resp.body).not.toHaveProperty('use_local_photo');
-          expect(resp.body).not.toHaveProperty('friends_list');
-          expect(resp.body).not.toHaveProperty('blocked_list');
-        });
+      .get('/users/profile/' + users[i].login)
+      .set('Cookie', cookies)
+      .then((resp) => {
+        expect(resp.body).toHaveProperty('id');
+        expect(resp.body).toHaveProperty('login');
+        expect(resp.body).toHaveProperty('photo_url');
+        expect(resp.body).not.toHaveProperty('photo_url_42');
+        expect(resp.body).not.toHaveProperty('photo_url_local');
+        expect(resp.body).not.toHaveProperty('use_local_photo');
+        expect(resp.body).not.toHaveProperty('friends_list');
+        expect(resp.body).not.toHaveProperty('blocked_list');
+      });
     }
   });
 
   it('gets data a non existing user', async () => {
     await request(app.getHttpServer())
-      .get('/users/id/' + '42_non_existing_user_login')
+      .get('/users/profile/' + '42_non_existing_user_login')
       .set('Cookie', cookies)
       .then((resp) => {
         expect(resp.status).toEqual(HttpStatus.NOT_FOUND);

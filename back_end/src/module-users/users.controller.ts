@@ -2,14 +2,14 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpStatus,
   NotFoundException,
   Param, Post, Session,
   UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
-  ApiOperation, ApiTags
+  ApiOperation, ApiResponse, ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
@@ -23,6 +23,7 @@ import { UsersService } from './service-users/users.service';
 
 @ApiTags('Users')
 @ApiCookieAuth()
+@ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not logged' })
 @UseGuards(AuthGuard)
 @Serialize(UserDto)
 @Controller('users')
@@ -36,24 +37,27 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get every users in the database',
   })
+  @ApiResponse({ type: UserDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Users array' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No users' })
   async getAllUsers() {
     return await this.usersService.getAllUsers();
   }
 
-  @Get('/id/:login')
+  @Get('/profile/:login')
   @ApiOperation({
     summary: 'Get public infos of user :login',
   })
-  async getUserById(@Param() {login}) {
-    const user = await this.usersService.find(login)
-      .then( (user) => {
-        if (user[0]) {
-          return user[0];
-        } else {
-          throw new NotFoundException('user not found');
-        }
-      });
-    return user;
+  @ApiResponse({ type: UserDto, isArray: false })
+  @ApiResponse({ status: HttpStatus.OK, description: 'User\'s public data' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
+  async getUserById(@Param() { login }) {
+    return await this.usersService.find(login).then((user) => {
+      if (! user[0]) {
+        throw new NotFoundException('user not found');
+      }
+      return user[0];
+    });
   }
 
   /*****************************************************************************
@@ -64,6 +68,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
+  @ApiResponse({ type: UserDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Array of users in the friends list' })
   async readAllFriends(@Session() session: Record<string, any>) {
     return await this.relationsService.readAllRelations(
       session.userId,
@@ -75,13 +81,15 @@ export class UsersController {
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
   })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Successfully added' })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to add' })
   async createFriend(
-    @Body() friendId: editRelationDto,
+    @Body() target: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.createRelation(
       session.userId,
-      friendId.id,
+      target.id,
       RelationType.Friend,
     );
   }
@@ -90,13 +98,15 @@ export class UsersController {
   @ApiOperation({
     summary: 'Remove one friend to the currently logger user',
   })
-  async deeleteFriend(
-    @Body() friendId: editRelationDto,
+  @ApiResponse({ status: HttpStatus.OK, description: 'Successfully deleted' })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to delete' })
+  async deleteFriend(
+    @Body() target: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     return await this.relationsService.deleteRelation(
       session.userId,
-      friendId.id,
+      target.id,
       RelationType.Friend,
     );
   }
@@ -109,6 +119,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get list of blocked accounts of the currently logger user',
   })
+  @ApiResponse({ type: UserDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Array of users in the blocked list' })
   async readAllBlocks(@Session() session: Record<string, any>) {
     return await this.relationsService.readAllRelations(
       session.userId,
@@ -120,13 +132,15 @@ export class UsersController {
   @ApiOperation({
     summary: 'Add one blocked account to the currently logger user',
   })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Successfully added' })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to add' })
   async createBlock(
-    @Body() blockId: editRelationDto,
+    @Body() target: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.createRelation(
       session.userId,
-      blockId.id,
+      target.id,
       RelationType.Block,
     );
   }
@@ -135,13 +149,15 @@ export class UsersController {
   @ApiOperation({
     summary: 'Remove one blocked account to the currently logger user',
   })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Successfully deleted' })
+  @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to delete' })
   async deleteBlock(
-    @Body() blockId: editRelationDto,
+    @Body() target: editRelationDto,
     @Session() session: Record<string, any>,
   ) {
     await this.relationsService.deleteRelation(
       session.userId,
-      blockId.id,
+      target.id,
       RelationType.Block,
     );
   }
