@@ -25,6 +25,6 @@ import { MeService } from './service-me/me.service';
 
 export class UsersModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CurrentUserMiddleware).forRoutes('*');
+    consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
   }
 }
