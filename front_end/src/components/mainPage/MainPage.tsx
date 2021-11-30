@@ -8,19 +8,21 @@ import axios from 'axios';
 
 
 const MainPage = () => {
-
+  
+  
     const [data, setData] = useState([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await axios (
-                'http://localhost:3000/users', {withCredentials: true}
-            );
-            setData(result.data)
-            console.log(result)
-        }
-        fetchData()
-    }, [])
-
+  
+    const fetchData = async () => {
+        const result = await axios (
+            'http://localhost:3000/users', {withCredentials: true}
+        );
+        setData(result.data)
+    }
+   
+        useEffect(() => {
+            fetchData();
+        }, [])
+    
   
         return (
             
@@ -32,8 +34,8 @@ const MainPage = () => {
                 <Routes >
                     <Route path='/MainPage' element={ <Game/> }/>
                     <Route path='/History-Game' element={ <HistoryGame/> }/>
-                    <Route path="/Setting" element={ <ParamUser data={data}/> }/>
-                    <Route path='/Rank'element={ <UserRank/> }/>
+                    <Route path="/Setting" element={ <ParamUser data={data} fetchData={fetchData} /> }/>
+                    <Route path='/Rank/*'element={ <UserRank/> }/>
                 </Routes>
             
                 

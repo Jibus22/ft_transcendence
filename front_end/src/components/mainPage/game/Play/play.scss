@@ -54,6 +54,11 @@
     .MuiCircularProgress-root {
         color: #CA6C88;
     }
+    .buttonDiv {
+        .MuiCircularProgress-root {
+            margin-left: 12px;
+        }
+    }
 
     .playRandom {
         width: 40%;
@@ -231,6 +236,13 @@
         
             .MuiCircularProgress-root {
                 color: #CA6C88; 
+                
+            }
+
+            .buttonDiv {
+                .MuiCircularProgress-root {
+                    margin-left: 7px;
+                }
             }
            
             .playRandom {
@@ -355,6 +367,7 @@
     
         .MuiCircularProgress-root {
             color: #CA6C88; 
+            
         }
        
         .playRandom {

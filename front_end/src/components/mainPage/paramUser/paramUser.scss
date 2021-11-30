@@ -1,4 +1,7 @@
 
+
+
+
 .mainParamUser {
     width: 37%;
     height: 560px;
@@ -128,9 +131,7 @@
         .MuiOutlinedInput-input {
             font-size: 1vw;
         }
-        // &:hover .MuiOutlinedInput-notchedOutline {
-        //     border: 1px solid #71DFE7;
-        // }
+       
         & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
            border: 1px solid #71DFE7;
         }
@@ -198,64 +199,5 @@
             
         }
     }
-
-    .mainPopUpUser {
-        width: 83%;
-        height: 43px;
-        margin: 7% 0% 0% 8%;
-        justify-content: space-around;
-        position: absolute;
-        
-        
-
-        .buttonPopUp {
-            
-            width: 12%;
-            height: 100%;
-            background-color: #E69C6A;
-            border-radius: 13px;
-
-            img {
-                width: 65%;
-            } 
-        }
-        .buttonPopUp:hover {
-            img {
-                width: 75%;
-            } 
-        }
-        .dlPop img {
-            width: 55%;
-        }
-        .dlPop:hover img {
-            width: 65%;
-        }
-
-        
-
-
-        .closePop {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: none;
-            img {
-                width: 50%;
-            
-            }
-        }
-        .closePop:hover {
-            img {
-                width: 60%;
-            }
-        }
-        
-
-
-    }
-
-    
-    
 }
-
 
