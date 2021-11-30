@@ -36,7 +36,7 @@ export class UsersService {
 	}
 
 	async findByLogin42(login_42: string) {
-		return await this.repo.find({ login_42 });
+		return await this.repoUser.find({ login_42 });
 	}
 
 	async update(id: string, attrs: Partial<User>) {
