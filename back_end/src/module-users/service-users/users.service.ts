@@ -35,6 +35,10 @@ export class UsersService {
 		return await this.repoUser.find({ login });
 	}
 
+	async findByLogin42(login_42: string) {
+		return await this.repo.find({ login_42 });
+	}
+
 	async update(id: string, attrs: Partial<User>) {
 		const user = await this.findOne(id);
 		if ( ! user) {

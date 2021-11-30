@@ -26,6 +26,6 @@ import { UserPhoto } from './entities/users_photo.entity';
 
 export class UsersModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CurrentUserMiddleware).forRoutes('*');
+    consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
   }
 }
