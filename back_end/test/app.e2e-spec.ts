@@ -54,7 +54,7 @@ describe('user controller: users basic features (e2e)', () => {
     await request(serv).get('/me').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).patch('/me').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).get('/users').expect(HttpStatus.UNAUTHORIZED);
-    await request(serv).get('/users/id/test_fake_user_id').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).get('/users/profile/test_fake_user_id').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).get('/users/friend').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).post('/users/friend').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).delete('/users/friend').expect(HttpStatus.UNAUTHORIZED);
