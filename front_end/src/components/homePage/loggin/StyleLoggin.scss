@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+
+.mainLoggin {
+    height: 53%;
+    width: 28%;
+    margin: 12% 10% 0% 0%;
+    background: linear-gradient(141.98deg, #E69C6A -1.02%, rgba(196, 196, 196, 0) 97.99%);
+    backdrop-filter: blur( 5px );
+    -webkit-backdrop-filter: blur( 10px );
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+
+    .welcome {
+      width: 50%;
+      margin: 15% auto;
+      
+      h1 {
+        text-align: center;
+        line-height: 34px;
+        color: white;
+        font-family: Montserrat, sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 1.8vw;
+      }
+
+      
+    }
+    .lockImg {
+      margin: -6% 0 0 0;
+      img {
+        margin: 0 auto;
+        width: 17%;
+      }
+      h1 {
+        margin: 6% auto;
+        color: white;
+        font-family: Montserrat, sans-serif;
+        font-size: 1.5vw;
+        font-weight: 400;
+      }
+    }
+
+    .buttonConnect {
+      width: 70%;
+      height: 13%;
+      margin: 4% auto;
+      
+
+      .buttonMuiConnect {
+        
+        width: 100%;
+        height: 100%;
+        background-color: #CA6C88;
+        border:none;
+        border-radius: 8px;
+        color: white;
+        font-family: Montserrat, sans-serif;
+        font-size: 1.6vw;
+        font-weight: 500;
+        
+      }
+      .buttonMui:hover {
+        background-color: rgba(202,108,136, 0.9);
+       
+      }
+      .buttonMuiConnect:hover {
+        font-size: 1.7vw;
+      }
+      
+    }
+}
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1800px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1800px) { 
+  .mainLoggin {
+    height: 48%;
+    margin: 15% 8% 0% 0%;
+  }
+}
+@media screen and (max-width: 1670px) { 
+  .mainLoggin {
+    height: 45%;
+    margin: 15% 6% 0% 0%;
+  }
+}
+
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1536px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1536px) { 
+  .mainLoggin {
+      width: 30%;
+      height: 55%;
+      margin: 15% 7% 0% 0%;
+
+  }
+
+
+}
+
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1440px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1440px) { 
+  .mainLoggin {
+    width: 420px;
+    height: 405px;
+    border: 1px solid rgba(255, 255, 255, 0.7);    
+    border-radius: 20px;
+
+    .welcome {
+      width: 50%;
+      margin: 55px auto;
+      
+      h1 {
+        line-height: 30px;
+        font-size: 27px;
+      }
+
+      
+    }
+    .lockImg {
+      margin: -20px 0 0 0;
+      img {
+        margin: 0 auto;
+        width: 70px;
+      }
+      h1 {
+        margin: 23px auto;
+        font-size: 24px;
+      }
+    }
+
+    .buttonConnect {
+      width: 70%;
+      height: 50px;
+      margin: 20px auto;
+      .buttonMuiConnect {
+        
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        font-size: 23px;
+        
+      }
+      .buttonMui:hover {
+        background-color: rgba(202,108,136, 0.9);
+      }
+      .buttonMuiConnect:hover {
+        font-size: 25px;
+      
+      }
+      
+    }
+}
+}
+
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1366px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1366px) { 
+  .mainLoggin {
+    width: 28%;
+    margin: 12% 10% 0% 0%;
+    height: 56%;
+    border: 1px solid rgba(255, 255, 255, 0.7);    
+    border-radius: 20px;
+
+    .welcome {
+      width: 50%;
+      margin: 55px auto;
+      
+      h1 {
+        line-height: 30px;
+        font-size: 25px;
+      }
+
+      
+    }
+    .lockImg {
+      margin: -20px 0 0 0;
+      img {
+        margin: 0 auto;
+        width: 60px;
+      }
+      h1 {
+        margin: 23px auto;
+        font-size: 22px;
+      }
+    }
+
+    .buttonConnect {
+      width: 70%;
+      height: 50px;
+      margin: 20px auto;
+      .buttonMuiConnect {
+        
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        font-size: 21px;
+        
+      }
+      .buttonMui:hover {
+        background-color: rgba(202,108,136, 0.9);
+      }
+      .buttonMuiConnect:hover {
+        font-size: 23px;
+      
+      }
+      
+    }
+}
+
+}

@@ -1,0 +1,54 @@
+version: '3.8'
+
+volumes:
+  node_modules_guest_back:
+  node_modules_guest_front:
+
+services:
+
+  back_end_server:
+    build: ./back_end
+    env_file:
+      - .env
+      - .env_prod.env
+    volumes:
+      ### Important to make sure node_module is not imported from local
+      - node_modules_guest_back:/usr/src/app/node_modules
+      - ./back_end:/usr/src/app
+    ports:
+      - 3000:3000
+      - 9229:9229
+    command: npm run start:prod
+
+  front_end_server:
+    build: ./front_end
+    volumes:
+      ### Important to make sure node_module is not imported from local
+      - node_modules_guest_front:/usr/src/app/node_modules
+      - ./front_end:/usr/src/app
+    ports:
+      - 3001:3000
+    command: npm run start
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # database:
+  #   image: 'postgres:latest'
+  #   ports:
+  #     - 5002:5432
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./db-data/:/var/lib/postgresql/data/
