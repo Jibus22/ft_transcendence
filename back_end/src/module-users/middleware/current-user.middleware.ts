@@ -34,7 +34,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
           req.currentUser = user;
         })
         .catch((error) => {
-					throw new UnauthorizedException();
+          req.session.userId = null;
         });
 			} else {
         logger.log('No user id in session');
