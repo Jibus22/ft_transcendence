@@ -6,4 +6,8 @@ services:
     env_file:
       - .env
       - .env_dev.env
+    volumes:
+      - type: bind
+        source: ./data/users_photos_dev
+        target: /usr/assets/users_photos
     command: npm run start:dev

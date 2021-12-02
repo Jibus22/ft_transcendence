@@ -15,6 +15,9 @@ services:
       ### Important to make sure node_module is not imported from local
       - node_modules_guest_back:/usr/src/app/node_modules
       - ./back_end:/usr/src/app
+      - type: bind
+        source: ./data/users_photos_prod
+        target: /usr/assets/users_photos
     ports:
       - 3000:3000
       - 9229:9229

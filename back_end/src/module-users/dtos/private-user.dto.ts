@@ -3,8 +3,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose, plainToClass, Transform } from "class-transformer";
 import { UserDto } from "./user.dto";
 
-// TODO make privateUserDto expend UserDto to avoid repeating code
-
 @Exclude()
 export class privateUserDto extends UserDto {
 

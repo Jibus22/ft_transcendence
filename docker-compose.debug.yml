@@ -6,4 +6,8 @@ services:
     env_file:
       - .env
       - .env_debug.env
+    volumes:
+      - type: bind
+        source: ./data/users_photos_debug
+        target: /usr/assets/users_photos
     command: npm run start:debug
