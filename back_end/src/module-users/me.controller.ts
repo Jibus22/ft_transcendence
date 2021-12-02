@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, HttpStatus, NotFoundException, Patch, Post, Session,
+  Controller, Delete, Get, HttpStatus, NotFoundException, Patch, Post, Session,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -66,11 +66,21 @@ export class MeController {
   @UseInterceptors(FileInterceptor('file'))
   @Serialize(privateUserDto)
   @ApiOperation({
-    summary: 'Post a new profile picture and set use_local_photo to true',
+    summary: 'Save a new or replace the current  local pohoto and use it as default',
   })
   @ApiResponse({ type: privateUserDto })
   async uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
     return await this.meService.uploadPhoto(userId, file);
+  }
+
+  @Delete('/photo')
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Delete the current local pohoto and use 42 photo as default',
+  })
+  @ApiResponse({ type: privateUserDto })
+  async deletePhoto(@CurrentUser() userId: string) {
+    // return await this.meService.deletePhoto(userId);
   }
 
 }
