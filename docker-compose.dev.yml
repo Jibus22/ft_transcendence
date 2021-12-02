@@ -9,5 +9,5 @@ services:
     volumes:
       - type: bind
         source: ./data/users_photos_dev
-        target: /usr/assets/users_photos
+        target: ${USERS_PHOTOS_STORAGE_PATH}
     command: npm run start:dev

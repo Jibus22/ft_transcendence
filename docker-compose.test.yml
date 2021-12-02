@@ -15,5 +15,5 @@ services:
       - ./.git:/usr/src/app/.git
       - type: bind
         source: ./data/users_photos_test
-        target: /usr/assets/users_photos
+        target: ${USERS_PHOTOS_STORAGE_PATH}
     command: npm run test:e2e

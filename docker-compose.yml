@@ -17,7 +17,7 @@ services:
       - ./back_end:/usr/src/app
       - type: bind
         source: ./data/users_photos_prod
-        target: /usr/assets/users_photos
+        target: ${USERS_PHOTOS_STORAGE_PATH}
     ports:
       - 3000:3000
       - 9229:9229
