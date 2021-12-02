@@ -31,6 +31,15 @@ export class UsersService {
 		return await this.repoUser.findOne(id);
 	}
 
+	async findOneWithRelations(id: string) {
+		if ( ! id) {
+			return null;
+		}
+		return await this.repoUser.findOne(id, {
+      relations: [ 'friends_list', 'blocked_list', 'photo_url_local']
+		});
+	}
+
 	async find(login: string) {
 		return await this.repoUser.find({ login });
 	}
@@ -51,5 +60,4 @@ export class UsersService {
 	async getAllUsers() {
 		return await this.repoUser.find();
 	}
-
 }
