@@ -13,6 +13,7 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
+import { randomUUID } from 'crypto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -63,14 +64,15 @@ export class MeController {
   }
 
   @Post('/photo')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {dest: `/usr/assets/users_photos`})) // TODO: change to env.
   @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Save a new or replace the current  local pohoto and use it as default',
   })
   @ApiResponse({ type: privateUserDto })
   async uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
-    return await this.meService.uploadPhoto(userId, file);
+    return await this.meService.uploadPhoto(userId, file)
+      .catch((error) => console.log("error", error.message)); // TODO manage properly
   }
 
   @Delete('/photo')

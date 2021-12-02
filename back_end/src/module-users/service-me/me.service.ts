@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { timestamp } from 'rxjs';
+import { rename } from 'fs';
+import { extname } from 'path/posix';
 import { Repository } from 'typeorm';
 import { User } from '../entities/users.entity';
 import { UserPhoto } from '../entities/users_photo.entity';
 import {
-  RelationsService,
-  RelationType,
+  RelationsService
 } from '../service-relations/relations.service';
 import { UsersService } from '../service-users/users.service';
 
@@ -14,8 +15,8 @@ import { UsersService } from '../service-users/users.service';
 export class MeService {
   constructor(
     @InjectRepository(UserPhoto) private repoUserPhoto: Repository<UserPhoto>,
+    private config: ConfigService,
     private userService: UsersService,
-    private relationsService: RelationsService,
   ) {}
 
   async whoAmI(userId: string): Promise<User> {
@@ -27,26 +28,32 @@ export class MeService {
     return await this.userService.findOneWithRelations(userId);
   }
 
-  //TODO manage errors
   async uploadPhoto(userId: string, file: Express.Multer.File) {
-    console.log(file);
 
+    console.log(file);
 
     const user = await this.userService.findOne(userId);
     if (user) {
-      const path = file.path;
-      console.log("file path is ", path);
-      const fileName = user.id + '_extentionHere';
 
-      // do save file to filesystem, construct unique filename
-      // .........
+      const newFileName = file.filename + extname(file.originalname);
+      const oldPath = file.path;
+      const newPath = this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + newFileName;
 
-      const newPhoto = this.repoUserPhoto.create({ owner: user, fileName });
+      rename(oldPath, newPath, (err) => {
+        if (err) throw err;
+      });
+
+      const currentPhoto = await this.repoUserPhoto.findOne({owner: user});
+      if (currentPhoto) {
+        await this.repoUserPhoto.remove(currentPhoto);
+      }
+
+      const newPhoto = this.repoUserPhoto.create({ owner: user, fileName: newFileName});
       await this.repoUserPhoto.save(newPhoto as Partial<UserPhoto>);
-        return await this.userService.update(user.id, {
-          use_local_photo: true,
-        });
 
+      await this.userService.update(user.id, {
+          use_local_photo: true,
+      });
     }
   }
 

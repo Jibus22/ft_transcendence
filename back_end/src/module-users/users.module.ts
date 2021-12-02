@@ -1,22 +1,24 @@
-import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthController } from './auth.controller';
+import { User } from './entities/users.entity';
+import { UserPhoto } from './entities/users_photo.entity';
+import { MeController } from './me.controller';
+import { CurrentUserMiddleware } from './middleware/current-user.middleware';
+import { AuthService } from './service-auth/auth.service';
+import { MeService } from './service-me/me.service';
+import { RelationsService } from './service-relations/relations.service';
 import { UsersService } from './service-users/users.service';
 import { UsersController } from './users.controller';
-import { User } from './entities/users.entity';
-import { AuthService } from './service-auth/auth.service';
-import { CurrentUserMiddleware } from './middleware/current-user.middleware';
-import { HttpModule } from '@nestjs/axios';
-import { RelationsService } from './service-relations/relations.service';
-import { AuthController } from './auth.controller';
-import { MeController } from './me.controller';
-import { MeService } from './service-me/me.service';
-import { UserPhoto } from './entities/users_photo.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserPhoto]), HttpModule],
   providers: [
     MeService,
     RelationsService,
+    ConfigService,
     UsersService,
     AuthService
   ],

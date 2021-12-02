@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Transform } from 'class-transformer';
+import { fstat, unlink } from 'fs';
 import {
   AfterInsert,
   AfterRemove,
@@ -47,8 +48,8 @@ export class UserPhoto {
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
       // TODO : rm file in filesystem
-
-      console.log('Hook | Removed UserPhoto: ', this);
+      // unlink()
+      console.log('🚮  Hook | Removed UserPhoto: ', this);
     }
   }
 
