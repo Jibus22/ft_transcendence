@@ -20,7 +20,7 @@ export class UserDto {
 		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
 			return value.obj.photo_url_42;
 		}
-		return value.obj.photo_url_local;
+		return value.obj.photo_url_local.fileName;
 	})
 	photo_url: string;
 

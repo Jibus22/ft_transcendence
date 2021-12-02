@@ -80,7 +80,7 @@ export class MeController {
   })
   @ApiResponse({ type: privateUserDto })
   async deletePhoto(@CurrentUser() userId: string) {
-    // return await this.meService.deletePhoto(userId);
+    return await this.meService.deletePhoto(userId);
   }
 
 }

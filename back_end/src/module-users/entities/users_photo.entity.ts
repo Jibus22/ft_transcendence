@@ -23,15 +23,11 @@ export class UserPhoto {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  ownerId: string;
-
-
-  @OneToOne(() => User, user => user.id)
+  @OneToOne(() => User, owner => owner.id, {onDelete: 'CASCADE'})
   @JoinColumn()
-  user: User;
+  owner: User;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   fileName: string;
 
 // ----------------------
@@ -43,21 +39,23 @@ export class UserPhoto {
   @AfterInsert()
   logInsert() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted User: ', this);
+      console.log('Hook | Inserted UserPhoto: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed User: ', this);
+      // TODO : rm file in filesystem
+
+      console.log('Hook | Removed UserPhoto: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated User: ', this);
+      console.log('Hook | Updated UserPhoto: ', this);
     }
   }
 }

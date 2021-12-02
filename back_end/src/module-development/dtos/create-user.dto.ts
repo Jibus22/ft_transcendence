@@ -10,10 +10,4 @@ export class CreateUserDto {
 
 	@IsString()
 	photo_url_42: string;
-
-	@IsString()
-	photo_url_local: string;
-
-	@IsBoolean()
-	use_local_photo: boolean;
 }
