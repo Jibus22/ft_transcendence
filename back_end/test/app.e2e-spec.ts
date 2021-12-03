@@ -40,11 +40,6 @@ describe('user controller: users basic features (e2e)', () => {
         expect(resp.body[user].login).toEqual(
           commons.testUserBatch[user].login,
         );
-        expect(resp.body[user].photo_url).toEqual(
-          commons.testUserBatch[user].photo_url_local === null
-            ? commons.testUserBatch[user].photo_url_42
-            : commons.testUserBatch[user].photo_url_local,
-        );
       }
     });
   });

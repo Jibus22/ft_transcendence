@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, HttpStatus, NotFoundException, Patch, Post, Session,
+  Controller, Delete, Get, HttpStatus, NotFoundException, Patch, Post, Session,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -13,6 +13,7 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
+import { randomUUID } from 'crypto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -63,14 +64,53 @@ export class MeController {
   }
 
   @Post('/photo')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {dest: `/usr/assets/users_photos`})) // TODO: change to env.
   @Serialize(privateUserDto)
   @ApiOperation({
-    summary: 'Post a new profile picture and set use_local_photo to true',
+    summary: 'Save a new or replace the current  local pohoto and use it as default',
   })
   @ApiResponse({ type: privateUserDto })
-  uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
-    return this.meService.uploadPhoto(file);
+  async uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
+    return await this.meService.uploadPhoto(userId, file)
+      .catch((error) => console.log("error", error.message)); // TODO manage properly
+  }
+
+  @Post('/useSchoolPhoto')
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Set user avatar url to School42 photo',
+  })
+  @ApiResponse({ type: privateUserDto })
+  async useSchoolPhoto(@CurrentUser() userId: string) {
+
+    return await this.meService.updateUseLocalPhoto(userId, false)
+      .catch((err) => {
+        throw new BadRequestException({message: err});
+      });
+  }
+
+  @Post('/useLocalPhoto')
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Set user avatar url to local photo, if it exists',
+  })
+  @ApiResponse({ type: privateUserDto })
+  async useLocalPhoto(@CurrentUser() userId: string) {
+
+    return await this.meService.updateUseLocalPhoto(userId, true)
+      .catch((err) => {
+        throw new BadRequestException({message: err});
+      });
+  }
+
+  @Delete('/photo')
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Delete the current local pohoto and use 42 photo as default',
+  })
+  @ApiResponse({ type: privateUserDto })
+  async deletePhoto(@CurrentUser() userId: string) {
+    return await this.meService.deletePhoto(userId);
   }
 
 }

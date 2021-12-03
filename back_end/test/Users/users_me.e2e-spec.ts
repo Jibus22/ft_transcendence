@@ -120,7 +120,7 @@ describe('user controller: /me routes (e2e)', () => {
       .then((resp) => {
         const newCookies = commons.getCookies(resp);
         expect(cookies).toHaveLength(2);
-        expect(newCookies).not.toBeDefined();
+        expect(newCookies).not.toEqual(cookies);
         expect(resp.status).toEqual(HttpStatus.UNAUTHORIZED);
       })
       .then(async () => await request(app.getHttpServer()).get('/me'))

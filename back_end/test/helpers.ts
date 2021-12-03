@@ -38,14 +38,14 @@ export class CommonTest {
       login_42: 'fake-randomDude',
       photo_url_42: 'https://cdn.intra.42.fr/users/medium_default.png',
       photo_url_local: null,
-      use_local_photo: true,
+      use_local_photo: false,
     },
     {
       login: 'fake-user-custome',
       login_42: 'fake-user',
       photo_url_42: 'https://cdn.intra.42.fr/users/medium_default.png',
-      photo_url_local: 'https://localhost:3000/users/photos/user.png',
-      use_local_photo: true,
+      photo_url_local: null,
+      use_local_photo: false,
     },
   ];
 

@@ -1,15 +1,12 @@
-import { AxiosRequestConfig } from 'axios';
-import {
-  BadGatewayException,
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
-import { UsersService } from '../service-users/users.service';
-import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import {
+  BadGatewayException, Injectable
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AxiosRequestConfig } from 'axios';
+import { lastValueFrom, map } from 'rxjs';
 import { User } from '../entities/users.entity';
-import { map, lastValueFrom } from 'rxjs';
-import { isError } from 'util';
+import { UsersService } from '../service-users/users.service';
 
 @Injectable()
 export class AuthService {
