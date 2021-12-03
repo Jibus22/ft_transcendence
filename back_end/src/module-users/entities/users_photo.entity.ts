@@ -47,9 +47,7 @@ export class UserPhoto {
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      // TODO : rm file in filesystem
-      // unlink()
-      console.log('🚮  Hook | Removed UserPhoto: ', this);
+      console.log('Hook | Removed UserPhoto: ', this);
     }
   }
 

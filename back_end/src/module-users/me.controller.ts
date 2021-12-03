@@ -75,6 +75,34 @@ export class MeController {
       .catch((error) => console.log("error", error.message)); // TODO manage properly
   }
 
+  @Post('/useSchoolPhoto')
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Set user avatar url to School42 photo',
+  })
+  @ApiResponse({ type: privateUserDto })
+  async useSchoolPhoto(@CurrentUser() userId: string) {
+
+    return await this.meService.updateUseLocalPhoto(userId, false)
+      .catch((err) => {
+        throw new BadRequestException({message: err});
+      });
+  }
+
+  @Post('/useLocalPhoto')
+  @Serialize(privateUserDto)
+  @ApiOperation({
+    summary: 'Set user avatar url to local photo, if it exists',
+  })
+  @ApiResponse({ type: privateUserDto })
+  async useLocalPhoto(@CurrentUser() userId: string) {
+
+    return await this.meService.updateUseLocalPhoto(userId, true)
+      .catch((err) => {
+        throw new BadRequestException({message: err});
+      });
+  }
+
   @Delete('/photo')
   @Serialize(privateUserDto)
   @ApiOperation({
