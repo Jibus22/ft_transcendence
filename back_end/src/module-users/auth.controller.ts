@@ -45,12 +45,13 @@ export class AuthController {
     @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
     async generate2faKey(@CurrentUser() userId, @Res() response) {
 
-      const otpAuthUrl = await this.authService.create2faKey(userId)
+      const {totpAuthUrl, secret} = await this.authService.create2faKey(userId)
         .catch((error) => {
           throw new BadRequestException(error);
         });
       response.setHeader('content-type','image/png');
-      return this.authService.qrCodeStreamPipe(response, otpAuthUrl);
+      response.setHeader('secretKey', secret); //TODO is it safe ?
+      return this.authService.qrCodeStreamPipe(response, totpAuthUrl);
     }
 
 

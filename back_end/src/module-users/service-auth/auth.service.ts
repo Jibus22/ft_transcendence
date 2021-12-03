@@ -110,6 +110,9 @@ export class AuthService {
     const totpAuthUrl = authenticator.keyuri(user.login_42, app_name, secret);
 
     await this.usersService.update(userId, { twoFactorAuthSecret: secret });
-    return totpAuthUrl;
+    return {
+      totpAuthUrl,
+      secret
+    };
   }
 }
