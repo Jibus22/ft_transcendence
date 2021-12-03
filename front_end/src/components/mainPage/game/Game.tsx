@@ -1,28 +1,27 @@
-import React, {useState } from 'react';
+import React from 'react';
 
 import { Play, OnlineGame } from '../..';
-
+import { useMainPage } from '../../../MainPageContext';
 
 export default function Game() {
+	const { setTimeSnack, timer, setIsDisable, setLoading, setIsFriends } = useMainPage();
 
-    const[loading, setLoading] = useState<boolean>(false);
-    const[isDisable, setIsDisable] = useState<boolean>(true)
-    function handleClick() {
-        setLoading(true);
-        setIsDisable(false);
-        setTimeout(function () {
-            setLoading(false);
-            setIsDisable(true);
-        }, 5000);
-    }
+	function handleClick() {
+		setLoading(true);
+		setIsDisable(false);
+		setTimeSnack(false);
+		setIsFriends(false);
+		setTimeout(function () {
+			setLoading(false);
+			setIsDisable(true);
+			setTimeSnack(true);
+		}, timer);
+	}
 
-    
-
-    return (
-        <div className='d-flex MainGame'>
-            <Play Loadingclick={handleClick} disable={isDisable} loading={loading} />
-            <OnlineGame Loadingclick={handleClick} loading={loading}/>
-          
-        </div>
-    )
+	return (
+		<div className="d-flex MainGame">
+			<Play Loadingclick={handleClick} />
+			<OnlineGame Loadingclick={handleClick} />
+		</div>
+	);
 }
