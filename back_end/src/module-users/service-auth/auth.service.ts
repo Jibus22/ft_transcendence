@@ -1,12 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import {
-  BadGatewayException, Injectable
-} from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig } from 'axios';
 import { lastValueFrom, map } from 'rxjs';
 import { User } from '../entities/users.entity';
 import { UsersService } from '../service-users/users.service';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -90,5 +90,26 @@ export class AuthService {
     return await this.usersService.create(user).catch((e) => {
       throw new BadGatewayException(e.message);
     });
+  }
+
+  public async qrCodeStreamPipe(stream: Response, otpPathUrl: string) {
+    return toFileStream(stream, otpPathUrl);
+  }
+
+  async create2faKey(userId: string) {
+    const user = await this.usersService.findOne(userId);
+
+    // TODO uncomment to avoid key deletion
+    // if (user.twoFactorAuthSecret) {
+    //   throw '2fa key already set';
+    // }
+    const secret = authenticator.generateSecret();
+    const app_name = this.configService.get(
+      'TWO_FACTOR_AUTHENTICATION_APP_NAME',
+    );
+    const totpAuthUrl = authenticator.keyuri(user.login_42, app_name, secret);
+
+    await this.usersService.update(userId, { twoFactorAuthSecret: secret });
+    return totpAuthUrl;
   }
 }

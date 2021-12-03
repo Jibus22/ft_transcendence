@@ -46,6 +46,12 @@ export class User {
   @JoinTable()
   blocked_list: UserDto[];
 
+  @Column({ nullable: true })
+  twoFactorAuthSecret: string
+
+  @Column({ default: false })
+  isTwoFactorEnable: boolean
+
 // ----------------------
 
 	// @Transform(value => {

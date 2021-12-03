@@ -20,6 +20,8 @@ export class DevelopmentController {
   async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
     const newUser = await this.developmentService.dev_logUser(user.login);
     session.userId = newUser.id;
+    session.isTwoFaAuthenticated = false;
+    session.hasTwoFaAuthenticated = newUser.isTwoFactorEnable;
     return newUser;
   }
 

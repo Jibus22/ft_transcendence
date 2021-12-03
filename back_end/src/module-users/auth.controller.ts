@@ -1,6 +1,7 @@
-import { Controller, Delete, Get, HttpStatus, InternalServerErrorException, Query, Redirect, Session } from '@nestjs/common';
+import { BadRequestException, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Query, Redirect, Res, Session } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthService } from './service-auth/auth.service';
 
 @ApiTags('Auth')
@@ -20,6 +21,8 @@ export class AuthController {
         throw new InternalServerErrorException('Could not identify user.')
       }
       session.userId = user.id;
+      session.hasTwoFaAuthenticated = user.isTwoFactorEnable;
+      session.isTwoFaAuthenticated = false;
       return { url: this.configService.get('AUTH_REDIRECT_URL') };
     }
 
@@ -30,5 +33,25 @@ export class AuthController {
     @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
     signOut(@Session() session: any) {
       session.userId = null;
+      session.hasTwoFaAuthenticated = null;
+      session.isTwoFaAuthenticated = null;
     }
+
+    @Get('/generate2faKey')
+    //TODO use guard ?
+    @ApiOperation({
+      summary: 'TODO'
+    })
+    @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
+    async generate2faKey(@CurrentUser() userId, @Res() response) {
+
+      const otpAuthUrl = await this.authService.create2faKey(userId)
+        .catch((error) => {
+          throw new BadRequestException(error);
+        });
+      response.setHeader('content-type','image/png');
+      return this.authService.qrCodeStreamPipe(response, otpAuthUrl);
+    }
+
+
 }

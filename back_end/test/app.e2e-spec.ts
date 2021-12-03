@@ -56,5 +56,6 @@ describe('user controller: users basic features (e2e)', () => {
     await request(serv).get('/users/block').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).post('/users/block').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).delete('/users/block').expect(HttpStatus.UNAUTHORIZED);
+    //TODO add new routes when implemented
   });
 });
