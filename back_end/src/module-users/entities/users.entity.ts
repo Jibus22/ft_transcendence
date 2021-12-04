@@ -47,10 +47,10 @@ export class User {
   blocked_list: UserDto[];
 
   @Column({ nullable: true })
-  twoFactorAuthSecret: string
+  twoFASecret: string
 
   @Column({ default: false })
-  isTwoFactorEnable: boolean
+  useTwoFA: boolean
 
 // ----------------------
 

@@ -92,7 +92,15 @@ export class AuthService {
     });
   }
 
-  public async qrCodeStreamPipe(stream: Response, otpPathUrl: string) {
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        Two Factor Authentication
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async qrCodeStreamPipe(stream: Response, otpPathUrl: string) {
     return toFileStream(stream, otpPathUrl);
   }
 
@@ -100,19 +108,54 @@ export class AuthService {
     const user = await this.usersService.findOne(userId);
 
     // TODO uncomment to avoid key deletion
-    // if (user.twoFactorAuthSecret) {
-    //   throw '2fa key already set';
-    // }
+    if (user.twoFASecret) {
+      throw '2fa key already set';
+    }
+
     const secret = authenticator.generateSecret();
     const app_name = this.configService.get(
       'TWO_FACTOR_AUTHENTICATION_APP_NAME',
     );
     const totpAuthUrl = authenticator.keyuri(user.login_42, app_name, secret);
 
-    await this.usersService.update(userId, { twoFactorAuthSecret: secret });
+    await this.usersService.update(userId, { twoFASecret: secret });
     return {
       totpAuthUrl,
-      secret
+      secret,
     };
+  }
+
+  async turn2fa_off(session) {
+    const user = await this.usersService.findOne(session.userId);
+
+    if (user && user.twoFASecret) {
+      session.useTwoFA = false;
+      session.isTwoFAutanticated = null;
+      return await this.usersService.update(session.userId, {
+        twoFASecret: null,
+        useTwoFA: false,
+      });
+    }
+    throw 'missing user in session or missing 2fa key in database';
+  }
+
+  async turn2fa_on(session, token: string) {
+    const user = await this.usersService.findOne(session.userId); //TODO manage error
+
+    if (user && this.verify_code(token, user.twoFASecret)) {
+      user.useTwoFA = true;
+      return await this.usersService.update(session.userId, {
+        useTwoFA: true,
+      });
+    }
+    throw 'invalid token';
+  }
+
+  private async verify_code(token: string, secret: string) {
+    console.log(token, secret);
+    return authenticator.verify({
+      token,
+      secret,
+    });
   }
 }

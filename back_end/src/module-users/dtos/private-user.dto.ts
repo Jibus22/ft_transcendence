@@ -19,4 +19,17 @@ export class privateUserDto extends UserDto {
 		return plainToClass(UserDto, value.obj.blocked_list);
 	})
 	blocked_list: UserDto[];
+
+	@ApiProperty()
+	@Expose()
+	@Transform(value => {
+		return (value.obj.twoFASecret) ? true : false;
+	})
+  hasTwoFASecret: boolean
+
+	// TODO remove debug
+	@ApiProperty()
+	@Expose()
+  useTwoFA: boolean
+
 }

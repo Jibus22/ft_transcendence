@@ -5,16 +5,16 @@ import { serialize } from 'class-transformer';
 export class AuthGuard implements CanActivate {
 
   private isTwoFaOk(session): boolean {
-    return (session.hasTwoFaAuthenticated === false
-      || (session.hasTwoFaAuthenticated && session.isTwoFaAuthenticated));
+    return ( ! session.useTwoFA
+      || (session.useTwoFA && session.isTwoFAutanticated));
   }
 
   canActivate(context: ExecutionContext) {
 
 		const logger = new Logger( '💂‍♂️ AuthGuard'); //TODO REMOVE LOGGER HERE
     const session = context.switchToHttp().getRequest().session;
-    console.log(session.hasTwoFaAuthenticated);
-    console.log(this.isTwoFaOk(session));
+    console.log('2fa used ?', session.useTwoFA);
+    console.log('2fs ok ?', this.isTwoFaOk(session));
     if (session.userId && this.isTwoFaOk(session)) {
       logger.log(`User id: ${session.userId}`);
       return true;
@@ -23,3 +23,4 @@ export class AuthGuard implements CanActivate {
     throw new UnauthorizedException();
   }
 }
+
