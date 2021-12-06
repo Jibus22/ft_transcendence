@@ -5,7 +5,7 @@ import { assert } from 'console';
 import { Repository } from 'typeorm';
 import { User } from '../entities/users.entity';
 import { UserPhoto } from '../entities/users_photo.entity';
-import { UserPhotoService } from '../service-file/userPhoto.service';
+import { UsersPhotoService } from '../service-file/userPhoto.service';
 import { UsersService } from '../service-users/users.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class MeService {
     @InjectRepository(UserPhoto) private repoUserPhoto: Repository<UserPhoto>,
     private config: ConfigService,
     private userService: UsersService,
-    private userPhotoService: UserPhotoService,
+    private usersPhotoService: UsersPhotoService,
   ) {}
 
   async whoAmI(userId: string): Promise<User> {
@@ -46,11 +46,11 @@ export class MeService {
     const user = await this.userService.findOne(userId);
 
     if (user) {
-      const newFileName = this.userPhotoService.addExtensionToFilename(file);
+      const newFileName = this.usersPhotoService.addExtensionToFilename(file);
       let userPhoto = await this.repoUserPhoto.findOne({ owner: user });
 
       if (userPhoto) {
-        this.userPhotoService.delete(userPhoto.fileName);
+        this.usersPhotoService.delete(userPhoto.fileName);
         userPhoto.fileName = newFileName;
       } else {
         userPhoto = this.repoUserPhoto.create({

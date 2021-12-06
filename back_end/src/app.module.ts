@@ -1,3 +1,4 @@
+import { UsersPhotoController } from './module-users/usersphoto.controller';
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
@@ -9,7 +10,6 @@ import { User } from './module-users/entities/users.entity';
 import { UserPhoto } from './module-users/entities/users_photo.entity';
 import { UsersModule } from './module-users/users.module';
 const cookieSession = require('cookie-session');
-
 
 @Module({
   imports: [
