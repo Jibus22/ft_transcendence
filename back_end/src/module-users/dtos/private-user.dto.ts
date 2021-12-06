@@ -28,7 +28,6 @@ export class privateUserDto extends UserDto {
   hasTwoFASecret: boolean
 
 	// TODO remove debug
-	@ApiProperty()
 	@Expose()
   useTwoFA: boolean
 

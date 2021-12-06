@@ -1,13 +1,15 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Post, Query, Redirect, Res, Session } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Post, Query, Redirect, Res, Session, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '../guards/auth.guard';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { privateUserDto } from './dtos/private-user.dto';
 import { AuthService } from './service-auth/auth.service';
 import { UsersService } from './service-users/users.service';
-import { authenticator } from 'otplib';
-import { privateUserDto } from './dtos/private-user.dto';
 
 @ApiTags('Auth')
+@Serialize(privateUserDto)
 @Controller('auth')
 export class AuthController {
 
@@ -25,8 +27,11 @@ export class AuthController {
         throw new InternalServerErrorException('Could not identify user.')
       }
       session.userId = user.id;
-      session.hasTwoFaAuthenticated = user.useTwoFA;
-      session.isTwoFaAuthenticated = false;
+      session.useTwoFA = user.useTwoFA;
+      session.isTwoFAutanticated = false;
+      if (user.useTwoFA) {
+        return { url: this.configService.get('AUTH_REDIRECT_URL_2FA') };
+      }
       return { url: this.configService.get('AUTH_REDIRECT_URL') };
     }
 
@@ -36,9 +41,7 @@ export class AuthController {
     })
     @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
     signOut(@Session() session: any) {
-      session.userId = null;
-      session.hasTwoFaAuthenticated = null;
-      session.isTwoFaAuthenticated = null;
+      session = null;
     }
 
 
@@ -53,6 +56,7 @@ export class AuthController {
     //TODO use guard ?
 
     @Post('/2fa/generate')
+    @UseGuards(AuthGuard)
     @ApiOperation({
       summary: 'Internally set a new key to user and return qr-code + key in headers'
     })
@@ -71,6 +75,7 @@ export class AuthController {
     }
 
     @Post('/2fa/turn-off')
+    @UseGuards(AuthGuard)
     @ApiOperation({
       summary: 'Turns off the 2fa, effectively removing the key from the db'
     })
@@ -85,6 +90,7 @@ export class AuthController {
     }
 
     @Post('/2fa/turn-on')
+    @UseGuards(AuthGuard)
     @ApiOperation({
       summary: 'Turns on the 2fa if token is valid'
     })
@@ -93,18 +99,25 @@ export class AuthController {
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
     async turn2fa_on(@Session() session, @Body() body: { token: string } ) {
       // TODO: use dto for body !
-      console.log('token:', body.token);
       return await this.authService.turn2fa_on(session, body.token)
-        .catch((err) => {
-          throw new BadRequestException(err);
-        });
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
+      // redirect login ?
     }
 
     @Post('/2fa/authenticate')
-    // @ApiOperation({
-    //   summary: 'TODO'
-    // })
-    // @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
-    async authenticate2fa(@CurrentUser() userId, @Res() response) {
+    // @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Authenticate user if 2fa is activated'
+    })
+    @ApiResponse({ status: HttpStatus.OK, description: 'User authenticated' })
+    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
+    async authenticate2fa(@Session() session, @Body() body: { token: string }) {
+      // TODO: use dto for body !
+      return await this.authService.authenticate2fa(session, body.token).
+        catch((err) => {
+          throw new BadRequestException(err);
+        })
     }
 }

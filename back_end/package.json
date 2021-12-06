@@ -45,6 +45,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.1.6",
+    "totp-generator": "^0.0.13",
     "typeorm": "^0.2.38"
   },
   "devDependencies": {

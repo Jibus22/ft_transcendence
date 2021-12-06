@@ -55,6 +55,14 @@ export class CommonTest {
     });
   }
 
+  updateCookies(response: request.Response, cookies: string[]): string[] {
+    const tmpCookies = response.get('Set-Cookie');
+    if (tmpCookies && tmpCookies !== cookies) {
+      return tmpCookies;
+    }
+    return cookies;
+  }
+
   getCookies(response: request.Response): string[] {
     return response.get('Set-Cookie');
   }
