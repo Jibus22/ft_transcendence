@@ -9,11 +9,10 @@ import { AuthService } from './service-auth/auth.service';
 import { UsersService } from './service-users/users.service';
 
 @ApiTags('Auth')
-@Serialize(privateUserDto)
 @Controller('auth')
 export class AuthController {
 
-	constructor(
+  constructor(
     private usersService: UsersService,
     private authService: AuthService,
     private configService: ConfigService) {}
@@ -45,13 +44,13 @@ export class AuthController {
     }
 
 
-  /*
-  ===================================================================
-  -------------------------------------------------------------------
-        Two factor authentication
-  -------------------------------------------------------------------
-  ===================================================================
-  */
+    /*
+    ===================================================================
+    -------------------------------------------------------------------
+    Two factor authentication
+    -------------------------------------------------------------------
+    ===================================================================
+    */
 
     //TODO use guard ?
 
@@ -66,15 +65,16 @@ export class AuthController {
     async generate2faKey(@CurrentUser() userId, @Res() response) {
 
       const {totpAuthUrl, secret} = await this.authService.create2faKey(userId)
-        .catch((error) => {
-          throw new BadRequestException(error);
-        });
+      .catch((error) => {
+        throw new BadRequestException(error);
+      });
       response.setHeader('content-type','image/png');
       response.setHeader('secretKey', secret); //TODO is it safe ?
       return this.authService.qrCodeStreamPipe(response, totpAuthUrl);
     }
 
     @Post('/2fa/turn-off')
+    @Serialize(privateUserDto)
     @UseGuards(AuthGuard)
     @ApiOperation({
       summary: 'Turns off the 2fa, effectively removing the key from the db'
@@ -84,12 +84,13 @@ export class AuthController {
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'missing user in session or missing 2fa key in database' })
     async turn2fa_off(@Session() session) {
       return await this.authService.turn2fa_off(session)
-        .catch((err) => {
-          throw new BadRequestException(err);
-        });
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
     }
 
     @Post('/2fa/turn-on')
+    @Serialize(privateUserDto)
     @UseGuards(AuthGuard)
     @ApiOperation({
       summary: 'Turns on the 2fa if token is valid'
@@ -108,6 +109,7 @@ export class AuthController {
 
     @Post('/2fa/authenticate')
     // @UseGuards(AuthGuard)
+    @Serialize(privateUserDto)
     @ApiOperation({
       summary: 'Authenticate user if 2fa is activated'
     })

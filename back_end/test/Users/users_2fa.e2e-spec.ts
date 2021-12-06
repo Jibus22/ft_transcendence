@@ -1,13 +1,10 @@
-import { HttpException, HttpStatus, INestApplication } from '@nestjs/common';
-import { PartialType } from '@nestjs/swagger';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import exp from 'constants';
 // import { totp } from 'otplib';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CommonTest } from '../helpers';
 const totp = require("totp-generator");
-var cookieParser = require('cookie-parser')
 
 describe('user controller: /me routes (e2e)', () => {
   let app: INestApplication;
