@@ -1,15 +1,18 @@
+import React, { useState } from 'react';
 import './StyleLoggin.scss';
 // import { Fade, Bounce } from "react-awesome-reveal";
 
 import Lock from './other/Vector.png';
 import Button from '@mui/material/Button';
-// import useMediaQuery from '@mui/material/useMediaQuery';
-// import IconButton from '@mui/material/IconButton';
-// import DehazeIcon from '@mui/icons-material/Dehaze';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import IconButton from '@mui/material/IconButton';
+import DehazeIcon from '@mui/icons-material/Dehaze';
 import NavLogin from './navLogin/NavLogin';
 
 export default function Loggin() {
-	// const matches = useMediaQuery('(max-width:1000px)');
+	const matches = useMediaQuery('(max-width:1000px)');
+
+	const [isNav, setIsNav] = useState(false);
 
 	const deskop = (
 		<div className="w-100 h-100">
@@ -38,17 +41,16 @@ export default function Loggin() {
 		</div>
 	);
 
-	// function handleClick() {
-	// 	return <NavLogin />;
-	// }
+	function handleClick() {
+		setIsNav(!isNav);
+	}
 
-	return (
+	return !matches ? (
 		<div className="mainLoggin">{deskop}</div>
-		// <div className="mainNavMenuLoggin d-flex ">
-		// 	<IconButton className="iconButtonMui " onClick={handleClick}>
-		// 		<DehazeIcon className="iconMui" />
-		// 	</IconButton>
-
-		// </div>
+	) : (
+		<div className="mainNavMenuLoggin d-flex ">
+			{isNav && null}
+			{!isNav && <NavLogin />}
+		</div>
 	);
 }
