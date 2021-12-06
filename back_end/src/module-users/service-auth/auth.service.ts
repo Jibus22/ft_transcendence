@@ -37,7 +37,7 @@ export class AuthService {
       },
     };
 
-    return lastValueFrom(
+    return await lastValueFrom(
       this.httpService
         .post(this.configService.get('AUTH_API_TOKEN_URL'), null, requestConfig)
         .pipe(
@@ -58,7 +58,7 @@ export class AuthService {
       },
     };
 
-    return lastValueFrom(
+    return await lastValueFrom(
       this.httpService
         .get(this.configService.get('AUTH_API_USER_ENDPOINT'), requestConfig)
         .pipe(
