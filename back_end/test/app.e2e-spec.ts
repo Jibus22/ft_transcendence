@@ -56,5 +56,10 @@ describe('user controller: users basic features (e2e)', () => {
     await request(serv).get('/users/block').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).post('/users/block').expect(HttpStatus.UNAUTHORIZED);
     await request(serv).delete('/users/block').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).post('/auth/2fa/generate').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).post('/auth/2fa/turn-off').expect(HttpStatus.UNAUTHORIZED);
+    await request(serv).post('/auth/2fa/turn-on').expect(HttpStatus.UNAUTHORIZED);
+    // await request(serv).post('/auth/2fa/authenticate').expect(HttpStatus.UNAUTHORIZED);
+    //TODO add new routes when implemented
   });
 });
