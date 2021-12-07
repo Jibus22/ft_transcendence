@@ -1,4 +1,3 @@
-import { UsersPhotoController } from './module-users/usersphoto.controller';
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
