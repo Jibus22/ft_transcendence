@@ -46,16 +46,11 @@ export class User {
   @JoinTable()
   blocked_list: UserDto[];
 
-// ----------------------
+  @Column({ nullable: true })
+  twoFASecret: string
 
-	// @Transform(value => {
-  //   console.log('transfor', value.obj);
-	// 	if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
-	// 		return value.obj.photo_url_42;
-	// 	}
-	// 	return value.obj.photo_url_local.filename;
-	// })
-	// photo_url: string;
+  @Column({ default: false })
+  useTwoFA: boolean
 
   /*
   ** Lifecycle functions

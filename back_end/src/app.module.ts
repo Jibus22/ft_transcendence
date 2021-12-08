@@ -10,7 +10,6 @@ import { UserPhoto } from './module-users/entities/users_photo.entity';
 import { UsersModule } from './module-users/users.module';
 const cookieSession = require('cookie-session');
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
