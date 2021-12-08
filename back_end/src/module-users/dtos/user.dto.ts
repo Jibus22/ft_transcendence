@@ -17,10 +17,11 @@ export class UserDto {
 	@ApiProperty()
 	@Expose()
 	@Transform(value => {
-		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
+		if (value.obj.use_local_photo === false || ! value.obj.photo_url_local) {
 			return value.obj.photo_url_42;
 		}
-		return value.obj.photo_url_local;
+		return process.env.USERS_PHOTOS_SERVE_ROUTE + value.obj.photo_url_local.fileName;
+
 	})
 	photo_url: string;
 
