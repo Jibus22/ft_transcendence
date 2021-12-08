@@ -5,6 +5,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
+import { User } from './entities/users.entity';
 import { AuthService } from './service-auth/auth.service';
 import { UsersService } from './service-users/users.service';
 
@@ -62,9 +63,9 @@ export class AuthController {
     // @ApiResponse({ }) // TODO set png ?
     @ApiResponse({ status: HttpStatus.OK, description: 'Qrcode as png and Key header' })
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: '2fa key already set' })
-    async generate2faKey(@CurrentUser() userId, @Res() response) {
+    async generate2faKey(@CurrentUser() user: User, @Res() response) {
 
-      const {totpAuthUrl, secret} = await this.authService.create2faKey(userId)
+      const {totpAuthUrl, secret} = await this.authService.create2faKey(user)
       .catch((error) => {
         throw new BadRequestException(error);
       });

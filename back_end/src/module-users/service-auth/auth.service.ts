@@ -104,9 +104,7 @@ export class AuthService {
     return toFileStream(stream, otpPathUrl);
   }
 
-  async create2faKey(userId: string) {
-    const user = await this.usersService.findOne(userId);
-
+  async create2faKey(user: User) {
     // TODO uncomment to avoid key deletion
     if (user.twoFASecret) {
       throw '2fa key already set';
@@ -118,7 +116,7 @@ export class AuthService {
     );
     const totpAuthUrl = authenticator.keyuri(user.login_42, app_name, secret);
 
-    await this.usersService.update(userId, { twoFASecret: secret });
+    await this.usersService.update(user.id, { twoFASecret: secret });
     return {
       totpAuthUrl,
       secret,

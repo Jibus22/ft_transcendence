@@ -15,6 +15,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
+import { User } from './entities/users.entity';
 import { UsersPhotoService } from './service-file/userPhoto.service';
 import { MeService } from './service-me/me.service';
 
@@ -46,11 +47,11 @@ export class UsersPhotoController {
   })
   @ApiResponse({ type: privateUserDto })
   async uploadPhoto(
-    @CurrentUser() userId: string,
+    @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.meService
-      .uploadPhoto(userId, file)
+      .uploadPhoto(user, file)
       .catch((error) => console.log('error', error.message)); // TODO manage properly
   }
 
@@ -60,8 +61,8 @@ export class UsersPhotoController {
     summary: 'Set user avatar url to School42 photo',
   })
   @ApiResponse({ type: privateUserDto })
-  async useSchoolPhoto(@CurrentUser() userId: string) {
-    return await this.meService.deletePhoto(userId);
+  async useSchoolPhoto(@CurrentUser() user: User) {
+    return await this.meService.deletePhoto(user);
   }
 
   /*

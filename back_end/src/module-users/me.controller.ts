@@ -45,10 +45,11 @@ export class MeController {
   })
   @ApiResponse({ type: privateUserDto })
   @ApiResponse({ status: HttpStatus.OK, description: 'User private informations' })
-  async whoAmI(@CurrentUser() userId: string) {
-    return await this.meService.whoAmI(userId)
-      .then((userData: User) => userData)
-      .catch((error) => {throw new NotFoundException(error);});
+  async whoAmI(@CurrentUser() user: User) {
+    if (!user) {
+      throw new BadRequestException('user session does not exist');
+    }
+    return user;
   }
 
   @Patch('/')

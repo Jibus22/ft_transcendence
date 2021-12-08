@@ -27,13 +27,13 @@ export class CurrentUserMiddleware implements NestMiddleware {
     const logger = new Logger(' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
     if (userId) {
       await this.usersService
-        .findOne(userId)
+        .findOneWithRelations(userId)
         .then((user) => {
-          logger.log(user.login);
+          logger.log(user.login); // TODO remove debug
           req.currentUser = user;
         })
         .catch((error) => {
-          req.session.userId = null;
+          req.session = null;
         });
 			} else {
         logger.log('No user id in session');

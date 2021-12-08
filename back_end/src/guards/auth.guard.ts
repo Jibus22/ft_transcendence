@@ -13,12 +13,7 @@ export class AuthGuard implements CanActivate {
 
 		const logger = new Logger( '💂‍♂️ AuthGuard'); //TODO REMOVE LOGGER HERE
     const session = context.switchToHttp().getRequest().session;
-    // TODO remove debug
-    // console.log('_____________');
-    // console.log('use 2fa', session.useTwoFA);
-    // console.log('is 2fa auth', session.isTwoFAutanticated);
-    // console.log('user id', session.userId);
-    if (session.userId && this.isTwoFaOk(session)) {
+    if (session && session.userId && this.isTwoFaOk(session)) {
       logger.log(`User id: ${session.userId}`);
       return true;
     }
