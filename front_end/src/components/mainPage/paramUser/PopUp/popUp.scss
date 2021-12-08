@@ -1,91 +1,81 @@
 .mainPopUpUser {
-    width: 83%;
-    height: 43px;
-    margin: 7% 0% 0% 8%;
-    justify-content: space-around;
-    position: absolute;
-    
-    
-    .buttonPopUp {
-        
-        width: 12%;
-        height: 100%;
-        background-color: #E69C6A;
-        border-radius: 13px;
+	width: 83%;
+	height: 43px;
+	margin: 7% 0% 0% 8%;
+	justify-content: space-around;
+	position: absolute;
 
-        img {
-            width: 65%;
-        } 
-    }
-    .buttonPopUp:hover {
-        img {
-            width: 75%;
-        } 
-    }
-    .dlPop img {
-        width: 55%;
-    }
-    .dlPop:hover img {
-        width: 65%;
-    }
+	.buttonPopUp {
+		width: 12%;
+		height: 100%;
+		background-color: #e69c6a;
+		border-radius: 13px;
 
-    
+		img {
+			width: 65%;
+		}
+	}
+	.buttonPopUp:hover {
+		img {
+			width: 75%;
+		}
+	}
 
-    .closePop {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: none;
-        img {
-            width: 80%;
-        
-        }
-    }
-    .closePop:hover {
-        img {
-            width: 90%;
-        }
-    }
-    
-   
-    
+	.css-gxc0n2-MuiButtonBase-root-MuiButton-root {
+		min-width: 100%;
+	}
+	.dlPop img {
+		width: 50%;
+	}
+	.dlPop:hover img {
+		width: 60%;
+	}
+
+	.closePop {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: none;
+		img {
+			width: 80%;
+		}
+	}
+	.closePop:hover {
+		img {
+			width: 90%;
+		}
+	}
 }
 
 //////////////////////////
 ////// Delet photo css ///
 /////////////////////////
 .mainDialogMui {
-p {
-    font-family: Montserrat, sans-serif;
-    
-}
+	p {
+		font-family: Montserrat, sans-serif;
+	}
 
-.MuiDialog-paperScrollBody {
-    border-radius: 24px !important;
- 
-    background: linear-gradient(-13.69deg, #E69C6A 30.67%, #CA6C88 102.8%);
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
-  
-}
+	.MuiDialog-paperScrollBody {
+		border-radius: 24px !important;
 
-.titleDialogMui {
-    margin: 0% 0% 0% 4%;
-}
+		background: linear-gradient(-13.69deg, #e69c6a 30.67%, #ca6c88 102.8%);
+		backdrop-filter: blur(3px);
+		-webkit-backdrop-filter: blur(3px);
+	}
 
-.contentDialogMui {
-    margin: -3% 0% 0% 0%;
-}
+	.titleDialogMui {
+		margin: 0% 0% 0% 4%;
+	}
 
-.MuiDialog-scrollBody {
-    margin: 7% 0% 0% 0%;
-    
-}
-.actionDialogMui {
-    height: 40px;
-    margin: -20px 0 0 0;
-}
+	.contentDialogMui {
+		margin: -3% 0% 0% 0%;
+	}
 
+	.MuiDialog-scrollBody {
+		margin: 7% 0% 0% 0%;
+	}
+	.actionDialogMui {
+		height: 40px;
+		margin: -20px 0 0 0;
+	}
 }
-
-

@@ -111,6 +111,31 @@
 }
 
 ///////////////////////////////////////////////
+//////// reponsive max-width: 1000px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1000px) {
+	.MainTitlePage {
+		margin: 12% 0% 0% 15%;
+		width: 85%;
+		height: 20%;
+
+		.MainTitle {
+			h1 {
+				line-height: 65px;
+				letter-spacing: 1px;
+				font-size: 60px;
+			}
+			.TitleText {
+				h5 {
+					font-size: 25px;
+					line-height: 30px;
+				}
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////
 ///////////////// Animation  //////////////////
 ///////////////////////////////////////////////
 .MainTitle:first-of-type h1,
