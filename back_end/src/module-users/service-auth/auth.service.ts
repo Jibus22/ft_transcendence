@@ -92,6 +92,13 @@ export class AuthService {
     });
   }
 
+  clearSession(session) {
+    session.userId = null;
+    session.useTwoFA = null;
+    session.isTwoFAutanticated = null;
+    session = null;
+  }
+
   /*
   ===================================================================
   -------------------------------------------------------------------
@@ -159,6 +166,7 @@ export class AuthService {
 
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
+
     if (! user.useTwoFA) {
       return this.turn2fa_off(session);
     }
