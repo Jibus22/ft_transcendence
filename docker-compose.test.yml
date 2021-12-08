@@ -13,4 +13,7 @@ services:
     volumes:
       ## in order to run test:watch, git is required to check files changes
       - ./.git:/usr/src/app/.git
+      - type: bind
+        source: ./data/users_photos_test
+        target: ${USERS_PHOTOS_STORAGE_PATH}
     command: npm run test:e2e

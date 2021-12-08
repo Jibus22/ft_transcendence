@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, HttpStatus, NotFoundException, Patch, Post, Session,
+  Controller, Delete, Get, HttpStatus, NotFoundException, Patch, Post, Session,
   UploadedFile,
   UseGuards,
   UseInterceptors
@@ -13,6 +13,7 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
+import { randomUUID } from 'crypto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -44,10 +45,11 @@ export class MeController {
   })
   @ApiResponse({ type: privateUserDto })
   @ApiResponse({ status: HttpStatus.OK, description: 'User private informations' })
-  async whoAmI(@CurrentUser() userId: string) {
-    return await this.meService.whoAmI(userId)
-      .then((userData: User) => userData)
-      .catch((error) => {throw new NotFoundException(error);});
+  async whoAmI(@CurrentUser() user: User) {
+    if (!user) {
+      throw new BadRequestException('user session does not exist');
+    }
+    return user;
   }
 
   @Patch('/')
@@ -61,16 +63,4 @@ export class MeController {
     return this.usersService.update(session.userId, body)
     .catch((error) => {throw new BadRequestException(error.message);});
   }
-
-  @Post('/photo')
-  @UseInterceptors(FileInterceptor('file'))
-  @Serialize(privateUserDto)
-  @ApiOperation({
-    summary: 'Post a new profile picture and set use_local_photo to true',
-  })
-  @ApiResponse({ type: privateUserDto })
-  uploadPhoto(@CurrentUser() userId: string, @UploadedFile() file: Express.Multer.File) {
-    return this.meService.uploadPhoto(file);
-  }
-
 }
