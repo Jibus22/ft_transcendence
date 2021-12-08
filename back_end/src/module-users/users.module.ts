@@ -13,7 +13,7 @@ import { MeService } from './service-me/me.service';
 import { RelationsService } from './service-relations/relations.service';
 import { UsersService } from './service-users/users.service';
 import { UsersController } from './users.controller';
-import { UsersPhotoController } from './usersPhoto.controller';
+import { UsersPhotoController } from './usersphoto.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserPhoto]), HttpModule],

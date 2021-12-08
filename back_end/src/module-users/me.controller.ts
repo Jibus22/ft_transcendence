@@ -1,19 +1,15 @@
 import {
   BadRequestException,
   Body,
-  Controller, Delete, Get, HttpStatus, NotFoundException, Patch, Post, Session,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors
+  Controller, Get, HttpStatus, Patch, Res, Session, UseGuards
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { randomUUID } from 'crypto';
+import { Response } from 'express';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -25,8 +21,10 @@ import { UsersService } from './service-users/users.service';
 
 @ApiTags('Me')
 @ApiCookieAuth()
-@ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not logged' })
-@UseGuards(AuthGuard)
+@ApiResponse({
+  status: HttpStatus.UNAUTHORIZED,
+  description: 'User not logged',
+})
 @Controller('me')
 export class MeController {
   constructor(
@@ -39,28 +37,53 @@ export class MeController {
    *****************************************************************************/
 
   @Get('/')
+  @UseGuards(AuthGuard)
   @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Get infos of the currently logged user',
   })
   @ApiResponse({ type: privateUserDto })
-  @ApiResponse({ status: HttpStatus.OK, description: 'User private informations' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User private informations',
+  })
   async whoAmI(@CurrentUser() user: User) {
-    if (!user) {
-      throw new BadRequestException('user session does not exist');
-    }
     return user;
   }
 
+  @Get('/is-logged')
+  @ApiOperation({
+    summary: 'Get authentication status of current user',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User is logged with OAuth and header Completed-Auth is set according to 2FA status',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User is not logged with OAuth',
+  })
+  async isLogged(@CurrentUser() user: User, @Session() session, @Res() res: Response) {
+    if (user.useTwoFA) {
+      return res.set('Completed-Auth', session.isTwoFAutanticated).send();
+    }
+    return res.set('Completed-Auth', 'true').send();
+  }
+
   @Patch('/')
+  @UseGuards(AuthGuard)
   @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Update infos of the currently logged user',
   })
   @ApiResponse({ type: privateUserDto })
-  @ApiResponse({ status: HttpStatus.OK, description: 'User private informations updated' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User private informations updated',
+  })
   async update(@Body() body: UpdateUserDto, @Session() session) {
-    return this.usersService.update(session.userId, body)
-    .catch((error) => {throw new BadRequestException(error.message);});
+    return this.usersService.update(session.userId, body).catch((error) => {
+      throw new BadRequestException(error.message);
+    });
   }
 }
