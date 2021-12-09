@@ -15,37 +15,29 @@ export class MeService {
     private usersPhotoService: UsersPhotoService,
   ) {}
 
-  async updateUseLocalPhoto(user: User, newValue: boolean) {
-    if (user) {
-      if (newValue === true && user.photo_url_local === null) {
-        throw 'user has no local photo';
-      }
-      if (user.use_local_photo !== newValue) {
-        return await this.userService.update(user.id, {
-          use_local_photo: newValue,
-        });
-      }
+  private async updateUseLocalPhoto(user: User, newValue: boolean) {
+    if (user.use_local_photo !== newValue) {
+      return await this.userService.update(user.id, {
+        use_local_photo: newValue,
+      });
     }
   }
 
   async uploadPhoto(user: User, file: Express.Multer.File) {
-    if (user) {
-      const newFileName = this.usersPhotoService.addExtensionToFilename(file);
-      let userPhoto = await this.repoUserPhoto.findOne({ owner: user });
+    const newFileName = this.usersPhotoService.addExtensionToFilename(file);
+    let userPhoto = await this.repoUserPhoto.findOne({ owner: user });
 
-      if (userPhoto) {
-        this.usersPhotoService.delete(userPhoto.fileName);
-        userPhoto.fileName = newFileName;
-      } else {
-        userPhoto = this.repoUserPhoto.create({
-          owner: user,
-          fileName: newFileName,
-        });
-      }
-
-      await this.repoUserPhoto.save(userPhoto);
-      await this.updateUseLocalPhoto(user, true);
+    if (userPhoto) {
+      this.usersPhotoService.delete(userPhoto.fileName);
+      userPhoto.fileName = newFileName;
+    } else {
+      userPhoto = this.repoUserPhoto.create({
+        owner: user,
+        fileName: newFileName,
+      });
     }
+    await this.updateUseLocalPhoto(user, true);
+    await this.repoUserPhoto.save(userPhoto);
   }
 
   async deletePhoto(user: User) {
@@ -59,5 +51,4 @@ export class MeService {
       }
     }
   }
-
 }
