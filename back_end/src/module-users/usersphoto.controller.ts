@@ -39,8 +39,7 @@ export class UsersPhotoController {
   @Post('/me/photo')
   @Serialize(privateUserDto)
   @UseInterceptors(
-    FileInterceptor('file', { dest: `/usr/assets/users_photos` }),
-  ) // TODO: change to env.
+    FileInterceptor('file', { dest: `/usr/assets/users_photos` })) // TODO: change to env.
   @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Upload a new custome photo and swtich to use it',
@@ -50,9 +49,9 @@ export class UsersPhotoController {
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.meService
+    await this.meService
       .uploadPhoto(user, file)
-      .catch((error) => console.log('error', error.message)); // TODO manage properly
+      .catch((error) => console.log('error - ', error)); // TODO manage properly
   }
 
   @Post('/me/useSchoolPhoto')
