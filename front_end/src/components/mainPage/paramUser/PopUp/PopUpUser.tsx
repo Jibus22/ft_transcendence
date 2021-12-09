@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
 import './popUp.scss';
-import {
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	IconButton,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import LCB from '../photos/Corbeille.png';
-import LUP from '../photos/bi_upload.png';
-import L42 from '../photos/Logo42.png';
 import LDE from '../photos/LogoDee.png';
 import LCL from '../photos/close-icon.png';
 
 import FormUpload from './formUpload/FormUpload';
+import Form42Upload from './form42Upload/Form42Upload';
+import FormRandomUpload from './formRandomUpload/FormRandomUpload';
 
 export interface Props {
 	printPopup: () => void;
@@ -27,9 +19,7 @@ export default function PopUpUser({ printPopup, userImg }: Props) {
 	const [open, setOpen] = useState(false);
 
 	const [name, setName] = useState('');
-	const [selectedFile, setSelectedFile] = useState<
-		string | ReadonlyArray<string> | number | undefined
-	>(undefined);
+	const [selectedFile, setSelectedFile] = useState<string | ReadonlyArray<string> | number | undefined>(undefined);
 
 	const handleClick = () => {
 		setOpen(!open);
@@ -43,14 +33,10 @@ export default function PopUpUser({ printPopup, userImg }: Props) {
 				</IconButton>
 			</div>
 			<div className="buttonPopUp 42Pop">
-				<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="">
-					<img src={L42} alt="" />
-				</IconButton>
+				<Form42Upload />
 			</div>
 			<div className="buttonPopUp deePop">
-				<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="">
-					<img src={LDE} alt="" />
-				</IconButton>
+				<FormRandomUpload />
 			</div>
 			<div className="buttonPopUp dlPop">
 				<FormUpload />
@@ -77,9 +63,7 @@ export default function PopUpUser({ printPopup, userImg }: Props) {
 					</div>
 				</DialogTitle>
 				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">
-						Are you sure you want to delete your photo?
-					</DialogContentText>
+					<DialogContentText id="alert-dialog-description">Are you sure you want to delete your photo?</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
 					<Button onClick={handleClick}>Disagree</Button>

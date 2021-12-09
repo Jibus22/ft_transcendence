@@ -44,6 +44,7 @@
 			}
 		}
 	}
+
 	.mainStatUser {
 		margin: -17% 0% 0% 0%;
 	}
@@ -169,6 +170,24 @@
 			text-transform: none;
 			font-size: 1vw;
 			border-radius: 40px;
+		}
+	}
+}
+
+/*This will work for firefox*/
+@-moz-document url-prefix() {
+	.mainParamUser {
+		.imgUser {
+			.userModif {
+				border-radius: 50px;
+				position: absolute;
+				width: 9%;
+				height: 19%;
+				margin: -9% 0% 0% 0%;
+				img {
+					margin: 0% 0% 0% 5%;
+				}
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
 import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre } from '..';
@@ -7,14 +7,22 @@ import axios from 'axios';
 import { useMainPage } from '../../MainPageContext';
 
 const MainPage = () => {
-	const { timeSnack, setData, setTimeSnack } = useMainPage();
+	const { timeSnack, setData, setTimeSnack, data } = useMainPage();
 
 	const fetchData = async () => {
-		const result = await axios('http://localhost:3000/users', {
-			withCredentials: true,
-		});
-		setData(result.data);
+		try {
+			const { data } = await axios('http://localhost:3000/users', {
+				withCredentials: true,
+			});
+			setData(data);
+			// console.log(data[0]);
+		} catch (err) {
+			console.log(err);
+		}
 	};
+	// useEffect(() => {
+	// 	console.log('data changed', data);
+	// }, [data]);
 
 	useEffect(() => {
 		fetchData();

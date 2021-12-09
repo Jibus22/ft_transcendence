@@ -57,7 +57,6 @@
 
 	.MuiDialog-paperScrollBody {
 		border-radius: 24px !important;
-
 		background: linear-gradient(-13.69deg, #e69c6a 30.67%, #ca6c88 102.8%);
 		backdrop-filter: blur(3px);
 		-webkit-backdrop-filter: blur(3px);
@@ -77,5 +76,42 @@
 	.actionDialogMui {
 		height: 40px;
 		margin: -20px 0 0 0;
+	}
+}
+
+/*This will work for firefox*/
+@-moz-document url-prefix() {
+	.mainPopUpUser {
+		width: 30%;
+		height: 43px;
+		margin: 1.5% 0% 0% 3%;
+		justify-content: space-around;
+		position: absolute;
+
+		.buttonPopUp {
+			width: 12%;
+			height: 100%;
+			background-color: #e69c6a;
+			border-radius: 13px;
+
+			img {
+				width: 65%;
+			}
+		}
+		.dlPop img {
+			width: 50%;
+		}
+		.dlPop:hover img {
+			width: 60%;
+		}
+		.closePop {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: none;
+			img {
+				width: 80%;
+			}
+		}
 	}
 }

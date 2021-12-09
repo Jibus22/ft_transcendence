@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './paramUser.scss';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
@@ -18,13 +18,21 @@ export default function ParamUser() {
 		},
 	});
 
-	const { userImg, userName } = useMainPage();
+	const { userImg, userName, setUserName, setUserImg, data } = useMainPage();
+	// useEffect(() => {
+	// 	if (data.length > 0) {
+	// 		setUserImg(data[0].photo_url);
+	// 	}
+	// });
 
 	const [isModif, setIsModif] = useState<boolean>(false);
 	const [isPop, setIsPop] = useState<boolean>(false);
 
-	function toggleModif() {
-		setIsModif(!isModif);
+	function toggleModifOn() {
+		setIsModif(true);
+	}
+	function toggleModifOff() {
+		setIsModif(false);
 	}
 	function printPopup() {
 		setIsPop(!isPop);
@@ -35,8 +43,8 @@ export default function ParamUser() {
 			<div className="mainParamUser d-flex flex-column">
 				{isPop ? <PopUpUser printPopup={printPopup} userImg={userImg} /> : null}
 
-				<div onMouseEnter={toggleModif} onMouseLeave={toggleModif} className="imgUser ">
-					<img src={userImg} alt="" className={`${isModif && !isPop ? 'imgFilter ' : 'none'} `} />
+				<div onMouseEnter={toggleModifOn} onMouseLeave={toggleModifOff} className="imgUser ">
+					<img src={userImg} alt="" className={`${isModif && !isPop ? 'imgFilter ' : ''} `} />
 					{isModif && !isPop ? (
 						<div className="userModif">
 							<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="" onClick={printPopup}>
@@ -74,12 +82,7 @@ export default function ParamUser() {
 						<FormUser isPop={isPop} userName={userName} />
 					</div>
 					<div className="switchMui ">
-						<FormControlLabel
-							disabled={isPop}
-							control={<Switch defaultChecked />}
-							label="2FA"
-							labelPlacement="start"
-						/>
+						<FormControlLabel disabled={isPop} control={<Switch defaultChecked />} label="2FA" labelPlacement="start" />
 					</div>
 					<div className="disconectMui">
 						<Button disabled={isPop} variant="text">

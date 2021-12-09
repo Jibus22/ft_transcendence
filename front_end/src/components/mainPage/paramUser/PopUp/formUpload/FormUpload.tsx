@@ -4,18 +4,22 @@ import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/Button';
 import LUP from '../../photos/bi_upload.png';
 import axios from 'axios';
-import '../popUp.scss';
 import { useMainPage } from '../../../../../MainPageContext';
 
 export default function FormUpload() {
-	const { fetchData } = useMainPage();
+	const { setData } = useMainPage();
+
+	const fetchDataUserMe = async () => {
+		const { data } = await axios.get('http://localhost:3000/me', {
+			withCredentials: true,
+		});
+		setData([data]);
+	};
 
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
-	const [imageUrl, setImageUrl] = useState('');
-
-	console.log(imageUrl);
 
 	useEffect(() => {
+		if (!selectedImage) return;
 		onSubmit();
 	}, [selectedImage]);
 
@@ -23,15 +27,13 @@ export default function FormUpload() {
 		let data = new FormData();
 		console.log(selectedImage);
 		if (selectedImage) {
-			data.append('photo_url', selectedImage);
+			data.append('file', selectedImage);
 		}
 		try {
 			const result = await axios.post('http://localhost:3000/me/photo', data, {
 				withCredentials: true,
 			});
-			console.log(result);
-
-			fetchData();
+			fetchDataUserMe();
 		} catch (err) {
 			console.log(err);
 		}

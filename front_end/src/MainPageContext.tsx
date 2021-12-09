@@ -22,6 +22,7 @@ interface IMainPageContext {
 	data: Array<Type>;
 	setData: React.Dispatch<React.SetStateAction<never[]>>;
 	fetchData: () => void;
+	fetchDataUserMe: () => void;
 	userName: string;
 	setUserName: React.Dispatch<React.SetStateAction<string>>;
 	userImg: string;
@@ -50,6 +51,13 @@ const MainPageProvider = (props: any) => {
 		setData(result.data);
 	};
 
+	const fetchDataUserMe = async () => {
+		const result = await axios.get('http://localhost:3000/me', {
+			withCredentials: true,
+		});
+		setData(result.data);
+	};
+
 	const ProviderValue = {
 		timeSnack,
 		setTimeSnack,
@@ -63,6 +71,7 @@ const MainPageProvider = (props: any) => {
 		setLoading,
 		data,
 		setData,
+		fetchDataUserMe,
 		fetchData,
 		userName,
 		setUserName,
