@@ -13,6 +13,7 @@ describe('user controller: /me routes (e2e)', () => {
   let users;
   let cookies: string[];
   let loggedUser;
+  let secret: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -46,43 +47,41 @@ describe('user controller: /me routes (e2e)', () => {
   ===================================================================
   */
 
-  const getIsLogged = async (cookiesParam: string[]) => {
+  async function getIsLogged(cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .get('/me/is-logged')
       .set('Cookie', cookiesParam);
   };
 
-  const generateQrCode = async (body, cookiesParam: string[]) => {
+  async function generateQrCode(body, cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/generate')
       .set('Cookie', cookiesParam)
       .send(body);
   };
 
-  const turn2Fa_on = async (body, cookiesParam: string[]) => {
+  async function turn2Fa_on(body, cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/turn-on')
       .set('Cookie', cookiesParam)
       .send(body);
   };
 
-  const turn2Fa_off = async (cookiesParam: string[]) => {
+  async function turn2Fa_off(cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/turn-off')
       .set('Cookie', cookiesParam);
   };
 
-  const authenticate2fa = async (body, cookiesParam: string[]) => {
+  async function authenticate2fa(body, cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/authenticate')
       .set('Cookie', cookiesParam)
       .send(body);
   };
 
-  const doFull2faProcess = async () => {
-    let secret: string;
-
-    await generateQrCode(null, cookies)
+  async function generateAndValidateQrCode() {
+    return await generateQrCode(null, cookies)
       .then(async (response) => {
         cookies = commons.updateCookies(response, cookies);
         secret = response.headers.secretkey;
@@ -96,7 +95,14 @@ describe('user controller: /me routes (e2e)', () => {
           response = await turn2Fa_on({ token: totp(secret) }, cookies);
         }
         cookies = commons.updateCookies(response, cookies);
-        return await authenticate2fa({ token: totp(secret) }, cookies);
+      });
+    };
+
+  async function doFull2faProcess() {
+
+    return await generateAndValidateQrCode()
+      .then(async () => {
+        return await authenticate2fa({ token: totp(secret) }, cookies)
       })
       .then(async (response) => {
         // second try in case the TOTP was sent at expire time
@@ -375,23 +381,40 @@ describe('user controller: /me routes (e2e)', () => {
           'true',
         );
       });
+  });
 
-    it('gets /me/is-logged when using 2FA, with 2fa turned off', async () => {
-      await doFull2faProcess()
-        .then(async () => {
-          return await turn2Fa_off(cookies);
-        })
-        .then(async (response) => {
-          expect(response.status).toBe(HttpStatus.OK);
-          return await getIsLogged(cookies);
-        })
-        .then(async (response) => {
-          await commons.getMe(cookies).then((resp) => {console.log(resp.body)});
-          expect(response.header).toHaveProperty(
-            'Completed-Auth'.toLowerCase(),
-            'true',
-          );
-        });
-    });
+  it('gets /me/is-logged when using 2FA, with 2fa turned off', async () => {
+    await doFull2faProcess()
+      .then(async () => {
+        return await turn2Fa_off(cookies);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        return await getIsLogged(cookies);
+      })
+      .then(async (response) => {
+        expect(response.header).toHaveProperty(
+          'Completed-Auth'.toLowerCase(),
+          'true',
+        );
+      });
+  });
+
+  it('gets /me/is-logged after partial login', async () => {
+    await generateAndValidateQrCode()
+      .then(async () => {
+        return await commons.logOutUser();
+
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        return await getIsLogged(cookies);
+      })
+      .then(async (response) => {
+        expect(response.header).toHaveProperty(
+          'Completed-Auth'.toLowerCase(),
+          'false',
+        );
+      });
   });
 });

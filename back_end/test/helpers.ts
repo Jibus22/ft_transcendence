@@ -55,6 +55,10 @@ export class CommonTest {
     });
   }
 
+  async logOutUser() {
+    return await request(this.app.getHttpServer()).delete('/auth/signout');
+  }
+
   updateCookies(response: request.Response, cookies: string[]): string[] {
     const tmpCookies = response.get('Set-Cookie');
     if (tmpCookies && tmpCookies !== cookies) {
