@@ -36,7 +36,7 @@ export class User {
   use_local_photo: boolean;
 
   @OneToOne(() => UserPhoto, photo => photo.owner)
-  photo_url_local: UserPhoto;
+  local_photo: UserPhoto;
 
   @ManyToMany(type => User, (user) => user.friends_list)
   @JoinTable()
