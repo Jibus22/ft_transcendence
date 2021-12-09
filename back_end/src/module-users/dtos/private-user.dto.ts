@@ -7,7 +7,7 @@ export class privateUserDto extends UserDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    return value.obj.photo_url_local ? true : false;
+    return value.obj.local_photo ? true : false;
   })
   storeCustomPhoto: boolean;
 
