@@ -1,13 +1,14 @@
 import {
-	Controller,
-	Get,
-	HttpStatus, Param,
-	Post,
-	Response,
-	StreamableFile,
-	UploadedFile,
-	UseGuards,
-	UseInterceptors
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Response,
+  StreamableFile,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -39,7 +40,8 @@ export class UsersPhotoController {
   @Post('/me/photo')
   @Serialize(privateUserDto)
   @UseInterceptors(
-    FileInterceptor('file', { dest: `/usr/assets/users_photos` })) // TODO: change to env.
+    FileInterceptor('file', { dest: `/usr/assets/users_photos` }),
+  ) // TODO: change to env.
   @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Upload a new custome photo and swtich to use it',

@@ -63,10 +63,7 @@ export default function FormUser({ isPop, userName }: Props) {
 
 	return (
 		<div className="w-100 h-100  d-flex flex-column">
-			<form
-				onSubmit={formik.handleSubmit}
-				className={`${Boolean(formik.errors.nickname) ? 'formDivButtonAnim' : 'none'} w-100 h-100 `}
-			>
+			<form onSubmit={formik.handleSubmit} className={`${Boolean(formik.errors.nickname) ? 'formDivButtonAnim' : 'none'} w-100 h-100 `}>
 				<TextField
 					sx={{ width: 2 / 2 }}
 					name="nickname"

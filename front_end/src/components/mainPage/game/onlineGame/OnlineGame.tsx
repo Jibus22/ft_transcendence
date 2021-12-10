@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './onlineGame.scss';
 import { useSpring, animated } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
@@ -6,42 +6,30 @@ import FF from '../../../homePage/section/photos/FF.png';
 import JB from '../../../homePage/section/photos/jb.png';
 import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { Fade, Bounce, Hinge, Flip, Slide } from 'react-awesome-reveal';
 
 interface Props {
 	Loadingclick: () => void;
 }
 
 export default function OnlineGame({ Loadingclick }: Props) {
-	const props = useSpring({
-		opacity: 1,
-		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 500px)' },
-		config: {
-			delay: 300,
-			duration: 300,
-		},
-	});
-
 	const { loading } = useMainPage();
+	const [time, setTime] = useState(false);
+	function handleClick() {
+		setTime(true);
+		setTimeout(function () {
+			setTime(false);
+		}, 2000);
+	}
 
 	let divTest = (
 		<div className="partyOnline d-flex ">
 			<div className="userImg d-flex">
 				<AvatarGroup max={2}>
-					<Badge
-						overlap="circular"
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-						variant="dot"
-						sx={{}}
-					>
+					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
 						<Avatar alt="userImg" src={FF} variant="square" className="domUser" />
 					</Badge>
-					<Badge
-						overlap="circular"
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-						variant="dot"
-						sx={{}}
-					>
+					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
 						<Avatar alt="userImg" src={JB} variant="rounded" className="extUser" />
 					</Badge>
 				</AvatarGroup>
@@ -58,12 +46,11 @@ export default function OnlineGame({ Loadingclick }: Props) {
 					<p>1</p>
 				</div>
 			</div>
-			<div className="userWatch d-flex ">
-				{/* <Button className='muiButton' variant="contained"   sx={{borderRadius: 4, width: 2/2, textTransform: 'none'}}>Watch</Button> */}
+			<div className="userWatch d-flex  ">
 				<LoadingButton
 					className="muiButton"
-					onClick={Loadingclick}
-					disabled={loading}
+					onClick={handleClick}
+					disabled={loading || time}
 					variant="contained"
 					sx={{
 						borderRadius: 4,
@@ -73,15 +60,16 @@ export default function OnlineGame({ Loadingclick }: Props) {
 						backgroundColor: '#E69C6A',
 					}}
 				>
-					{loading && <CircularProgress size="1.2em" />}
-					{!loading && 'Watch'}
+					{(loading || time) && <CircularProgress size="1.2em" />}
+					{!loading && !time && 'Watch'}
 				</LoadingButton>
 			</div>
 		</div>
 	);
 
 	return (
-		<animated.div style={props} className="w-100">
+		// <animated.div style={animDiv} className="w-100">
+		<Slide direction="up" duration={300} className="w-100 h-100">
 			<div className="mainOnlineGame d-flex flex-column ">
 				<div className="title">
 					<h1>Online game</h1>
@@ -96,6 +84,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 					</div>
 				</div>
 			</div>
-		</animated.div>
+		</Slide>
+		// </animated.div>
 	);
 }
