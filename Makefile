@@ -1,17 +1,30 @@
 all:
-	docker-compose build
-
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ; docker-compose rm -fsv
 
 back:
-	docker-compose build back_end_server
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
 
 front:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up front_end_server ; docker-compose rm -fsv
+
+
+
+allbuild:
+	docker-compose build
+
+backbuild:
+	docker-compose build back_end_server
+
+frontbuild:
 	docker-compose build front_end_server
+
 
 
 dockerclean:
 	docker system prune
 	docker volume prune
+
+
 
 backdoc:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run  -p 8080:8080 back_end_server bash -c 'npm run documentation:serve'
