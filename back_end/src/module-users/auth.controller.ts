@@ -41,7 +41,7 @@ export class AuthController {
     })
     @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
     signOut(@Session() session: any) {
-      session = null;
+      this.authService.clearSession(session);
     }
 
 
