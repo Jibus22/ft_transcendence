@@ -54,11 +54,11 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.OK, description: "User's public data" })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
   async getUserById(@Param() { login }) {
-    return await this.usersService.find(login).then((user) => {
-      if (!user[0]) {
+    return await this.usersService.find({login}).then((users) => {
+      if (!users[0]) {
         throw new NotFoundException('user not found');
       }
-      return user[0];
+      return users[0];
     });
   }
 
