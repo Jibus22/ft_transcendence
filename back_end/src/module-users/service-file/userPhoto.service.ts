@@ -46,7 +46,6 @@ export class UsersPhotoService {
       }
       const mime = require('mime-types');
       const file = createReadStream(path);
-      console.log(file.readableLength);
       res.set({
         'Content-Type': mime.lookup(path),
         'Content-Disposition': `attachment; filename=${filename}`,
