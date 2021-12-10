@@ -21,3 +21,9 @@
 		padding-top: 0px;
 	}
 }
+
+@-moz-document url-prefix() {
+	.App {
+		scrollbar-color: rgba(51, 51, 51, 0.7) rgba(4, 3, 3, 0) !important;
+	}
+}

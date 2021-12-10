@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { useSpring, SpringValue } from 'react-spring';
 
 interface Type {
 	id: number;
