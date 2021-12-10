@@ -2,14 +2,15 @@ import {
   Body, Controller, Delete, Get, Post, Session, UseGuards
 } from '@nestjs/common';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { UserDto } from '../module-users/dtos/user.dto';
 import { DevGuard } from '../guards/dev.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
+import { privateUserDto } from '../module-users/dtos/private-user.dto';
+import { UserDto } from '../module-users/dtos/user.dto';
 import { User } from '../module-users/entities/users.entity';
 import { DevelopmentService } from './development.service';
 
 @ApiTags('DevTools')
-@Serialize(UserDto)
+@Serialize(privateUserDto)
 @UseGuards(DevGuard)
 @Controller('dev')
 export class DevelopmentController {
