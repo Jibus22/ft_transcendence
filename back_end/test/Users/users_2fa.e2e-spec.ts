@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import exp from 'constants';
 import { repeat } from 'rxjs';
 // import { totp } from 'otplib';
 import * as request from 'supertest';
@@ -51,34 +52,34 @@ describe('user controller: /me routes (e2e)', () => {
     return await request(app.getHttpServer())
       .get('/me/is-logged')
       .set('Cookie', cookiesParam);
-  };
+  }
 
   async function generateQrCode(body, cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/generate')
       .set('Cookie', cookiesParam)
       .send(body);
-  };
+  }
 
   async function turn2Fa_on(body, cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/turn-on')
       .set('Cookie', cookiesParam)
       .send(body);
-  };
+  }
 
   async function turn2Fa_off(cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/turn-off')
       .set('Cookie', cookiesParam);
-  };
+  }
 
   async function authenticate2fa(body, cookiesParam: string[]) {
     return await request(app.getHttpServer())
       .post('/auth/2fa/authenticate')
       .set('Cookie', cookiesParam)
       .send(body);
-  };
+  }
 
   async function generateAndValidateQrCode() {
     return await generateQrCode(null, cookies)
@@ -96,13 +97,12 @@ describe('user controller: /me routes (e2e)', () => {
         }
         cookies = commons.updateCookies(response, cookies);
       });
-    };
+  }
 
   async function doFull2faProcess() {
-
     return await generateAndValidateQrCode()
       .then(async () => {
-        return await authenticate2fa({ token: totp(secret) }, cookies)
+        return await authenticate2fa({ token: totp(secret) }, cookies);
       })
       .then(async (response) => {
         // second try in case the TOTP was sent at expire time
@@ -111,7 +111,7 @@ describe('user controller: /me routes (e2e)', () => {
         }
         cookies = commons.updateCookies(response, cookies);
       });
-  };
+  }
 
   /*
   ===================================================================
@@ -293,7 +293,6 @@ describe('user controller: /me routes (e2e)', () => {
       })
       .then(async (response) => {
         // second try in case the TOTP was sent at expire time
-
         expect(response.body).toHaveProperty('message', 'no user logged');
         if (response.status === HttpStatus.BAD_REQUEST) {
           response = await authenticate2fa({ token: totp(secret) }, cookies);
@@ -404,7 +403,6 @@ describe('user controller: /me routes (e2e)', () => {
     await generateAndValidateQrCode()
       .then(async () => {
         return await commons.logOutUser();
-
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
@@ -415,6 +413,34 @@ describe('user controller: /me routes (e2e)', () => {
           'Completed-Auth'.toLowerCase(),
           'false',
         );
-      });
+        return await commons.logUser(loggedUser.login);
+      })
+      .then(async (response) => {
+        cookies = commons.getCookies(response);
+        expect(response.status).toBe(HttpStatus.CREATED);
+        return await getIsLogged(cookies);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.header).toHaveProperty(
+          'Completed-Auth'.toLowerCase(),
+          'false',
+          );
+          return await authenticate2fa({ token: totp(secret) }, cookies);
+        }).then(async (response) => {
+          if (response.status === HttpStatus.BAD_REQUEST) {
+            response = await authenticate2fa({ token: totp(secret) }, cookies);
+          }
+          cookies = commons.getCookies(response);
+          expect(response.status).toBe(HttpStatus.CREATED);
+        return await getIsLogged(cookies);
+        })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.header).toHaveProperty(
+          'Completed-Auth'.toLowerCase(),
+          'true',
+          );
+        });
   });
 });
