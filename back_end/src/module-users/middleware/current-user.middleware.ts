@@ -1,8 +1,7 @@
 import {
   Injectable,
   Logger,
-  NestMiddleware,
-  UnauthorizedException
+  NestMiddleware
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../entities/users.entity';
@@ -29,7 +28,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.session || {};
     const logger = new Logger(' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
-    logger.log('', `New request: ${req.method} ${req.baseUrl}`);
+    logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
     if (userId) {
       await this.usersService
         .findOneWithRelations(userId)
