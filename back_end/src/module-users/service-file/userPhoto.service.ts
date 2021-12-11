@@ -1,15 +1,13 @@
 import {
-  ForbiddenException,
-  HttpException,
-  HttpStatus,
+  ForbiddenException, HttpStatus,
   Injectable,
-  NotFoundException,
-  StreamableFile,
+  Logger, StreamableFile
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { R_OK } from 'constants';
-import { createReadStream, rename, stat, statSync, unlink, unlinkSync } from 'fs';
+import {
+  createReadStream, renameSync, statSync, unlink
+} from 'fs';
 import { extname, join } from 'path';
 import { Repository } from 'typeorm';
 import { UserPhoto } from '../entities/users_photo.entity';
@@ -34,47 +32,48 @@ export class UsersPhotoService {
     const newPath =
       this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + newFileName;
 
-    rename(oldPath, newPath, (error) => {
-      if (error) {
-        throw error;
-      }
-    });
-
+    try {
+      renameSync(oldPath, newPath);
+    } catch (error) {
+      const logger = new Logger('fileSystem');
+      logger.log(`Rename failed: ${error}`);
+      throw {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'could not store the file',
+      };
+    }
     return newFileName;
   }
 
-  async delete(filename: string) {
+  delete(filename: string) {
     const filePath =
-      this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + filename;
+      this.config.get('USERS_PHOTOS__STORAGE_PATH') + '/' + filename;
 
-
-      try {
-        unlinkSync(filePath);
-      } catch {
-        console.log('could not delete previous file');
-      }
-      // unlink(filePath, (err) => {
-      //   if (err) throw 'No file to delete';
-      // });
-    }
+    unlink(filePath, (error) => {
+      const logger = new Logger('fileSystem');
+      logger.log(`Unlink failed: ${error}`);
+    });
+  }
 
   async serveFile(filename: string, res) {
-    const fsPromises = require('fs').promises;
     let path = join(this.config.get('USERS_PHOTOS_STORAGE_PATH'), filename);
     try {
-      const stat = await fsPromises.stat(path, R_OK);
-      if (!stat.isFile()) {
-        return new ForbiddenException();
+      const stat = statSync(path);
+      if (stat.isFile()) {
+        const mime = require('mime-types');
+        const file = createReadStream(path);
+        res.set({
+          'Content-Type': mime.lookup(path),
+          'Content-Disposition': `attachment; filename=${filename}`,
+        });
+        return new StreamableFile(file);
       }
-      const mime = require('mime-types');
-      const file = createReadStream(path);
-      res.set({
-        'Content-Type': mime.lookup(path),
-        'Content-Disposition': `attachment; filename=${filename}`,
-      });
-      return new StreamableFile(file);
+      return new ForbiddenException(`${filename} is a directory`);
     } catch (err) {
-      return new NotFoundException();
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: 'file not found',
+      };
     }
   }
 }

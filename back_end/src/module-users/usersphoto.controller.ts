@@ -1,21 +1,18 @@
 import {
-  BadRequestException,
   Controller,
   Get,
   HttpException,
   HttpStatus,
-  InternalServerErrorException,
-  Param,
+  InternalServerErrorException, Param,
   Post,
   Response,
   StreamableFile,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { response } from 'express';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -100,10 +97,18 @@ export class UsersPhotoController {
     status: HttpStatus.NOT_FOUND,
     description: 'file requested not found',
   })
-  servePhoto(
+  async servePhoto(
     @Param('fileName') fileName,
     @Response({ passthrough: true }) res,
   ) {
-    return this.usersPhotoService.serveFile(fileName, res);
+    return await this.usersPhotoService.serveFile(fileName, res)
+      .catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      }
+      else {
+        throw new InternalServerErrorException(error);
+      }
+    });
   }
 }
