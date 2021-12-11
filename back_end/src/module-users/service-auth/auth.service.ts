@@ -93,7 +93,6 @@ export class AuthService {
   }
 
   clearSession(session) {
-
     delete session.userId;
     delete session.useTwoFA;
     delete session.isTwoFAutanticated;
