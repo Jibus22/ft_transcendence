@@ -1,16 +1,21 @@
 import {
-	Controller,
-	Get,
-	HttpStatus, Param,
-	Post,
-	Response,
-	StreamableFile,
-	UploadedFile,
-	UseGuards,
-	UseInterceptors
+  BadRequestException,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  Param,
+  Post,
+  Response,
+  StreamableFile,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { response } from 'express';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -37,21 +42,31 @@ export class UsersPhotoController {
   */
 
   @Post('/me/photo')
-  @Serialize(privateUserDto)
   @UseInterceptors(
-    FileInterceptor('file', { dest: `/usr/assets/users_photos` })) // TODO: change to env.
+    FileInterceptor('file', { dest: `/usr/assets/users_photos` }),
+  ) // TODO: change to env.
   @Serialize(privateUserDto)
+  @ApiResponse({ type: privateUserDto })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'something is wrong with the file',
+  })
   @ApiOperation({
     summary: 'Upload a new custome photo and swtich to use it',
   })
-  @ApiResponse({ type: privateUserDto })
   async uploadPhoto(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    await this.meService
-      .uploadPhoto(user, file)
-      .catch((error) => console.log('error - ', error)); // TODO manage properly
+    await this.meService.uploadPhoto(user, file)
+    .catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      }
+      else {
+        throw new InternalServerErrorException(error);
+      }
+    });
   }
 
   @Post('/me/useSchoolPhoto')

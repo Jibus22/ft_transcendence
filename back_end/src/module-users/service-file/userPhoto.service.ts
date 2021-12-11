@@ -1,8 +1,15 @@
-import { ForbiddenException, Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  StreamableFile,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { R_OK } from 'constants';
-import { createReadStream, rename, unlink } from 'fs';
+import { createReadStream, rename, stat, statSync, unlink, unlinkSync } from 'fs';
 import { extname, join } from 'path';
 import { Repository } from 'typeorm';
 import { UserPhoto } from '../entities/users_photo.entity';
@@ -15,26 +22,41 @@ export class UsersPhotoService {
   ) {}
 
   addExtensionToFilename(file: Express.Multer.File) {
-    const newFileName = file.filename + extname(file.originalname);
+    const extension = extname(file.originalname);
+    if (extension.length <= 0) {
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'missing file extension',
+      };
+    }
+    const newFileName = file.filename + extension;
     const oldPath = file.path;
     const newPath =
       this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + newFileName;
 
-    rename(oldPath, newPath, (err) => {
-      if (err) throw err;
+    rename(oldPath, newPath, (error) => {
+      if (error) {
+        throw error;
+      }
     });
 
     return newFileName;
   }
 
-  delete(filename: string) {
-    unlink(
-      this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + filename,
-      (err) => {
-        if (err) console.log(err.message);
-      },
-    );
-  }
+  async delete(filename: string) {
+    const filePath =
+      this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + filename;
+
+
+      try {
+        unlinkSync(filePath);
+      } catch {
+        console.log('could not delete previous file');
+      }
+      // unlink(filePath, (err) => {
+      //   if (err) throw 'No file to delete';
+      // });
+    }
 
   async serveFile(filename: string, res) {
     const fsPromises = require('fs').promises;
