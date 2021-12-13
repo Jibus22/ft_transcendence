@@ -1,0 +1,33 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>
+    <h1>Test page fo status</h1>
+    <!-- <div>
+      <ul id="messages"></ul>
+    </div> -->
+
+    <div>
+      <!-- <input id="message" type="text" /> -->
+      <p>
+        Online: <input id="online" type="checkbox">
+      </p>
+      <p>
+        Ingame: <input id="ingame" type="checkbox">
+      </p>
+      <button onclick="handleSubmitNewMessage()">Submit</button>
+    </div>
+
+    <script src="https://cdn.socket.io/4.4.0/socket.io.min.js"></script>
+    <script src="./status-socket.js"></script>
+  </div>
+</body>
+
+</html>
