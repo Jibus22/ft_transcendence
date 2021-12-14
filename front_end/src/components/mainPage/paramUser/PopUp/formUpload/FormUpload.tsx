@@ -13,17 +13,6 @@ interface Props {
 export default function FormUpload({ fetchDataMe }: Props) {
 	const { setData, fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
 
-	// const fetchDataUserMe = async () => {
-	// 	try {
-	// 		const { data } = await axios.get('http://localhost:3000/me', {
-	// 			withCredentials: true,
-	// 		});
-	// 		setData([data]);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
-
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
 
 	useEffect(() => {
@@ -42,7 +31,7 @@ export default function FormUpload({ fetchDataMe }: Props) {
 		if (selectedImage) {
 			data.append('file', selectedImage);
 		}
-		console.log(data);
+
 		try {
 			const result = await axios
 				.post('http://localhost:3000/me/photo', data, {

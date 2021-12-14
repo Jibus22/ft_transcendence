@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './popUp.scss';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -21,9 +21,9 @@ interface IUser {
 export default function PopUpUser({ printPopup }: Props) {
 	const { setCustomPhoto, customPhoto, setOpenSure, openSure, fetchData } = useMainPage();
 
-	const handleClick = () => {
-		setOpenSure(!openSure);
-	};
+	// useEffect(() => {
+	// 	fetchData();
+	// }, []);
 
 	const disagree = () => {
 		setCustomPhoto(true);
@@ -44,6 +44,8 @@ export default function PopUpUser({ printPopup }: Props) {
 		} catch (err) {
 			console.log(err);
 		}
+
+		console.log(customPhoto);
 	};
 
 	return (

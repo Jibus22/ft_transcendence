@@ -47,7 +47,7 @@ const MainPageProvider = (props: any) => {
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
 	const [isFriends, setIsFriends] = useState(false);
-	const [customPhoto, setCustomPhoto] = useState(false);
+	const [customPhoto, setCustomPhoto] = useState(true);
 	const [openSure, setOpenSure] = useState(false);
 
 	const fetchData = async () => {

@@ -24,6 +24,8 @@ export default function Form42Upload({ fetchDataMe }: Props) {
 
 			if (customPhoto) {
 				setOpenSure(true);
+			} else {
+				fetchData();
 			}
 		} catch (err) {
 			console.log(err);
