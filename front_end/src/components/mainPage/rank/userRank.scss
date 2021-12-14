@@ -1,404 +1,450 @@
-.mainUserRank{
-    width: 80%;
-    height: 700px;
-    margin: -15px 0 0 190px;
-    padding: 0 20px 0 0;
-    
-    border-radius: 23px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    background: linear-gradient(5.69deg, #E69C6A -3.67%, rgba(230, 156, 106, 0) 102.8%);
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-    backdrop-filter: blur( 8px );
-    -webkit-backdrop-filter: blur( 8px );
+.mainUserRank {
+	width: 80%;
+	height: 700px;
+	margin: -15px 0 0 190px;
+	padding: 0 20px 0 0;
 
-    .mainTitleRank {
-        margin: 50px 0 0 0;
-        width: 100%;
-        padding: 0 100px 0 100px;
-        justify-content:space-between;
+	border-radius: 23px;
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 
-        h1 {
-            font-family: Montserrat, sans-serif;
-            font-size: 38px;
-            font-weight: 500;
-            color: white;
-        }
-    }
-   
-    .toogleButton {
-        ul {
-            list-style:none;
-        }
-        p {
-            color: #CA6C88;
-            margin: 0 auto;
-            font-size: 17px;
-        }
+	.mainTitleRank {
+		margin: 50px 0 0 0;
+		width: 100%;
+		padding: 0 100px 0 100px;
+		justify-content: space-between;
 
-        margin: 30px 50px 0 0;
-        width: 17%;
-        height: 40px;
-        border: #FCDDEC 2px solid;
-        border-radius: 30px;
-        background-color: #FCDDEC;
-    }
+		h1 {
+			font-family: Montserrat, sans-serif;
+			font-size: 38px;
+			font-weight: 500;
+			color: white;
+		}
+	}
 
-   .selectedNave {
-       background: #CA6C88;
-       height: 120%;
-        
-       border-radius: 30px;
+	.toogleButton {
+		ul {
+			list-style: none;
+		}
+		p {
+			color: #ca6c88;
+			margin: 0 auto;
+			font-size: 17px;
+		}
 
-       p {
-        color: white ;
-       }
-       
-   }
-   .rankInfo {
-       width: 90%;
-       margin: 30px auto;
-       h3 {
-        color: #E69C6A;
-       }
-       .nbRank {
-        margin: 0 0 0 10px;
-       }
-       .nbUser {
-           margin: 0 0 0 120px;
-       }
-       .nbGame {
-            margin: 0 0 0 364px;
-       }
-       .nbWin {
-            margin: 0 0 0 130px;
-       }
-       .nbLoose {
-        margin: 0 0 0 130px;
-       }
-   }
+		margin: 30px 50px 0 0;
+		width: 17%;
+		height: 40px;
+		border: #fcddec 2px solid;
+		border-radius: 30px;
+		background-color: #fcddec;
+	}
 
-   ::-webkit-scrollbar {
-    width: 10px;
-    
-  }
-  ::-webkit-scrollbar-track {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    border-radius: 40px;
+	.switch-button {
+		background: #fcddec;
+		border-radius: 30px;
+		overflow: hidden;
+		width: 150px;
+		height: 25px;
+		text-align: center;
+		font-size: 18px;
+		letter-spacing: 1px;
+		color: #155fff;
+		position: relative;
+		padding-right: 120px;
+		position: relative;
+
+		&:before {
+			content: '';
+			position: absolute;
+			top: 0;
+			bottom: 0;
+
+			width: 120px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 3;
+			pointer-events: none;
+		}
+
+		.divSwitchButton {
+			margin: -40% 0% 0% 19px;
+			font-size: 12px;
+			font-family: Montserrat, sans-serif;
+		}
+		.divSwitchButton2 {
+			margin: -40% 0% 0% 35px;
+			font-size: 12px;
+			font-family: Montserrat, sans-serif;
+		}
+		.divSwitchOn {
+			color: #ca6c88;
+		}
+		.divSwitchOff {
+			color: white;
+		}
+
+		&-checkbox {
+			cursor: pointer;
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			z-index: 2;
+
+			&:checked + .switch-button-label:before {
+				transform: translateX(71px);
+				transition: transform 300ms linear;
+			}
+
+			& + .switch-button-label {
+				position: relative;
+				padding: 15px 0;
+				display: block;
+				user-select: none;
+				pointer-events: none;
+
+				&:before {
+					content: '';
+					background: #ca6c88;
+					height: 62%;
+					width: 79px;
+					position: absolute;
+					border: 1px solid #fcddec;
+					top: 0.8px;
+					border-radius: 30px;
+					transform: translateX(0);
+					transition: transform 300ms;
+				}
+
+				.switch-button-label-span {
+					position: relative;
+				}
+			}
+		}
+	}
+
+	.selectedNave {
+		background: #ca6c88;
+		height: 120%;
+
+		border-radius: 30px;
+
+		p {
+			color: white;
+		}
+	}
+	.rankInfo {
+		width: 90%;
+		margin: 30px auto;
+		h3 {
+			color: #e69c6a;
+		}
+		.nbRank {
+			margin: 0 0 0 10px;
+		}
+		.nbUser {
+			margin: 0 0 0 120px;
+		}
+		.nbGame {
+			margin: 0 0 0 364px;
+		}
+		.nbWin {
+			margin: 0 0 0 130px;
+		}
+		.nbLoose {
+			margin: 0 0 0 130px;
+		}
+	}
+
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+	::-webkit-scrollbar-track {
+		margin-top: 30px;
+		margin-bottom: 30px;
+		border-radius: 40px;
+	}
 }
-
-
-    
-}
-
 
 .userPrintDIv {
-    width: 95%;
-    height: 500px;
-    margin: 0 0 0 80px;
-    overflow: auto;
+	width: 95%;
+	height: 500px;
+	margin: 0 0 0 80px;
+	overflow: auto;
 
-    h1, h3{
-        font-family: Montserrat, sans-serif;
-        color: white;
-        font-weight: normal;
-        font-size: 25px;
-        
-    }
-    .MainUserRankdiv {
-        margin: 0 0 30px 0;
-        .nbRank {
-           
-            width: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+	h1,
+	h3 {
+		font-family: Montserrat, sans-serif;
+		color: white;
+		font-weight: normal;
+		font-size: 25px;
+	}
+	.MainUserRankdiv {
+		margin: 0 0 30px 0;
+		.nbRank {
+			width: 50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
-        .imgUser {
-            
-            margin: 0 0 0 100px;
-            
-            .MuiAvatar-root {
-                width: 85px;
-                height: 83px;
-                border: none;
-                
-                
-                
-            }
-            .MuiBadge-badge {
-                width: 17%;
-                height: 16%;
-                background-color: #E6DA6A;
-                color: #E6DA6A;
-                border-radius: 100%;
-                box-shadow: 0 0 0 0.5px #E6DA6A;
-                z-index: 3;
-            }.MuiBadge-badge::after {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                animation: badgeAnim 1.2s infinite ease-in-out;
-                border: 1px solid #E6DA6A;
-                content: "";
-                
-            }
-        }
-        .logginUser {
-            width: 200px;
-            margin: 0 0 0 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            h1 {
-                text-align: center;
-            }
-            
-        }
-        .nbStatGame {
-            margin: 0 0 0 100px;
-            justify-content: center;
-            align-items: center;
-        }
-        .nbStatWin {
-            margin: 0 0 0 150px;
-            justify-content: center;
-            align-items: center;
-        }
-        .nbStatLoose{
-            margin: 0 0 0 150px;
-            justify-content: center;
-            align-items: center;
-        }
+		.imgUser {
+			margin: 0 0 0 100px;
 
-        .buttonDIv {
-            margin: 0 0 0 150px;
-            justify-content: center;
-            align-items: center;
+			.MuiAvatar-root {
+				width: 85px;
+				height: 83px;
+				border: none;
+			}
+			.MuiBadge-badge {
+				width: 17%;
+				height: 16%;
+				background-color: #e6da6a;
+				color: #e6da6a;
+				border-radius: 100%;
+				box-shadow: 0 0 0 0.5px #e6da6a;
+				z-index: 3;
+			}
+			.MuiBadge-badge::after {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				animation: badgeAnim 1.2s infinite ease-in-out;
+				border: 1px solid #e6da6a;
+				content: '';
+			}
+		}
+		.logginUser {
+			width: 200px;
+			margin: 0 0 0 50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			h1 {
+				text-align: center;
+			}
+		}
+		.nbStatGame {
+			margin: 0 0 0 100px;
+			justify-content: center;
+			align-items: center;
+		}
+		.nbStatWin {
+			margin: 0 0 0 150px;
+			justify-content: center;
+			align-items: center;
+		}
+		.nbStatLoose {
+			margin: 0 0 0 150px;
+			justify-content: center;
+			align-items: center;
+		}
 
-            .muiButton {
-                height: 40px;
-                width: 150px;
-                border: white 1px solid;
-                background-color: #E69C6A;
-                font-family: Montserrat, sans-serif;
-                font-weight: 500;
-                font-size: 19px;
-                border-radius: 15px;
-                
-            }
-            .muiButton:hover {
-                background-color: rgba(230,156,106, 0.5);
-                font-size: 21px;
-            }
-        }
+		.buttonDIv {
+			margin: 0 0 0 150px;
+			justify-content: center;
+			align-items: center;
 
-    }
-
-    
+			.muiButton {
+				height: 40px;
+				width: 150px;
+				border: white 1px solid;
+				background-color: #e69c6a;
+				font-family: Montserrat, sans-serif;
+				font-weight: 500;
+				font-size: 19px;
+				border-radius: 15px;
+			}
+			.muiButton:hover {
+				background-color: rgba(230, 156, 106, 0.5);
+				font-size: 21px;
+			}
+		}
+	}
 }
 
+///////////////////////////////////////////////
+//////// reponsive max-width: 1440px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1440px) {
+	.mainUserRank {
+		width: 80.8%;
+		height: 70%;
+		margin: 4% 0 0 140px;
+		padding: 0 20px 0 0;
 
-   ///////////////////////////////////////////////
-    //////// reponsive max-width: 1440px  /////////
-    ///////////////////////////////////////////////
-@media screen and (max-width: 1440px) { 
-    .mainUserRank{
-        width: 80.8%;
-        height: 70%;
-        margin: 4% 0 0 140px;
-        padding: 0 20px 0 0;
-       
-    
-        .mainTitleRank {
-            margin: 35px 0 0 0;
-            width: 100%;
-            padding: 0 80px 0 80px;
-           
-            h1 {
-                font-size: 28px;
-               
-            }
-        }
-       
-        .toogleButton {
-            p {
-                margin: 0 auto;
-                font-size: 13px;
-            }
-            margin: 30px 30px 0 0;
-            width: 20%;
-            height: 30px;
-            border: #FCDDEC 1px solid;
-            border-radius: 30px;
-           
-        }
-    
-       .selectedNav {
-          
-           height: 120%;
-           border-radius: 30px;
-    
-           p {
-            
-           }
-           
-       }
-       .rankInfo {
-           width: 90%;
-           margin: 30px auto;
-           h3 {
-            color: #E69C6A;
-            font-size: 14px;
-           }
-           .nbRank {
-            margin: 0 0 0 -5px;
-           }
-           .nbUser {
-               margin: 0 0 0 105px;
-           }
-           .nbGame {
-                margin: 0 0 0 314px;
-           }
-           .nbWin {
-                margin: 0 0 0 82px;
-           }
-           .nbLoose {
-            margin: 0 0 0 81px;
-           }
-       }
-    
-       ::-webkit-scrollbar {
-        width: 8px;
-        
-      }
-      ::-webkit-scrollbar-track {
-        margin-top: 30px;
-        margin-bottom: 30px;
-        border-radius: 40px;
-    }
-    
-    
-        
-    }
-    
-    
-    .userPrintDIv {
-        width: 97%;
-        height: 350px;
-        margin: 0 0 0 40px;
-        overflow: auto;
-        padding: 0 0 0 0;
-    
-        h1, h3{
-            font-family: Montserrat, sans-serif;
-            color: white;
-            font-weight: normal;
-            font-size: 18px;
-            
-        }
-        .MainUserRankdiv {
-            margin: 0 0 20px 0;
-            .nbRank {
-               
-                width: 50px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-    
-            .imgUser {
-            
-                margin: 0 0 0 81px;
-                
-                .MuiAvatar-root {
-                    width: 70px;
-                    height: 70px;
-                    border: none;
-                    
-                    
-                    
-                }
-                .MuiBadge-badge {
-                    width: 17%;
-                    height: 16%;
-                    background-color: #E6DA6A;
-                    color: #E6DA6A;
-                    border-radius: 100%;
-                    box-shadow: 0 0 0 0.5px #E6DA6A;
-                    z-index: 3;
-                }.MuiBadge-badge::after {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 50%;
-                    animation: badgeAnim 1.2s infinite ease-in-out;
-                    border: 1px solid #E6DA6A;
-                    content: "";
-                    
-                }
-            }
+		.mainTitleRank {
+			margin: 35px 0 0 0;
+			width: 100%;
+			padding: 0 80px 0 80px;
 
-            .logginUser {
-                width: 200px;
-                margin: 0 0 0 50px;
-                justify-content: center;
-                align-items: center;
-                h1 {
-                    text-align: center;
-                }
-                
-            }
-            .nbStatGame {
-                margin: 0 0 0 50px;
-                justify-content: center;
-                align-items: center;
-            }
-            .nbStatWin {
-                margin: 0 0 0 100px;
-                justify-content: center;
-                align-items: center;
-            }
-            .nbStatLoose{
-                margin: 0 0 0 100px;
-                justify-content: center;
-                align-items: center;
-            }
-    
-            .buttonDIv {
-                margin: 0 0 0 120px;
-                justify-content: center;
-                align-items: center;
-    
-                .muiButton {
-                    height: 35px;
-                    width: 120px;
-                    border: white 1px solid;
-                    background-color: #E69C6A;
-                    font-family: Montserrat, sans-serif;
-                    font-weight: 500;
-                    font-size: 14px;
-                    border-radius: 14px;
-                    
-                }
-                .muiButton:hover {
-                    background-color: rgba(230,156,106, 0.5);
-                    font-size: 16px;
-                }
-            }
-    
-        }
-    
-        
-    }
+			h1 {
+				font-size: 28px;
+			}
+		}
 
+		.toogleButton {
+			p {
+				margin: 0 auto;
+				font-size: 13px;
+			}
+			margin: 30px 30px 0 0;
+			width: 20%;
+			height: 30px;
+			border: #fcddec 1px solid;
+			border-radius: 30px;
+		}
+
+		.selectedNav {
+			height: 120%;
+			border-radius: 30px;
+
+			p {
+			}
+		}
+		.rankInfo {
+			width: 90%;
+			margin: 30px auto;
+			h3 {
+				color: #e69c6a;
+				font-size: 14px;
+			}
+			.nbRank {
+				margin: 0 0 0 -5px;
+			}
+			.nbUser {
+				margin: 0 0 0 105px;
+			}
+			.nbGame {
+				margin: 0 0 0 314px;
+			}
+			.nbWin {
+				margin: 0 0 0 82px;
+			}
+			.nbLoose {
+				margin: 0 0 0 81px;
+			}
+		}
+
+		::-webkit-scrollbar {
+			width: 8px;
+		}
+		::-webkit-scrollbar-track {
+			margin-top: 30px;
+			margin-bottom: 30px;
+			border-radius: 40px;
+		}
+	}
+
+	.userPrintDIv {
+		width: 97%;
+		height: 350px;
+		margin: 0 0 0 40px;
+		overflow: auto;
+		padding: 0 0 0 0;
+
+		h1,
+		h3 {
+			font-family: Montserrat, sans-serif;
+			color: white;
+			font-weight: normal;
+			font-size: 18px;
+		}
+		.MainUserRankdiv {
+			margin: 0 0 20px 0;
+			.nbRank {
+				width: 50px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.imgUser {
+				margin: 0 0 0 81px;
+
+				.MuiAvatar-root {
+					width: 70px;
+					height: 70px;
+					border: none;
+				}
+				.MuiBadge-badge {
+					width: 17%;
+					height: 16%;
+					background-color: #e6da6a;
+					color: #e6da6a;
+					border-radius: 100%;
+					box-shadow: 0 0 0 0.5px #e6da6a;
+					z-index: 3;
+				}
+				.MuiBadge-badge::after {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+					animation: badgeAnim 1.2s infinite ease-in-out;
+					border: 1px solid #e6da6a;
+					content: '';
+				}
+			}
+
+			.logginUser {
+				width: 200px;
+				margin: 0 0 0 50px;
+				justify-content: center;
+				align-items: center;
+				h1 {
+					text-align: center;
+				}
+			}
+			.nbStatGame {
+				margin: 0 0 0 50px;
+				justify-content: center;
+				align-items: center;
+			}
+			.nbStatWin {
+				margin: 0 0 0 100px;
+				justify-content: center;
+				align-items: center;
+			}
+			.nbStatLoose {
+				margin: 0 0 0 100px;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.buttonDIv {
+				margin: 0 0 0 120px;
+				justify-content: center;
+				align-items: center;
+
+				.muiButton {
+					height: 35px;
+					width: 120px;
+					border: white 1px solid;
+					background-color: #e69c6a;
+					font-family: Montserrat, sans-serif;
+					font-weight: 500;
+					font-size: 14px;
+					border-radius: 14px;
+				}
+				.muiButton:hover {
+					background-color: rgba(230, 156, 106, 0.5);
+					font-size: 16px;
+				}
+			}
+		}
+	}
 }
-
-
-

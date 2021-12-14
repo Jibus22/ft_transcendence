@@ -8,11 +8,6 @@ export class UpdateUserDto {
 	@IsString()
 	login: string;
 
-	@ApiPropertyOptional() 			// TODO remove is upload of picture is done in backend
-	@IsOptional()
-	@IsUrl()
-	photo_url_local: string;
-
 	@ApiPropertyOptional()
 	@IsOptional()
 	@IsBoolean()

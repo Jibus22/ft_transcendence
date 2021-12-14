@@ -25,16 +25,16 @@ export class CurrentUserMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.session || {};
     const logger = new Logger(' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
-
+    logger.log('', `New request: ${req.method} ${req.baseUrl}`);
     if (userId) {
       await this.usersService
-        .findOne(userId)
+        .findOneWithRelations(userId)
         .then((user) => {
-          logger.log(user.login);
+          logger.log(`By user: ${user.login}`); // TODO remove debug
           req.currentUser = user;
         })
         .catch((error) => {
-					throw new UnauthorizedException();
+          req.session = null;
         });
 			} else {
         logger.log('No user id in session');

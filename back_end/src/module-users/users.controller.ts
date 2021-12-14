@@ -4,8 +4,7 @@ import {
   Delete,
   Get, HttpStatus,
   NotFoundException,
-  Param, Post, Session,
-  UseGuards
+  Param, Post, Session, UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -23,7 +22,10 @@ import { UsersService } from './service-users/users.service';
 
 @ApiTags('Users')
 @ApiCookieAuth()
-@ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not logged' })
+@ApiResponse({
+  status: HttpStatus.UNAUTHORIZED,
+  description: 'User not logged',
+})
 @UseGuards(AuthGuard)
 @Serialize(UserDto)
 @Controller('users')
@@ -49,27 +51,34 @@ export class UsersController {
     summary: 'Get public infos of user :login',
   })
   @ApiResponse({ type: UserDto, isArray: false })
-  @ApiResponse({ status: HttpStatus.OK, description: 'User\'s public data' })
+  @ApiResponse({ status: HttpStatus.OK, description: "User's public data" })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
   async getUserById(@Param() { login }) {
-    return await this.usersService.find(login).then((user) => {
-      if (! user[0]) {
+    return await this.usersService.find({login}).then((users) => {
+      if (!users[0]) {
         throw new NotFoundException('user not found');
       }
-      return user[0];
+      return users[0];
     });
   }
 
-  /*****************************************************************************
-   *    FRIENDS
-   *****************************************************************************/
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        FRIENDS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
   @Get('/friend')
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
   @ApiResponse({ type: UserDto, isArray: true })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Array of users in the friends list' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Array of users in the friends list',
+  })
   async readAllFriends(@Session() session: Record<string, any>) {
     return await this.relationsService.readAllRelations(
       session.userId,
@@ -81,7 +90,10 @@ export class UsersController {
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
   })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Successfully added' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully added',
+  })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to add' })
   async createFriend(
     @Body() target: editRelationDto,
@@ -111,16 +123,23 @@ export class UsersController {
     );
   }
 
-  /*****************************************************************************
-   *    BLOCKED ACCOUNTS
-   *****************************************************************************/
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        BLOCKED ACCOUNTS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
   @Get('/block')
   @ApiOperation({
     summary: 'Get list of blocked accounts of the currently logger user',
   })
   @ApiResponse({ type: UserDto, isArray: true })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Array of users in the blocked list' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Array of users in the blocked list',
+  })
   async readAllBlocks(@Session() session: Record<string, any>) {
     return await this.relationsService.readAllRelations(
       session.userId,
@@ -132,7 +151,10 @@ export class UsersController {
   @ApiOperation({
     summary: 'Add one blocked account to the currently logger user',
   })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Successfully added' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Successfully added',
+  })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to add' })
   async createBlock(
     @Body() target: editRelationDto,

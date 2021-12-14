@@ -1,46 +1,53 @@
-
-import React, {useState, useEffect} from 'react';
-import  './mainPage.scss'
-import { Routes, Route} from "react-router-dom";
-import { Header, ParamUser, UserRank, HistoryGame, Game} from '..';
-// import ErrorPage from '../errorPage/ErrorPage';
+import React, { useEffect } from 'react';
+import './mainPage.scss';
+import { Routes, Route } from 'react-router-dom';
+import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre } from '..';
 import axios from 'axios';
-
+import { useMainPage } from '../../MainPageContext';
+import { useMount } from 'ahooks';
 
 const MainPage = () => {
-  
-  
-    const [data, setData] = useState([]);
-  
-    const fetchData = async () => {
-        const result = await axios (
-            'http://localhost:3000/users', {withCredentials: true}
-        );
-        setData(result.data)
-    }
-   
-        useEffect(() => {
-            fetchData();
-        }, [])
-    
-  
-        return (
-            
-            <div className='mainPageBody d-flex flex-column ' >
-                <div>
-                    <Header data={data}/>
-                </div>
-            
-                <Routes >
-                    <Route path='/MainPage' element={ <Game/> }/>
-                    <Route path='/History-Game' element={ <HistoryGame/> }/>
-                    <Route path="/Setting" element={ <ParamUser data={data} fetchData={fetchData} /> }/>
-                    <Route path='/Rank/*'element={ <UserRank/> }/>
-                </Routes>
-            
-                
-            </div>
-        );
-}
+	const { timeSnack, setData, setTimeSnack } = useMainPage();
 
-export default MainPage
+	const fetchData = async () => {
+		try {
+			const { data } = await axios('http://localhost:3000/users', {
+				withCredentials: true,
+			});
+			setData(data);
+			// console.log(data[0]);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	// useMount(() => {
+	// 	fetchData();
+	// });
+
+	const resetTimeSnack = () => {
+		setTimeSnack(false);
+	};
+
+	return (
+		<div className="mainPageBody d-flex flex-column ">
+			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
+			<div>
+				<Header />
+			</div>
+
+			<Routes>
+				<Route path="/MainPage" element={<Game />} />
+				<Route path="/History-Game" element={<HistoryGame />} />
+				<Route path="/Setting" element={<ParamUser />} />
+				<Route path="/Rank" element={<UserRank />} />
+			</Routes>
+		</div>
+	);
+};
+
+export default MainPage;
