@@ -1,8 +1,3 @@
-# data
-data/*
-!.gitkeep
-
-
 # compiled output
 */dist
 */node_modules
@@ -153,5 +148,6 @@ back_end/dbDev.sqlite
 back_end/package-lock.json
 back_end/.TODO
 TODO
+back_end/back_up_package.json
 back_end/package.json
 back_end/yarn.lock

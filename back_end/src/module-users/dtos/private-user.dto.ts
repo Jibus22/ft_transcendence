@@ -1,38 +1,44 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
-import { UserDto } from './user.dto';
+
+import { ApiProperty } from "@nestjs/swagger";
+import { Exclude, Expose, plainToClass, Transform } from "class-transformer";
+import { UserDto } from "./user.dto";
 
 @Exclude()
-export class privateUserDto extends UserDto {
-  @ApiProperty()
-  @Expose()
-  @Transform((value) => {
-    return value.obj.local_photo ? true : false;
-  })
-  storeCustomPhoto: boolean;
+export class privateUserDto {
 
-  @ApiProperty({ type: UserDto, isArray: true })
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.friends_list);
-  })
-  friends_list: UserDto[];
+	@ApiProperty()
+	@Expose()
+	id: string;
 
-  @ApiProperty({ type: UserDto, isArray: true })
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.blocked_list);
-  })
-  blocked_list: UserDto[];
+	@ApiProperty()
+	@Expose()
+	login: string;
 
-  @ApiProperty()
-  @Expose()
-  @Transform((value) => {
-    return value.obj.twoFASecret ? true : false;
-  })
-  hasTwoFASecret: boolean;
+	@ApiProperty()
+	@Expose()
+	login_42: string;
 
-  // TODO remove debug
-  @Expose()
-  useTwoFA: boolean;
+	@ApiProperty()
+	@Expose()
+	@Transform(value => {
+		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
+			return value.obj.photo_url_42;
+		}
+		return value.obj.photo_url_local;
+	})
+	photo_url: string;
+
+	@ApiProperty({ type: UserDto, isArray: true })
+	@Expose()
+	@Transform(value => {
+		return plainToClass(UserDto, value.obj.friends_list);
+	})
+	friends_list: UserDto[];
+
+	@ApiProperty({ type: UserDto, isArray: true })
+	@Expose()
+	@Transform(value => {
+		return plainToClass(UserDto, value.obj.blocked_list);
+	})
+	blocked_list: UserDto[];
 }

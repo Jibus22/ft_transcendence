@@ -14,4 +14,3 @@ RUN yarn && yarn cache clean
 WORKDIR /usr/src/app
 
 EXPOSE 3000
-

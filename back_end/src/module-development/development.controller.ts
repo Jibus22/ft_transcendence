@@ -2,15 +2,16 @@ import {
   Body, Controller, Delete, Get, Post, Session, UseGuards
 } from '@nestjs/common';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { deserialize, serialize } from 'class-transformer';
 import { DevGuard } from '../guards/dev.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
-import { privateUserDto } from '../module-users/dtos/private-user.dto';
-import { UserDto } from '../module-users/dtos/user.dto';
 import { User } from '../module-users/entities/users.entity';
 import { DevelopmentService } from './development.service';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { devUserDto } from './dtos/devUser.dto';
 
 @ApiTags('DevTools')
-@Serialize(privateUserDto)
+@Serialize(devUserDto)
 @UseGuards(DevGuard)
 @Controller('dev')
 export class DevelopmentController {
@@ -21,8 +22,6 @@ export class DevelopmentController {
   async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
     const newUser = await this.developmentService.dev_logUser(user.login);
     session.userId = newUser.id;
-    session.useTwoFA = newUser.useTwoFA;
-    session.isTwoFAutanticated = false;
     return newUser;
   }
 
@@ -36,10 +35,10 @@ export class DevelopmentController {
   @ApiProperty()
   @Post('/createUserBatch')
   async createUserBatch(
-    @Body() body: UserDto[] | UserDto,
+    @Body() body: CreateUserDto[] | CreateUserDto,
     ) {
       let successCreation = 0;
-      const users: Partial<User>[] = body as UserDto[];
+      const users: Partial<User>[] = body as CreateUserDto[];
       for (const user of users) {
          await this.developmentService.dev_createUserBatch(user)
           .then((value) => { successCreation++; })

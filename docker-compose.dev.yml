@@ -6,8 +6,4 @@ services:
     env_file:
       - .env
       - .env_dev.env
-    volumes:
-      - type: bind
-        source: ./data/users_photos_dev
-        target: ${USERS_PHOTOS_STORAGE_PATH}
     command: npm run start:dev

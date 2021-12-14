@@ -1,23 +1,21 @@
-import { CanActivate, ExecutionContext, ForbiddenException, HttpException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+/*
+https://docs.nestjs.com/guards#guards
+*/
+
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { serialize } from 'class-transformer';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-
-  private isTwoFaOk(session): boolean {
-    return ( ! session.useTwoFA
-      || (session.useTwoFA && session.isTwoFAutanticated));
-  }
-
   canActivate(context: ExecutionContext) {
 
 		const logger = new Logger( '💂‍♂️ AuthGuard'); //TODO REMOVE LOGGER HERE
-    const session = context.switchToHttp().getRequest().session;
-    if (session && session.userId && this.isTwoFaOk(session)) {
-      logger.log(`User id: ${session.userId}`);
+
+    const request = context.switchToHttp().getRequest();
+    logger.log(`User id: ${request.session.userId}`);
+
+    if (request.session.userId)
       return true;
-    }
     throw new UnauthorizedException();
   }
 }
-
