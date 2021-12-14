@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/users.entity';
@@ -24,6 +24,12 @@ export class MeService {
   }
 
   async uploadPhoto(user: User, file: Express.Multer.File) {
+    if (!file.filename || !file.path) {
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'missing file informations',
+      };
+    }
     const newFileName = this.usersPhotoService.addExtensionToFilename(file);
     let userPhoto = await this.repoUserPhoto.findOne({ owner: user });
 
