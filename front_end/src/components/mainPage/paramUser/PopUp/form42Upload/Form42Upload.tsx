@@ -1,25 +1,30 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React from 'react';
 
 import IconButton from '@mui/material/Button';
 import L42 from '../../photos/Logo42.png';
 import axios from 'axios';
-import { useFormik } from 'formik';
 import { useMainPage } from '../../../../../MainPageContext';
 
-export default function Form42Upload() {
-	const { fetchDataUserMe } = useMainPage();
+interface Props {
+	fetchDataMe: () => void;
+}
+
+export default function Form42Upload({ fetchDataMe }: Props) {
+	const { fetchData, customPhoto, setOpenSure } = useMainPage();
 
 	const onSubmit = async () => {
 		let data = new FormData();
-		// console.log(selectedImage);
-		// if (selectedImage) {
-		// 	data.append('file', selectedImage);
-		// }
+
 		try {
-			const result = await axios.post('http://localhost:3000/me/photo', data, {
+			// const result = await axios.post('http://localhost:3000/me/useSchoolPhoto', data, {
+			await axios.post('http://localhost:3000/me/useSchoolPhoto', data, {
 				withCredentials: true,
 			});
-			fetchDataUserMe();
+			fetchDataMe();
+
+			if (customPhoto) {
+				setOpenSure(true);
+			}
 		} catch (err) {
 			console.log(err);
 		}

@@ -99,6 +99,7 @@ export default function FormUser({ isPop, userName }: Props) {
 					}}
 				/>
 			</form>
+
 			{isValidate ? (
 				<div className="alertValidateIcon ">
 					<Alert sx={{ width: 2 / 2 }} severity="success" icon={<CheckIcon fontSize="inherit" />}>

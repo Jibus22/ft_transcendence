@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import './paramUser.scss';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
-import { Switch, FormControlLabel, Button, IconButton } from '@mui/material';
+import { Switch, FormControlLabel, Button, IconButton, Avatar } from '@mui/material';
 import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';
 import { useHover } from 'ahooks';
+
+import ReactDOMServer from 'react-dom/server';
 
 export default function ParamUser() {
 	const props = useSpring({
@@ -19,7 +21,7 @@ export default function ParamUser() {
 		},
 	});
 
-	const { userImg, userName, setUserName, setUserImg, data } = useMainPage();
+	const { userImg, userName } = useMainPage();
 	const ref = useRef<HTMLDivElement>(null);
 	const isHovering = useHover(ref);
 
@@ -32,12 +34,6 @@ export default function ParamUser() {
 	// const [isModif, setIsModif] = useState<boolean>(false);
 	const [isPop, setIsPop] = useState<boolean>(false);
 
-	// function toggleModifOn() {
-	// 	setIsModif(true);
-	// }
-	// function toggleModifOff() {
-	// 	setIsModif(false);
-	// }
 	function printPopup() {
 		setIsPop(!isPop);
 	}
@@ -45,9 +41,15 @@ export default function ParamUser() {
 	return (
 		<animated.div style={props} className="w-100 ">
 			<div className="mainParamUser d-flex flex-column">
-				{isPop ? <PopUpUser printPopup={printPopup} userImg={userImg} /> : null}
+				{isPop ? <PopUpUser printPopup={printPopup} /> : null}
 				<div ref={ref} className="imgUser ">
-					<img src={userImg} alt="" className={`${isHovering && !isPop ? 'imgFilter ' : ''} `} />
+					<Avatar
+						alt="userImg"
+						src={userImg}
+						sx={{ width: 2 / 2, height: 2 / 2 }}
+						className={`${isHovering && !isPop ? 'imgFilter ' : ''} `}
+					/>
+
 					{isHovering && !isPop ? (
 						<div className="userModif">
 							<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="" onClick={printPopup}>
