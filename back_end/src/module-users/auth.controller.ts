@@ -1,6 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Post, Query, Redirect, Res, Session, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, CACHE_MANAGER, Controller, Delete, Get, HttpStatus, Inject, InternalServerErrorException, Post, Query, Redirect, Res, Session, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Cache } from "cache-manager";
+import { randomUUID } from 'crypto';
 import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -14,6 +16,7 @@ import { UsersService } from './service-users/users.service';
 export class AuthController {
 
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private usersService: UsersService,
     private authService: AuthService,
     private configService: ConfigService) {}
@@ -123,4 +126,27 @@ export class AuthController {
           throw new BadRequestException(err);
         })
     }
+
+    /*
+    ===================================================================
+    -------------------------------------------------------------------
+      Websocket auth
+    -------------------------------------------------------------------
+    ===================================================================
+    */
+
+    @Get('/ws/token')
+    @UseGuards(AuthGuard)
+    @ApiOperation({
+      summary: 'Returns a token for websocket connection'
+    })
+    @ApiResponse({ status: HttpStatus.OK, description: 'token object' })
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'no user logged' })
+    async producteWsToken(@CurrentUser() user) {
+      const token = randomUUID() + '.' + user.id;
+      await this.cacheManager.set(token, user.id, {ttl: 240}); //TODO reduce length, debug only
+      console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
+      return {token};
+    }
+
 }
