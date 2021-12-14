@@ -1,117 +1,91 @@
 .mainPopUpUser {
-	width: 83%;
-	height: 43px;
-	margin: 7% 0% 0% 8%;
-	justify-content: space-around;
-	position: absolute;
+    width: 83%;
+    height: 43px;
+    margin: 7% 0% 0% 8%;
+    justify-content: space-around;
+    position: absolute;
+    
+    
+    .buttonPopUp {
+        
+        width: 12%;
+        height: 100%;
+        background-color: #E69C6A;
+        border-radius: 13px;
 
-	.buttonPopUp {
-		width: 12%;
-		height: 100%;
-		background-color: #e69c6a;
-		border-radius: 13px;
+        img {
+            width: 65%;
+        } 
+    }
+    .buttonPopUp:hover {
+        img {
+            width: 75%;
+        } 
+    }
+    .dlPop img {
+        width: 55%;
+    }
+    .dlPop:hover img {
+        width: 65%;
+    }
 
-		img {
-			width: 65%;
-		}
-	}
-	.buttonPopUp:hover {
-		img {
-			width: 75%;
-		}
-	}
+    
 
-	.css-gxc0n2-MuiButtonBase-root-MuiButton-root {
-		min-width: 100%;
-	}
-	.dlPop img {
-		width: 50%;
-	}
-	.dlPop:hover img {
-		width: 60%;
-	}
-
-	.closePop {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background: none;
-		img {
-			width: 80%;
-		}
-	}
-	.closePop:hover {
-		img {
-			width: 90%;
-		}
-	}
+    .closePop {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: none;
+        img {
+            width: 80%;
+        
+        }
+    }
+    .closePop:hover {
+        img {
+            width: 90%;
+        }
+    }
+    
+   
+    
 }
 
 //////////////////////////
 ////// Delet photo css ///
 /////////////////////////
 .mainDialogMui {
-	p {
-		font-family: Montserrat, sans-serif;
-	}
-
-	.MuiDialog-paperScrollBody {
-		border-radius: 24px !important;
-		background: linear-gradient(-13.69deg, #e69c6a 30.67%, #ca6c88 102.8%);
-		backdrop-filter: blur(3px);
-		-webkit-backdrop-filter: blur(3px);
-	}
-
-	.titleDialogMui {
-		margin: 0% 0% 0% 4%;
-	}
-
-	.contentDialogMui {
-		margin: -3% 0% 0% 0%;
-	}
-
-	.MuiDialog-scrollBody {
-		margin: 7% 0% 0% 0%;
-	}
-	.actionDialogMui {
-		height: 40px;
-		margin: -20px 0 0 0;
-	}
+p {
+    font-family: Montserrat, sans-serif;
+    
 }
 
-/*This will work for firefox*/
-@-moz-document url-prefix() {
-	.mainPopUpUser {
-		width: 30%;
-		height: 43px;
-		margin: 1.5% 0% 0% 3%;
-		justify-content: space-around;
-		position: absolute;
-
-		.buttonPopUp {
-			width: 12%;
-			height: 100%;
-			background-color: #e69c6a;
-			border-radius: 13px;
-
-			img {
-				width: 65%;
-			}
-		}
-		.dlPop img {
-			width: 50%;
-		}
-		.dlPop:hover img {
-			width: 60%;
-		}
-		.closePop {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			background: none;
-			img {
-				width: 80%;
-			}
-		}
-	}
+.MuiDialog-paperScrollBody {
+    border-radius: 24px !important;
+ 
+    background: linear-gradient(-13.69deg, #E69C6A 30.67%, #CA6C88 102.8%);
+    backdrop-filter: blur( 3px );
+    -webkit-backdrop-filter: blur( 3px );
+  
 }
+
+.titleDialogMui {
+    margin: 0% 0% 0% 4%;
+}
+
+.contentDialogMui {
+    margin: -3% 0% 0% 0%;
+}
+
+.MuiDialog-scrollBody {
+    margin: 7% 0% 0% 0%;
+    
+}
+.actionDialogMui {
+    height: 40px;
+    margin: -20px 0 0 0;
+}
+
+}
+
+

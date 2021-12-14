@@ -1,0 +1,66 @@
+.footer{
+    opacity: 0.9;
+    width: 100%;
+    font-size: 0.8em;  
+    margin-top: 70px;
+
+ 
+   
+    
+}
+
+
+
+.copyR {
+    margin: -20px 0 0 0;
+}
+
+
+@media screen and (max-width: 1199px) {
+    .footer {
+        
+        
+        overflow: hidden;
+        font-size: 0.8em;
+    }
+}
+
+
+@media screen and (max-width: 770px) {
+    .footer {
+     
+        height: 280px;
+        width: 100%;
+    }
+    .Cadre {
+        visibility: hidden;
+    }
+
+    .Newsletter {
+        margin-top: -50px;
+    }
+    .BoutonSub {
+        margin-top: 5px;
+        height: 30px;
+        width: 90px;
+       
+        font-size: 15px;
+    }
+    .MainFooter {
+        margin: -15px 0px 0 130px;
+    }
+    .ParaFooter {
+        margin: 0 0px 0 -70px;
+        
+    }
+    .EmailA {
+        margin: 5px 0 0 0;
+    }
+    
+    .BarreEmail {
+        height: 20px;
+    }
+    
+       
+
+}

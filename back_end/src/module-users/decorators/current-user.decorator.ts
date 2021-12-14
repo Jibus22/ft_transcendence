@@ -1,12 +1,10 @@
-import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
-import { User } from "../entities/users.entity";
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 
 export const CurrentUser = createParamDecorator(
-  (data: never, context: ExecutionContext): User => {
-    const { currentUser } = context.switchToHttp().getRequest();
-    if (!currentUser) {
-      throw new UnauthorizedException('no user logged');
-    }
-    return currentUser;
-  },
-);
+	(data: never, context: ExecutionContext) => {
+		const request = context.switchToHttp().getRequest();
+		// return request.currentUser;
+		return request.session.userId;
+	}
+
+)

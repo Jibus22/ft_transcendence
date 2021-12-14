@@ -3,21 +3,15 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { User } from '../module-users/entities/users.entity';
 import { UsersService } from '../module-users/service-users/users.service';
 
 @Injectable()
 export class DevelopmentService {
-  constructor(
-		@InjectRepository(User) private repoUser: Repository<User>,
-    private usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   async dev_logUser(login: string) {
-    const users = await this.repoUser.find({
-      where: { 'login': login}
-    })
+    const users = await this.usersService.find(login);
     if (!users[0]) {
       throw new BadRequestException(`No user ${login}`);
     }
