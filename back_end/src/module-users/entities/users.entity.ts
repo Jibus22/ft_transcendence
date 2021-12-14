@@ -52,11 +52,11 @@ export class User {
   @Column({ default: false })
   useTwoFA: boolean
 
-  @Column({ default: false })
-  status_online: boolean
+  @Column({ nullable: true, unique: true })
+  ws_id: string;
 
   @Column({ default: false })
-  status_ingame: boolean
+  is_in_game: boolean
 
   /*
   ** Lifecycle functions

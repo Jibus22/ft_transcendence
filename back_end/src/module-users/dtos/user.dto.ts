@@ -27,13 +27,14 @@ export class UserDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    if (value.obj.status_online && value.obj.status_ingame) {
+    if (value.obj.ws_id && value.obj.is_in_game) {
       return 'ingame';
-    } else if (value.obj.status_online) {
+    } else if (value.obj.ws_id) {
       return 'online';
     } else {
       return 'offline';
     }
   })
   status: string;
+
 }

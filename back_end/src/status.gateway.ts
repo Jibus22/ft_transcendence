@@ -1,13 +1,15 @@
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
+  WebSocketServer
 } from '@nestjs/websockets';
+import { Cache } from 'cache-manager';
+import { Socket } from 'socket.io';
 import { UsersService } from './module-users/service-users/users.service';
-import { Server, Socket } from 'socket.io';
-import { User } from './module-users/entities/users.entity';
+
 
 const options = {
   cors: {
@@ -20,37 +22,52 @@ const options = {
 @WebSocketGateway(options)
 export class StatusGateway {
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private usersService: UsersService
   ) {}
 
   @WebSocketServer()
   server;
 
-  handleConnection(client: Socket, ...args: any[]) {
-    const key = client.handshake.auth;
-    if (!key) {
-      console.log(client.handshake);
-      client.disconnect();
+  async getUserIdFromToken(token: string) {
+    return await this.cacheManager.get<string>(token)
+  }
+
+  async handleConnection(client: Socket, ...args: any[]) {
+    const {key: token} = client.handshake.auth;
+    const userId = await this.getUserIdFromToken(token);
+
+    if (!userId) {
+      client._error({message: 'wrong token'});
+      return client.disconnect();
     }
-    console.log(key);
-    console.log(client.handshake);
+    return await this.usersService.update(userId, {
+      ws_id: client.id,
+    });
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+    const user = await this.usersService.find({ws_id: client.id});
+
+    if (user[0]) {
+      await this.usersService.update(user[0].id, {
+        ws_id: null,
+      });
+    }
   }
 
-  @SubscribeMessage('online')
-  // upateOnline(@MessageBody() message: string): void {
-  upateOnline(@ConnectedSocket() client, data): void {
-    console.log(client.handshake.user);
-    console.log(client.id);
+  // @SubscribeMessage('online')
+  // // upateOnline(@MessageBody() message: string): void {
+  // upateOnline(@ConnectedSocket() client): void {
+  //   console.log(client.handshake.user);
+  //   console.log(client.id);
     // if (!user) {
     //   console.log('No user logged');
     //   return;
     // }
     // console.log('Online:', message);
-  }
+  // }
 
   @SubscribeMessage('ingame')
   upateIngame(@MessageBody() message: string): void {
