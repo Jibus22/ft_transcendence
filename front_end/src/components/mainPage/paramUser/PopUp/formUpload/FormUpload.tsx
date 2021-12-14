@@ -2,7 +2,6 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import '../popUp.scss';
 import IconButton from '@mui/material/Button';
 import LUP from '../../photos/bi_upload.png';
-import { useMount } from 'ahooks';
 import axios from 'axios';
 import { useMainPage } from '../../../../../MainPageContext';
 
@@ -11,7 +10,7 @@ interface Props {
 }
 
 export default function FormUpload({ fetchDataMe }: Props) {
-	const { setData, fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
+	const { fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
 
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
 
@@ -24,7 +23,6 @@ export default function FormUpload({ fetchDataMe }: Props) {
 	// 	if (!selectedImage) return;
 	// 	onSubmit();
 	// });
-	console.log(selectedImage);
 	const onSubmit = async () => {
 		let data = new FormData();
 

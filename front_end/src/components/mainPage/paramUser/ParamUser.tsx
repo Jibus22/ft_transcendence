@@ -8,8 +8,6 @@ import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';
 import { useHover } from 'ahooks';
 
-import ReactDOMServer from 'react-dom/server';
-
 export default function ParamUser() {
 	const props = useSpring({
 		opacity: 1,
@@ -25,13 +23,6 @@ export default function ParamUser() {
 	const ref = useRef<HTMLDivElement>(null);
 	const isHovering = useHover(ref);
 
-	// useEffect(() => {
-	// 	if (data.length > 0) {
-	// 		setUserImg(data[0].photo_url);
-	// 	}
-	// });
-
-	// const [isModif, setIsModif] = useState<boolean>(false);
 	const [isPop, setIsPop] = useState<boolean>(false);
 
 	function printPopup() {
