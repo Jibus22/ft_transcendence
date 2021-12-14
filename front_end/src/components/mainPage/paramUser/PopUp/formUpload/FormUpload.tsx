@@ -1,20 +1,28 @@
-import React, { useState, useRef, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import '../popUp.scss';
-import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/Button';
 import LUP from '../../photos/bi_upload.png';
+import { useMount } from 'ahooks';
 import axios from 'axios';
 import { useMainPage } from '../../../../../MainPageContext';
 
-export default function FormUpload() {
-	const { setData } = useMainPage();
+interface Props {
+	fetchDataMe: () => void;
+}
 
-	const fetchDataUserMe = async () => {
-		const { data } = await axios.get('http://localhost:3000/me', {
-			withCredentials: true,
-		});
-		setData([data]);
-	};
+export default function FormUpload({ fetchDataMe }: Props) {
+	const { setData, fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
+
+	// const fetchDataUserMe = async () => {
+	// 	try {
+	// 		const { data } = await axios.get('http://localhost:3000/me', {
+	// 			withCredentials: true,
+	// 		});
+	// 		setData([data]);
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// };
 
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
 
@@ -23,24 +31,41 @@ export default function FormUpload() {
 		onSubmit();
 	}, [selectedImage]);
 
+	// useMount(() => {
+	// 	if (!selectedImage) return;
+	// 	onSubmit();
+	// });
+	console.log(selectedImage);
 	const onSubmit = async () => {
 		let data = new FormData();
-		console.log(selectedImage);
+
 		if (selectedImage) {
 			data.append('file', selectedImage);
 		}
+		console.log(data);
 		try {
-			const result = await axios.post('http://localhost:3000/me/photo', data, {
-				withCredentials: true,
-			});
-			fetchDataUserMe();
+			const result = await axios
+				.post('http://localhost:3000/me/photo', data, {
+					withCredentials: true,
+				})
+				.then((response) => {
+					// if (response.status !== HttpStatus.CREATED) {
+					// 	// response.body.message; ?
+					// 	//afficher message user : upload failed
+					// }
+				});
+			fetchDataMe();
+			if (customPhoto) {
+				setOpenSure(true);
+			} else {
+				fetchDataUserMe();
+			}
 		} catch (err) {
 			console.log(err);
 		}
 	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-		console.log('use');
 		if (e.target.files) {
 			setSelectedImage(e.target.files[0]);
 		}
@@ -48,13 +73,7 @@ export default function FormUpload() {
 
 	return (
 		<div className="w-100 h-100">
-			<input
-				accept="image/*"
-				type="file"
-				id="select-image"
-				style={{ display: 'none' }}
-				onChange={handleChange}
-			/>
+			<input accept="image/*" type="file" id="select-image" style={{ display: 'none' }} onChange={handleChange} />
 			<label htmlFor="select-image" className="w-100 h-100">
 				<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} component="span">
 					<img src={LUP} alt="" />

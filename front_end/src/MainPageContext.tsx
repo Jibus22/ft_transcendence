@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import { useSpring, SpringValue } from 'react-spring';
 
 interface Type {
 	id: number;
@@ -30,6 +29,10 @@ interface IMainPageContext {
 	setUserImg: React.Dispatch<React.SetStateAction<string>>;
 	isFriends: boolean;
 	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
+	customPhoto: boolean;
+	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
+	openSure: boolean;
+	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -44,6 +47,8 @@ const MainPageProvider = (props: any) => {
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
 	const [isFriends, setIsFriends] = useState(false);
+	const [customPhoto, setCustomPhoto] = useState(false);
+	const [openSure, setOpenSure] = useState(false);
 
 	const fetchData = async () => {
 		const result = await axios('http://localhost:3000/users', {
@@ -53,10 +58,14 @@ const MainPageProvider = (props: any) => {
 	};
 
 	const fetchDataUserMe = async () => {
-		const result = await axios.get('http://localhost:3000/me', {
-			withCredentials: true,
-		});
-		setData(result.data);
+		try {
+			const { data } = await axios.get('http://localhost:3000/me', {
+				withCredentials: true,
+			});
+			setData([data]);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	const ProviderValue = {
@@ -80,6 +89,10 @@ const MainPageProvider = (props: any) => {
 		setUserImg,
 		isFriends,
 		setIsFriends,
+		customPhoto,
+		setCustomPhoto,
+		openSure,
+		setOpenSure,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

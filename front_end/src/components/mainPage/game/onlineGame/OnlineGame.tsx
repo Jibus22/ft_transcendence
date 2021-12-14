@@ -6,13 +6,22 @@ import FF from '../../../homePage/section/photos/FF.png';
 import JB from '../../../homePage/section/photos/jb.png';
 import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Fade, Bounce, Hinge, Flip, Slide } from 'react-awesome-reveal';
 
 interface Props {
 	Loadingclick: () => void;
 }
 
 export default function OnlineGame({ Loadingclick }: Props) {
+	const props = useSpring({
+		opacity: 1,
+		transform: 'translate(0px, 0px)',
+		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		config: {
+			delay: 300,
+			duration: 300,
+		},
+	});
+
 	const { loading } = useMainPage();
 	const [time, setTime] = useState(false);
 	function handleClick() {
@@ -68,8 +77,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 	);
 
 	return (
-		// <animated.div style={animDiv} className="w-100">
-		<Slide direction="up" duration={300} className="w-100 h-100">
+		<animated.div style={props} className="w-100">
 			<div className="mainOnlineGame d-flex flex-column ">
 				<div className="title">
 					<h1>Online game</h1>
@@ -84,7 +92,6 @@ export default function OnlineGame({ Loadingclick }: Props) {
 					</div>
 				</div>
 			</div>
-		</Slide>
-		// </animated.div>
+		</animated.div>
 	);
 }

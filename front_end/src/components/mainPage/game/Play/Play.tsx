@@ -6,7 +6,6 @@ import { Button, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import FormPlay from './FormPlay';
 import { useMainPage } from '../../../../MainPageContext';
-
 interface Props {
 	Loadingclick: () => void;
 }
