@@ -4,6 +4,10 @@ import { Ball } from './Ball';
 import { Player } from './Player';
 import "./PongGame.css"
 
+//Client
+const W3CWebSocket = require('websocket').w3cwebsocket;
+let client= new W3CWebSocket('ws://127.0.0.1:8000');
+
 class PongGame extends React.Component {
 	width = 700;
 	height = 600;
@@ -15,11 +19,14 @@ class PongGame extends React.Component {
 
 	_widthPlayer:number = 15;
 	_playerOne: Player = new Player('P1', 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this._widthPlayer);
-	_playerTwo: Player = new Player('P2', 'w', 's', 80, this._widthPlayer, this.width - (2 * this._widthPlayer));
+	_playerTwo: Player = new Player('P2', 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this.width - (2 * this._widthPlayer));
 	_ball: Ball = new Ball(this.width, this.height);
 	_keystate: any = {};
 	_canvas: HTMLCanvasElement | undefined = undefined;
 	_ctx: CanvasRenderingContext2D | undefined = undefined;
+	_J1:boolean = false;
+	_J2:boolean = false;
+
 
 	constructor(props:any){
 		super(props);
@@ -40,15 +47,40 @@ class PongGame extends React.Component {
 	}
 
 	private _update(): void{
-		this._playerOne._update(this._keystate, this.height);
-		this._playerTwo._update(this._keystate, this.height);
-		let ret = this._ball._update(this._playerOne, this._playerTwo);
-		
-		if (ret > 0)
+		if (this._J1)
 		{
-			//TODO score 
-			this._ball.y = this.height/2;
-			this._ball.x = this.width/2;
+			this._playerOne._update(this._keystate, this.height);
+			client.send(JSON.stringify({
+				type: "message",
+				object: "P1",
+				y: this._playerOne.y
+			}))
+		}
+		if(this._J2)
+		{
+			this._playerTwo._update(this._keystate, this.height);
+			console.log(client);
+			client.send(JSON.stringify({
+				type: "message",
+				object: "P2",
+				y: this._playerTwo.y
+			}))
+		}
+		if (this._J1)
+		{
+			let ret = this._ball._update(this._playerOne, this._playerTwo);
+			if (ret > 0)
+			{
+				//TODO score 
+				this._ball.y = this.height/2;
+				this._ball.x = this.width/2;
+			}
+			client.send(JSON.stringify({
+				type: "message",
+				object: "B",
+				x: this._ball.x,
+				y: this._ball.y
+			}))
 		}
 
 	}
@@ -87,11 +119,44 @@ class PongGame extends React.Component {
 		setInterval(() => {
 			this._update();
 			this._draw();
-		}, 1);
+		}, 10);
+	}
+
+	onButtonClicked = (value: string) => {
+		client.send(JSON.stringify({
+			type: "message",
+			msg: value
+		}))
 	}
 
 	componentDidMount() {
+		let rep = prompt("J1 J2 ou W");
+		if (rep === 'J1')
+			this._J1 = true;
+		else if (rep === 'J2')
+			this._J2 = true;
+		client.onopen = () => {
+			client.send(JSON.stringify({
+				type: "message",
+				msg: "Hello"
+			}))
+			console.log('WebSocket Client Connected');
+		  };
 		this._initPongGame();
+		client.onmessage = (message: any) => {
+			const data = JSON.parse(message.data)
+			console.log(data);
+			if (this._J1 && data.object === "P2")
+				this._playerTwo.y = data.y;
+			if (this._J2 && data.object === "P1")
+				this._playerOne.y = data.y ;
+			if (this._J2 && data.object === "B")
+			{
+				this._ball.x = data.x;
+				this._ball.y = data.y;
+			}
+		  console.log('reply: ', data);
+		};
 		setTimeout(() => this._startGame(), 1000);
 	}
 
@@ -103,13 +168,17 @@ class PongGame extends React.Component {
 	}
 
 	render() {
-		return <canvas
-			id='canvasGame'
-			onTouchStart={(e) => this._touch(e)}
-			onTouchMove={(e) => this._touch(e)}
-			style={this._canvasStyle}
-			width={this.width}
-			height={this.height} />
+		return (
+		<div>
+			<canvas
+				id='canvasGame'
+				onTouchStart={(e) => this._touch(e)}
+				onTouchMove={(e) => this._touch(e)}
+				style={this._canvasStyle}
+				width={this.width}
+				height={this.height} />
+			<button onClick={() => this.onButtonClicked('Hello')}> Valider</button>
+		</div>)
 	}
 
 }
