@@ -47,11 +47,13 @@ export class UsersPhotoService {
 
   delete(filename: string) {
     const filePath =
-      this.config.get('USERS_PHOTOS__STORAGE_PATH') + '/' + filename;
+      this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + filename;
 
     unlink(filePath, (error) => {
-      const logger = new Logger('fileSystem');
-      logger.log(`Unlink failed: ${error}`);
+      if (error) {
+        const logger = new Logger('fileSystem');
+        logger.log(`Unlink failed: ${error}`);
+      }
     });
   }
 
