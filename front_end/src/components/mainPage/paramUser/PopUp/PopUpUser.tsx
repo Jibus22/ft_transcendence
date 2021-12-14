@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './popUp.scss';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-import LCB from '../photos/Corbeille.png';
 import LCL from '../photos/close-icon.png';
 import FormUpload from './formUpload/FormUpload';
 import Form42Upload from './form42Upload/Form42Upload';
@@ -19,18 +18,13 @@ interface IUser {
 }
 
 export default function PopUpUser({ printPopup }: Props) {
-	const { setCustomPhoto, customPhoto, setOpenSure, openSure, fetchData } = useMainPage();
-
-	const handleClick = () => {
-		setOpenSure(!openSure);
-	};
+	const { setCustomPhoto, setOpenSure, openSure, fetchData } = useMainPage();
 
 	const disagree = () => {
 		setCustomPhoto(true);
 		setOpenSure(false);
 	};
 	const agree = () => {
-		// setCustomPhoto(false);
 		setOpenSure(false);
 		fetchData();
 	};
@@ -48,11 +42,6 @@ export default function PopUpUser({ printPopup }: Props) {
 
 	return (
 		<div className="mainPopUpUser d-flex">
-			{/* <div className="buttonPopUp deletPop">
-				<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} onClick={handleClick} className="">
-					<img src={LCB} alt="" />
-				</IconButton>
-			</div> */}
 			<div className="buttonPopUp 42Pop">
 				<Form42Upload fetchDataMe={FetchDatame} />
 			</div>

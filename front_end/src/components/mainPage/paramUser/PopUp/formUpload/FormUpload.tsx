@@ -2,7 +2,6 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import '../popUp.scss';
 import IconButton from '@mui/material/Button';
 import LUP from '../../photos/bi_upload.png';
-import { useMount } from 'ahooks';
 import axios from 'axios';
 import { useMainPage } from '../../../../../MainPageContext';
 
@@ -11,18 +10,7 @@ interface Props {
 }
 
 export default function FormUpload({ fetchDataMe }: Props) {
-	const { setData, fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
-
-	// const fetchDataUserMe = async () => {
-	// 	try {
-	// 		const { data } = await axios.get('http://localhost:3000/me', {
-	// 			withCredentials: true,
-	// 		});
-	// 		setData([data]);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
+	const { fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
 
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
 
@@ -35,14 +23,13 @@ export default function FormUpload({ fetchDataMe }: Props) {
 	// 	if (!selectedImage) return;
 	// 	onSubmit();
 	// });
-	console.log(selectedImage);
 	const onSubmit = async () => {
 		let data = new FormData();
 
 		if (selectedImage) {
 			data.append('file', selectedImage);
 		}
-		console.log(data);
+
 		try {
 			const result = await axios
 				.post('http://localhost:3000/me/photo', data, {

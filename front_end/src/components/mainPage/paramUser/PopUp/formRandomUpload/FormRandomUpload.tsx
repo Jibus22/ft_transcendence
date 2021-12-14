@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '../popUp.scss';
 import IconButton from '@mui/material/Button';
 import LDE from '../../photos/LogoDee.png';
 import { BigHead } from '@bigheads/core';
 import { getRandomOptions } from './generateRandomAvatar';
 import ReactDOMServer from 'react-dom/server';
-import { LocalizationProvider } from '@mui/lab';
 import { useMainPage } from '../../../../../MainPageContext';
 import axios from 'axios';
 

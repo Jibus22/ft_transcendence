@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre } from '..';
 import axios from 'axios';
 import { useMainPage } from '../../MainPageContext';
-import { useMount } from 'ahooks';
 
 const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack } = useMainPage();
@@ -24,10 +23,6 @@ const MainPage = () => {
 	useEffect(() => {
 		fetchData();
 	}, []);
-
-	// useMount(() => {
-	// 	fetchData();
-	// });
 
 	const resetTimeSnack = () => {
 		setTimeSnack(false);
