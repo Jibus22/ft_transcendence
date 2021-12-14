@@ -1,6 +1,5 @@
 import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
-  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
@@ -8,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Socket } from 'socket.io';
+import { User } from './module-users/entities/users.entity';
 import { UsersService } from './module-users/service-users/users.service';
 
 
@@ -29,11 +29,20 @@ export class StatusGateway {
   @WebSocketServer()
   server;
 
+  async updateUser(client: Socket, userData: Partial<User>) {
+    const user = await this.usersService.find({ws_id: client.id});
+
+    if (user[0]) {
+      return await this.usersService.update(user[0].id, userData);
+    }
+
+  }
+
   async getUserIdFromToken(token: string) {
     return await this.cacheManager.get<string>(token)
   }
 
-  async handleConnection(client: Socket, ...args: any[]) {
+  async handleConnection(client: Socket) {
     const {key: token} = client.handshake.auth;
     const userId = await this.getUserIdFromToken(token);
 
@@ -43,34 +52,25 @@ export class StatusGateway {
     }
     return await this.usersService.update(userId, {
       ws_id: client.id,
-    });
+    })
   }
 
   async handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    const user = await this.usersService.find({ws_id: client.id});
-
-    if (user[0]) {
-      await this.usersService.update(user[0].id, {
-        ws_id: null,
-      });
-    }
+    await this.updateUser(client, {
+      ws_id: null,
+      is_in_game: false
+    })
   }
 
-  // @SubscribeMessage('online')
-  // // upateOnline(@MessageBody() message: string): void {
-  // upateOnline(@ConnectedSocket() client): void {
-  //   console.log(client.handshake.user);
-  //   console.log(client.id);
-    // if (!user) {
-    //   console.log('No user logged');
-    //   return;
-    // }
-    // console.log('Online:', message);
-  // }
-
   @SubscribeMessage('ingame')
-  upateIngame(@MessageBody() message: string): void {
-    console.log('Ingame:', message);
+  async upateIngame(client: Socket, data: string) {
+    console.log('Ingame:', client.id);
+
+    if (data && data === 'in') {
+      await this.updateUser(client, {is_in_game: true})
+    } else if (data && data === 'out') {
+      await this.updateUser(client, {is_in_game: false})
+    }
   }
 }

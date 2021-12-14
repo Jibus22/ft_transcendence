@@ -11,7 +11,7 @@ import { io, Socket } from "socket.io-client";
 const MainPage = () => {
 
 
-    const [wsStatus, setWsStatus] = useState<Socket>();
+    const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
     const [data, setData] = useState([]);
 
     const fetchData = async () => {
@@ -24,10 +24,11 @@ const MainPage = () => {
     const connectWsStatus = async () => {
         await axios ('http://localhost:3000/auth/ws/token', {
             withCredentials: true
-        }).then((response) => {
+        })
+        .then((response) => {
             const {token} = response.data;
             if (!token) {
-                throw 'no valid token';
+                throw new Error('no valid token');
             }
             const socket = io("ws://localhost:3000",
             {
@@ -59,10 +60,6 @@ const MainPage = () => {
         useEffect(() => {
             fetchData();
             connectWsStatus();
-            /* ----------------
-                The wsStatus can be passed to the Game module so it can
-                send 'ingame' message when user plays / end play.
-            ------------------ */
 
         }, [])
 
@@ -75,7 +72,7 @@ const MainPage = () => {
                 </div>
 
                 <Routes >
-                    <Route path='/MainPage' element={ <Game/> }/>
+                    <Route path='/MainPage' element={ <Game wsStatus={wsStatus}/> }/>
                     <Route path='/History-Game' element={ <HistoryGame/> }/>
                     <Route path="/Setting" element={ <ParamUser data={data} fetchData={fetchData} /> }/>
                     <Route path='/Rank/*'element={ <UserRank/> }/>
