@@ -5,12 +5,13 @@ import { Routes, Route} from "react-router-dom";
 import { Header, ParamUser, UserRank, HistoryGame, Game} from '..';
 // import ErrorPage from '../errorPage/ErrorPage';
 import axios from 'axios';
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 
 const MainPage = () => {
 
 
+    const [wsStatus, setWsStatus] = useState<Socket>();
     const [data, setData] = useState([]);
 
     const fetchData = async () => {
@@ -25,7 +26,6 @@ const MainPage = () => {
             withCredentials: true
         }).then((response) => {
             const {token} = response.data;
-            console.log('ws:', token);
             if (!token) {
                 throw 'no valid token';
             }
@@ -37,13 +37,21 @@ const MainPage = () => {
             });
 
             socket.on("connect_error", (err) => {
-                console.log(`connect_error due to ${err.message}`);
+                setWsStatus(undefined);
+                console.log(`ws connect_error due to ${err.message}`);
             });
 
-            socket.on("connect", () => console.log(`CONNECTED`));
-            socket.on("disconnect", () => console.log(`DISCONNECTED`));
+            socket.on("connect", () => {
+                setWsStatus(socket);
+                console.log(`WS CONNECTED`)
+            });
+            socket.on("disconnect", () => {
+                setWsStatus(undefined);
+                console.log(`WS DISCONNECTED`)
+            });
         })
         .catch((error) => {
+            setWsStatus(undefined);
             console.log(error);
         });
     }
@@ -51,6 +59,11 @@ const MainPage = () => {
         useEffect(() => {
             fetchData();
             connectWsStatus();
+            /* ----------------
+                The wsStatus can be passed to the Game module so it can
+                send 'ingame' message when user plays / end play.
+            ------------------ */
+
         }, [])
 
 
