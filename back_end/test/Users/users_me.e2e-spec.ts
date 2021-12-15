@@ -87,7 +87,7 @@ describe('user controller: /me routes (e2e)', () => {
     await commons
       .logUser('non_existing_user')
       .then((response) => commons.getCookies(response))
-      .then((tmpCookies) => expect(tmpCookies).toBeUndefined());
+      .then((tmpCookies) => expect(tmpCookies.length).toBe(0));
   });
 
   /*
