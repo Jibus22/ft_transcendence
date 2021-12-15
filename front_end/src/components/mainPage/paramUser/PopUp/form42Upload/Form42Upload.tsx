@@ -5,27 +5,22 @@ import L42 from '../../photos/Logo42.png';
 import axios from 'axios';
 import { useMainPage } from '../../../../../MainPageContext';
 
-interface Props {
-	fetchDataMe: () => void;
-}
-
-export default function Form42Upload({ fetchDataMe }: Props) {
-	const { fetchData, customPhoto, setOpenSure } = useMainPage();
+export default function Form42Upload() {
+	const { customPhoto, setOpenSure, userImg } = useMainPage();
 
 	const onSubmit = async () => {
+		if (userImg.startsWith('https://cdn.intra.42.fr/')) {
+			return;
+		}
+
 		let data = new FormData();
 
 		try {
-			// const result = await axios.post('http://localhost:3000/me/useSchoolPhoto', data, {
 			await axios.post('http://localhost:3000/me/useSchoolPhoto', data, {
 				withCredentials: true,
 			});
-			fetchDataMe();
-
 			if (customPhoto) {
 				setOpenSure(true);
-			} else {
-				fetchData();
 			}
 		} catch (err) {
 			console.log(err);

@@ -8,20 +8,19 @@ import { useMainPage } from '../../MainPageContext';
 const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack } = useMainPage();
 
-	const fetchData = async () => {
+	const fetchDataUserMe = async () => {
 		try {
-			const { data } = await axios('http://localhost:3000/users', {
+			const { data } = await axios.get('http://localhost:3000/me', {
 				withCredentials: true,
 			});
-			setData(data);
-			// console.log(data[0]);
+			setData([data]);
 		} catch (err) {
 			console.log(err);
 		}
 	};
 
 	useEffect(() => {
-		fetchData();
+		fetchDataUserMe();
 	}, []);
 
 	const resetTimeSnack = () => {

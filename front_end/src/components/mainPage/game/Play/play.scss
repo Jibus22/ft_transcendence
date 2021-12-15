@@ -168,6 +168,105 @@
 }
 
 ///////////////////////////////////////////////
+//////// reponsive max-width: 2560px  /////////
+///////////////////////////////////////////////
+@media screen and (min-width: 2560px) {
+	.mainGameWindow {
+		margin: 140px 0 0 255px;
+		width: 70%;
+		height: 800px;
+		border-radius: 30px;
+
+		.msgPlay {
+			margin: 100px auto;
+			width: 55%;
+
+			h1 {
+				font-size: 60px;
+				line-height: 80px;
+			}
+		}
+		.iconePLayGame {
+			margin: -20px auto;
+			img {
+				width: 180px;
+			}
+		}
+
+		.buttonMui {
+			font-size: 27px;
+			font-weight: 500;
+			border-radius: 15px;
+		}
+		.buttonMui:hover {
+			font-size: 29px;
+		}
+
+		.buttonDiv {
+			.MuiCircularProgress-root {
+				margin: 15px 0 0 13px;
+				width: 35px !important;
+				height: 35px !important;
+			}
+		}
+
+		.playRandom {
+			width: 40%;
+			height: 8%;
+			margin: 80px auto;
+		}
+
+		.buttonMuiFriend {
+			margin: 30px 0 0 0;
+			height: 65px;
+		}
+
+		.formDivButton {
+			margin-top: 30px;
+			height: 65px;
+
+			.buttonDiv {
+				width: 20%;
+				border-radius: 0 10px 10px 0px;
+				background-color: white;
+
+				img {
+					width: 35px;
+				}
+				img:hover {
+					width: 38px;
+				}
+			}
+
+			.muiButtonInput {
+				border-radius: 10px 0px 0px 10px;
+				font-size: 2em;
+
+				.MuiFormHelperText-root {
+					font-size: 20px;
+					font-family: Montserrat, sans-serif;
+					margin: 10px auto;
+					color: red;
+				}
+			}
+			.MuiOutlinedInput-input {
+				margin: -6px auto;
+				font-size: 25px;
+				color: white;
+			}
+		}
+		.formDivButton:focus-visible {
+			outline: none;
+			text-decoration: none;
+		}
+		.formDivButton ::placeholder {
+			font-size: 20px;
+			height: 20px;
+		}
+	}
+}
+
+///////////////////////////////////////////////
 //////// reponsive max-width: 1440px  /////////
 ///////////////////////////////////////////////
 

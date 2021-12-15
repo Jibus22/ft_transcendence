@@ -5,11 +5,7 @@ import LUP from '../../photos/bi_upload.png';
 import axios from 'axios';
 import { useMainPage } from '../../../../../MainPageContext';
 
-interface Props {
-	fetchDataMe: () => void;
-}
-
-export default function FormUpload({ fetchDataMe }: Props) {
+export default function FormUpload() {
 	const { fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
 
 	const [selectedImage, setSelectedImage] = useState<File | undefined>();
@@ -19,10 +15,6 @@ export default function FormUpload({ fetchDataMe }: Props) {
 		onSubmit();
 	}, [selectedImage]);
 
-	// useMount(() => {
-	// 	if (!selectedImage) return;
-	// 	onSubmit();
-	// });
 	const onSubmit = async () => {
 		let data = new FormData();
 
@@ -41,7 +33,6 @@ export default function FormUpload({ fetchDataMe }: Props) {
 					// 	//afficher message user : upload failed
 					// }
 				});
-			fetchDataMe();
 			if (customPhoto) {
 				setOpenSure(true);
 			} else {

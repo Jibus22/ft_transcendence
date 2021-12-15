@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './popUp.scss';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -18,7 +18,13 @@ interface IUser {
 }
 
 export default function PopUpUser({ printPopup }: Props) {
-	const { setCustomPhoto, setOpenSure, openSure, fetchData } = useMainPage();
+	const { setCustomPhoto, setOpenSure, openSure, fetchDataUserMe, data } = useMainPage();
+
+	useEffect(() => {
+		if (data.length > 0) {
+			setCustomPhoto(data[0].storeCustomPhoto);
+		}
+	});
 
 	const disagree = () => {
 		setCustomPhoto(true);
@@ -26,30 +32,19 @@ export default function PopUpUser({ printPopup }: Props) {
 	};
 	const agree = () => {
 		setOpenSure(false);
-		fetchData();
-	};
-
-	const FetchDatame = async () => {
-		try {
-			const { data }: { data: IUser } = await axios.get('http://localhost:3000/me', {
-				withCredentials: true,
-			});
-			setCustomPhoto(data.storeCustomPhoto);
-		} catch (err) {
-			console.log(err);
-		}
+		fetchDataUserMe();
 	};
 
 	return (
 		<div className="mainPopUpUser d-flex">
 			<div className="buttonPopUp 42Pop">
-				<Form42Upload fetchDataMe={FetchDatame} />
+				<Form42Upload />
 			</div>
 			<div className="buttonPopUp deePop">
-				<FormRandomUpload fetchDataMe={FetchDatame} />
+				<FormRandomUpload />
 			</div>
 			<div className="buttonPopUp dlPop">
-				<FormUpload fetchDataMe={FetchDatame} />
+				<FormUpload />
 			</div>
 			<div className="buttonPopUp closePop" onClick={printPopup}>
 				<IconButton sx={{ width: 2 / 2 }}>

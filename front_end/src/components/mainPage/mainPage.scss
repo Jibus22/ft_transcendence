@@ -3,9 +3,11 @@
 	height: 900px;
 }
 
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
+@media screen and (min-width: 2560px) {
+	.mainPageBody {
+		height: 1410px;
+	}
+}
 
 @keyframes badgeAnim {
 	0% {
