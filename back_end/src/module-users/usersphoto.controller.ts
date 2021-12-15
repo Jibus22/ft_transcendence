@@ -1,14 +1,15 @@
 import {
   Controller,
   Get,
+  HttpException,
   HttpStatus,
-  Param,
+  InternalServerErrorException, Param,
   Post,
   Response,
   StreamableFile,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -38,22 +39,31 @@ export class UsersPhotoController {
   */
 
   @Post('/me/photo')
-  @Serialize(privateUserDto)
   @UseInterceptors(
     FileInterceptor('file', { dest: `/usr/assets/users_photos` }),
   ) // TODO: change to env.
   @Serialize(privateUserDto)
+  @ApiResponse({ type: privateUserDto })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'something is wrong with the file',
+  })
   @ApiOperation({
     summary: 'Upload a new custome photo and swtich to use it',
   })
-  @ApiResponse({ type: privateUserDto })
   async uploadPhoto(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    await this.meService
-      .uploadPhoto(user, file)
-      .catch((error) => console.log('error - ', error)); // TODO manage properly
+    await this.meService.uploadPhoto(user, file)
+    .catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      }
+      else {
+        throw new InternalServerErrorException(error);
+      }
+    });
   }
 
   @Post('/me/useSchoolPhoto')
@@ -87,10 +97,18 @@ export class UsersPhotoController {
     status: HttpStatus.NOT_FOUND,
     description: 'file requested not found',
   })
-  servePhoto(
+  async servePhoto(
     @Param('fileName') fileName,
     @Response({ passthrough: true }) res,
   ) {
-    return this.usersPhotoService.serveFile(fileName, res);
+    return await this.usersPhotoService.serveFile(fileName, res)
+      .catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      }
+      else {
+        throw new InternalServerErrorException(error);
+      }
+    });
   }
 }

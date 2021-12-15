@@ -1,8 +1,13 @@
-import { ForbiddenException, Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
+import {
+  ForbiddenException, HttpStatus,
+  Injectable,
+  Logger, StreamableFile
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { R_OK } from 'constants';
-import { createReadStream, rename, unlink } from 'fs';
+import {
+  createReadStream, renameSync, statSync, unlink
+} from 'fs';
 import { extname, join } from 'path';
 import { Repository } from 'typeorm';
 import { UserPhoto } from '../entities/users_photo.entity';
@@ -15,44 +20,62 @@ export class UsersPhotoService {
   ) {}
 
   addExtensionToFilename(file: Express.Multer.File) {
-    const newFileName = file.filename + extname(file.originalname);
+    const extension = extname(file.originalname);
+    if (extension.length <= 0) {
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'missing file extension',
+      };
+    }
+    const newFileName = file.filename + extension;
     const oldPath = file.path;
     const newPath =
       this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + newFileName;
 
-    rename(oldPath, newPath, (err) => {
-      if (err) throw err;
-    });
-
+    try {
+      renameSync(oldPath, newPath);
+    } catch (error) {
+      const logger = new Logger('fileSystem');
+      logger.log(`Rename failed: ${error}`);
+      throw {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: 'could not store the file',
+      };
+    }
     return newFileName;
   }
 
   delete(filename: string) {
-    unlink(
-      this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + filename,
-      (err) => {
-        if (err) console.log(err.message);
-      },
-    );
+    const filePath =
+      this.config.get('USERS_PHOTOS_STORAGE_PATH') + '/' + filename;
+
+    unlink(filePath, (error) => {
+      if (error) {
+        const logger = new Logger('fileSystem');
+        logger.log(`Unlink failed: ${error}`);
+      }
+    });
   }
 
   async serveFile(filename: string, res) {
-    const fsPromises = require('fs').promises;
     let path = join(this.config.get('USERS_PHOTOS_STORAGE_PATH'), filename);
     try {
-      const stat = await fsPromises.stat(path, R_OK);
-      if (!stat.isFile()) {
-        return new ForbiddenException();
+      const stat = statSync(path);
+      if (stat.isFile()) {
+        const mime = require('mime-types');
+        const file = createReadStream(path);
+        res.set({
+          'Content-Type': mime.lookup(path),
+          'Content-Disposition': `attachment; filename=${filename}`,
+        });
+        return new StreamableFile(file);
       }
-      const mime = require('mime-types');
-      const file = createReadStream(path);
-      res.set({
-        'Content-Type': mime.lookup(path),
-        'Content-Disposition': `attachment; filename=${filename}`,
-      });
-      return new StreamableFile(file);
+      return new ForbiddenException(`${filename} is a directory`);
     } catch (err) {
-      return new NotFoundException();
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: 'file not found',
+      };
     }
   }
 }
