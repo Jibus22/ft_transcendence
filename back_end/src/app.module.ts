@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import { CacheModule, MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,10 +8,14 @@ import { DevelopmentModule } from './module-development/development.module';
 import { User } from './module-users/entities/users.entity';
 import { UserPhoto } from './module-users/entities/users_photo.entity';
 import { UsersModule } from './module-users/users.module';
+import { StatusGateway } from './status.gateway';
 const cookieSession = require('cookie-session');
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -26,6 +30,7 @@ const cookieSession = require('cookie-session');
   ],
   controllers: [AppController],
   providers: [
+    StatusGateway,
     AppService,
     {
       provide: APP_PIPE,

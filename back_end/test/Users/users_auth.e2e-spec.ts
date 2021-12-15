@@ -1,8 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import exp from 'constants';
-import { repeat } from 'rxjs';
-// import { totp } from 'otplib';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CommonTest } from '../helpers';
@@ -116,7 +113,7 @@ describe('user controller: /me routes (e2e)', () => {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        /me routes tests
+        2FA routes tests
   -------------------------------------------------------------------
   ===================================================================
   */
@@ -383,12 +380,15 @@ describe('user controller: /me routes (e2e)', () => {
   });
 
   it('gets /me/is-logged when using 2FA, with 2fa turned off', async () => {
+    let localCookies = cookies;
+
     await doFull2faProcess()
       .then(async () => {
         return await turn2Fa_off(cookies);
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.CREATED);
+        cookies = commons.getCookies(response);
         return await getIsLogged(cookies);
       })
       .then(async (response) => {
@@ -400,47 +400,73 @@ describe('user controller: /me routes (e2e)', () => {
   });
 
   it('gets /me/is-logged after partial login', async () => {
+    let localCookies = cookies;
+
     await generateAndValidateQrCode()
       .then(async () => {
         return await commons.logOutUser();
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
-        return await getIsLogged(cookies);
+        localCookies = commons.getCookies(response);
+        return await getIsLogged(localCookies);
       })
       .then(async (response) => {
-        expect(response.header).toHaveProperty(
-          'Completed-Auth'.toLowerCase(),
-          'false',
-        );
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
         return await commons.logUser(loggedUser.login);
       })
       .then(async (response) => {
-        cookies = commons.getCookies(response);
         expect(response.status).toBe(HttpStatus.CREATED);
-        return await getIsLogged(cookies);
+        localCookies = commons.getCookies(response);
+        return await getIsLogged(localCookies);
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
         expect(response.header).toHaveProperty(
           'Completed-Auth'.toLowerCase(),
           'false',
-          );
-          return await authenticate2fa({ token: totp(secret) }, cookies);
-        }).then(async (response) => {
-          if (response.status === HttpStatus.BAD_REQUEST) {
-            response = await authenticate2fa({ token: totp(secret) }, cookies);
-          }
-          cookies = commons.getCookies(response);
-          expect(response.status).toBe(HttpStatus.CREATED);
-        return await getIsLogged(cookies);
-        })
+        );
+        return await authenticate2fa({ token: totp(secret) }, localCookies);
+      })
+      .then(async (response) => {
+        if (response.status === HttpStatus.BAD_REQUEST) {
+          response = await authenticate2fa({ token: totp(secret) }, localCookies);
+        }
+        localCookies = commons.getCookies(response);
+        expect(response.status).toBe(HttpStatus.CREATED);
+        return await getIsLogged(localCookies);
+      })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
         expect(response.header).toHaveProperty(
           'Completed-Auth'.toLowerCase(),
           'true',
-          );
-        });
+        );
+      });
+    });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+          Auth routes tests
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+
+  it('logs user out', async () => {
+    let localCookies: string[];
+
+    await commons.logOutUser()
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+         localCookies = commons.getCookies(response);
+        expect(localCookies.length).toBe(0);
+        return await getIsLogged(localCookies);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      });
   });
+
 });

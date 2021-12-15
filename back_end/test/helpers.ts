@@ -68,7 +68,7 @@ export class CommonTest {
   }
 
   getCookies(response: request.Response): string[] {
-    return response.get('Set-Cookie');
+    return response.get('Set-Cookie') || [];
   }
 
   async getMe(cookies: string[]) {
