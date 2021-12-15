@@ -23,13 +23,29 @@ export class MeService {
     }
   }
 
-  async uploadPhoto(user: User, file: Express.Multer.File) {
-    if (!file.filename || !file.path) {
+  private validateFile(file: Express.Multer.File) {
+    if (!file.filename || !file.path || !file.mimetype.includes('image/')) {
+      console.log('rejected file:', file);
       throw {
         status: HttpStatus.BAD_REQUEST,
-        error: 'missing file informations',
+        error: 'file not supported',
       };
     }
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      console.log('rejected file:', file);
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error:
+          'file is too large, maximum size allowed: ' +
+          maxSize / 1024 / 1024 +
+          'MiB',
+      };
+    }
+  }
+
+  async uploadPhoto(user: User, file: Express.Multer.File) {
+    this.validateFile(file);
     const newFileName = this.usersPhotoService.addExtensionToFilename(file);
     let userPhoto = await this.repoUserPhoto.findOne({ owner: user });
 
