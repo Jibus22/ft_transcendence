@@ -6,15 +6,10 @@ import LCL from '../photos/close-icon.png';
 import FormUpload from './formUpload/FormUpload';
 import Form42Upload from './form42Upload/Form42Upload';
 import FormRandomUpload from './formRandomUpload/FormRandomUpload';
-import axios from 'axios';
 import { useMainPage } from '../../../../MainPageContext';
 
 export interface Props {
 	printPopup: () => void;
-}
-
-interface IUser {
-	storeCustomPhoto: boolean;
 }
 
 export default function PopUpUser({ printPopup }: Props) {
