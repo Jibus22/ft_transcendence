@@ -1,181 +1,222 @@
-
 .MainTitlePage {
-    margin: 5% 0% 0% 10%;
-    width: 65%;
-    height: 20%;
+	margin: 5% 0% 0% 10%;
+	width: 65%;
+	height: 20%;
 
-    h1 {
-      font-family: Montserrat, sans-serif;
-      font-style: normal;
-  }
+	h1 {
+		font-family: Montserrat, sans-serif;
+		font-style: normal;
+	}
 
-  .MainTitle {
-      text-align: center;
+	.MainTitle {
+		text-align: center;
 
-      h1 {
-        font-weight: 900;
-        color: #FFFFFF;
-        letter-spacing: 4px;
-        font-size: 95px;    
-        text-align: center;
-        line-height: 88px;
-      }
+		h1 {
+			font-weight: 900;
+			color: #ffffff;
+			letter-spacing: 4px;
+			font-size: 5vw;
+			text-align: center;
+			line-height: 88px;
+		}
 
-      .TitleText {
-        text-align: center;
+		.TitleText {
+			text-align: center;
 
-        h5 {
-          font-weight: 500;
-          font-size: 30px;
-          line-height: 60px;
-          color: #E69C6A;
-        }
-      }
-      .sepTitle {
-        hr {
-          height: 3px;
-          width: 100%;
-          margin: 20px auto ;
-          animation-name: slideHr;
-          animation-delay: 0s;
-          animation-duration: 4s;
-          color: #CA6C88;
-          
-        }
-    }
-  }
+			h5 {
+				font-weight: 500;
+				font-size: 30px;
+				line-height: 60px;
+				color: #e69c6a;
+			}
+		}
+		.sepTitle {
+			hr {
+				height: 3px;
+				width: 100%;
+				margin: 20px auto;
+				animation-name: slideHr;
+				animation-delay: 0s;
+				animation-duration: 4s;
+				color: #ca6c88;
+			}
+		}
+	}
 }
-
-
-
 
 ///////////////////////////////////////////////
 //////// reponsive max-width: 1566px  /////////
 ///////////////////////////////////////////////
-@media screen and (max-width: 1566px) { 
-  .MainTitlePage {
-    margin: 5% 0% 0% 10%;
-    width: 65%;
-    height: 20%;
+@media screen and (max-width: 1566px) {
+	.MainTitlePage {
+		margin: 5% 0% 0% 10%;
+		width: 65%;
+		height: 20%;
 
-  .MainTitle {
-      h1 {
-        letter-spacing: 4px;
-        font-size: 77px;    
-        line-height: 78px;
-      }
-      .TitleText {
-        h5 {
-          font-size: 25px;
-          line-height: 50px;
-        }
-      }
-      .sepTitle {
-        hr {
-          height: 3px;
-          width: 100%;
-          margin: 20px auto ;
-        }
-    }
-  }
+		.MainTitle {
+			h1 {
+				line-height: 78px;
+			}
+			.TitleText {
+				h5 {
+					font-size: 25px;
+				}
+			}
+		}
+	}
 }
-}
-
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
-@media screen and (max-width: 1440px) { 
-
-}
-
 
 ///////////////////////////////////////////////
 //////// reponsive max-width: 1366px  /////////
 ///////////////////////////////////////////////
-@media screen and (max-width: 1366px) { 
-  .MainTitlePage {
-    margin: 3% 0% 0% 10%;
-    width: 55%;
-    height: 20%;
+@media screen and (max-width: 1366px) {
+	.MainTitlePage {
+		margin: 3% 0% 0% 10%;
+		width: 63%;
+		height: 20%;
 
-  .MainTitle {
-      h1 {
-        letter-spacing: 4px;
-        font-size: 64px;    
-        line-height: 64px;
-      }
-      .TitleText {
-        h5 {
-          font-size: 21px;
-          line-height: 33px;
-        }
-      }
-      .sepTitle {
-        hr {
-          height: 3px;
-          width: 100%;
-          margin: 20px auto ;
-        }
-    }
-  }
-}
+		.MainTitle {
+			h1 {
+				letter-spacing: 4px;
+			}
+			.TitleText {
+				h5 {
+					font-size: 21px;
+				}
+			}
+		}
+	}
 }
 
+///////////////////////////////////////////////
+//////// reponsive max-width: 1250px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1250px) {
+	.MainTitlePage {
+		margin: 3% 0% 0% 10%;
+		width: 67%;
+		height: 20%;
 
+		.MainTitle {
+			h1 {
+				line-height: 64px;
+			}
+			.TitleText {
+				h5 {
+					font-size: 21px;
+				}
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1000px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1000px) {
+	.MainTitlePage {
+		margin: 12% 0% 0% 15%;
+		width: 85%;
+		height: 20%;
+
+		.MainTitle {
+			h1 {
+				line-height: 65px;
+				letter-spacing: 1px;
+				font-size: 60px;
+			}
+			.TitleText {
+				h5 {
+					font-size: 25px;
+					line-height: 30px;
+				}
+			}
+		}
+	}
+}
 
 ///////////////////////////////////////////////
 ///////////////// Animation  //////////////////
 ///////////////////////////////////////////////
-.MainTitle:first-of-type h1, h5 {   
-  animation: showup 7s;
-  animation-iteration-count: 1;
+.MainTitle:first-of-type h1,
+h5 {
+	animation: showup 7s;
+	animation-iteration-count: 1;
 }
 
-.MainTitle:last-of-type h1, h5{
-  animation: reveal 0s;
-  animation-iteration-count: 0;
-  
+.MainTitle:last-of-type h1,
+h5 {
+	animation: reveal 0s;
+	animation-iteration-count: 0;
 }
 
-.MainTitle:last-of-type h1, h5{
-  animation: slidein 7s ;
-  animation-iteration-count: 1;
- 
-}  
+.MainTitle:last-of-type h1,
+h5 {
+	animation: slidein 7s;
+	animation-iteration-count: 1;
+}
 @keyframes showup {
-  0% {opacity:0;}
-  20% {opacity:1;}
-  80% {opacity:1;}
-  100% {opacity:0;}
+	0% {
+		opacity: 0;
+	}
+	20% {
+		opacity: 1;
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 @keyframes slidein {
-  0% { margin-left:-1600px; }
-  20% { margin-left:-800px; }
-  35% { margin-left:0px; }
-  100% { margin-left:0px; }
+	0% {
+		margin-left: -1600px;
+	}
+	20% {
+		margin-left: -800px;
+	}
+	35% {
+		margin-left: 0px;
+	}
+	100% {
+		margin-left: 0px;
+	}
 }
 
 @keyframes reveal {
-     0% {opacity:0;width:0px;}
-     20% {opacity:1;width:0px;}
-    30% {width:355px;}
-    80% {opacity:1;}
-    100% {opacity:0;width:355px;}
+	0% {
+		opacity: 0;
+		width: 0px;
+	}
+	20% {
+		opacity: 1;
+		width: 0px;
+	}
+	30% {
+		width: 355px;
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		width: 355px;
+	}
 }
 
 @keyframes slideHr {
-  from {
-   visibility: visible;
-    margin-left: 100%;
-    width: 0%;
-  }
+	from {
+		visibility: visible;
+		margin-left: 100%;
+		width: 0%;
+	}
 
-  to {
-    visibility: visible;
-    margin-left: 0%;
-   
-    width: 100%;
-  }
- }
+	to {
+		visibility: visible;
+		margin-left: 0%;
+
+		width: 100%;
+	}
+}

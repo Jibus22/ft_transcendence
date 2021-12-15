@@ -1,27 +1,28 @@
-
-import React, {useState, useEffect} from 'react';
-import  './mainPage.scss'
-import { Routes, Route} from "react-router-dom";
-import { Header, ParamUser, UserRank, HistoryGame, Game} from '..';
-// import ErrorPage from '../errorPage/ErrorPage';
+import React, { useEffect, useState } from 'react';
+import './mainPage.scss';
+import { Routes, Route } from 'react-router-dom';
+import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre } from '..';
 import axios from 'axios';
+import { useMainPage } from '../../MainPageContext';
 import { io, Socket } from "socket.io-client";
 
-
 const MainPage = () => {
-
-
+	const { timeSnack, setData, setTimeSnack } = useMainPage();
     const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
-    const [data, setData] = useState([]);
 
-    const fetchData = async () => {
-        const result = await axios (
-            'http://localhost:3000/users', {withCredentials: true}
-        );
-        setData(result.data);
-    }
+	const fetchData = async () => {
+		try {
+			const { data } = await axios('http://localhost:3000/users', {
+				withCredentials: true,
+			});
+			setData(data);
+			// console.log(data[0]);
+		} catch (err) {
+			console.log(err);
+		}
+	};
 
-    const connectWsStatus = async () => {
+  const connectWsStatus = async () => {
         await axios ('http://localhost:3000/auth/ws/token', {
             withCredentials: true
         })
@@ -55,32 +56,31 @@ const MainPage = () => {
             setWsStatus(undefined);
             console.log(error);
         });
-    }
+    };
 
-        useEffect(() => {
-            fetchData();
-            connectWsStatus();
+	useEffect(() => {
+		fetchData();
+        connectWsStatus();
+	}, []);
 
-        }, [])
+	const resetTimeSnack = () => {
+		setTimeSnack(false);
+	};
 
+	return (
+		<div className="mainPageBody d-flex flex-column ">
+			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
+			<div>
+				<Header />
+			</div>
 
-        return (
-
-            <div className='mainPageBody d-flex flex-column ' >
-                <div>
-                    <Header data={data}/>
-                </div>
-
-                <Routes >
-                    <Route path='/MainPage' element={ <Game wsStatus={wsStatus}/> }/>
-                    <Route path='/History-Game' element={ <HistoryGame/> }/>
-                    <Route path="/Setting" element={ <ParamUser data={data} fetchData={fetchData} /> }/>
-                    <Route path='/Rank/*'element={ <UserRank/> }/>
-                </Routes>
-
-
-            </div>
-        );
-}
-
+			<Routes>
+                <Route path='/MainPage' element={ <Game wsStatus={wsStatus}/> }/>
+				<Route path="/History-Game" element={<HistoryGame />} />
+				<Route path="/Setting" element={<ParamUser />} />
+				<Route path="/Rank" element={<UserRank />} />
+			</Routes>
+		</div>
+	);
+};
 export default MainPage
