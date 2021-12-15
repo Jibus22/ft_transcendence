@@ -50,6 +50,7 @@
     "react-upload-gallery": "^0.4.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.4",
+    "socket.io-client": "^4.4.0",
     "styled-components": "^5.3.1",
     "typescript": "^4.4.4",
     "web-vitals": "^2.1.2",
