@@ -59,6 +59,7 @@ export default function Play({ Loadingclick }: Props) {
 				<div className="msgPlay  ">
 					<h1>Do you want to play now ? </h1>
 				</div>
+
 				<div className="iconePLayGame">
 					<img src={IconGame} alt="" />
 				</div>

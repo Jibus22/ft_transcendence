@@ -3,10 +3,6 @@
 	height: 900px;
 }
 
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
-
 @keyframes badgeAnim {
 	0% {
 		transform: scale(0.8);
@@ -15,5 +11,14 @@
 	100% {
 		transform: scale(2.4);
 		opacity: 0;
+	}
+}
+
+/////////////////////////////////////////////
+////// reponsive max-width: 2560px  /////////
+/////////////////////////////////////////////
+@media screen and (min-width: 2560px) {
+	.mainPageBody {
+		height: 1410px;
 	}
 }
