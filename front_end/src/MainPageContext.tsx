@@ -5,6 +5,7 @@ interface Type {
 	id: number;
 	login: string;
 	photo_url: string;
+	storeCustomPhoto: boolean;
 }
 
 interface IMainPageContext {
@@ -21,7 +22,7 @@ interface IMainPageContext {
 	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	data: Array<Type>;
 	setData: React.Dispatch<React.SetStateAction<never[]>>;
-	fetchData: () => void;
+	// fetchData: () => void;
 	fetchDataUserMe: () => void;
 	userName: string;
 	setUserName: React.Dispatch<React.SetStateAction<string>>;
@@ -50,12 +51,12 @@ const MainPageProvider = (props: any) => {
 	const [customPhoto, setCustomPhoto] = useState(true);
 	const [openSure, setOpenSure] = useState(false);
 
-	const fetchData = async () => {
-		const result = await axios('http://localhost:3000/users', {
-			withCredentials: true,
-		});
-		setData(result.data);
-	};
+	// const fetchData = async () => {
+	// 	const result = await axios('http://localhost:3000/users', {
+	// 		withCredentials: true,
+	// 	});
+	// 	setData(result.data);
+	// };
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -82,7 +83,7 @@ const MainPageProvider = (props: any) => {
 		data,
 		setData,
 		fetchDataUserMe,
-		fetchData,
+		// fetchData,
 		userName,
 		setUserName,
 		userImg,
