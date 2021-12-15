@@ -19,3 +19,12 @@
 		opacity: 0;
 	}
 }
+
+/////////////////////////////////////////////
+////// reponsive max-width: 2560px  /////////
+/////////////////////////////////////////////
+@media screen and (min-width: 2560px) {
+	.mainPageBody {
+		height: 1410px;
+	}
+}
