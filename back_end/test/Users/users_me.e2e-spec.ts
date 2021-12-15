@@ -87,7 +87,7 @@ describe('user controller: /me routes (e2e)', () => {
     await commons
       .logUser('non_existing_user')
       .then((response) => commons.getCookies(response))
-      .then((tmpCookies) => expect(tmpCookies).toBeUndefined());
+      .then((tmpCookies) => expect(tmpCookies.length).toBe(0));
   });
 
   /*
@@ -120,7 +120,7 @@ describe('user controller: /me routes (e2e)', () => {
       .then((resp) => {
         const newCookies = commons.getCookies(resp);
         expect(cookies).toHaveLength(2);
-        expect(newCookies).not.toBeDefined();
+        expect(newCookies).not.toEqual(cookies);
         expect(resp.status).toEqual(HttpStatus.UNAUTHORIZED);
       })
       .then(async () => await request(app.getHttpServer()).get('/me'))

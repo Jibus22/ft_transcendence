@@ -1,35 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindConditions, Repository } from 'typeorm';
 import { User } from '../entities/users.entity';
+import { UserPhoto } from '../entities/users_photo.entity';
 
 @Injectable()
 export class UsersService {
 
-	constructor(@InjectRepository(User) private repo: Repository<User>) {}
+	constructor(
+		@InjectRepository(User) private repoUser: Repository<User>,
+		) {}
 
 	async create(user: Partial<User> | Partial<User>[]) {
-		const newUser = this.repo.create(user as Partial<User>);
-		return await this.repo.save(newUser);
+		const newUser = this.repoUser.create(user as Partial<User>);
+		return await this.repoUser.save(newUser);
 	}
 
 	async remove(login: string) {
-		const user = await this.find(login);
+		const user = await this.find({login});
 		if ( ! user) {
 			throw new NotFoundException('user not found');
 		}
-		return await this.repo.remove(user);
+		return await this.repoUser.remove(user);
 	}
 
 	async findOne(id: string) {
 		if ( ! id) {
 			return null;
 		}
-		return await this.repo.findOne(id);
+		return await this.repoUser.findOne(id);
 	}
 
-	async find(login: string) {
-		return await this.repo.find({ login });
+	async findOneWithRelations(id: string) {
+		if ( ! id) {
+			return null;
+		}
+		return await this.repoUser.findOne(id, {
+      relations: [ 'friends_list', 'blocked_list', 'local_photo']
+		});
+	}
+
+	async find(user: Partial<User>) {
+		return await this.repoUser.find({
+			where: user,
+			relations: ['local_photo']
+		});
 	}
 
 	async update(id: string, attrs: Partial<User>) {
@@ -38,11 +53,12 @@ export class UsersService {
 			throw new NotFoundException('user not found');
 		}
 		Object.assign(user, attrs);
-		return await this.repo.save(user);
+		return await this.repoUser.save(user);
 	}
 
 	async getAllUsers() {
-		return await this.repo.find();
+		return await this.repoUser.find({
+      relations: [ 'local_photo']
+		});
 	}
-
 }

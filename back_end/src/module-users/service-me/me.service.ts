@@ -1,43 +1,60 @@
-import {
-  BadRequestException,
-  Injectable
-} from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../entities/users.entity';
-import { RelationsService, RelationType } from '../service-relations/relations.service';
+import { UserPhoto } from '../entities/users_photo.entity';
+import { UsersPhotoService } from '../service-file/userPhoto.service';
 import { UsersService } from '../service-users/users.service';
 
 @Injectable()
 export class MeService {
   constructor(
+    @InjectRepository(User) private repoUser: Repository<User>,
+    @InjectRepository(UserPhoto) private repoUserPhoto: Repository<UserPhoto>,
     private userService: UsersService,
-    private relationsService: RelationsService,
-    ) {}
+    private usersPhotoService: UsersPhotoService,
+  ) {}
 
-    async whoAmI(userId: string): Promise<User> {
-      if (!userId) {
-        throw new BadRequestException('user session does not exist');
+  private async updateUseLocalPhoto(user: User, newValue: boolean) {
+    if (user.use_local_photo !== newValue) {
+      return await this.userService.update(user.id, {
+        use_local_photo: newValue,
+      });
+    }
+  }
+
+  async uploadPhoto(user: User, file: Express.Multer.File) {
+    if (!file.filename || !file.path) {
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'missing file informations',
+      };
+    }
+    const newFileName = this.usersPhotoService.addExtensionToFilename(file);
+    let userPhoto = await this.repoUserPhoto.findOne({ owner: user });
+
+    if (userPhoto) {
+      this.usersPhotoService.delete(userPhoto.fileName);
+      userPhoto.fileName = newFileName;
+    } else {
+      userPhoto = this.repoUserPhoto.create({
+        owner: user,
+        fileName: newFileName,
+      });
+    }
+    await this.updateUseLocalPhoto(user, true);
+    await this.repoUserPhoto.save(userPhoto);
+  }
+
+  async deletePhoto(user: User) {
+    if (user) {
+      const photo = await this.repoUserPhoto.findOne({ owner: user });
+      if (photo) {
+        await this.repoUserPhoto.remove(photo);
+        return await this.userService.update(user.id, {
+          use_local_photo: false,
+        });
       }
-      let user: User;
-      return await this.userService
-      .findOne(userId)
-      .then((foundUser) => {
-        if (! foundUser ) {
-          throw 'user not found in database';
-        }
-        user = foundUser;
-        return this.relationsService.readAllRelations(user.id, RelationType.Friend);
-      })
-      .then((friends) => {
-        user.friends_list = friends;
-        return this.relationsService.readAllRelations(user.id, RelationType.Block);
-      })
-      .then((blocked) => {
-        user.blocked_list = blocked;
-        return user;
-      })
     }
-
-    uploadPhoto(file: Express.Multer.File) {
-      console.log(file);
-    }
+  }
 }

@@ -6,9 +6,10 @@ import {
   AfterUpdate,
   Column,
   Entity, JoinTable,
-  ManyToMany, PrimaryGeneratedColumn
+  ManyToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
 import { UserDto } from '../dtos/user.dto';
+import { UserPhoto } from './users_photo.entity';
 
 const conf = new ConfigService;
 
@@ -31,14 +32,11 @@ export class User {
   @Column()
   photo_url_42: string;
 
-  @Column({
-    unique: true,
-    nullable: true,
-  })
-  photo_url_local: string;
-
   @Column()
   use_local_photo: boolean;
+
+  @OneToOne(() => UserPhoto, photo => photo.owner)
+  local_photo: UserPhoto;
 
   @ManyToMany(type => User, (user) => user.friends_list)
   @JoinTable()
@@ -48,15 +46,17 @@ export class User {
   @JoinTable()
   blocked_list: UserDto[];
 
-// ----------------------
+  @Column({ nullable: true })
+  twoFASecret: string
 
-	@Transform(value => {
-		if (value.obj.use_local_photo === false || value.obj.photo_url_local === null) {
-			return value.obj.photo_url_42;
-		}
-		return value.obj.photo_url_local;
-	})
-	photo_url: string;
+  @Column({ default: false })
+  useTwoFA: boolean
+
+  @Column({ nullable: true, unique: true })
+  ws_id: string;
+
+  @Column({ default: false })
+  is_in_game: boolean
 
   /*
   ** Lifecycle functions
