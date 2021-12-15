@@ -22,12 +22,17 @@ interface IMainPageContext {
 	data: Array<Type>;
 	setData: React.Dispatch<React.SetStateAction<never[]>>;
 	fetchData: () => void;
+	fetchDataUserMe: () => void;
 	userName: string;
 	setUserName: React.Dispatch<React.SetStateAction<string>>;
 	userImg: string;
 	setUserImg: React.Dispatch<React.SetStateAction<string>>;
 	isFriends: boolean;
 	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
+	customPhoto: boolean;
+	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
+	openSure: boolean;
+	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -42,12 +47,25 @@ const MainPageProvider = (props: any) => {
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
 	const [isFriends, setIsFriends] = useState(false);
+	const [customPhoto, setCustomPhoto] = useState(true);
+	const [openSure, setOpenSure] = useState(false);
 
 	const fetchData = async () => {
 		const result = await axios('http://localhost:3000/users', {
 			withCredentials: true,
 		});
 		setData(result.data);
+	};
+
+	const fetchDataUserMe = async () => {
+		try {
+			const { data } = await axios.get('http://localhost:3000/me', {
+				withCredentials: true,
+			});
+			setData([data]);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 
 	const ProviderValue = {
@@ -63,6 +81,7 @@ const MainPageProvider = (props: any) => {
 		setLoading,
 		data,
 		setData,
+		fetchDataUserMe,
 		fetchData,
 		userName,
 		setUserName,
@@ -70,6 +89,10 @@ const MainPageProvider = (props: any) => {
 		setUserImg,
 		isFriends,
 		setIsFriends,
+		customPhoto,
+		setCustomPhoto,
+		openSure,
+		setOpenSure,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

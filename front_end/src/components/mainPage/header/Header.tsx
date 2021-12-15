@@ -8,7 +8,10 @@ export default function Header() {
 	const { data, userName, userImg, setUserName, setUserImg } = useMainPage();
 
 	useEffect(() => {
-		data.map((item) => (setUserName(item.login), setUserImg(item.photo_url)));
+		if (data.length > 0) {
+			setUserName(data[0].login);
+			setUserImg(data[0].photo_url);
+		}
 	});
 
 	return (
@@ -17,10 +20,7 @@ export default function Header() {
 				<div className="d-flex  mainNavMenu">
 					<ul className="navbar-nav headerMenu  w-100 ">
 						<li className="nav-item  linkLogoNav">
-							<Link
-								className={(navData) => (navData.isActive ? 'selectedNave' : '')}
-								to="/MainPage"
-							>
+							<Link className={(navData) => (navData.isActive ? 'selectedNave' : '')} to="/MainPage">
 								<h1>Games</h1>
 							</Link>
 						</li>
@@ -32,10 +32,7 @@ export default function Header() {
 						</li>
 
 						<li className="nav-item linkLogoNav ">
-							<Link
-								className={(navData) => (navData.isActive ? 'selectedNave' : '')}
-								to="/History-Game"
-							>
+							<Link className={(navData) => (navData.isActive ? 'selectedNave' : '')} to="/History-Game">
 								<h1>History</h1>
 							</Link>
 						</li>
@@ -49,12 +46,7 @@ export default function Header() {
 								<h2 className="">{userName}</h2>
 							</div>
 							<div className="profilLogginImg ">
-								<Badge
-									overlap="circular"
-									anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-									variant="dot"
-									sx={{}}
-								>
+								<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
 									<Avatar alt="userImg" src={userImg} />
 								</Badge>
 							</div>

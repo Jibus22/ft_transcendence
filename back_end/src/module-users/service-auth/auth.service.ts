@@ -75,7 +75,7 @@ export class AuthService {
   }
 
   async updateDatabase(user: Partial<User>) {
-    const users = await this.usersService.findByLogin42(user.login_42);
+    const users = await this.usersService.find(user);
     if (users.length) {
       return await this.usersService
         .update(users[0].id, {
@@ -90,6 +90,12 @@ export class AuthService {
     return await this.usersService.create(user).catch((e) => {
       throw new BadGatewayException(e.message);
     });
+  }
+
+  clearSession(session) {
+    delete session.userId;
+    delete session.useTwoFA;
+    delete session.isTwoFAutanticated;
   }
 
   /*
@@ -159,6 +165,7 @@ export class AuthService {
 
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
+
     if (! user.useTwoFA) {
       return this.turn2fa_off(session);
     }

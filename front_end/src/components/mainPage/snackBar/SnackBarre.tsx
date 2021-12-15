@@ -2,8 +2,11 @@ import React from 'react';
 import './snackBarre.scss';
 import Horloge from './img/Horloge.png';
 import Emoji from './img/emoji.png';
+
+// import 'react-toastify/scss/main.scss';
+// import 'react-toastify/dist/ReactToastify.css';
+import { injectStyle } from 'react-toastify/dist/inject-style';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useMainPage } from '../../../MainPageContext';
 
 interface ISnackBarreProps {
@@ -12,6 +15,10 @@ interface ISnackBarreProps {
 
 export default function SnackBarre({ onClose }: ISnackBarreProps) {
 	const { isFriends } = useMainPage();
+
+	if (typeof window !== 'undefined') {
+		injectStyle();
+	}
 
 	const notify = () => {
 		!isFriends

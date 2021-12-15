@@ -252,3 +252,54 @@
 		}
 	}
 }
+
+///////////////////////////////////////////////
+//////// reponsive max-width: 1000px  /////////
+///////////////////////////////////////////////
+@media screen and (max-width: 1000px) {
+	.Section {
+		width: 93%;
+		padding: 30px 0 0 30px;
+		margin: 6% 0 0% 40px;
+
+		.profil img {
+			width: 55px;
+			height: 55px;
+		}
+
+		.listProfil-2 {
+			margin: 0 0px 0 -100px;
+		}
+
+		.info {
+			margin: 5px 0 0px 20px;
+			width: 180px;
+
+			h3 {
+				font-size: 16px;
+			}
+			p {
+				margin: -17px 0 0 0;
+				font-size: 16px;
+				line-height: 30px;
+			}
+		}
+		.profil1 {
+			margin: 5px 0 0 0px;
+		}
+		.profil2 {
+			margin: 95px 0 0 0px;
+		}
+		.profil3 {
+			margin: 95px 0 0 0px;
+		}
+
+		.profil4 {
+			margin: 80px 0 0 60px;
+		}
+
+		.profil5 {
+			margin: 100px 0 0 60px;
+		}
+	}
+}

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './paramUser.scss';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
-import { Switch, FormControlLabel, Button, IconButton } from '@mui/material';
+import { Switch, FormControlLabel, Button, IconButton, Avatar } from '@mui/material';
 import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';
+import { useHover } from 'ahooks';
 
 export default function ParamUser() {
 	const props = useSpring({
@@ -19,13 +20,11 @@ export default function ParamUser() {
 	});
 
 	const { userImg, userName } = useMainPage();
+	const ref = useRef<HTMLDivElement>(null);
+	const isHovering = useHover(ref);
 
-	const [isModif, setIsModif] = useState<boolean>(false);
 	const [isPop, setIsPop] = useState<boolean>(false);
 
-	function toggleModif() {
-		setIsModif(!isModif);
-	}
 	function printPopup() {
 		setIsPop(!isPop);
 	}
@@ -33,11 +32,16 @@ export default function ParamUser() {
 	return (
 		<animated.div style={props} className="w-100 ">
 			<div className="mainParamUser d-flex flex-column">
-				{isPop ? <PopUpUser printPopup={printPopup} userImg={userImg} /> : null}
+				{isPop ? <PopUpUser printPopup={printPopup} /> : null}
+				<div ref={ref} className="imgUser ">
+					<Avatar
+						alt="userImg"
+						src={userImg}
+						sx={{ width: 2 / 2, height: 2 / 2 }}
+						className={`${isHovering && !isPop ? 'imgFilter ' : ''} `}
+					/>
 
-				<div onMouseEnter={toggleModif} onMouseLeave={toggleModif} className="imgUser ">
-					<img src={userImg} alt="" className={`${isModif && !isPop ? 'imgFilter ' : 'none'} `} />
-					{isModif && !isPop ? (
+					{isHovering && !isPop ? (
 						<div className="userModif">
 							<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="" onClick={printPopup}>
 								<img src={PencilIcon} alt="" />
@@ -74,12 +78,7 @@ export default function ParamUser() {
 						<FormUser isPop={isPop} userName={userName} />
 					</div>
 					<div className="switchMui ">
-						<FormControlLabel
-							disabled={isPop}
-							control={<Switch defaultChecked />}
-							label="2FA"
-							labelPlacement="start"
-						/>
+						<FormControlLabel disabled={isPop} control={<Switch defaultChecked />} label="2FA" labelPlacement="start" />
 					</div>
 					<div className="disconectMui">
 						<Button disabled={isPop} variant="text">

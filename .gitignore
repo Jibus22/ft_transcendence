@@ -13,6 +13,7 @@ back_end/*.sqlite
 back_end/*.sqlite*
 back_end/*.sqlite-shm
 back_end/*.sqlite-wal
+yarn.lock
 
 # Logs
 logs
@@ -155,3 +156,4 @@ back_end/.TODO
 TODO
 back_end/package.json
 back_end/yarn.lock
+front_end/yarn.lock

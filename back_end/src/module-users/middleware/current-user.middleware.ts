@@ -1,11 +1,11 @@
 import {
   Injectable,
   Logger,
-  NestMiddleware,
-  UnauthorizedException
+  NestMiddleware
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../entities/users.entity';
+import { AuthService } from '../service-auth/auth.service';
 import { UsersService } from '../service-users/users.service';
 
 declare global {
@@ -20,20 +20,28 @@ declare global {
 
 @Injectable()
 export class CurrentUserMiddleware implements NestMiddleware {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService
+    ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    // if (req.baseUrl.includes('/socket.io')) { // TODO remove debug
+    //   return next();
+    // }
+
     const { userId } = req.session || {};
     const logger = new Logger(' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
+    logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
     if (userId) {
       await this.usersService
         .findOneWithRelations(userId)
         .then((user) => {
-          logger.log(user.login); // TODO remove debug
+          logger.log(`By user: ${user.login}`); // TODO remove debug
           req.currentUser = user;
         })
         .catch((error) => {
-          req.session = null;
+          this.authService.clearSession(req.session);
         });
 			} else {
         logger.log('No user id in session');
