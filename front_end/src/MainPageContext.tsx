@@ -34,6 +34,7 @@ interface IMainPageContext {
 	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
 	openSure: boolean;
 	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
+	onSubmit: (file: File) => void;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -69,6 +70,27 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
+	const onSubmit = async (file: File) => {
+		let data = new FormData();
+		data.append('file', file);
+
+		console.log('lalala');
+
+		try {
+			await axios.post('http://localhost:3000/me/photo', data, {
+				withCredentials: true,
+			});
+
+			if (customPhoto) {
+				setOpenSure(true);
+			} else {
+				fetchDataUserMe();
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	const ProviderValue = {
 		timeSnack,
 		setTimeSnack,
@@ -94,6 +116,7 @@ const MainPageProvider = (props: any) => {
 		setCustomPhoto,
 		openSure,
 		setOpenSure,
+		onSubmit,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
