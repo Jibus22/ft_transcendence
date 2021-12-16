@@ -208,6 +208,27 @@ describe('user controller: /me routes (e2e)', () => {
       });
   });
 
+  it('updates user with invalid value', async () => {
+    await commons
+      .createFakeUsers()
+      .then(async () => await commons.logUser(loggedUser.login))
+      .then((response) => {
+        cookies = commons.getCookies(response);
+      })
+      .then(
+        async () =>
+          await patchMe(
+            {
+              login: 42
+            },
+            cookies,
+          ),
+      )
+      .then((response) => {
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+  });
+
   it('updates user invalid key', async () => {
     await commons
       .createFakeUsers()
