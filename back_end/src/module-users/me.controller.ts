@@ -83,7 +83,12 @@ export class MeController {
   })
   async update(@Body() body: UpdateUserDto, @Session() session) {
     return this.usersService.update(session.userId, body).catch((error) => {
-      throw new BadRequestException(error.message);
+      const message = error.message as string;
+      if (message?.includes('UNIQUE')) {
+        throw new BadRequestException('already used');
+      } else {
+        throw new BadRequestException(error);
+      }
     });
   }
 }
