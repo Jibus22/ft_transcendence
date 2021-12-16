@@ -22,7 +22,7 @@ export default function FormUser({ isPop, userName }: Props) {
 		setIsDisable(false);
 	}
 
-	const { fetchData } = useMainPage();
+	const { fetchDataUserMe } = useMainPage();
 
 	function disableInputPop(): boolean {
 		if (isDisable || isPop) return true;
@@ -53,7 +53,7 @@ export default function FormUser({ isPop, userName }: Props) {
 				setTimeout(function () {
 					setIsValidate(false);
 				}, 2200);
-				fetchData();
+				fetchDataUserMe();
 			}
 		},
 	});

@@ -8,15 +8,7 @@ import ReactDOMServer from 'react-dom/server';
 import { useMainPage } from '../../../../../MainPageContext';
 import axios from 'axios';
 
-// interface IUser {
-// 	storeCustomPhoto: boolean;
-// }
-
-interface Props {
-	fetchDataMe: () => void;
-}
-
-export default function FormRandomUpload({ fetchDataMe }: Props) {
+export default function FormRandomUpload() {
 	const { fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
 
 	const generateRandomAvatar = () => {
@@ -38,8 +30,6 @@ export default function FormRandomUpload({ fetchDataMe }: Props) {
 			await axios.post('http://localhost:3000/me/photo', data, {
 				withCredentials: true,
 			});
-			// fetchDataUserMe();
-			fetchDataMe();
 			if (customPhoto) {
 				setOpenSure(true);
 			} else {
