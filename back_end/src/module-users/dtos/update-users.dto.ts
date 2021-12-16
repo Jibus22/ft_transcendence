@@ -8,8 +8,4 @@ export class UpdateUserDto {
 	@IsString()
 	login: string;
 
-	@ApiPropertyOptional()
-	@IsOptional()
-	@IsBoolean()
-	use_local_photo: boolean;
 }
