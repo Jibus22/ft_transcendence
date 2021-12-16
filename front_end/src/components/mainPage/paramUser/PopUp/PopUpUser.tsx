@@ -7,13 +7,26 @@ import FormUpload from './formUpload/FormUpload';
 import Form42Upload from './form42Upload/Form42Upload';
 import FormRandomUpload from './formRandomUpload/FormRandomUpload';
 import { useMainPage } from '../../../../MainPageContext';
+import { BigHead } from '@bigheads/core';
+import { getRandomOptions } from './formRandomUpload/generateRandomAvatar';
+import ReactDOMServer from 'react-dom/server';
 
 export interface Props {
 	printPopup: () => void;
 }
 
 export default function PopUpUser({ printPopup }: Props) {
-	const { setCustomPhoto, setOpenSure, openSure, fetchDataUserMe, data } = useMainPage();
+	const { setCustomPhoto, setOpenSure, openSure, data, onSubmit, pathPop, isUpload, onSubmitUpload, selectedImage, setIsUpload } =
+		useMainPage();
+
+	const generateRandomAvatar = () => {
+		const props = getRandomOptions();
+		const svgToString = <BigHead {...props} />;
+		return ReactDOMServer.renderToString(svgToString);
+	};
+	const svg = generateRandomAvatar();
+	const blob = new Blob([svg], { type: 'image/svg+xml' });
+	const file = new File([blob], 'random.svg', { type: 'image/svg' });
 
 	useEffect(() => {
 		if (data.length > 0) {
@@ -22,12 +35,18 @@ export default function PopUpUser({ printPopup }: Props) {
 	});
 
 	const disagree = () => {
-		setCustomPhoto(true);
+		setIsUpload(false);
 		setOpenSure(false);
 	};
+
 	const agree = () => {
+		if (!isUpload) {
+			onSubmit(file, pathPop);
+		} else {
+			onSubmitUpload(selectedImage);
+			setIsUpload(false);
+		}
 		setOpenSure(false);
-		fetchDataUserMe();
 	};
 
 	return (
@@ -36,7 +55,7 @@ export default function PopUpUser({ printPopup }: Props) {
 				<Form42Upload />
 			</div>
 			<div className="buttonPopUp deePop">
-				<FormRandomUpload />
+				<FormRandomUpload file={file} />
 			</div>
 			<div className="buttonPopUp dlPop">
 				<FormUpload />
@@ -64,10 +83,10 @@ export default function PopUpUser({ printPopup }: Props) {
 					<DialogContentText id="alert-dialog-description">Are you sure you want to delete your photo?</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
-					<Button onClick={disagree}>Disagree</Button>
-					<Button sx={{ color: 'red' }} onClick={agree}>
-						Agree
+					<Button sx={{ color: 'red' }} onClick={disagree}>
+						Disagree
 					</Button>
+					<Button onClick={agree}>Agree</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
