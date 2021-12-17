@@ -25,15 +25,13 @@ export class MeService {
 
   private validateFile(file: Express.Multer.File) {
     if (!file.filename || !file.path || !file.mimetype.includes('image/')) {
-      console.log('rejected file:', file);
       throw {
         status: HttpStatus.BAD_REQUEST,
-        error: 'file not supported',
+        error: 'file format not supported',
       };
     }
     const maxSize = 2 * 1024 * 1024;
     if (file.size > maxSize) {
-      console.log('rejected file:', file);
       throw {
         status: HttpStatus.BAD_REQUEST,
         error:
