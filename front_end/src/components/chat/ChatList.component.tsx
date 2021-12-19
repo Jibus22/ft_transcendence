@@ -21,10 +21,10 @@ const ChatList = () => {
 	<ChatListWrapper>
 		<SearchField>
 			<input type="text" placeholder="Search" />
-			<SearchIcon style={{ fontSize: "32px;", color: "#CA6C88" }} className="icon" />
+			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
 		<List>
-			{contacts.map(contact => (<Preview>
+			{contacts.map(contact => (<Preview key={contact.name}>
 				<img src={contact.profilePicture} alt={contact.name} />
 				<div>
 					<h4>{contact.name}</h4>

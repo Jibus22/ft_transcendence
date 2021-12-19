@@ -1,14 +1,13 @@
 import styled from "styled-components"
 import ChatList from "./ChatList.component";
+import ChatPanel from "./ChatPanel.component";
 
 const ChatContainer = ({ open }: any) => {
 	return (<ChatContainerWrapper open={open}>
 		{/* Chat list + Tabs */}
 		<ChatList />
 		{/* Messages pane */}
-		<MessagesPaneWrapper>
-
-		</MessagesPaneWrapper>
+		<ChatPanel />
 	</ChatContainerWrapper>);
 };
 
@@ -35,11 +34,6 @@ const ChatContainerWrapper = styled.div<{open: boolean}>`
 		transform: translateY(0);
 		pointer-events: inherit;
 	`}
-`;
-
-const MessagesPaneWrapper = styled.div`
-	flex: 1;
-	background-color: white;
 `;
 
 export default ChatContainer;
