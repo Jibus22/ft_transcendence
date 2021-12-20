@@ -7,7 +7,7 @@ import {
   Entity, JoinTable,
   ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
-import { Room } from '../../module-chat/entities/room.entity';
+import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
 
@@ -58,11 +58,11 @@ export class User {
   @Column({ default: false })
   is_in_game: boolean
 
-  @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
-  rooms_ownership: Room[];
+  // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
+  // rooms_ownership: Room[];
 
-  @ManyToMany(type => Room, (rooms_modaration) => rooms_modaration.id)
-  rooms_moderation: Room[];
+  // @ManyToMany(type => Room, (rooms_modaration) => rooms_modaration.id)
+  // rooms_moderation: Room[];
 
   /*
   ** Lifecycle functions

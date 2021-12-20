@@ -6,7 +6,7 @@ import {
   Column,
   Entity, ManyToOne, OneToMany, ManyToMany, PrimaryGeneratedColumn, JoinTable
 } from 'typeorm';
-import { User } from '../../module-users/entities/users.entity';
+import { User } from '../../users/entities/users.entity';
 
 
 const conf = new ConfigService;
@@ -21,12 +21,12 @@ export class Room {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(type => User, (owner) => owner.rooms_ownership)
-  owner: User;
+  // @ManyToOne(type => User, (owner) => owner.rooms_ownership)
+  // owner: User;
 
-  @ManyToMany(type => User, (moderators) => moderators.rooms_moderation)
-  @JoinTable()
-  moderators: User[];
+  // @ManyToMany(type => User, (moderators) => moderators.rooms_moderation)
+  // @JoinTable()
+  // moderators: User[];
 
   @Column({ nullable: true })
   password: string;
