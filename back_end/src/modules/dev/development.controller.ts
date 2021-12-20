@@ -1,13 +1,11 @@
-import {
-  Body, Controller, Delete, Get, Post, Session, UseGuards
-} from '@nestjs/common';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { DevGuard } from '../guards/dev.guard';
-import { Serialize } from '../interceptors/serialize.interceptor';
-import { privateUserDto } from '../module-users/dtos/private-user.dto';
-import { UserDto } from '../module-users/dtos/user.dto';
-import { User } from '../module-users/entities/users.entity';
-import { DevelopmentService } from './development.service';
+import { Session, UseGuards, Controller, Post, Body, Get, Delete } from "@nestjs/common";
+import { ApiTags, ApiProperty } from "@nestjs/swagger";
+import { DevGuard } from "../../guards/dev.guard";
+import { Serialize } from "../../interceptors/serialize.interceptor";
+import { privateUserDto } from "../users/dtos/private-user.dto";
+import { UserDto } from "../users/dtos/user.dto";
+import { User } from "../users/entities/users.entity";
+import { DevelopmentService } from "./development.service";
 
 @ApiTags('DevTools')
 @Serialize(privateUserDto)
