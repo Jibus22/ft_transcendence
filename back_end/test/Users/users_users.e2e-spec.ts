@@ -3,8 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import * as request from 'supertest';
 import { CommonTest } from '../helpers';
-import { UsersService } from 'src/module-users/service-users/users.service';
-import { User } from 'src/module-users/entities/users.entity';
+import { User } from '../../src/modules/users/entities/users.entity';
 
 describe('user controller: users infos routes (e2e)', () => {
   let app: INestApplication;
