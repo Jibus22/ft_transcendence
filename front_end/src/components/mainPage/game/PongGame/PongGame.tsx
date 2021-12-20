@@ -6,7 +6,7 @@ import "./PongGame.css"
 
 //Client
 const W3CWebSocket = require('websocket').w3cwebsocket;
-let client= new W3CWebSocket('ws://127.0.0.1:8000');
+let client= new W3CWebSocket('ws://192.168.1.17:8000');
 
 class PongGame extends React.Component {
 	width = 700;
@@ -18,8 +18,8 @@ class PongGame extends React.Component {
 	}
 
 	_widthPlayer:number = 15;
-	_playerOne: Player = new Player('P1', 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this._widthPlayer);
-	_playerTwo: Player = new Player('P2', 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this.width - (2 * this._widthPlayer));
+	_playerOne: Player = new Player('P1', 1, 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this._widthPlayer);
+	_playerTwo: Player = new Player('P2', 2,'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this.width - (2 * this._widthPlayer));
 	_ball: Ball = new Ball(this.width, this.height);
 	_keystate: any = {};
 	_canvas: HTMLCanvasElement | undefined = undefined;
@@ -49,25 +49,6 @@ class PongGame extends React.Component {
 	private _update(): void{
 		if (this._J1)
 		{
-			this._playerOne._update(this._keystate, this.height);
-			client.send(JSON.stringify({
-				type: "message",
-				object: "P1",
-				y: this._playerOne.y
-			}))
-		}
-		if(this._J2)
-		{
-			this._playerTwo._update(this._keystate, this.height);
-			console.log(client);
-			client.send(JSON.stringify({
-				type: "message",
-				object: "P2",
-				y: this._playerTwo.y
-			}))
-		}
-		if (this._J1)
-		{
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0)
 			{
@@ -82,7 +63,25 @@ class PongGame extends React.Component {
 				y: this._ball.y
 			}))
 		}
-
+		if (this._J1)
+		{
+			this._playerOne._update(this._keystate, this.height, this._ball);
+			client.send(JSON.stringify({
+				type: "message",
+				object: "P1",
+				y: this._playerOne.y
+			}))
+		}
+		if(this._J2)
+		{
+			this._playerTwo._update(this._keystate, this.height, this._ball);
+			//console.log(client);
+			client.send(JSON.stringify({
+				type: "message",
+				object: "P2",
+				y: this._playerTwo.y
+			}))
+		}
 	}
 
 	_draw = () => {
@@ -130,6 +129,9 @@ class PongGame extends React.Component {
 	}
 
 	componentDidMount() {
+		console.log(client);
+		//if (client.readyState !== WebSocket.OPEN)
+		//	return;
 		let rep = prompt("J1 J2 ou W");
 		if (rep === 'J1')
 			this._J1 = true;

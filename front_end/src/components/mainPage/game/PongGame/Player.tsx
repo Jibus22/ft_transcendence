@@ -1,23 +1,61 @@
-export class Player{
+import { Ball } from "./Ball";
 
-	y:number = 10;
-	size:number;
+export class Player {
 
-	constructor (
-		public name:string,
-		public keyUp:string,
-		public keyDown:string,
-		public defaultSize:number,
-		public width:number,
+	y: number = 10;
+	size: number;
+
+	constructor(
+		public name: string,
+		public num: number,
+		public keyUp: string,
+		public keyDown: string,
+		public defaultSize: number,
+		public width: number,
 		public x: number
-	){
+	) {
 		this.size = this.defaultSize;
 	}
 
-	_update(keystate:any, height:number){
-		if (keystate[this.keyUp] && this.y - 1 > 0)
-			this.y -= 1;
-		else if (keystate[this.keyDown] && this.y + this.size + 1 < height)
-			this.y += 1;
+	_ballInPlayer(ball: Ball): boolean {
+		// le centre de la balle est dans le pad
+		if (ball.x > this.x && ball.x < this.x + this.width && ball.y > this.y && ball.y < this.y + this.size)
+			return true;
+
+		//Intersection cotes haut du pas avec le point le plus bas de la balle
+		if (ball.x > this.x && ball.x < this.x + this.width && ball.y + ball.size > this.y && ball.y + ball.size < this.y + this.size)
+			return true;
+
+		//Intersection cotes bas du pas avec le point le plus haut de la balle
+		if (ball.x > this.x && ball.x < this.x + this.width && ball.y - ball.size > this.y && ball.y - ball.size < this.y + this.size)
+			return true;
+
+		//Si point le plus a droite de la ballle est dans le pad
+		if (ball.x + ball.size > this.x && ball.x + ball.size < this.x + this.width && ball.y > this.y && ball.y < this.y + this.size)
+			return true;
+
+		//Si point le plus a gauche de la ballle est dans le pad
+		if (ball.x - ball.size > this.x && ball.x - ball.size < this.x + this.width && ball.y > this.y && ball.y < this.y + this.size)
+			return true;
+
+
+		//Meme chose avec les point en haut a gauche bas droit haut droit et haut gacuhe
+		if (ball.x + ball.size > this.x && ball.x + ball.size < this.x + this.width && ball.y + ball.size > this.y && ball.y + ball.size < this.y + this.size)
+			return true;
+		if (ball.x - ball.size > this.x && ball.x - ball.size < this.x + this.width && ball.y - ball.size > this.y && ball.y - ball.size < this.y + this.size)
+			return true;
+		if (ball.x + ball.size > this.x && ball.x + ball.size < this.x + this.width && ball.y - ball.size > this.y && ball.y - ball.size < this.y + this.size)
+			return true;
+		if (ball.x - ball.size > this.x && ball.x - ball.size < this.x + this.width && ball.y + ball.size > this.y && ball.y + ball.size < this.y + this.size)
+			return true;
+		return false;
+	}
+
+	_update(keystate: any, height: number, ball: Ball) {
+		let deplacement = 3;
+		if (keystate[this.keyUp] && this.y - deplacement > 0 && !this._ballInPlayer(ball))
+			this.y -= deplacement;
+		else if (keystate[this.keyDown] && this.y + this.size + deplacement < height && !this._ballInPlayer(ball))
+			this.y += deplacement;
 	}
 }
