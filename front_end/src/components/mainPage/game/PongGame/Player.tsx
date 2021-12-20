@@ -53,9 +53,18 @@ export class Player {
 
 	_update(keystate: any, height: number, ball: Ball) {
 		let deplacement = 3;
-		if (keystate[this.keyUp] && this.y - deplacement > 0 && !this._ballInPlayer(ball))
+		if (keystate[this.keyUp] && this.y - deplacement > 0)
+		{
 			this.y -= deplacement;
+			if(this._ballInPlayer(ball))
+				this.y += deplacement;
+		}
+			
 		else if (keystate[this.keyDown] && this.y + this.size + deplacement < height && !this._ballInPlayer(ball))
+		{
 			this.y += deplacement;
+			if(this._ballInPlayer(ball))
+				this.y -= deplacement;
+		}
 	}
 }
