@@ -9,13 +9,13 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatModule } from './chat/chat.module';
-import { Room } from './chat/entities/room.entity';
-import { DevelopmentModule } from './dev/development.module';
+import { Room } from './modules/chat/entities/room.entity';
+import { ChatModule } from './modules/chat/chat.module';
+import { DevelopmentModule } from './modules/dev/development.module';
+import { UserPhoto } from './modules/users/entities/users_photo.entity';
+import { UsersModule } from './modules/users/users.module';
 import { StatusGateway } from './status.gateway';
-import { User } from './users/entities/users.entity';
-import { UserPhoto } from './users/entities/users_photo.entity';
-import { UsersModule } from './users/users.module';
+import { User } from './modules/users/entities/users.entity';
 const cookieSession = require('cookie-session');
 
 @Module({

@@ -10,8 +10,8 @@ import {
   ApiCookieAuth,
   ApiOperation, ApiResponse, ApiTags
 } from '@nestjs/swagger';
-import { AuthGuard } from '../guards/auth.guard';
-import { Serialize } from '../interceptors/serialize.interceptor';
+import { AuthGuard } from '../../guards/auth.guard';
+import { Serialize } from '../../interceptors/serialize.interceptor';
 import { editRelationDto } from './dtos/edit-relation.dto';
 import { UserDto } from './dtos/user.dto';
 import {

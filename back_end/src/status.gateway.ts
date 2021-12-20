@@ -6,8 +6,8 @@ import {
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Socket } from 'socket.io';
-import { User } from './users/entities/users.entity';
-import { UsersService } from './users/service-users/users.service';
+import { User } from './modules/users/entities/users.entity';
+import { UsersService } from './modules/users/service-users/users.service';
 
 const options : GatewayMetadata = {
   cors: {

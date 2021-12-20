@@ -4,9 +4,8 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, ManyToOne, OneToMany, ManyToMany, PrimaryGeneratedColumn, JoinTable
+  Entity, PrimaryGeneratedColumn
 } from 'typeorm';
-import { User } from '../../users/entities/users.entity';
 
 
 const conf = new ConfigService;
