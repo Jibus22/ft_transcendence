@@ -15,8 +15,8 @@ import { DevelopmentModule } from './modules/dev/development.module';
 import { UserPhoto } from './modules/users/entities/users_photo.entity';
 import { UsersModule } from './modules/users/users.module';
 import { StatusGateway } from './status.gateway';
-import { GameModule } from './game/game.module';
-import { Game } from './game/entities/game.entity';
+import { GameModule } from './modules/game/game.module';
+import { Game } from './modules/game/entities/game.entity';
 import { User } from './modules/users/entities/users.entity';
 const cookieSession = require('cookie-session');
 
