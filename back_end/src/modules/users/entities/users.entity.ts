@@ -1,13 +1,13 @@
 import { ConfigService } from '@nestjs/config';
-import { Transform } from 'class-transformer';
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
   Entity, JoinTable,
-  ManyToMany, OneToOne, PrimaryGeneratedColumn
+  ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
+import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
 
@@ -57,6 +57,12 @@ export class User {
 
   @Column({ default: false })
   is_in_game: boolean
+
+  // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
+  // rooms_ownership: Room[];
+
+  // @ManyToMany(type => Room, (rooms_modaration) => rooms_modaration.id)
+  // rooms_moderation: Room[];
 
   /*
   ** Lifecycle functions

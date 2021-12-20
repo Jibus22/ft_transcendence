@@ -9,17 +9,20 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DevelopmentModule } from './module-development/development.module';
-import { User } from './module-users/entities/users.entity';
-import { UserPhoto } from './module-users/entities/users_photo.entity';
-import { UsersModule } from './module-users/users.module';
+import { Room } from './modules/chat/entities/room.entity';
+import { ChatModule } from './modules/chat/chat.module';
+import { DevelopmentModule } from './modules/dev/development.module';
+import { UserPhoto } from './modules/users/entities/users_photo.entity';
+import { UsersModule } from './modules/users/users.module';
 import { StatusGateway } from './status.gateway';
 import { GameModule } from './game/game.module';
 import { Game } from './game/entities/game.entity';
+import { User } from './modules/users/entities/users.entity';
 const cookieSession = require('cookie-session');
 
 @Module({
   imports: [
+    ChatModule,
     CacheModule.register({
       isGlobal: true,
     }),
@@ -29,7 +32,7 @@ const cookieSession = require('cookie-session');
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: process.env.DB_NAME,
-      entities: [User, UserPhoto, Game],
+      entities: [User, UserPhoto, Game, Room],
       synchronize: true,
     }),
     UsersModule,

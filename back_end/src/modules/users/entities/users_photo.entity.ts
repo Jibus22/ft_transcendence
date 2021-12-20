@@ -1,15 +1,11 @@
 import { ConfigService } from '@nestjs/config';
-import { Transform } from 'class-transformer';
-import { fstat, unlink } from 'fs';
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, JoinColumn, JoinTable,
-  ManyToMany, OneToOne, PrimaryGeneratedColumn
+  Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
-import { UserDto } from '../dtos/user.dto';
 import { User } from './users.entity';
 
 const conf = new ConfigService;

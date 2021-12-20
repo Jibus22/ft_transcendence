@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../guards/auth.guard';
-import { Serialize } from '../interceptors/serialize.interceptor';
+import { AuthGuard } from '../../guards/auth.guard';
+import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { User } from './entities/users.entity';
