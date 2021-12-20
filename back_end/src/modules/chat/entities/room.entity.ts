@@ -1,10 +1,11 @@
 import { ConfigService } from '@nestjs/config';
+import { User } from 'src/modules/users/entities/users.entity';
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, PrimaryGeneratedColumn
+  Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn
 } from 'typeorm';
 
 
@@ -20,13 +21,18 @@ export class Room {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @ManyToOne(type => User, (owner) => owner.rooms_ownership)
-  // owner: User;
+  @ManyToOne(type => User, (owner) => owner.rooms_ownership)
+  owner: User;
 
-  // @ManyToMany(type => User, (moderators) => moderators.rooms_moderation)
-  // @JoinTable()
-  // moderators: User[];
+  @ManyToMany(type => User, (moderators) => moderators.rooms_moderation)
+  @JoinTable()
+  moderators: User[];
 
+  @ManyToMany(type => User, (moderators) => moderators.rooms_joined)
+  @JoinTable()
+  participants: User[];
+
+  //Will be salted and hashed
   @Column({ nullable: true })
   password: string;
 
@@ -46,21 +52,21 @@ export class Room {
   logInsert() {
     // TODO: add owner to moderator list!
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted User: ', this);
+      console.log('Inserted Room: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed User: ', this);
+      console.log('Removed Room: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated User: ', this);
+      console.log('Updated Room: ', this);
     }
   }
 }
