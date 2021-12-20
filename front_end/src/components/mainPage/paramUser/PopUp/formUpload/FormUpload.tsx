@@ -1,54 +1,49 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useEffect, ChangeEvent } from 'react';
 import '../popUp.scss';
 import IconButton from '@mui/material/Button';
 import LUP from '../../photos/bi_upload.png';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../../../../MainPageContext';
+import ReportIcon from '@mui/icons-material/Report';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 
-interface Props {
-	fetchDataMe: () => void;
-}
+export default function FormUpload() {
+	const { fetchDataUserMe, customPhoto, setOpenSure, setIsUpload, selectedImage, setSelectedImage, setOpenUpload, openUpload } =
+		useMainPage();
 
-export default function FormUpload({ fetchDataMe }: Props) {
-	const { fetchDataUserMe, customPhoto, setOpenSure } = useMainPage();
-
-	const [selectedImage, setSelectedImage] = useState<File | undefined>();
+	const handleClick = () => {
+		setOpenUpload(!openUpload);
+	};
 
 	useEffect(() => {
 		if (!selectedImage) return;
 		onSubmit();
 	}, [selectedImage]);
 
-	// useMount(() => {
-	// 	if (!selectedImage) return;
-	// 	onSubmit();
-	// });
 	const onSubmit = async () => {
 		let data = new FormData();
+		if (customPhoto) {
+			setIsUpload(true);
+			setOpenSure(true);
+			return;
+		}
 
 		if (selectedImage) {
 			data.append('file', selectedImage);
 		}
 
 		try {
-			const result = await axios
-				.post('http://localhost:3000/me/photo', data, {
-					withCredentials: true,
-				})
-				.then((response) => {
-					// if (response.status !== HttpStatus.CREATED) {
-					// 	// response.body.message; ?
-					// 	//afficher message user : upload failed
-					// }
-				});
-			fetchDataMe();
-			if (customPhoto) {
-				setOpenSure(true);
-			} else {
-				fetchDataUserMe();
+			await axios.post('http://localhost:3000/me/photo', data, {
+				withCredentials: true,
+			});
+
+			fetchDataUserMe();
+		} catch (error) {
+			const err = error as AxiosError;
+			if (err.response?.status === 400) {
+				setOpenUpload(true);
+				return;
 			}
-		} catch (err) {
-			console.log(err);
 		}
 	};
 
@@ -66,6 +61,27 @@ export default function FormUpload({ fetchDataMe }: Props) {
 					<img src={LUP} alt="" />
 				</IconButton>
 			</label>
+			<Dialog
+				open={openUpload}
+				onClose={handleClick}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+				scroll="body"
+				className="mainDialogMui"
+			>
+				<DialogTitle id="alert-dialog-title" className="d-flex">
+					<ReportIcon sx={{ color: 'orange' }} />
+					<div className="titleDialogMui">
+						<p>Warning !</p>
+					</div>
+				</DialogTitle>
+				<DialogContent className="contentDialogMui">
+					<DialogContentText id="alert-dialog-description">Unsupported format</DialogContentText>
+				</DialogContent>
+				<DialogActions className="actionDialogMui">
+					<Button onClick={handleClick}>Agree</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
 	);
 }
