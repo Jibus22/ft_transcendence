@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/users.entity';
@@ -9,24 +9,26 @@ import { Room } from './entities/room.entity';
 
 @Injectable()
 export class ChatService {
-	constructor(
-		@InjectRepository(Room) private repoRoom: Repository<Room>,
-		private usersService: UsersService
-	) {}
+  constructor(
+    @InjectRepository(Room) private repoRoom: Repository<Room>,
+    private usersService: UsersService,
+  ) {}
 
   async create(user: User, createChatDto: CreateRoomDto) {
-		const room = this.repoRoom.create(createChatDto as Partial<Room>);
-		room.owner = user;
-		room.participants.push(user);
-		return await this.repoRoom.save(room, {
-
-		});
+    const room = this.repoRoom.create(createChatDto as Partial<Room>);
+    room.owner = user;
+    return await this.repoRoom.save(room).catch((error) => {
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'could not save to database',
+      };
+    });
   }
 
   async findAll() {
-		return await this.repoRoom.find({
-      relations: [ 'owner', 'participants']
-		});
+    return await this.repoRoom.find({
+      relations: ['owner', 'participants'],
+    });
   }
 
   findOne(id: number) {

@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { SiteOwnerGuard } from 'src/guards/siteOwner.guard';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
@@ -22,20 +23,34 @@ import { Room } from './entities/room.entity';
 export class ChatController {
   constructor(
     private readonly chatService: ChatService
-  ) {}
+    ) {}
 
-  @Post()
-  @ApiOperation({
-    summary: 'Create one room',
-  })
-  @ApiResponse({ type: Room, isArray: true })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Newly create room infos' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No users' })
-  create(@CurrentUser() user, @Body() createChatDto: CreateRoomDto) {
-    return this.chatService.create(user, createChatDto);
-  }
+    @Post()
+    @ApiOperation({
+      summary: 'Create one room',
+    })
+    @ApiResponse({ type: Room, isArray: false })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Newly create room infos' })
+    async create(@CurrentUser() user, @Body() createChatDto: CreateRoomDto) {
+      return await this.chatService.create(user, createChatDto)
+      .catch((error) => {
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        }
+        else {
+          throw new InternalServerErrorException(error);
+        }
+      });
+    }
 
   @Get()
+  @UseGuards(SiteOwnerGuard)
+  @ApiOperation({
+    summary: 'Get all existing rooms',
+  })
+  @ApiResponse({ type: Room, isArray: true })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Every rooms in the system' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User must role is not high enough' })
   findAll() {
     return this.chatService.findAll();
   }
