@@ -1,12 +1,12 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, getSchemaPath } from "@nestjs/swagger";
 import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
-import { User } from "../../users/entities/users.entity";
+import { CreateParticipantDto } from "./create-participant.dto";
 
 export class CreateRoomDto {
 
 	@ApiProperty()
 	@IsArray()
-	participants: Partial<User>[];
+	participants: CreateParticipantDto[];
 
 	@ApiPropertyOptional()
 	@IsOptional()

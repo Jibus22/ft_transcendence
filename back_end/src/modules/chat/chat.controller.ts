@@ -1,10 +1,13 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { SiteOwnerGuard } from '../../guards/siteOwner.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { CreateUserDto } from '../dev/dtos/create-user.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { UserDto } from '../users/dtos/user.dto';
 import { ChatService } from './chat.service';
+import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { RoomDto } from './dto/room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -30,8 +33,8 @@ export class ChatController {
     })
     @ApiResponse({ type: Room, isArray: false })
     @ApiResponse({ status: HttpStatus.OK, description: 'Newly create room infos' })
-    async create(@CurrentUser() user, @Body() createChatDto: CreateRoomDto) {
-      return await this.chatService.create(user, createChatDto)
+    async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
+      return await this.chatService.create(user, createRoomDto)
       .catch((error) => {
         if (error.status) {
           throw new HttpException(error, error.status);

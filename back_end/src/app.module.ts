@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChatModule } from './modules/chat/chat.module';
+import { ChatMessage } from './modules/chat/entities/chatMessage.entity';
 import { Room } from './modules/chat/entities/room.entity';
 import { DevelopmentModule } from './modules/dev/development.module';
 import { User } from './modules/users/entities/users.entity';
@@ -30,7 +31,7 @@ const cookieSession = require('cookie-session');
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: process.env.DB_NAME,
-      entities: [User, UserPhoto, Room],
+      entities: [User, UserPhoto, Room, ChatMessage],
       synchronize: true,
     }),
     UsersModule,

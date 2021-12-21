@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
+import { PartialType } from '@nestjs/swagger';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
@@ -42,24 +43,128 @@ describe('user controller: users infos routes (e2e)', () => {
   ===================================================================
   */
 
-  /*
-    ===================================================================
-    -------------------------------------------------------------------
-          /users/*
-    -------------------------------------------------------------------
-    ===================================================================
-   */
-
-  it('creates a simple private room with participants', async () => {
-    await request(app.getHttpServer())
+  async function createSimpleRoom(bodyRequest) {
+    return await request(app.getHttpServer())
       .post('/room')
       .set('Cookie', cookies)
-      .send({
+      .send(bodyRequest);
+  }
+
+  async function getAllRooms() {
+    return await request(app.getHttpServer())
+      .get('/room')
+      .set('Cookie', cookies);
+  }
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        Room creation
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  it('creates a simple private room with participants', async () => {
+    await createSimpleRoom({
+      participants: [{ login: users[1].login }, { id: users[2].id }],
+      is_private: true,
+    }).then((response) => {
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(response.body).toHaveProperty('is_private', true);
+    });
+  });
+
+  it('creates a simple private room photo_url field', async () => {
+    await createSimpleRoom({
+      participants: [{ photo_url: users[5].photo_url_42 }],
+      is_private: true,
+    }).then((response) => {
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(response.body).toHaveProperty('is_private', true);
+    });
+
+    await getAllRooms().then(response => {
+      expect(response.body[0].participants).toHaveLength(0)
+    });
+  });
+
+  it('creates a simple private room with non existing participants', async () => {
+    await createSimpleRoom({
+      participants: [{ login: 'non_existing_user_login' }, { id: users[2].id }],
+      is_private: true,
+    }).then((response) => {
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(response.body).toHaveProperty('is_private', true);
+    });
+  });
+
+  it('creates a simple private room with some invalid key in body', async () => {
+    await createSimpleRoom({
+      participants: [{ login: 'non_existing_user_login' }, { id: users[2].id }],
+      some_key: true,
+      is_private: true,
+    }).then((response) => {
+      expect(response.status).toBe(HttpStatus.CREATED);
+      expect(response.body).toHaveProperty('is_private', true);
+    });
+  });
+
+  it('creates a simple private room with missing key in body', async () => {
+    await createSimpleRoom({
+      participants: [{ login: 'non_existing_user_login' }, { id: users[2].id }],
+      // is_private: true,  // not sent for test
+    }).then((response) => {
+      expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+  });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+  Get All Rooms
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  it('creates a few rooms and get list of them', async () => {
+    const rooms = [
+      {
         participants: [{ login: users[1].login }, { id: users[2].id }],
         is_private: true,
-      })
-      .then((response) => {
-        expect(response.status).toBe(HttpStatus.CREATED);
+      },
+      {
+        participants: [{ login: users[2].login }, { id: users[2].id }],
+        is_private: false,
+      },
+      {
+        participants: [{ id: users[4].id }],
+        password: 'testPassword',
+        is_private: false,
+      },
+      {
+        participants: users,
+        password: null,
+        is_private: false,
+      },
+    ];
+
+    console.log(Date.now());
+    for (let i = 0; i < rooms.length; i++) {
+      await createSimpleRoom(rooms[i]);
+    }
+
+    await getAllRooms().then((response) => {
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(typeof response.body).toBe('object');
+      expect(response.body.length).toBe(rooms.length);
+      response.body.forEach((element, index) => {
+        expect(element).toHaveProperty(
+          'is_password_protected',
+          rooms[index].password ? true : false,
+        );
+        expect(typeof element.is_password_protected).toBe('boolean');
+        expect(element).toHaveProperty('is_private', rooms[index].is_private);
       });
+    });
   });
 });

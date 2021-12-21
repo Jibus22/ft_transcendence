@@ -7,6 +7,7 @@ import {
   Column,
   Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn
 } from 'typeorm';
+import { ChatMessage } from './chatMessage.entity';
 
 
 const conf = new ConfigService;
@@ -32,15 +33,14 @@ export class Room {
   @JoinTable()
   participants: User[];
 
-  //Will be salted and hashed
   @Column({ nullable: true })
   password: string;
 
   @Column()
   is_private: boolean;
 
-  // @ManyToOne(type => ChatMessage, (chat) => user.id)
-  // messages: ChatMessage
+  @ManyToOne(type => ChatMessage, (message) => message.id)
+  messages: ChatMessage[]
 
   // participants
 
