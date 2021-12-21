@@ -1,10 +1,9 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SiteOwnerGuard } from 'src/guards/siteOwner.guard';
 import { AuthGuard } from '../../guards/auth.guard';
+import { SiteOwnerGuard } from '../../guards/siteOwner.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { UserDto } from '../users/dtos/user.dto';
 import { ChatService } from './chat.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { RoomDto } from './dto/room.dto';

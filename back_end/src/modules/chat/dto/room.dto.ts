@@ -1,8 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { Expose, plainToClass, Transform } from "class-transformer";
-import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
-import { UserDto } from "src/modules/users/dtos/user.dto";
-import { User } from "src/modules/users/entities/users.entity";
+import { UserDto } from "../../users/dtos/user.dto";
 
 export class RoomDto {
 

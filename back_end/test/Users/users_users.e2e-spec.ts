@@ -1,9 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../../src/app.module';
 import * as request from 'supertest';
-import { CommonTest } from '../helpers';
+import { AppModule } from '../../src/app.module';
 import { User } from '../../src/modules/users/entities/users.entity';
+import { CommonTest } from '../helpers';
 
 describe('user controller: users infos routes (e2e)', () => {
   let app: INestApplication;

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
-import { User } from "src/modules/users/entities/users.entity";
+import { User } from "../../users/entities/users.entity";
 
 export class CreateRoomDto {
 

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/modules/users/entities/users.entity';
+import { User } from '../../../modules/users/entities/users.entity';
 import {
   AfterInsert,
   AfterRemove,

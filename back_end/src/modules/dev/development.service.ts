@@ -32,15 +32,14 @@ export class DevelopmentService {
 
   async dev_deleteUserBatch(users: Partial<User>[]) {
     users.forEach(async (val) => {
-      if (!val.login) {
-        throw new BadRequestException('missing login');
-      }
+      if (val.login) {
       return await this.usersService
         .remove(val.login)
         .then((val) => val)
         .catch((e) => {
-          throw new BadRequestException(e.message);
+          throw new BadRequestException(e);
         });
+      }
     });
   }
 
