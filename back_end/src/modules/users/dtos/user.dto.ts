@@ -31,7 +31,7 @@ export class UserDto {
       return 'ingame';
     } else if (value.obj.ws_id) {
       return 'online';
-    } else {
+    } else if (value.obj.ws_id === null) {
       return 'offline';
     }
   })
