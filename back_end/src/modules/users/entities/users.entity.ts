@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { Room } from '../../chat/entities/room.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -7,7 +8,6 @@ import {
   Entity, JoinTable,
   ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
-import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
 

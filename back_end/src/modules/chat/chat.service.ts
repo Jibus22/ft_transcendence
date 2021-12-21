@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
-import { CreateRoomDto } from './dtos/createRoom.dto';
+import { CreateRoomDto } from './dto/create-room.dto';
+import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
 
 @Injectable()
@@ -13,21 +14,30 @@ export class ChatService {
 		private usersService: UsersService
 	) {}
 
-	async create(user: User, roomData: CreateRoomDto) {
-
-		const room = this.repoRoom.create(roomData as Partial<Room>);
+  async create(user: User, createChatDto: CreateRoomDto) {
+		const room = this.repoRoom.create(createChatDto as Partial<Room>);
 		room.owner = user;
 		room.participants.push(user);
-		// const arr = roomData.participants;
-		// const participants = arr.map( async(value) => {
-		// 	return await this.usersService.find({id: value.id}).catch();
-		// })
+		return await this.repoRoom.save(room, {
 
-		// console.log(room);
-		// console.log(participants);
-		const ret = await this.repoRoom.save(room);
-		console.log(ret);
-	}
+		});
+  }
 
+  async findAll() {
+		return await this.repoRoom.find({
+      relations: [ 'owner', 'participants']
+		});
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} chat`;
+  }
+
+  update(id: number, updateChatDto: UpdateRoomDto) {
+    return `This action updates a #${id} chat`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} chat`;
+  }
 }
-
