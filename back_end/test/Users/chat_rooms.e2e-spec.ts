@@ -56,6 +56,40 @@ describe('user controller: users infos routes (e2e)', () => {
       .set('Cookie', cookies);
   }
 
+  async function getUserRooms() {
+    return await request(app.getHttpServer())
+      .get('/me/rooms')
+      .set('Cookie', cookies);
+  }
+
+  async function generateOneRandomRoom(tmpCookie: string[]) {
+    const body = {
+      participants: users.map((value) => {
+        return Math.random() < 0.2 ? { id: value.id } : '';
+      }),
+      is_private: Math.random() < 0.5,
+      password: Math.random() < 0.3 ? 'fake_password' : '',
+    };
+
+    console.log(body);
+    return await request(app.getHttpServer())
+      .post('/room')
+      .set('Cookie', tmpCookie)
+      .send(body);
+  }
+
+  async function generateManyRandomRooms(nbOfRooms: number) {
+    for (let i = 0; i < nbOfRooms; i++) {
+      const ran = Math.floor((Math.random() * 100) % users.length);
+      const tmpCookie = await commons
+        .logUser(commons.testUserBatch[ran].login)
+        .then((response) => commons.getCookies(response));
+
+      await generateOneRandomRoom(tmpCookie);
+    }
+    return await getAllRooms();
+  }
+
   /*
   ===================================================================
   -------------------------------------------------------------------
@@ -83,8 +117,8 @@ describe('user controller: users infos routes (e2e)', () => {
       expect(response.body).toHaveProperty('is_private', true);
     });
 
-    await getAllRooms().then(response => {
-      expect(response.body[0].participants).toHaveLength(0)
+    await getAllRooms().then((response) => {
+      expect(response.body[0].participants).toHaveLength(0);
     });
   });
 
@@ -148,7 +182,6 @@ describe('user controller: users infos routes (e2e)', () => {
       },
     ];
 
-    console.log(Date.now());
     for (let i = 0; i < rooms.length; i++) {
       await createSimpleRoom(rooms[i]);
     }
@@ -165,6 +198,30 @@ describe('user controller: users infos routes (e2e)', () => {
         expect(typeof element.is_password_protected).toBe('boolean');
         expect(element).toHaveProperty('is_private', rooms[index].is_private);
       });
+    });
+  });
+
+  it('creates many random rooms', async () => {
+    const nbOfRooms = 2;
+    await generateManyRandomRooms(nbOfRooms)
+    .then((resp) => {
+      expect(resp.body.length).toEqual(nbOfRooms);
+      console.log(JSON.stringify(resp.body, null, 4));
+    });
+  });
+
+  it('creates many random rooms and get user\'s rooms', async () => {
+    const nbOfRooms = 2;
+    await generateManyRandomRooms(nbOfRooms)
+    .then((resp) => {
+      expect(resp.body.length).toEqual(nbOfRooms);
+      console.log(JSON.stringify(resp.body, null, 4));
+    })
+    .then(async () => {
+      return await getUserRooms();
+    })
+    .then((response) => {
+      console.log(response.body);
     });
   });
 });
