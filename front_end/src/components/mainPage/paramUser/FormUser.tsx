@@ -38,6 +38,7 @@ export default function FormUser({ isPop, userName }: Props) {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
+			console.log(values);
 			const user = {
 				login: values.nickname,
 			};
@@ -101,7 +102,7 @@ export default function FormUser({ isPop, userName }: Props) {
 			</form>
 
 			{isValidate ? (
-				<div className="alertValidateIcon ">
+				<div className="alertValidateIcon `">
 					<Alert sx={{ width: 2 / 2 }} severity="success" icon={<CheckIcon fontSize="inherit" />}>
 						Saved
 					</Alert>

@@ -6,6 +6,7 @@ interface Type {
 	login: string;
 	photo_url: string;
 	storeCustomPhoto: boolean;
+	hasTwoFASecret: boolean;
 }
 
 interface IMainPageContext {

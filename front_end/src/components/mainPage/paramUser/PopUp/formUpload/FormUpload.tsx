@@ -1,4 +1,4 @@
-import React, { useEffect, ChangeEvent } from 'react';
+import React, { useEffect, ChangeEvent, useState } from 'react';
 import '../popUp.scss';
 import IconButton from '@mui/material/Button';
 import LUP from '../../photos/bi_upload.png';
@@ -11,17 +11,24 @@ export default function FormUpload() {
 	const { fetchDataUserMe, customPhoto, setOpenSure, setIsUpload, selectedImage, setSelectedImage, setOpenUpload, openUpload } =
 		useMainPage();
 
+	const [isModif, setIsmodif] = useState(false);
+
 	const handleClick = () => {
 		setOpenUpload(!openUpload);
 	};
 
 	useEffect(() => {
-		if (!selectedImage) return;
-		onSubmit();
+		if (!selectedImage) {
+			return;
+		}
+		if (isModif) {
+			onSubmit();
+		}
 	}, [selectedImage]);
 
 	const onSubmit = async () => {
 		let data = new FormData();
+
 		if (customPhoto) {
 			setIsUpload(true);
 			setOpenSure(true);
@@ -50,6 +57,7 @@ export default function FormUpload() {
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
 			setSelectedImage(e.target.files[0]);
+			setIsmodif(true);
 		}
 	};
 

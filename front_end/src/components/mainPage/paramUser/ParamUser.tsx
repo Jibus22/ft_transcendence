@@ -7,6 +7,7 @@ import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';
 import { useHover } from 'ahooks';
+import DoubleAuth from './doubleAuth/DoubleAuth';
 
 export default function ParamUser() {
 	const props = useSpring({
@@ -77,9 +78,7 @@ export default function ParamUser() {
 					<div className="mainMaterialUiText ">
 						<FormUser isPop={isPop} userName={userName} />
 					</div>
-					<div className="switchMui ">
-						<FormControlLabel disabled={isPop} control={<Switch defaultChecked />} label="2FA" labelPlacement="start" />
-					</div>
+					<DoubleAuth isPop={isPop} />
 					<div className="disconectMui">
 						<Button disabled={isPop} variant="text">
 							Disconnect
