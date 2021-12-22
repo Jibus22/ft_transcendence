@@ -64,7 +64,7 @@ export class MeController {
     description: 'User private informations',
   })
   async getMyRooms(@CurrentUser() user: User) {
-    return await this.chatService.findAllBelongingRooms(user);
+    return await this.chatService.findUserRoomList(user);
   }
 
   @Get('/is-logged')

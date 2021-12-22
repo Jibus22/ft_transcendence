@@ -14,7 +14,6 @@ export class RoomDto {
     return plainToClass(UserDto, value.obj.participants);
   })
 	participants: UserDto[];
-	@ApiProperty()
 
 	// @Expose()
   // @Transform((value) => {
@@ -27,7 +26,7 @@ export class RoomDto {
   @Transform((value) => {
     return plainToClass(UserDto, value.obj.owner);
   })
-	owner: UserDto[];
+	owner: UserDto;
 
 	@ApiProperty()
 	@Expose()

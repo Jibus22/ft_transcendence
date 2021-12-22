@@ -29,16 +29,20 @@ export class ChatService {
     return storedHash === hash.toString('hex');
   }
 
+  filterOutOwner(participants: User[], owner: User) {
+    return participants.filter((participant) =>
+     (participant.id && participant.id !== owner.id)
+     || (participant.login && participant.login !== owner.login)
+    );
+  }
+
   async create(user: User, createRoomDto: CreateRoomDto) {
     const room = this.repoRoom.create(createRoomDto as Partial<Room>);
     if (room.password) {
       room.password = await this.encodePassword(room.password);
     }
     room.owner = user;
-    room.participants = room.participants.filter((participant) => {
-      return (participant.id !== undefined && participant.id !== room.owner.id)
-      || (participant.login !== undefined && participant.login !== room.owner.login)
-    });
+    room.participants = this.filterOutOwner(room.participants, room.owner);
 
     return await this.repoRoom.save(room).catch((error) => {
       throw {
@@ -63,18 +67,19 @@ export class ChatService {
       console.log("\n ✅ ROOMS RETURNED");
       console.log('OWNER', JSON.stringify(room.owner?.login, null, 4));
       console.log('PRIVATE?', room.is_private);
-      const participants = room.participants.map(participant => { return participant.login });
-      console.log('PARTICIPANTS', JSON.stringify(participants, null, 4));
+      // const participants = room.participants.map(participant => { return (participant.login || participant.id) });
+      // const participants = room.participants.map(participant => { return participant });
+      // console.log('PARTICIPANTS', JSON.stringify(room.participants, null, 4));
     })
   }
 
-  async findAllBelongingRooms(user: User) {
+  async findUserRoomList(user: User) {
     const ret = await this.repoRoom
     .createQueryBuilder('room')
+    .leftJoinAndSelect('room.owner', 'user')
+    .leftJoinAndSelect('room.participants', 'participant')
     .where('room.is_private = false')
-    .leftJoin('room.owner', 'user')
     .orWhere('room.owner = :id', { id: user.id })
-    .leftJoin('room.participants', 'participant')
     .orWhere('participant.id = :id', { id: user.id })
     .getMany();
 

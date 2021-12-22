@@ -3,6 +3,8 @@ import { PartialType } from '@nestjs/swagger';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { RoomDto } from '../../src/modules/chat/dto/room.dto';
+import { UserDto } from '../../src/modules/users/dtos/user.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 
@@ -71,7 +73,7 @@ describe('user controller: users infos routes (e2e)', () => {
       password: Math.random() < 0.3 ? 'fake_password' : '',
     };
 
-    console.log(body);
+    // console.log(body);
     return await request(app.getHttpServer())
       .post('/room')
       .set('Cookie', tmpCookie)
@@ -201,27 +203,58 @@ describe('user controller: users infos routes (e2e)', () => {
     });
   });
 
-  it('creates many random rooms', async () => {
-    const nbOfRooms = 2;
-    await generateManyRandomRooms(nbOfRooms)
-    .then((resp) => {
-      expect(resp.body.length).toEqual(nbOfRooms);
-      console.log(JSON.stringify(resp.body, null, 4));
+  it('creates room with owner in participants', async () => {
+    await createSimpleRoom({
+      participants: [{ login: loggedUser.login }, { id: users[2].id }],
+      is_private: true,
+    }).then((resp) => {
+      expect(resp.body.participants.length).toEqual(1);
     });
   });
 
-  it('creates many random rooms and get user\'s rooms', async () => {
-    const nbOfRooms = 2;
-    await generateManyRandomRooms(nbOfRooms)
-    .then((resp) => {
-      expect(resp.body.length).toEqual(nbOfRooms);
-      console.log(JSON.stringify(resp.body, null, 4));
-    })
-    .then(async () => {
-      return await getUserRooms();
-    })
-    .then((response) => {
-      console.log(response.body);
+  it('creates room with twice the same user', async () => {
+    await createSimpleRoom({
+      participants: [
+        { id: users[1].id },
+        { id: users[2].id },
+        { id: users[2].id },
+      ],
+      is_private: true,
+    }).then((resp) => {
+      expect(resp.body.participants.length).toEqual(2);
     });
+  });
+
+  it('creates many random rooms', async () => {
+    const nbOfRooms = 4;
+    await generateManyRandomRooms(nbOfRooms).then((resp) => {
+      expect(resp.body.length).toEqual(nbOfRooms);
+    });
+  });
+
+  it("creates many random rooms and get user's rooms list on /me/rooms", async () => {
+    const nbOfRooms = 30;
+    let roomsCreated;
+    console.log(loggedUser);
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (resp) => {
+        roomsCreated = resp.body;
+        expect(roomsCreated.length).toEqual(nbOfRooms);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRooms: RoomDto[] = response.body;
+        const expectedRooms: RoomDto[] = roomsCreated.filter((room: RoomDto) => {
+          return (
+            room.owner.login === loggedUser.login ||
+            room.participants.includes(loggedUser) ||
+            room.is_private === false
+          );
+        });
+        console.log(JSON.stringify(expectedRooms, null, 4));
+        console.log(JSON.stringify(returnedRooms, null, 4));
+        expect(returnedRooms).toEqual(expectedRooms);
+        expect(returnedRooms.length).toBe(expectedRooms.length);
+      });
   });
 });
