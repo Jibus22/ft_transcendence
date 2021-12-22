@@ -63,7 +63,6 @@ export class AuthController {
     @ApiOperation({
       summary: 'Internally set a new key to user and return qr-code + key in headers'
     })
-    // @ApiResponse({ }) // TODO set png ?
     @ApiResponse({ status: HttpStatus.OK, description: 'Qrcode as png and Key header' })
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: '2fa key already set' })
     async generate2faKey(@CurrentUser() user: User, @Res() response) {
@@ -112,7 +111,7 @@ export class AuthController {
     }
 
     @Post('/2fa/authenticate')
-    // @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard) // TODO keep ?
     @Serialize(privateUserDto)
     @ApiOperation({
       summary: 'Authenticate user if 2fa is activated'
@@ -144,8 +143,7 @@ export class AuthController {
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'no user logged' })
     async producteWsToken(@CurrentUser() user) {
       const token = randomUUID() + '.' + user.id;
-      await this.cacheManager.set(token, user.id, {ttl: 240}); //TODO reduce length, debug only
-      console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
+      await this.cacheManager.set(token, user.id, {ttl: 5});
       return {token};
     }
 
