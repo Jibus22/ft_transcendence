@@ -21,7 +21,6 @@ const cookieSession = require('cookie-session');
 
 @Module({
   imports: [
-    ChatModule,
     CacheModule.register({
       isGlobal: true,
     }),
@@ -34,6 +33,8 @@ const cookieSession = require('cookie-session');
       entities: [User, UserPhoto, Room, ChatMessage],
       synchronize: true,
     }),
+
+    ChatModule,
     UsersModule,
     DevelopmentModule,
   ],

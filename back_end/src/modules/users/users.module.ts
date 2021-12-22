@@ -2,6 +2,9 @@ import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatModule } from '../chat/chat.module';
+import { ChatService } from '../chat/chat.service';
+import { Room } from '../chat/entities/room.entity';
 import { AuthController } from './auth.controller';
 import { User } from './entities/users.entity';
 import { UserPhoto } from './entities/users_photo.entity';
@@ -16,14 +19,16 @@ import { UsersController } from './users.controller';
 import { UsersPhotoController } from './usersphoto.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserPhoto]), HttpModule],
+  imports: [TypeOrmModule.forFeature([User, UserPhoto, Room]), HttpModule],
   providers: [
     UsersPhotoService,
     MeService,
     RelationsService,
     ConfigService,
     UsersService,
-    AuthService
+    AuthService,
+
+    ChatService
   ],
   controllers: [UsersController, UsersPhotoController, AuthController, MeController],
   exports: [UsersService]

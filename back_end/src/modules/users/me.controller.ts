@@ -12,11 +12,12 @@ import {
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { ChatService } from '../chat/chat.service';
+import { RoomDto } from '../chat/dto/room.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
 import { User } from './entities/users.entity';
-import { MeService } from './service-me/me.service';
 import { UsersService } from './service-users/users.service';
 
 @ApiTags('Me')
@@ -29,7 +30,7 @@ import { UsersService } from './service-users/users.service';
 export class MeController {
   constructor(
     private usersService: UsersService,
-    private meService: MeService,
+    private chatService: ChatService,
   ) {}
 
   /*****************************************************************************
@@ -49,6 +50,21 @@ export class MeController {
   })
   async whoAmI(@CurrentUser() user: User) {
     return user;
+  }
+
+  @Get('/rooms')
+  @UseGuards(AuthGuard)
+  @Serialize(RoomDto)
+  @ApiOperation({
+    summary: 'Get infos of the currently logged user',
+  })
+  @ApiResponse({ type: privateUserDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User private informations',
+  })
+  async getMyRooms(@CurrentUser() user: User) {
+    return await this.chatService.findAllBelongingRooms(user);
   }
 
   @Get('/is-logged')
