@@ -61,15 +61,15 @@ export class ChatService {
   }
 
   private logRooms(rooms: Room[]) {
-    return;
+    return; // TODO REMOVE FUNCITON DEBUG
     console.log('SIZE OF RETURN: ', rooms.length);
     rooms.forEach((room) => {
-      console.log("\n ✅ ROOMS RETURNED");
-      console.log('OWNER', JSON.stringify(room.owner?.login, null, 4));
-      console.log('PRIVATE?', room.is_private);
-      // const participants = room.participants.map(participant => { return (participant.login || participant.id) });
-      // const participants = room.participants.map(participant => { return participant });
-      // console.log('PARTICIPANTS', JSON.stringify(room.participants, null, 4));
+      console.log("\n ✅ ROOMS RETURNED ->>>>>>>>>>>>>> ", room.id,
+      ' | OWNER', JSON.stringify(room.owner?.login, null, 4),
+      ' | PRIVATE?', room.is_private,
+      ' | PARTICIPANTS', room.participants.length,
+      ' | PARTICIPANTS', JSON.stringify(room.participants.map(user => user.login), null, 4)
+      );
     })
   }
 
@@ -78,12 +78,12 @@ export class ChatService {
     .createQueryBuilder('room')
     .leftJoinAndSelect('room.owner', 'user')
     .leftJoinAndSelect('room.participants', 'participant')
-    .where('room.is_private = false')
+    .orWhere('room.is_private = false')
     .orWhere('room.owner = :id', { id: user.id })
     .orWhere('participant.id = :id', { id: user.id })
     .getMany();
 
-    this.logRooms(ret); // TODO remove debug !
+    // this.logRooms(ret); // TODO remove debug !
     return ret;
   }
 

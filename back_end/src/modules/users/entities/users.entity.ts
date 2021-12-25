@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { Room } from '../../chat/entities/room.entity';
 import {
   AfterInsert,
   AfterRemove,
@@ -8,6 +7,7 @@ import {
   Entity, JoinTable,
   ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
+import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
 
@@ -61,10 +61,10 @@ export class User {
   @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
   rooms_ownership: Room[];
 
-  @ManyToMany(type => Room, (rooms_modaration) => rooms_modaration.id)
+  @ManyToMany(type => Room)
   rooms_moderation: Room[];
 
-  @ManyToMany(type => Room, (rooms_modaration) => rooms_modaration.id)
+  @ManyToMany(type => Room)
   rooms_joined: Room[];
 
   /*
