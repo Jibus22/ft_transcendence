@@ -219,6 +219,33 @@ describe('user controller: /me routes (e2e)', () => {
       });
   });
 
+  it('generates 2fa qrCode, tries to activate with invalid token', async () => {
+    let secret: string;
+
+    await generateQrCode(null, cookies)
+      .then(async (response) => {
+        expect(response.headers.secretkey).toBeDefined();
+        expect(response.headers['content-type']).toEqual('image/png');
+        secret = response.headers.secretkey;
+      })
+      .then(async () => {
+        return await commons.getMe(cookies);
+      })
+      .then(async (response) => {
+        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        return await turn2Fa_on({ token: 'asdbdnvdsf' }, cookies);
+      })
+      .then(async (response) => {
+        cookies = commons.updateCookies(response, cookies);
+        expect(response.body).toHaveProperty('message', 'invalid token');
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+        return await commons.getMe(cookies);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+      });
+  });
+
   it('generates 2fa qrCode, activates it and tries to authenticate with wrong token', async () => {
     let secret: string;
 
