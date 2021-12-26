@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './popUp.scss';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
-import ErrorIcon from '@mui/icons-material/Error';
+import { IconButton } from '@mui/material';
+
 import LCL from '../photos/close-icon.png';
 import FormUpload from './formUpload/FormUpload';
 import Form42Upload from './form42Upload/Form42Upload';
@@ -16,8 +16,19 @@ export interface Props {
 }
 
 export default function PopUpUser({ printPopup }: Props) {
-	const { setCustomPhoto, setOpenSure, openSure, data, onSubmit, pathPop, isUpload, onSubmitUpload, selectedImage, setIsUpload } =
-		useMainPage();
+	const {
+		setCustomPhoto,
+		setOpenSure,
+		openSure,
+		data,
+		onSubmit,
+		pathPop,
+		isUpload,
+		onSubmitUpload,
+		selectedImage,
+		setIsUpload,
+		dialogMui,
+	} = useMainPage();
 
 	const generateRandomAvatar = () => {
 		const props = getRandomOptions();
@@ -65,30 +76,8 @@ export default function PopUpUser({ printPopup }: Props) {
 					<img src={LCL} alt="" />
 				</IconButton>
 			</div>
-			<Dialog
-				open={openSure}
-				onClose={disagree}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-				scroll="body"
-				className="mainDialogMui"
-			>
-				<DialogTitle id="alert-dialog-title" className="d-flex">
-					<ErrorIcon sx={{ color: 'orange' }} />
-					<div className="titleDialogMui">
-						<p>Warning !</p>
-					</div>
-				</DialogTitle>
-				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">Are you sure you want to delete your photo?</DialogContentText>
-				</DialogContent>
-				<DialogActions className="actionDialogMui">
-					<Button sx={{ color: 'red' }} onClick={disagree}>
-						Disagree
-					</Button>
-					<Button onClick={agree}>Agree</Button>
-				</DialogActions>
-			</Dialog>
+
+			{dialogMui(openSure, disagree, agree, 'Warning !', 'Are you sure you want to delete your photo?')}
 		</div>
 	);
 }

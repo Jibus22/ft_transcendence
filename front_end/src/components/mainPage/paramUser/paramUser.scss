@@ -141,7 +141,7 @@
 
 		.alertValidateIcon {
 			position: absolute;
-			margin: 7% auto;
+			margin: 2% auto;
 			.MuiAlert-root {
 				background: transparent;
 				margin: 0% auto;
@@ -172,6 +172,10 @@
 			font-size: 1vw;
 			border-radius: 40px;
 		}
+	}
+
+	.MuiBackdrop-root {
+		margin: -20% auto;
 	}
 }
 
