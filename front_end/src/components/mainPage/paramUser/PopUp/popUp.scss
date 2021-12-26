@@ -94,12 +94,18 @@
 		font-size: 1.2vw;
 		text-align: center;
 	}
+	h3 {
+		text-align: center;
+		font-size: 0.8vw;
+		font-style: oblique;
+		margin-top: -3%;
+	}
 }
 
 .imgQR {
 	width: 40%;
 
-	margin: 0 auto;
+	margin: 2% auto;
 
 	img {
 		width: 100%;
@@ -108,7 +114,7 @@
 
 .buttonInput {
 	justify-content: space-around;
-	margin: 5% 0% 0% 0%;
+	margin: 9% 0% 0% 0%;
 	.buttonQR {
 		width: 25%;
 		height: 100%;
@@ -172,15 +178,21 @@
 		& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
 			border: 1px solid #71dfe7;
 		}
+	}
 
-		// .MuiFormHelperText-root {
-		// 	position: absolute;
-		// 	font-size: 0.9vw;
-		// 	font-family: Montserrat, sans-serif;
-		// 	margin: 1% auto;
-		// 	color: red;
-		// 	margin: 18% 0 0 25%;
-		// }
+	.MuiFormHelperText-root {
+		color: red !important;
+		font-size: 0.6vw !important;
+		margin: 3% auto;
+	}
+	.formDivButtonAnim {
+		animation-name: shake-horizontal;
+		animation-duration: 0.6s;
+		animation-timing-function: ease;
+		animation-delay: 0s;
+		animation-iteration-count: 1;
+		animation-direction: normal;
+		animation-fill-mode: none;
 	}
 }
 

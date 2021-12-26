@@ -1,39 +1,54 @@
 import React, { useEffect, useState } from 'react';
+import '../paramUser.scss';
 import { Modal, Box, FormControlLabel, Switch, Button } from '@mui/material';
 import { useMainPage } from '../../../../MainPageContext';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import FormAuth from './form/FormAuth';
-import QR from './qr.png';
 
 interface Props {
 	isPop: boolean;
+	dataFa: boolean;
 }
 
-export default function DoubleAuth({ isPop }: Props) {
+export default function DoubleAuth({ isPop, dataFa }: Props) {
 	const style = {
 		position: 'absolute' as 'absolute',
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
 		width: 400,
-
+		height: '68%',
 		bgcolor: 'white',
-
-		border: '2px solid #000',
+		border: '1px solid #000',
+		borderRadius: '15px',
 		boxShadow: 24,
 		p: 4,
 	};
 
-	const { data, fetchDataUserMe } = useMainPage();
+	const { dialogMui } = useMainPage();
+
 	const [iFa, setFa] = useState(false);
+
 	const [url, setUrl] = useState('');
 	const [open, setOpen] = useState(false);
+	const [openDeleteKey, setOpenDeleteKey] = useState(false);
+	const [code, setCode] = useState('');
 
-	// useMount(() => {
-	// 	if (data.length > 0) {
-	// 		setFa(data[0].hasTwoFASecret);
-	// 	}
-	// });
+	useEffect(() => {
+		if (dataFa === true) {
+			setFa(true);
+		}
+	}, [dataFa]);
+
+	const disagree = () => {
+		setOpenDeleteKey(false);
+		setFa(true);
+	};
+
+	const agree = async () => {
+		setOpenDeleteKey(false);
+		deleteKey();
+	};
 
 	const handleChange = () => {
 		setFa(!iFa);
@@ -41,6 +56,9 @@ export default function DoubleAuth({ isPop }: Props) {
 		if (!iFa) {
 			activeAuth();
 			setOpen(true);
+		}
+		if (iFa === true) {
+			setOpenDeleteKey(true);
 		}
 	};
 
@@ -51,16 +69,11 @@ export default function DoubleAuth({ isPop }: Props) {
 			withCredentials: true,
 			responseType: 'blob',
 		}).then((response) => {
-			console.log(response.headers['secretKey']);
+			setCode(response.headers.secretkey);
 			setUrl(window.URL.createObjectURL(new Blob([response.data])));
-			console.log(url);
 		});
 	};
 
-	// const [open, setOpen] = React.useState(false);
-	// const handleOpen = () => setOpen(true);
-
-	//localhost:3000/auth/2fa/turn-off
 	const deleteKey = async () => {
 		await axios({
 			url: 'http://localhost:3000/auth/2fa/turn-off',
@@ -80,20 +93,21 @@ export default function DoubleAuth({ isPop }: Props) {
 	return (
 		<div className="switchMui ">
 			<FormControlLabel control={<Switch checked={iFa} onChange={handleChange} />} label="2FA" disabled={isPop} />
-
+			{dialogMui(openDeleteKey, disagree, agree, 'Warning !', 'Are you sure you want to remove your OAuth system ?')}
 			<button onClick={deleteKey}>OFF</button>
 			<Modal open={open} onClose={handleClose}>
 				<Box sx={style}>
 					<div className="d-flex flex-column">
 						<div className="titleInfo">
-							<h1>Scan the QR code</h1>
+							<h1>Scan the QR code with your favorite app</h1>
 						</div>
 
 						<div className="imgQR">
 							<img src={url} alt="" />
 						</div>
 						<div className="infoKey">
-							<h2>ou copier colle la clee</h2>
+							<h2>Or enter this code : </h2>
+							<h3>{code}</h3>
 						</div>
 
 						<div className="d-flex buttonInput ">
@@ -103,7 +117,7 @@ export default function DoubleAuth({ isPop }: Props) {
 								</Button>
 							</div>
 							<div className="inputQR ">
-								<FormAuth />
+								<FormAuth closeQR={setOpen} />
 							</div>
 						</div>
 					</div>

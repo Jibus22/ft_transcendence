@@ -12,6 +12,7 @@ export default function FormUpload() {
 		useMainPage();
 
 	const [isModif, setIsmodif] = useState(false);
+	const [messData, setMessData] = useState('');
 
 	const handleClick = () => {
 		setOpenUpload(!openUpload);
@@ -47,9 +48,11 @@ export default function FormUpload() {
 			fetchDataUserMe();
 		} catch (error) {
 			const err = error as AxiosError;
+
 			if (err.response?.status === 400) {
+				const dataError = err.response?.data;
+				setMessData(dataError['error']);
 				setOpenUpload(true);
-				return;
 			}
 		}
 	};
@@ -84,7 +87,7 @@ export default function FormUpload() {
 					</div>
 				</DialogTitle>
 				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">Unsupported format</DialogContentText>
+					<DialogContentText id="alert-dialog-description">{messData}</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
 					<Button onClick={handleClick}>Agree</Button>
