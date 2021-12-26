@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Expose, plainToClass, Transform } from "class-transformer";
+import { Exclude, Expose, plainToClass, Transform } from "class-transformer";
 import { UserDto } from "../../users/dtos/user.dto";
 
+@Exclude()
 export class RoomDto {
 
 	@ApiProperty()

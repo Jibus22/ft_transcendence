@@ -4,9 +4,10 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, JoinTable,
+  Entity, JoinColumn, JoinTable,
   ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
+import { RoomDto } from '../../chat/dto/room.dto';
 import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
@@ -58,7 +59,7 @@ export class User {
   @Column({ default: false })
   is_in_game: boolean
 
-  @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
+  @OneToMany(type => Room, (room) => room.owner)
   rooms_ownership: Room[];
 
   @ManyToMany(type => Room)
