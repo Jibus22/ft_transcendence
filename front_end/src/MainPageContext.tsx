@@ -1,11 +1,14 @@
 import React, { useState, useContext } from 'react';
 import axios, { AxiosError } from 'axios';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 
 interface Type {
 	id: number;
 	login: string;
 	photo_url: string;
 	storeCustomPhoto: boolean;
+	hasTwoFASecret: boolean;
 }
 
 interface IMainPageContext {
@@ -44,6 +47,7 @@ interface IMainPageContext {
 	setSelectedImage: React.Dispatch<React.SetStateAction<File>>;
 	openUpload: boolean;
 	setOpenUpload: React.Dispatch<React.SetStateAction<boolean>>;
+	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -110,6 +114,36 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
+	const dialogMui = (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => {
+		return (
+			<Dialog
+				open={open}
+				onClose={disagree}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+				scroll="body"
+				className="mainDialogMui"
+			>
+				<DialogTitle id="alert-dialog-title" className="d-flex">
+					<ErrorIcon sx={{ color: 'orange' }} />
+					<div className="titleDialogMui">
+						<p>{title}</p>
+					</div>
+				</DialogTitle>
+				<DialogContent className="contentDialogMui">
+					<DialogContentText id="alert-dialog-description">{description}</DialogContentText>
+				</DialogContent>
+				<DialogActions className="actionDialogMui">
+					<Button sx={{ color: 'red' }} onClick={disagree}>
+						Disagree
+					</Button>
+
+					<Button onClick={agree}>Agree</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
+
 	const ProviderValue = {
 		timeSnack,
 		setTimeSnack,
@@ -143,6 +177,7 @@ const MainPageProvider = (props: any) => {
 		setSelectedImage,
 		openUpload,
 		setOpenUpload,
+		dialogMui,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
