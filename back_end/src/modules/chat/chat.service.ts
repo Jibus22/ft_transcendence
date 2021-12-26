@@ -1,11 +1,9 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { assert } from 'console';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
-import { UsersService } from '../users/service-users/users.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
@@ -95,7 +93,13 @@ export class ChatService {
     return `This action updates a #${id} chat`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  async remove(id: string) {
+    const room = await this.repoRoom.findOneOrFail({id}).catch((error) => {
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: 'could find room',
+      };
+    })
+    await this.repoRoom.remove(room);
   }
 }

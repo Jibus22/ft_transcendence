@@ -1,13 +1,13 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { SiteOwnerGuard } from '../../guards/siteOwner.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
-import { CreateUserDto } from '../dev/dtos/create-user.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { UserDto } from '../users/dtos/user.dto';
+import { User } from '../users/entities/users.entity';
 import { ChatService } from './chat.service';
-import { CreateParticipantDto } from './dto/create-participant.dto';
+import { createMessageDto } from './dto/create-message.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { RoomDto } from './dto/room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -46,7 +46,7 @@ export class ChatController {
     }
 
   @Get()
-  @UseGuards(SiteOwnerGuard)
+  // @UseGuards(SiteOwnerGuard) // TODO implement
   @ApiOperation({
     summary: 'Get all existing rooms',
   })
@@ -67,8 +67,17 @@ export class ChatController {
     return this.chatService.update(+id, updateChatDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatService.remove(+id);
+  @Post(':room_id/message')
+  addMessage(@Param('room_id') id: string, @CurrentUser() user: User, @Body() message: createMessageDto){
+
+  }
+
+  @UseGuards(RoomOwnerGuard) // TODO implement
+  @Delete(':room_id')
+  async remove(@Param('room_id') id: string) {
+    console.log('DELETE FUNCITON');
+    return await this.chatService.remove(id).catch((error) => {
+      throw new NotFoundException(error);
+    })
   }
 }
