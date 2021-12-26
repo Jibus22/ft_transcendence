@@ -1,5 +1,23 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { SiteOwnerGuard } from '../../guards/siteOwner.guard';
@@ -23,27 +41,26 @@ import { Room } from './entities/room.entity';
 @Serialize(RoomDto)
 @Controller('/room')
 export class ChatController {
-  constructor(
-    private readonly chatService: ChatService
-    ) {}
+  constructor(private readonly chatService: ChatService) {}
 
-    @Post()
-    @ApiOperation({
-      summary: 'Create one room',
-    })
-    @ApiResponse({ type: Room, isArray: false })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Newly create room infos' })
-    async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
-      return await this.chatService.create(user, createRoomDto)
-      .catch((error) => {
-        if (error.status) {
-          throw new HttpException(error, error.status);
-        }
-        else {
-          throw new InternalServerErrorException(error);
-        }
-      });
-    }
+  @Post()
+  @ApiOperation({
+    summary: 'Create one room',
+  })
+  @ApiResponse({ type: Room, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Newly create room infos',
+  })
+  async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
+    return await this.chatService.create(user, createRoomDto).catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      } else {
+        throw new InternalServerErrorException(error);
+      }
+    });
+  }
 
   @Get()
   // @UseGuards(SiteOwnerGuard) // TODO implement
@@ -51,8 +68,14 @@ export class ChatController {
     summary: 'Get all existing rooms',
   })
   @ApiResponse({ type: Room, isArray: true })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Every rooms in the system' })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User must role is not high enough' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Every rooms in the system',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User must role is not high enough',
+  })
   findAll() {
     return this.chatService.findAll();
   }
@@ -68,9 +91,11 @@ export class ChatController {
   }
 
   @Post(':room_id/message')
-  addMessage(@Param('room_id') id: string, @CurrentUser() user: User, @Body() message: createMessageDto){
-
-  }
+  addMessage(
+    @Param('room_id') id: string,
+    @CurrentUser() user: User,
+    @Body() message: createMessageDto,
+  ) {}
 
   @UseGuards(RoomOwnerGuard) // TODO implement
   @Delete(':room_id')
@@ -78,6 +103,6 @@ export class ChatController {
     console.log('DELETE FUNCITON');
     return await this.chatService.remove(id).catch((error) => {
       throw new NotFoundException(error);
-    })
+    });
   }
 }

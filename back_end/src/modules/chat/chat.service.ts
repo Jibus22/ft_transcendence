@@ -28,9 +28,10 @@ export class ChatService {
   }
 
   filterOutOwner(participants: User[], owner: User) {
-    return participants.filter((participant) =>
-     (participant.id && participant.id !== owner.id)
-     || (participant.login && participant.login !== owner.login)
+    return participants.filter(
+      (participant) =>
+        (participant.id && participant.id !== owner.id) ||
+        (participant.login && participant.login !== owner.login),
     );
   }
 
@@ -62,24 +63,34 @@ export class ChatService {
     return; // TODO REMOVE FUNCITON DEBUG
     console.log('SIZE OF RETURN: ', rooms.length);
     rooms.forEach((room) => {
-      console.log("\n ✅ ROOMS RETURNED ->>>>>>>>>>>>>> ", room.id,
-      ' | OWNER', JSON.stringify(room.owner?.login, null, 4),
-      ' | PRIVATE?', room.is_private,
-      ' | PARTICIPANTS', room.participants.length,
-      ' | PARTICIPANTS', JSON.stringify(room.participants.map(user => user.login), null, 4)
+      console.log(
+        '\n ✅ ROOMS RETURNED ->>>>>>>>>>>>>> ',
+        room.id,
+        ' | OWNER',
+        JSON.stringify(room.owner?.login, null, 4),
+        ' | PRIVATE?',
+        room.is_private,
+        ' | PARTICIPANTS',
+        room.participants.length,
+        ' | PARTICIPANTS',
+        JSON.stringify(
+          room.participants.map((user) => user.login),
+          null,
+          4,
+        ),
       );
-    })
+    });
   }
 
   async findUserRoomList(user: User) {
     const ret = await this.repoRoom
-    .createQueryBuilder('room')
-    .leftJoinAndSelect('room.owner', 'user')
-    .leftJoinAndSelect('room.participants', 'participant')
-    .orWhere('room.is_private = false')
-    .orWhere('room.owner = :id', { id: user.id })
-    .orWhere('participant.id = :id', { id: user.id })
-    .getMany();
+      .createQueryBuilder('room')
+      .leftJoinAndSelect('room.owner', 'user')
+      .leftJoinAndSelect('room.participants', 'participant')
+      .orWhere('room.is_private = false')
+      .orWhere('room.owner = :id', { id: user.id })
+      .orWhere('participant.id = :id', { id: user.id })
+      .getMany();
 
     // this.logRooms(ret); // TODO remove debug !
     return ret;
@@ -94,12 +105,12 @@ export class ChatService {
   }
 
   async remove(id: string) {
-    const room = await this.repoRoom.findOneOrFail({id}).catch((error) => {
+    const room = await this.repoRoom.findOneOrFail({ id }).catch((error) => {
       throw {
         status: HttpStatus.NOT_FOUND,
         error: 'could find room',
       };
-    })
+    });
     await this.repoRoom.remove(room);
   }
 }
