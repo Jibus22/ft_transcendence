@@ -6,8 +6,9 @@ import { User } from '../modules/users/entities/users.entity';
 export class RoomOwnerGuard implements CanActivate {
 
   private isRoomOwned(currentUser: User, targetedRoom: Room): boolean {
+    console.log('isRoomOwned', targetedRoom);
     return targetedRoom.participants.some( participant =>
-      participant.user === currentUser && participant.is_owner
+      participant.user.id === currentUser.id && participant.is_owner
     );
   }
 
@@ -15,9 +16,9 @@ export class RoomOwnerGuard implements CanActivate {
 
 		const logger = new Logger( '💂‍♂️ Room Owner Guard'); //TODO REMOVE LOGGER HERE
     const currentUser: User = context.switchToHttp().getRequest().currentUser;
-    const targetRoom  = context.switchToHttp().getRequest().params.room_id;
+    const targetRoom: Room  = context.switchToHttp().getRequest().targetedRoom;
     if (currentUser && targetRoom) {
-      logger.log(`User id: ${currentUser.id}, trying to target room: ${targetRoom}`);
+      logger.log(`User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`);
       const ret = this.isRoomOwned(currentUser, targetRoom);
       logger.log(`ACCESS GRANTED ? ${ret}`);
       return ret;

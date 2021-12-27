@@ -24,6 +24,7 @@ import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
 import { ChatService } from './chat.service';
+import { TargetedRoom } from './decorators/targeted-room.decorator';
 import { createMessageDto } from './dto/create-message.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { RoomDto } from './dto/room.dto';
@@ -89,7 +90,7 @@ export class ChatController {
     return this.chatService.update(+id, updateChatDto);
   }
 
-  @UseGuards(RoomGuard) // TODO implement
+  @UseGuards(RoomGuard)
   @Post(':room_id/message')
   addMessage(
     @Param('room_id') id: string,
@@ -100,8 +101,8 @@ export class ChatController {
 
   @UseGuards(RoomOwnerGuard)
   @Delete(':room_id')
-  async remove(@Param('room_id') id: string) {
-    console.log('DELETE FUNCITON');
+  async remove(@Param('room_id') id: string, @TargetedRoom() targetedRoom: Room) {
+    console.log('DELETE FUNCITON', id, targetedRoom);
     return await this.chatService.remove(id).catch((error) => {
       throw new NotFoundException(error);
     });

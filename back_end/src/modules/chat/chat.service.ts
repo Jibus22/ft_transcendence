@@ -104,16 +104,19 @@ export class ChatService {
       .orWhere('room.is_private = false')
       .orWhere('user.id = :id', { id: user.id })
       .getMany();
-  }
+    }
 
-  async findOne(id: string) {
-    return this.repoRoom.findOne(id);
-  }
+    async findOne(id: string) {
+      return this.repoRoom.findOne(id);
+    }
 
-  async findOneWithRelations(id: string) {
-    return this.repoRoom.findOne(id, {
-      relations: ['participants'],
-    });
+    async findOneWithRelations(id: string) {
+      return await this.repoRoom
+      .createQueryBuilder('room')
+      .where("room.id = :id", { id })
+      .leftJoinAndSelect('room.participants', 'participants')
+      .leftJoinAndSelect('participants.user', 'user')
+      .getOne();
   }
 
   update(id: number, updateChatDto: UpdateRoomDto) {
@@ -121,7 +124,7 @@ export class ChatService {
   }
 
   async remove(id: string) {
-    const room = await this.repoRoom.findOneOrFail({ id }).catch((error) => {
+    const room = await this.repoRoom.findOne({ id }).catch((error) => {
       throw {
         status: HttpStatus.NOT_FOUND,
         error: 'could not find room',
