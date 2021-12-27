@@ -123,13 +123,7 @@ export class ChatService {
     return `This action updates a #${id} chat`;
   }
 
-  async remove(id: string) {
-    const room = await this.repoRoom.findOne({ id }).catch((error) => {
-      throw {
-        status: HttpStatus.NOT_FOUND,
-        error: 'could not find room',
-      };
-    });
-    await this.repoRoom.remove(room);
+  async remove(targetedRoom: Room) {
+    return await this.repoRoom.remove(targetedRoom);
   }
 }

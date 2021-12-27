@@ -49,7 +49,7 @@ export class ChatController {
   })
   @ApiResponse({ type: Room, isArray: false })
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description: 'Newly create room infos',
   })
   async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
@@ -67,7 +67,7 @@ export class ChatController {
   @ApiOperation({
     summary: 'Get all existing rooms',
   })
-  @ApiResponse({ type: Room, isArray: true })
+  @ApiResponse({ type: RoomDto, isArray: true })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Every rooms in the system',
@@ -99,11 +99,22 @@ export class ChatController {
   ) {
   }
 
+  @ApiOperation({
+    summary: 'Delete one room if user is the owner or site owner',
+  })
+  @ApiResponse({ type: RoomDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Infos of the deleted room',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
   @UseGuards(RoomOwnerGuard)
   @Delete(':room_id')
-  async remove(@Param('room_id') id: string, @TargetedRoom() targetedRoom: Room) {
-    console.log('DELETE FUNCITON', id, targetedRoom);
-    return await this.chatService.remove(id).catch((error) => {
+  async remove(@TargetedRoom() targetedRoom: Room) {
+    return await this.chatService.remove(targetedRoom).catch((error) => {
       throw new NotFoundException(error);
     });
   }

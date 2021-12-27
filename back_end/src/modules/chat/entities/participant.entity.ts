@@ -25,7 +25,7 @@ export class Participant {
   @ManyToOne(type => User)
   user: User;
 
-  @ManyToOne(type => Room)
+  @ManyToOne(type => Room, {onDelete: 'CASCADE'})
   room: Room;
 
   @Column({default: false})

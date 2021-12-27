@@ -13,6 +13,17 @@ export class RoomDto {
 
 	@ApiProperty()
 	@Expose()
+	is_private: boolean;
+
+	@ApiProperty()
+	@Expose()
+	@Transform((value): boolean  => {
+		return (value.obj.password && value.obj.password.length) ? true : false;
+	})
+	is_password_protected: boolean;
+
+	@ApiProperty()
+	@Expose()
   @Transform((value) => {
     return plainToClass(ParticipantDto, value.obj.participants);
   })
@@ -39,15 +50,4 @@ export class RoomDto {
   //   return plainToClass(UserDto, participants.find((user) => user.is_owner));
   // })
 	// owner: UserDto;
-
-	@ApiProperty()
-	@Expose()
-	is_private: boolean;
-
-	@ApiProperty()
-	@Expose()
-	@Transform((value): boolean  => {
-		return (value.obj.password && value.obj.password.length) ? true : false;
-	})
-	is_password_protected: boolean;
 }

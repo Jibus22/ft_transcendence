@@ -40,7 +40,6 @@ export class Room {
 
   @AfterInsert()
   logInsert() {
-    // TODO: add owner to moderator list!
     if (conf.get('NODE_ENV') === 'dev') {
       console.log('Inserted Room: ', this);
     }
