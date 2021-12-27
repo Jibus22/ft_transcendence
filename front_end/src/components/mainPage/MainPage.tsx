@@ -56,6 +56,11 @@ const MainPage = () => {
 					setWsStatus(socket);
 					console.log(`WS CONNECTED`);
 				});
+
+				socket.on('error', (error) => {
+					console.log(error);
+				});
+
 				socket.on('disconnect', () => {
 					setWsStatus(undefined);
 					console.log(`WS DISCONNECTED`);
