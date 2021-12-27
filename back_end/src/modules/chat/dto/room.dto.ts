@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose, plainToClass, Transform } from "class-transformer";
-import { UserDto } from "../../users/dtos/user.dto";
+import { Participant } from "../entities/participant.entity";
+import { ParticipantDto } from "./participant.dto";
 
 @Exclude()
 export class RoomDto {
@@ -12,16 +13,24 @@ export class RoomDto {
 	@ApiProperty()
 	@Expose()
   @Transform((value) => {
-    return plainToClass(UserDto, value.obj.participants);
+    return plainToClass(Participant, value.obj.participants);
   })
-	participants: UserDto[];
+	participants: ParticipantDto[];
 
-	@ApiProperty()
-	@Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.participants);
-  })
-	moderators: UserDto[];
+	// @ApiProperty()
+	// @Expose()
+  // @Transform((value) => {
+  //   return plainToClass(UserDto, value.obj.participants);
+  // })
+	// participants: UserDto[];
+
+	// @ApiProperty()
+	// @Expose()
+  // @Transform((value) => {
+	// 	const participants: Participant[] = value.obj.participants;
+  //   return plainToClass(UserDto, participants.filter((user) => user.is_moderator));
+  // })
+	// moderators: UserDto[];
 
 	// @Expose()
   // @Transform((value) => {
@@ -29,12 +38,13 @@ export class RoomDto {
   // })
 	// bans: Ban[];
 
-	@ApiProperty()
-	@Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.owner);
-  })
-	owner: UserDto;
+	// @ApiProperty()
+	// @Expose()
+  // @Transform((value) => {
+	// 	const participants: Participant[] = value.obj.participants;
+  //   return plainToClass(UserDto, participants.find((user) => user.is_owner));
+  // })
+	// owner: UserDto;
 
 	@ApiProperty()
 	@Expose()
@@ -43,7 +53,7 @@ export class RoomDto {
 	@ApiProperty()
 	@Expose()
 	@Transform((value): boolean  => {
-		return value.obj.password ? true : false;
+		return (value.obj.password && value.obj.password.length) ? true : false;
 	})
 	is_password_protected: boolean;
 }

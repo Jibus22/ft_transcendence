@@ -4,15 +4,23 @@ import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
+import { UsersService } from '../users/service-users/users.service';
+import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { Participant } from './entities/participant.entity';
 import { Room } from './entities/room.entity';
 
 const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class ChatService {
-  constructor(@InjectRepository(Room) private repoRoom: Repository<Room>) {}
+  constructor(
+    @InjectRepository(Room) private repoRoom: Repository<Room>,
+    @InjectRepository(Participant)
+    private repoParticipants: Repository<Participant>,
+    private usersService: UsersService,
+  ) {}
 
   private async encodePassword(password: string) {
     const salt = randomBytes(8).toString('hex');
@@ -20,30 +28,36 @@ export class ChatService {
     return salt + '.' + hash.toString('hex');
   }
 
-  private async validatePassword(encodedPassword: string, userEntry: string) {
-    const [salt, storedHash] = encodedPassword.split('.');
+  // private async validatePassword(encodedPassword: string, userEntry: string) {
+  //   const [salt, storedHash] = encodedPassword.split('.');
 
-    const hash = (await scrypt(userEntry, salt, 32)) as Buffer;
-    return storedHash === hash.toString('hex');
-  }
+  //   const hash = (await scrypt(userEntry, salt, 32)) as Buffer;
+  //   return storedHash === hash.toString('hex');
+  // }
 
-  private filterOutOwner(participants: User[], owner: User) {
-    return participants.filter(
-      (participant) =>
-        (participant.id && participant.id !== owner.id) ||
-        (participant.login && participant.login !== owner.login),
-    );
-  }
-
-  async create(user: User, createRoomDto: CreateRoomDto) {
-    const room = this.repoRoom.create(createRoomDto as Partial<Room>);
-    if (room.password) {
-      room.password = await this.encodePassword(room.password);
+  private async createParticipant(
+    participant: CreateParticipantDto,
+    room: Room,
+    isOwner: boolean,
+  ) {
+    const user = await this.usersService.findOne(participant.id);
+    if (user) {
+      const newParticipant = this.repoParticipants.create({ user, room });
+      newParticipant.is_owner = isOwner;
+      await this.repoParticipants.save(newParticipant).catch((error) => {
+        console.log(error);
+      });
     }
-    room.owner = user;
-    room.participants = this.filterOutOwner(room.participants, room.owner);
+  }
 
-    return await this.repoRoom.save(room).catch((error) => {
+  private async createRoom(createRoomDto: CreateRoomDto) {
+    const newRoom = this.repoRoom.create({
+      is_private: createRoomDto.is_private,
+      password: createRoomDto.password,
+    });
+
+    return await this.repoRoom.save(newRoom).catch((error) => {
+      console.log(error);
       throw {
         status: HttpStatus.BAD_REQUEST,
         error: 'could not save to database',
@@ -51,35 +65,34 @@ export class ChatService {
     });
   }
 
+  async create(currentUser: User, createRoomDto: CreateRoomDto) {
+    // TODO can we encode it in DTO Transform?
+    if (createRoomDto.password?.length) {
+      createRoomDto.password = await this.encodePassword(
+        createRoomDto.password,
+      );
+    } else {
+      createRoomDto.password = null;
+    }
+
+    const room = await this.createRoom(createRoomDto);
+    await this.createParticipant(currentUser, room, true);
+
+    for (let i = 0; i < createRoomDto.participants.length; i++) {
+      const participant = createRoomDto.participants[i];
+      if (participant.id !== currentUser.id) {
+        await this.createParticipant(participant, room, false);
+      }
+    }
+    return room;
+  }
+
   async findAll() {
     const ret = await this.repoRoom.find({
-      relations: ['owner', 'participants'],
+      relations: ['participants', 'messages'],
     });
     return ret;
   }
-
-  // private logRooms(rooms: Room[]) {
-  //   return; // TODO REMOVE FUNCITON DEBUG
-  //   console.log('SIZE OF RETURN: ', rooms.length);
-  //   rooms.forEach((room) => {
-  //     console.log(
-  //       '\n ✅ ROOMS RETURNED ->>>>>>>>>>>>>> ',
-  //       room.id,
-  //       ' | OWNER',
-  //       JSON.stringify(room.owner?.login, null, 4),
-  //       ' | PRIVATE?',
-  //       room.is_private,
-  //       ' | PARTICIPANTS',
-  //       room.participants.length,
-  //       ' | PARTICIPANTS',
-  //       JSON.stringify(
-  //         room.participants.map((user) => user.login),
-  //         null,
-  //         4,
-  //       ),
-  //     );
-  //   });
-  // }
 
   async findUserRoomList(user: User) {
     return await this.repoRoom
@@ -105,7 +118,9 @@ export class ChatService {
   }
 
   async findOneWithRelations(id: string) {
-    return this.repoRoom.findOne(id, { relations: ['participants', 'moderators', 'owner']});
+    return this.repoRoom.findOne(id, {
+      relations: ['participants', 'moderators', 'owner'],
+    });
   }
 
   update(id: number, updateChatDto: UpdateRoomDto) {

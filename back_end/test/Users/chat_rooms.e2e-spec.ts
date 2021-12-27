@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
+import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 describe('chat controller: chat rooms routes (e2e)', () => {
@@ -63,21 +64,20 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       .set('Cookie', cookies);
   }
 
-
-  class Participant {
-    id: string
+  class CreatedParticipant {
+    id: string;
   }
 
   class RandomRoom {
     id: string;
-    owner_created: Participant;
-    participants: Participant[];
+    owner_created: CreatedParticipant;
+    participants: CreatedParticipant[];
     is_private: boolean;
     password: string;
   }
 
   function makeOneRandomRoom(): RandomRoom {
-    let participants: Participant[] = [];
+    let participants: CreatedParticipant[] = [];
     users.forEach((user) => {
       if (Math.random() < 0.3) {
         participants.push({ id: user.id });
@@ -86,7 +86,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
 
     return {
       id: '',
-      owner_created: { id: "" },
+      owner_created: { id: '' },
       participants: participants,
       is_private: Math.random() < 0.5,
       password: Math.random() < 0.3 ? 'fake_password' : '',
@@ -118,14 +118,11 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         .set('Cookie', tmpCookie)
         .send(randomRoom)
         .then((resp) => {
-          // console.log('BODY', JSON.stringify(resp.body, null, 4));
-          expect(resp.body).toBeDefined();
-          expect(resp.body.participants).toBeDefined();
+          expect(resp.status).toBe(HttpStatus.CREATED);
+          expect(resp.body.is_private).toBeDefined();
+          expect(resp.body.is_password_protected).toBeDefined();
           expect(resp.body.id).toBeDefined();
           randomRoom.id = resp.body.id;
-          expect(resp.body.participants.length).toBe(
-            randomRoom.participants.length,
-          );
         });
       createdRooms.push(randomRoom);
     }
@@ -160,7 +157,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     });
 
     await getAllRooms().then((response) => {
-      expect(response.body[0].participants).toHaveLength(0);
+      expect(response.body[0].participants).toHaveLength(1);
     });
   });
 
@@ -247,9 +244,21 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     await createSimpleRoom({
       participants: [{ login: loggedUser.login }, { id: users[2].id }],
       is_private: true,
-    }).then((resp) => {
-      expect(resp.body.participants.length).toEqual(1);
-    });
+    })
+      .then(async (resp) => {
+        expect(resp.status).toBe(HttpStatus.CREATED);
+        return await getAllRooms();
+      })
+      .then((resp) => {
+        const participants: Participant[] = resp.body[0].participants;
+        expect(participants).toBeDefined();
+        expect(participants.length).toEqual(2);
+        expect(
+          participants.some(
+            (p) => p.id === loggedUser.id && p.is_owner === true,
+          ),
+        );
+      });
   });
 
   it('creates room with twice the same user', async () => {
@@ -260,9 +269,21 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         { id: users[2].id },
       ],
       is_private: true,
-    }).then((resp) => {
-      expect(resp.body.participants.length).toEqual(2);
-    });
+    })
+      .then(async (resp) => {
+        expect(resp.status).toBe(HttpStatus.CREATED);
+        return await getAllRooms();
+      })
+      .then((resp) => {
+        const participants: Participant[] = resp.body[0].participants;
+        expect(participants).toBeDefined();
+        expect(participants.length).toEqual(4);
+        expect(
+          participants.some(
+            (p) => p.id === loggedUser.id && p.is_owner === true,
+          ),
+        );
+      });
   });
 
   it('creates many random rooms', async () => {
@@ -278,17 +299,23 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       .then((response) => {
         const returnedRooms = response.body as RoomDto[];
         expect(returnedRooms.length).toEqual(createdRooms.length);
-
         returnedRooms.forEach((returnedRoom) => {
           const roomIndex = createdRooms.findIndex((item) => {
             return item.id === returnedRoom.id;
           });
-
           expect(roomIndex).not.toBe(-1);
-          expect(returnedRoom.participants.length).toBe(createdRooms[roomIndex].participants.length);
+          const room = createdRooms[roomIndex];
+
+          const expectedLen = room.participants.some(
+            (p) => p.id === room.owner_created.id,
+          )
+            ? room.participants.length
+            : room.participants.length + 1;
+          expect(returnedRoom.participants.length).toBe(expectedLen);
           returnedRoom.participants.forEach((participant, participantIndex) => {
-            const createdRoom = createdRooms[roomIndex];
-            expect(createdRoom.participants.some(e => e.id === participant.id)).not.toBe(-1);
+            expect(
+              room.participants.some((e) => e.id === participant.id),
+            ).not.toBe(-1);
           });
         });
       });
@@ -297,7 +324,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   it("creates many random rooms and get user's rooms list on /me/rooms", async () => {
     const nbOfRooms = 80;
     let createdRooms: RandomRoom[];
-    let loggedUserId: Participant = {id: ''};
+    let loggedUserId: CreatedParticipant = { id: '' };
 
     await generateManyRandomRooms(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
@@ -318,9 +345,9 @@ describe('chat controller: chat rooms routes (e2e)', () => {
             return (
               room.is_private === false ||
               room.owner_created.id === loggedUserId.id ||
-              room.participants.some(e => e.id === loggedUserId.id)
-              );
-            },
+              room.participants.some((e) => e.id === loggedUserId.id)
+            );
+          },
         );
         expect(returnedRooms.length).toBe(expectedRooms.length);
       });

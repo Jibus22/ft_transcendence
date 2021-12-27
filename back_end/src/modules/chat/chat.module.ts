@@ -1,17 +1,17 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/users.entity';
+import { UsersService } from '../users/service-users/users.service';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { ChatMessage } from './entities/chatMessage.entity';
+import { Participant } from './entities/participant.entity';
 import { Room } from './entities/room.entity';
-import { CurrentRoomMiddleware } from './middleware/current-room.middleware';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Room, User, ChatMessage])],
+  imports: [TypeOrmModule.forFeature([Room, User, ChatMessage, Participant])],
   controllers: [ChatController],
-  providers: [ChatService],
+  providers: [UsersService, ChatService],
   exports: [ChatService],
 })
-export class ChatModule {
-}
+export class ChatModule {}

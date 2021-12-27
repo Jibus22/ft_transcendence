@@ -1,17 +1,10 @@
-import { ApiExtraModels, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { ApiExtraModels, ApiProperty } from "@nestjs/swagger";
+import { IsUUID } from "class-validator";
 
 @ApiExtraModels()
 export class CreateParticipantDto {
 
-	@ApiPropertyOptional()
-	@IsOptional()
+	@ApiProperty()
 	@IsUUID()
 	id: string;
-
-	@ApiPropertyOptional()
-	@IsOptional()
-	@IsString()
-	login: string;
-
 }

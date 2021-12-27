@@ -36,7 +36,7 @@ export class UsersService {
 			return null;
 		}
 		return await this.repoUser.findOne(id, {
-      relations: [ 'friends_list', 'blocked_list', 'local_photo', 'rooms_ownership']
+      relations: [ 'friends_list', 'blocked_list', 'local_photo', 'rooms_participation']
 		});
 	}
 

@@ -13,6 +13,7 @@ import { AppService } from './app.service';
 import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
 import { ChatMessage } from './modules/chat/entities/chatMessage.entity';
+import { Participant } from './modules/chat/entities/participant.entity';
 import { Room } from './modules/chat/entities/room.entity';
 import { CurrentRoomMiddleware } from './modules/chat/middleware/current-room.middleware';
 import { DevelopmentModule } from './modules/dev/development.module';
@@ -35,7 +36,7 @@ const cookieSession = require('cookie-session');
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: process.env.DB_NAME,
-      entities: [User, UserPhoto, Room, ChatMessage],
+      entities: [User, UserPhoto, Room, ChatMessage, Participant],
       synchronize: true,
     }),
     HttpModule,

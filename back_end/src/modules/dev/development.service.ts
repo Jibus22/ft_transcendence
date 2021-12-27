@@ -1,7 +1,6 @@
 import {
   BadRequestException,
-  Injectable,
-  InternalServerErrorException,
+  Injectable
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,7 +21,7 @@ export class DevelopmentService {
       throw new BadRequestException(`No user ${login}`);
     }
     return this.usersService.create(users[0]).catch((error) => {
-      throw new InternalServerErrorException(error.message);
+      throw new BadRequestException(error.message);
     });
   }
 

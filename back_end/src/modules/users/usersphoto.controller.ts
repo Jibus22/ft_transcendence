@@ -3,7 +3,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  InternalServerErrorException, Param,
+  BadRequestException, Param,
   Post,
   Response,
   StreamableFile,
@@ -62,7 +62,7 @@ export class UsersPhotoController {
         throw new HttpException(error, error.status);
       }
       else {
-        throw new InternalServerErrorException(error);
+        throw new BadRequestException(error);
       }
     });
   }
@@ -109,7 +109,8 @@ export class UsersPhotoController {
         throw new HttpException(error, error.status);
       }
       else {
-        throw new InternalServerErrorException(error);
+        throw new BadRequestException(error);
+
       }
     });
   }

@@ -16,7 +16,7 @@ export class DevelopmentController {
 
   @ApiProperty()
   @Post('/signin')
-  async logDebugUser(@Body() user: Partial<User>, @Session() session: any) {
+  async logDebugUser(@Body() user: {login: string}, @Session() session: any) {
     const newUser = await this.developmentService.dev_logUser(user.login);
     session.userId = newUser.id;
     session.useTwoFA = newUser.useTwoFA;

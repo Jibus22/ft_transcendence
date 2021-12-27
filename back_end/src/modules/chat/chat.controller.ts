@@ -1,12 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
-  HttpStatus,
-  InternalServerErrorException,
-  NotFoundException,
+  HttpStatus, NotFoundException,
   Param,
   Patch,
   Post,
@@ -57,7 +56,7 @@ export class ChatController {
       if (error.status) {
         throw new HttpException(error, error.status);
       } else {
-        throw new InternalServerErrorException(error);
+        throw new BadRequestException(error);
       }
     });
   }

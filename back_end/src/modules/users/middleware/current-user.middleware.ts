@@ -38,6 +38,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
         })
         .catch((error) => {
           logger.log('User Not Found: Clearing Session'); // TODO remove debug
+          logger.log(error); // TODO remove debug
           this.authService.clearSession(req.session);
         });
     } else {

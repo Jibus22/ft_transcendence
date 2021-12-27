@@ -4,10 +4,10 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, JoinColumn, JoinTable,
+  Entity, JoinTable,
   ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
 } from 'typeorm';
-import { RoomDto } from '../../chat/dto/room.dto';
+import { Participant } from '../../chat/entities/participant.entity';
 import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
@@ -59,14 +59,8 @@ export class User {
   @Column({ default: false })
   is_in_game: boolean
 
-  @OneToMany(type => Room, (room) => room.owner)
-  rooms_ownership: Room[];
-
-  @ManyToMany(type => Room)
-  rooms_moderation: Room[];
-
-  @ManyToMany(type => Room)
-  rooms_joined: Room[];
+  @OneToMany(type => Participant, participant => participant.user)
+  rooms_participation: Participant[];
 
   /*
   ** Lifecycle functions
