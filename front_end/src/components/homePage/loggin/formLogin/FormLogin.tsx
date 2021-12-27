@@ -18,7 +18,7 @@ export default function FormLogin() {
 			key: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: async (values) => {
+		onSubmit: async (values, { setErrors, resetForm }) => {
 			const token = {
 				token: values.key,
 			};
@@ -34,7 +34,8 @@ export default function FormLogin() {
 			} catch (error) {
 				const err = error as AxiosError;
 				if (err.response?.status === 400) {
-					console.log(err.response);
+					setErrors({ key: 'Wrong key' });
+					values.key = '';
 				}
 			}
 		},

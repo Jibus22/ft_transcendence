@@ -9,7 +9,6 @@ import { useMainPage } from '../../../MainPageContext';
 import { useHover } from 'ahooks';
 import DoubleAuth from './doubleAuth/DoubleAuth';
 import axios from 'axios';
-
 import { useNavigate } from 'react-router-dom';
 
 export default function ParamUser() {

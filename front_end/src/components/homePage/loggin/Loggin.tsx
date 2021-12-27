@@ -4,7 +4,6 @@ import FormLogin from './formLogin/FormLogin';
 import Lock from './other/Vector.png';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import NavLogin from './navLogin/NavLogin';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +13,10 @@ export default function Loggin() {
 	const [isNav, setIsNav] = useState(false);
 
 	const [isKey, setIsKey] = useState(false);
+
+	useEffect(() => {
+		isLogged();
+	}, []);
 
 	let navigate = useNavigate();
 	const isLogged = async () => {
@@ -39,9 +42,24 @@ export default function Loggin() {
 		}
 	};
 
-	useEffect(() => {
-		isLogged();
-	}, []);
+	const changeUser = async () => {
+		try {
+			await axios.delete('http://localhost:3000/auth/signout', {
+				withCredentials: true,
+			});
+			isLogged();
+			setIsKey(false);
+			navigate('/');
+
+			// setTime(true);
+			// setTimeout(function () {
+			// 	setTime(false);
+			// 	navigate('/');
+			// }, 1500);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const deskop1 = (
 		<div className="w-100 h-100">
@@ -67,7 +85,7 @@ export default function Loggin() {
 	);
 
 	const deskop = (
-		<div className="w-100 h-100">
+		<div className="w-100 loginInput ">
 			<div className="welcome ">
 				<h1>Welcome back to ft_transcendence</h1>
 			</div>
@@ -79,6 +97,9 @@ export default function Loggin() {
 			</div>
 			<div>
 				<FormLogin />
+			</div>
+			<div className="disconectMui">
+				<p onClick={changeUser}>Change account</p>
 			</div>
 		</div>
 	);
