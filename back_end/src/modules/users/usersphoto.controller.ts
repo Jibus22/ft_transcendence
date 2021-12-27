@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../guards/auth.guard';
-import { Serialize } from '../interceptors/serialize.interceptor';
+import { AuthGuard } from '../../guards/auth.guard';
+import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { User } from './entities/users.entity';
@@ -54,9 +54,10 @@ export class UsersPhotoController {
   async uploadPhoto(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+    ) {
     await this.meService.uploadPhoto(user, file)
     .catch((error) => {
+      this.usersPhotoService.delete(file.filename)
       if (error.status) {
         throw new HttpException(error, error.status);
       }
@@ -73,6 +74,7 @@ export class UsersPhotoController {
   })
   @ApiResponse({ type: privateUserDto })
   async useSchoolPhoto(@CurrentUser() user: User) {
+    this.usersPhotoService.delete(user.local_photo.fileName);
     return await this.meService.deletePhoto(user);
   }
 
