@@ -16,6 +16,13 @@ export class RoomDto {
   })
 	participants: UserDto[];
 
+	@ApiProperty()
+	@Expose()
+  @Transform((value) => {
+    return plainToClass(UserDto, value.obj.participants);
+  })
+	moderators: UserDto[];
+
 	// @Expose()
   // @Transform((value) => {
   //   return plainToClass(UserDto, value.obj.participants);

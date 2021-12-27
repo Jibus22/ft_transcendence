@@ -5,7 +5,7 @@ import { AppModule } from '../../src/app.module';
 import { CommonTest } from '../helpers';
 const totp = require('totp-generator');
 
-describe('user controller: /me routes (e2e)', () => {
+describe('user controller: auth routes (e2e)', () => {
   let app: INestApplication;
   let commons: CommonTest;
   let users;

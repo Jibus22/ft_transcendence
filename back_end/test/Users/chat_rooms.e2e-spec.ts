@@ -5,7 +5,7 @@ import { AppModule } from '../../src/app.module';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
-describe('user controller: users infos routes (e2e)', () => {
+describe('chat controller: chat rooms routes (e2e)', () => {
   let app: INestApplication;
   let commons: CommonTest;
   let users: User[];

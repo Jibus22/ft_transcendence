@@ -27,7 +27,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
     // }
 
     const { userId } = req.session || {};
-    const logger = new Logger(' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger(' 🛠 👥  User Middlewear');
     logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
     if (userId) {
       await this.usersService

@@ -1,16 +1,16 @@
-import { ApiProperty, ApiPropertyOptional, getSchemaPath } from "@nestjs/swagger";
-import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
-import { CreateParticipantDto } from "./create-participant.dto";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, IsString, Length, minLength, MinLength } from "class-validator";
 
 export class createMessageDto {
 
-	@ApiPropertyOptional()
-	@IsOptional()
+	@ApiProperty()
 	@IsString()
+	@Length(1, 10000)
 	message: string;
 
 	@ApiPropertyOptional()
 	@IsOptional()
+	@Length(1, 10000)
 	@IsString()
 	password: string;
 }

@@ -83,7 +83,7 @@ export class ChatService {
   }
 
   async findUserRoomList(user: User) {
-    const ret = await this.repoRoom
+    return await this.repoRoom
       .createQueryBuilder('room')
       .leftJoinAndSelect('room.owner', 'user')
       .leftJoinAndSelect('room.participants', 'participant')
@@ -91,13 +91,14 @@ export class ChatService {
       .orWhere('room.owner = :id', { id: user.id })
       .orWhere('participant.id = :id', { id: user.id })
       .getMany();
-
-    // this.logRooms(ret); // TODO remove debug !
-    return ret;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  async findOne(id: string) {
+    return this.repoRoom.findOne(id);
+  }
+
+  async findOneWithRelations(id: string) {
+    return this.repoRoom.findOne(id, { relations: ['participants', 'moderators', 'owner']});
   }
 
   update(id: number, updateChatDto: UpdateRoomDto) {
@@ -108,7 +109,7 @@ export class ChatService {
     const room = await this.repoRoom.findOneOrFail({ id }).catch((error) => {
       throw {
         status: HttpStatus.NOT_FOUND,
-        error: 'could find room',
+        error: 'could not find room',
       };
     });
     await this.repoRoom.remove(room);

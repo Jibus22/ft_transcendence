@@ -2,9 +2,11 @@ import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatController } from '../chat/chat.controller';
 import { ChatModule } from '../chat/chat.module';
 import { ChatService } from '../chat/chat.service';
 import { Room } from '../chat/entities/room.entity';
+import { CurrentRoomMiddleware } from '../chat/middleware/current-room.middleware';
 import { AuthController } from './auth.controller';
 import { User } from './entities/users.entity';
 import { UserPhoto } from './entities/users_photo.entity';
@@ -27,15 +29,11 @@ import { UsersPhotoController } from './usersphoto.controller';
     ConfigService,
     UsersService,
     AuthService,
-
-    ChatService
+    ChatService,
   ],
   controllers: [UsersController, UsersPhotoController, AuthController, MeController],
   exports: [UsersService]
 })
 
 export class UsersModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
-  }
 }

@@ -1,3 +1,4 @@
+import { HttpModule, HttpService } from '@nestjs/axios';
 import {
   CacheModule,
   MiddlewareConsumer,
@@ -9,12 +10,16 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
 import { ChatMessage } from './modules/chat/entities/chatMessage.entity';
 import { Room } from './modules/chat/entities/room.entity';
+import { CurrentRoomMiddleware } from './modules/chat/middleware/current-room.middleware';
 import { DevelopmentModule } from './modules/dev/development.module';
 import { User } from './modules/users/entities/users.entity';
 import { UserPhoto } from './modules/users/entities/users_photo.entity';
+import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
+import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
 import { StatusGateway } from './status.gateway';
 const cookieSession = require('cookie-session');
@@ -33,7 +38,7 @@ const cookieSession = require('cookie-session');
       entities: [User, UserPhoto, Room, ChatMessage],
       synchronize: true,
     }),
-
+    HttpModule,
     ChatModule,
     UsersModule,
     DevelopmentModule,
@@ -41,6 +46,7 @@ const cookieSession = require('cookie-session');
   controllers: [AppController],
   providers: [
     StatusGateway,
+    AuthService,
     AppService,
     {
       provide: APP_PIPE,
@@ -61,5 +67,11 @@ export class AppModule {
         }),
       )
       .forRoutes('*');
+      /*
+      * The order of the MiddleWear is important for the CurrentRoom middlewear
+      * to have access to the CurrentUser
+      */
+      consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
+      consumer.apply(CurrentRoomMiddleware).forRoutes(ChatController);
   }
 }

@@ -10,17 +10,17 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomGuard } from '../../guards/room.guard';
 import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
-import { SiteOwnerGuard } from '../../guards/siteOwner.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
@@ -82,7 +82,7 @@ export class ChatController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.chatService.findOne(+id);
+    return this.chatService.findOne(id);
   }
 
   @Patch(':id')
@@ -90,14 +90,16 @@ export class ChatController {
     return this.chatService.update(+id, updateChatDto);
   }
 
+  @UseGuards(RoomGuard) // TODO implement
   @Post(':room_id/message')
   addMessage(
     @Param('room_id') id: string,
     @CurrentUser() user: User,
-    @Body() message: createMessageDto,
-  ) {}
+    @Body() body: createMessageDto,
+  ) {
+  }
 
-  @UseGuards(RoomOwnerGuard) // TODO implement
+  @UseGuards(RoomOwnerGuard)
   @Delete(':room_id')
   async remove(@Param('room_id') id: string) {
     console.log('DELETE FUNCITON');
