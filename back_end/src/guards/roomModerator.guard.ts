@@ -7,7 +7,7 @@ export class RoomOwnerGuard implements CanActivate {
 
   private isRoomOwned(currentUser: User, targetedRoom: Room): boolean {
     return targetedRoom.participants.some( participant =>
-      participant.user === currentUser && participant.is_owner
+      participant.user === currentUser && participant.is_moderator
     );
   }
 

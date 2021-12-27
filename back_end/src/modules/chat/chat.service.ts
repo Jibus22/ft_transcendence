@@ -44,6 +44,7 @@ export class ChatService {
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
       newParticipant.is_owner = isOwner;
+      newParticipant.is_moderator = isOwner;
       await this.repoParticipants.save(newParticipant).catch((error) => {
         console.log(error);
       });
