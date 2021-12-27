@@ -103,17 +103,6 @@ export class ChatService {
       .orWhere('room.is_private = false')
       .orWhere('user.id = :id', { id: user.id })
       .getMany();
-
-    // return await this.repoRoom
-    //   .createQueryBuilder('room')
-    //   .leftJoinAndSelect('room.owner', 'user')
-    //   .leftJoinAndSelect('room.participants', 'participant')
-    //   .leftJoinAndSelect('room.moderators', 'moderator')
-    //   .orWhere('room.is_private = false')
-    //   .orWhere('room.owner = :id', { id: user.id })
-    //   .orWhere('participant.id = :id', { id: user.id })
-    //   .orWhere('moderator.id = :id', { id: user.id })
-    //   .getMany();
   }
 
   async findOne(id: string) {
@@ -122,7 +111,7 @@ export class ChatService {
 
   async findOneWithRelations(id: string) {
     return this.repoRoom.findOne(id, {
-      relations: ['participants', 'moderators', 'owner'],
+      relations: ['participants'],
     });
   }
 

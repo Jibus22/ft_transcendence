@@ -32,13 +32,13 @@ export class RoomDto {
   // })
 	// bans: Ban[];
 
-	@ApiProperty()
-	@Expose()
-  @Transform((value) => {
-		const participants: Participant[] = value.obj.participants;
-    return plainToClass(UserDto, participants.find((user) => user.is_owner));
-  })
-	owner: UserDto;
+	// @ApiProperty()
+	// @Expose()
+  // @Transform((value) => {
+	// 	const participants: Participant[] = value.obj.participants;
+  //   return plainToClass(UserDto, participants.find((user) => user.is_owner));
+  // })
+	// owner: UserDto;
 
 	@ApiProperty()
 	@Expose()
