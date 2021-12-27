@@ -20,14 +20,14 @@ export class ChatService {
     return salt + '.' + hash.toString('hex');
   }
 
-  async validatePassword(encodedPassword: string, userEntry: string) {
+  private async validatePassword(encodedPassword: string, userEntry: string) {
     const [salt, storedHash] = encodedPassword.split('.');
 
     const hash = (await scrypt(userEntry, salt, 32)) as Buffer;
     return storedHash === hash.toString('hex');
   }
 
-  filterOutOwner(participants: User[], owner: User) {
+  private filterOutOwner(participants: User[], owner: User) {
     return participants.filter(
       (participant) =>
         (participant.id && participant.id !== owner.id) ||
@@ -55,42 +55,49 @@ export class ChatService {
     const ret = await this.repoRoom.find({
       relations: ['owner', 'participants'],
     });
-    this.logRooms(ret); // TODO remove debug !
     return ret;
   }
 
-  private logRooms(rooms: Room[]) {
-    return; // TODO REMOVE FUNCITON DEBUG
-    console.log('SIZE OF RETURN: ', rooms.length);
-    rooms.forEach((room) => {
-      console.log(
-        '\n ✅ ROOMS RETURNED ->>>>>>>>>>>>>> ',
-        room.id,
-        ' | OWNER',
-        JSON.stringify(room.owner?.login, null, 4),
-        ' | PRIVATE?',
-        room.is_private,
-        ' | PARTICIPANTS',
-        room.participants.length,
-        ' | PARTICIPANTS',
-        JSON.stringify(
-          room.participants.map((user) => user.login),
-          null,
-          4,
-        ),
-      );
-    });
-  }
+  // private logRooms(rooms: Room[]) {
+  //   return; // TODO REMOVE FUNCITON DEBUG
+  //   console.log('SIZE OF RETURN: ', rooms.length);
+  //   rooms.forEach((room) => {
+  //     console.log(
+  //       '\n ✅ ROOMS RETURNED ->>>>>>>>>>>>>> ',
+  //       room.id,
+  //       ' | OWNER',
+  //       JSON.stringify(room.owner?.login, null, 4),
+  //       ' | PRIVATE?',
+  //       room.is_private,
+  //       ' | PARTICIPANTS',
+  //       room.participants.length,
+  //       ' | PARTICIPANTS',
+  //       JSON.stringify(
+  //         room.participants.map((user) => user.login),
+  //         null,
+  //         4,
+  //       ),
+  //     );
+  //   });
+  // }
 
   async findUserRoomList(user: User) {
     return await this.repoRoom
       .createQueryBuilder('room')
-      .leftJoinAndSelect('room.owner', 'user')
       .leftJoinAndSelect('room.participants', 'participant')
       .orWhere('room.is_private = false')
-      .orWhere('room.owner = :id', { id: user.id })
       .orWhere('participant.id = :id', { id: user.id })
       .getMany();
+    // return await this.repoRoom
+    //   .createQueryBuilder('room')
+    //   .leftJoinAndSelect('room.owner', 'user')
+    //   .leftJoinAndSelect('room.participants', 'participant')
+    //   .leftJoinAndSelect('room.moderators', 'moderator')
+    //   .orWhere('room.is_private = false')
+    //   .orWhere('room.owner = :id', { id: user.id })
+    //   .orWhere('participant.id = :id', { id: user.id })
+    //   .orWhere('moderator.id = :id', { id: user.id })
+    //   .getMany();
   }
 
   async findOne(id: string) {
