@@ -78,6 +78,12 @@
 	.MuiButton-root {
 		border-radius: 17px;
 	}
+
+	.circularDialogMui {
+		margin: 3% 0 0 47%;
+		width: 20px !important;
+		height: 20px !important;
+	}
 }
 
 .titleInfo {
@@ -88,7 +94,7 @@
 	}
 }
 .infoKey {
-	margin: 3% 0% 0% 0%;
+	margin: 1% 0% 0% 0%;
 	h2 {
 		font-family: Montserrat, sans-serif;
 		font-size: 1.2vw;
@@ -105,7 +111,7 @@
 .imgQR {
 	width: 40%;
 
-	margin: 2% auto;
+	margin: 7% auto;
 
 	img {
 		width: 100%;
@@ -151,6 +157,7 @@
 		.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
 			margin-top: -9px;
 			font-size: 0.7vw;
+			color: rgba(0, 0, 0, 0.4);
 		}
 
 		.MuiIconButton-root {
@@ -176,7 +183,7 @@
 		}
 
 		& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-			border: 1px solid #71dfe7;
+			border: 1px solid #ca6c88;
 		}
 	}
 

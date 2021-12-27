@@ -16,11 +16,11 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
-		width: 400,
-		height: '68%',
+		width: '27%',
+		height: '57%',
 		bgcolor: 'white',
 		border: '1px solid #000',
-		borderRadius: '15px',
+		borderRadius: '6%',
 		boxShadow: 24,
 		p: 4,
 	};
@@ -79,8 +79,8 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 			url: 'http://localhost:3000/auth/2fa/turn-off',
 			method: 'POST',
 			withCredentials: true,
-		}).then((response) => {
-			console.log(response);
+		}).catch((error) => {
+			console.log(error);
 		});
 	};
 
