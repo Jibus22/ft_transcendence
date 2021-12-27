@@ -12,20 +12,6 @@ export class privateUserDto extends UserDto {
   })
   storeCustomPhoto: boolean;
 
-  @ApiProperty({ type: UserDto, isArray: true })
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.friends_list);
-  })
-  friends_list: UserDto[];
-
-  @ApiProperty({ type: UserDto, isArray: true })
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.blocked_list);
-  })
-  blocked_list: UserDto[];
-
   @ApiProperty({ type: RoomDto, isArray: true })
   @Expose()
   @Transform((value) => {
@@ -39,8 +25,4 @@ export class privateUserDto extends UserDto {
     return value.obj.twoFASecret ? true : false;
   })
   hasTwoFASecret: boolean;
-
-  // TODO remove debug
-  @Expose()
-  useTwoFA: boolean;
 }
