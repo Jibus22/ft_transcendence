@@ -196,3 +196,66 @@
 		}
 	}
 }
+
+@media screen and (min-width: 2560px) {
+	.mainParamUser {
+		height: 950px;
+
+		.mainMaterialUiText {
+			margin: 4% auto;
+			width: 45%;
+
+			///////////////////////////////////
+			.MuiOutlinedInput-root {
+				color: white;
+				font-family: Montserrat, sans-serif;
+			}
+			.MuiOutlinedInput-notchedOutline {
+				border-color: #ca6c88;
+				border-radius: 15px;
+			}
+			.Mui-focused {
+				color: white;
+				font-size: 1.2vw;
+			}
+			.MuiOutlinedInput-input {
+				font-size: 1vw;
+			}
+
+			& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+				border: 1px solid #71dfe7;
+			}
+
+			.MuiFormHelperText-root {
+				position: absolute;
+				font-size: 0.9vw;
+				font-family: Montserrat, sans-serif;
+				margin: 1% auto;
+				color: red;
+				margin: 18% 0 0 25%;
+			}
+
+			////////////////////////////////////////////@
+
+			.MuiIconButton-root {
+				width: 35px;
+				height: 35px;
+				margin: 0 0 0 12px;
+			}
+			.MuiIconButton-root:hover {
+				width: 37px;
+				height: 37px;
+			}
+
+			.alertValidateIcon {
+				position: absolute;
+				margin: 2% auto;
+				.MuiAlert-root {
+					background: transparent;
+					margin: 0% auto;
+					color: white;
+				}
+			}
+		}
+	}
+}
