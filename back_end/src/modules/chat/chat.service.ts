@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
@@ -88,19 +88,22 @@ export class ChatService {
   }
 
   async findAll() {
-    const ret = await this.repoRoom.find({
-      relations: ['participants', 'messages'],
-    });
-    return ret;
+    return await this.repoRoom
+      .createQueryBuilder('room')
+      .leftJoinAndSelect('room.participants', 'participants')
+      .leftJoinAndSelect('participants.user', 'user')
+      .getMany();
   }
 
   async findUserRoomList(user: User) {
     return await this.repoRoom
       .createQueryBuilder('room')
-      .leftJoinAndSelect('room.participants', 'participant')
+      .leftJoinAndSelect('room.participants', 'participants')
+      .leftJoinAndSelect('participants.user', 'user')
       .orWhere('room.is_private = false')
-      .orWhere('participant.id = :id', { id: user.id })
+      .orWhere('user.id = :id', { id: user.id })
       .getMany();
+
     // return await this.repoRoom
     //   .createQueryBuilder('room')
     //   .leftJoinAndSelect('room.owner', 'user')
