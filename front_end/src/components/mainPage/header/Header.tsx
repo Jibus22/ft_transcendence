@@ -1,22 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './header.scss';
 import { useMainPage } from '../../../MainPageContext';
 import { NavLink as Link } from 'react-router-dom';
 import { Badge, Avatar } from '@mui/material';
+import { withStyles } from '@material-ui/core/styles';
 
 export default function Header() {
 	const { data, userName, userImg, setUserName, setUserImg } = useMainPage();
+
+	const [lol, setlol] = useState('');
 
 	useEffect(() => {
 		if (data.length > 0) {
 			setUserName(data[0].login);
 			setUserImg(data[0].photo_url);
+			setlol(data[0].status);
 		}
+		// setStatusColor(lol);
 	});
+
+	// 	if (document.getElementById("changeColorDemo").value !== "") {
+	// 		document.getElementById("buttonDemo").style.background = "green";
+	// 	 } else {
+	// 		document.getElementById("buttonDemo").style.background = "skyblue";
+	// 	 }
+	//   }
+
+	// const setStatusColor = (status: string) => {
+	// 	if (status === 'offline') {
+	// 		setColorStatus('red');
+	// 	}
+	// 	if (status === 'online') {
+	// 		setColorStatus('red');
+	// 	}
+	// 	if (status === 'ingame') {
+	// 		setColorStatus('orange');
+	// 	}
+	// };
 
 	return (
 		<div className=" d-flex flex-column mainHeader ">
-			<nav className="navbar navbar-expand-lg  menuHeader ">
+			<nav className="navbar navbar-expand-lg  menuHeader stroke ">
 				<div className="d-flex  mainNavMenu">
 					<ul className="navbar-nav headerMenu  w-100 ">
 						<li className="nav-item  linkLogoNav">
@@ -46,7 +70,22 @@ export default function Header() {
 								<h2 className="">{userName}</h2>
 							</div>
 							<div className="profilLogginImg ">
-								<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
+								<Badge
+									overlap="circular"
+									anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+									variant="dot"
+									sx={{
+										'.MuiBadge-badge': {
+											backgroundColor: 'green',
+											color: 'green',
+											borderColor: 'green',
+											boxShadow: 'green',
+										},
+										'.MuiBadge-badge::after': {
+											borderColor: 'green',
+										},
+									}}
+								>
 									<Avatar alt="userImg" src={userImg} />
 								</Badge>
 							</div>
