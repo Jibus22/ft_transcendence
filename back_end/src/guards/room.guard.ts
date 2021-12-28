@@ -12,7 +12,7 @@ import { User } from '../modules/users/entities/users.entity';
 export class RoomGuard implements CanActivate {
   private isRoomAccessible(currentUser: User, targetedRoom: Room): boolean {
     return targetedRoom.participants.some(
-      (participant) => participant.user === currentUser,
+      (participant) => participant.user.id === currentUser.id,
     );
   }
 
