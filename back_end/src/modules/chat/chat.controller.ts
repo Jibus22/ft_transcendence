@@ -10,13 +10,13 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomGuard } from '../../guards/room.guard';

@@ -12,7 +12,7 @@ import {
   Redirect,
   Res,
   Session,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
