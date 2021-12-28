@@ -8,7 +8,6 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -26,11 +25,19 @@ import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
 import { ChatService } from './chat.service';
 import { TargetedRoom } from './decorators/targeted-room.decorator';
+import { ChatMessageDto } from './dto/chatMessade.dto';
 import { createMessageDto } from './dto/create-message.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { RoomDto } from './dto/room.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
+
+/*
+  ===================================================================
+  -------------------------------------------------------------------
+        ROOM ROUTES
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
 @ApiTags('Chat')
 @ApiCookieAuth()
@@ -39,12 +46,10 @@ import { Room } from './entities/room.entity';
   description: 'User not logged',
 })
 @UseGuards(AuthGuard)
-@Serialize(RoomDto)
 @Controller('/room')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post()
   @ApiOperation({
     summary: 'Create one room',
   })
@@ -53,6 +58,8 @@ export class ChatController {
     status: HttpStatus.CREATED,
     description: 'Newly create room infos',
   })
+  @Post()
+  @Serialize(RoomDto)
   async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
     return await this.chatService.create(user, createRoomDto).catch((error) => {
       if (error.status) {
@@ -63,7 +70,6 @@ export class ChatController {
     });
   }
 
-  @Get()
   // @UseGuards(SiteOwnerGuard) // TODO implement
   @ApiOperation({
     summary: 'Get all existing rooms',
@@ -77,6 +83,8 @@ export class ChatController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'User must role is not high enough',
   })
+  @Get()
+  @Serialize(RoomDto)
   findAll() {
     return this.chatService.findAll();
   }
@@ -93,14 +101,6 @@ export class ChatController {
   }
 */
 
-  @UseGuards(RoomGuard)
-  @Post(':room_id/message')
-  addMessage(
-    @Param('room_id') id: string,
-    @CurrentUser() user: User,
-    @Body() body: createMessageDto,
-  ) {}
-
   @ApiOperation({
     summary: 'Delete one room if user is the owner or site owner',
   })
@@ -113,11 +113,63 @@ export class ChatController {
     status: HttpStatus.FORBIDDEN,
     description: 'not enough rights',
   })
-  @UseGuards(RoomOwnerGuard)
   @Delete(':room_id')
+  @Serialize(RoomDto)
+  @UseGuards(RoomOwnerGuard)
   async remove(@TargetedRoom() targetedRoom: Room) {
     return await this.chatService.remove(targetedRoom).catch((error) => {
       throw new NotFoundException(error);
     });
+  }
+
+  /*
+    ===================================================================
+    -------------------------------------------------------------------
+          MESSAGES ROUTES
+    -------------------------------------------------------------------
+    ===================================================================
+    */
+
+  @ApiOperation({
+    summary: 'Add a message to a room if user is participant',
+  })
+  @ApiResponse({ type: RoomDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Infos of the deleted room',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @Post(':room_id/message')
+  @Serialize(ChatMessageDto)
+  @UseGuards(RoomGuard)
+  async addMessage(
+    @TargetedRoom() room: Room,
+    @CurrentUser() user: User,
+    @Body() body: createMessageDto,
+  ) {
+    return await this.chatService.createMessage(room, user, body);
+    // TODO here add websocket send function to all people in the room
+  }
+
+  @ApiOperation({
+    summary: 'Add a message to a room if user is participant',
+  })
+  @ApiResponse({ type: RoomDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Infos of the deleted room',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @Get(':room_id/message')
+  @Serialize(RoomDto)
+  @UseGuards(RoomGuard)
+  async getMessages(@Param('room_id') room_id: string) {
+    return await this.chatService.findOneWithMessages(room_id);
   }
 }
