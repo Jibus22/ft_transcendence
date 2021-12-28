@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
-import './paramUser.scss';
+import React, { useState, useRef, useEffect } from 'react';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
-import { Switch, FormControlLabel, Button, IconButton, Avatar } from '@mui/material';
+import { CircularProgress, Button, IconButton, Avatar } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
 import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';
 import { useHover } from 'ahooks';
+import DoubleAuth from './doubleAuth/DoubleAuth';
+import axios from 'axios';
+
+import { useNavigate } from 'react-router-dom';
 
 export default function ParamUser() {
 	const props = useSpring({
@@ -19,15 +23,53 @@ export default function ParamUser() {
 		},
 	});
 
-	const { userImg, userName } = useMainPage();
+	const { userImg, userName, dialogMui, data } = useMainPage();
 	const ref = useRef<HTMLDivElement>(null);
 	const isHovering = useHover(ref);
 
+	let navigate = useNavigate();
+
 	const [isPop, setIsPop] = useState<boolean>(false);
+	const [time, setTime] = useState(false);
+
+	const [dataFa, setDataFa] = useState(false);
+
+	useEffect(() => {
+		if (data.length > 0) {
+			if (data[0].hasTwoFASecret === true) {
+				setDataFa(data[0].hasTwoFASecret);
+			}
+		}
+	});
 
 	function printPopup() {
 		setIsPop(!isPop);
 	}
+
+	const [open, setOpen] = useState(false);
+	const disagree = () => {
+		setOpen(false);
+	};
+
+	const agree = async () => {
+		setOpen(false);
+		try {
+			await axios.delete('http://localhost:3000/auth/signout', {
+				withCredentials: true,
+			});
+			setTime(true);
+			setTimeout(function () {
+				setTime(false);
+				navigate('/');
+			}, 1500);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const disconect = async () => {
+		setOpen(true);
+	};
 
 	return (
 		<animated.div style={props} className="w-100 ">
@@ -50,6 +92,9 @@ export default function ParamUser() {
 					) : null}
 				</div>
 				<div className={`${isPop ? 'mainStatUserBlur' : 'mainStatUser'} `}>
+					<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
+						<CircularProgress color="inherit" />
+					</Backdrop>
 					<div className="StatUser d-flex flex-column">
 						<div className="infoStatUser d-flex ">
 							<div className="">
@@ -77,15 +122,15 @@ export default function ParamUser() {
 					<div className="mainMaterialUiText ">
 						<FormUser isPop={isPop} userName={userName} />
 					</div>
-					<div className="switchMui ">
-						<FormControlLabel disabled={isPop} control={<Switch defaultChecked />} label="2FA" labelPlacement="start" />
-					</div>
+
+					<DoubleAuth isPop={isPop} dataFa={dataFa} />
 					<div className="disconectMui">
-						<Button disabled={isPop} variant="text">
+						<Button disabled={isPop} onClick={disconect} variant="text">
 							Disconnect
 						</Button>
 					</div>
 				</div>
+				{dialogMui(open, disagree, agree, 'Warning !', 'Are you sure you want to disconnect ?')}
 			</div>
 		</animated.div>
 	);
