@@ -3,7 +3,7 @@ import './onlineGame.scss';
 import { useSpring, animated } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import FF from '../../../homePage/section/photos/FF.png';
-import JB from '../../../homePage/section/photos/jb.png';
+import JB from '../../../homePage/section/photos/JB.png';
 import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 

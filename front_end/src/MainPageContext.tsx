@@ -1,11 +1,14 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 
 interface Type {
 	id: number;
 	login: string;
 	photo_url: string;
 	storeCustomPhoto: boolean;
+	hasTwoFASecret: boolean;
 }
 
 interface IMainPageContext {
@@ -34,13 +37,23 @@ interface IMainPageContext {
 	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
 	openSure: boolean;
 	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
+	onSubmit: (file: File, path: string) => void;
+	onSubmitUpload: (file: File) => void;
+	pathPop: string;
+	setPathPop: React.Dispatch<React.SetStateAction<string>>;
+	isUpload: boolean;
+	setIsUpload: React.Dispatch<React.SetStateAction<boolean>>;
+	selectedImage: File;
+	setSelectedImage: React.Dispatch<React.SetStateAction<File>>;
+	openUpload: boolean;
+	setOpenUpload: React.Dispatch<React.SetStateAction<boolean>>;
+	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
 
 const MainPageProvider = (props: any) => {
 	const [timeSnack, setTimeSnack] = useState(false);
-	const [testString, setTestString] = useState('default value');
 	const [timer, setTimer] = useState(5000);
 	const [isDisable, setIsDisable] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -50,13 +63,10 @@ const MainPageProvider = (props: any) => {
 	const [isFriends, setIsFriends] = useState(false);
 	const [customPhoto, setCustomPhoto] = useState(true);
 	const [openSure, setOpenSure] = useState(false);
-
-	// const fetchData = async () => {
-	// 	const result = await axios('http://localhost:3000/users', {
-	// 		withCredentials: true,
-	// 	});
-	// 	setData(result.data);
-	// };
+	const [pathPop, setPathPop] = useState('');
+	const [isUpload, setIsUpload] = useState(false);
+	const [selectedImage, setSelectedImage] = useState();
+	const [openUpload, setOpenUpload] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -69,11 +79,74 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
+	const onSubmit = async (file: File, path: string) => {
+		let data = new FormData();
+		data.append('file', file);
+		try {
+			await axios.post('http://localhost:3000/' + path, data, {
+				withCredentials: true,
+			});
+			fetchDataUserMe();
+		} catch (err) {
+			console.log(err);
+		}
+	};
+	const onSubmitUpload = async (file: File) => {
+		let data = new FormData();
+		if (customPhoto) {
+			setOpenSure(true);
+		}
+
+		if (file) {
+			data.append('file', file);
+		}
+		try {
+			await axios.post('http://localhost:3000/me/photo', data, {
+				withCredentials: true,
+			});
+			fetchDataUserMe();
+		} catch (error) {
+			const err = error as AxiosError;
+			if (err.response?.status === 400) {
+				setOpenUpload(true);
+				return;
+			}
+		}
+	};
+
+	const dialogMui = (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => {
+		return (
+			<Dialog
+				open={open}
+				onClose={disagree}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+				scroll="body"
+				className="mainDialogMui"
+			>
+				<DialogTitle id="alert-dialog-title" className="d-flex">
+					<ErrorIcon sx={{ color: 'orange' }} />
+					<div className="titleDialogMui">
+						<p>{title}</p>
+					</div>
+				</DialogTitle>
+				<DialogContent className="contentDialogMui">
+					<DialogContentText id="alert-dialog-description">{description}</DialogContentText>
+				</DialogContent>
+				<DialogActions className="actionDialogMui">
+					<Button sx={{ color: 'red' }} onClick={disagree}>
+						Disagree
+					</Button>
+
+					<Button onClick={agree}>Agree</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
+
 	const ProviderValue = {
 		timeSnack,
 		setTimeSnack,
-		testString,
-		setTestString,
 		timer,
 		setTimer,
 		isDisable,
@@ -94,6 +167,17 @@ const MainPageProvider = (props: any) => {
 		setCustomPhoto,
 		openSure,
 		setOpenSure,
+		onSubmit,
+		onSubmitUpload,
+		pathPop,
+		setPathPop,
+		isUpload,
+		setIsUpload,
+		selectedImage,
+		setSelectedImage,
+		openUpload,
+		setOpenUpload,
+		dialogMui,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

@@ -50,9 +50,6 @@ export class AuthController {
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;
     session.isTwoFAutanticated = false;
-    if (user.useTwoFA) {
-      return { url: this.configService.get('AUTH_REDIRECT_URL_2FA') };
-    }
     return { url: this.configService.get('AUTH_REDIRECT_URL') };
   }
 
