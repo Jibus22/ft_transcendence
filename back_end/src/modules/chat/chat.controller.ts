@@ -5,17 +5,18 @@ import {
   Delete,
   Get,
   HttpException,
-  HttpStatus, NotFoundException,
+  HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomGuard } from '../../guards/room.guard';
@@ -96,8 +97,7 @@ export class ChatController {
     @Param('room_id') id: string,
     @CurrentUser() user: User,
     @Body() body: createMessageDto,
-  ) {
-  }
+  ) {}
 
   @ApiOperation({
     summary: 'Delete one room if user is the owner or site owner',

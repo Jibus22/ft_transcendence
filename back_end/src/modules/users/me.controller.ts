@@ -1,13 +1,19 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, HttpStatus, Patch, Res, Session, UseGuards
+  Controller,
+  Get,
+  HttpStatus,
+  Patch,
+  Res,
+  Session,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -73,13 +79,18 @@ export class MeController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User is logged with OAuth and header Completed-Auth is set according to 2FA status',
+    description:
+      'User is logged with OAuth and header Completed-Auth is set according to 2FA status',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'User is not logged with OAuth',
   })
-  async isLogged(@CurrentUser() user: User, @Session() session, @Res() res: Response) {
+  async isLogged(
+    @CurrentUser() user: User,
+    @Session() session,
+    @Res() res: Response,
+  ) {
     if (user.useTwoFA) {
       return res.set('Completed-Auth', session.isTwoFAutanticated).send();
     }

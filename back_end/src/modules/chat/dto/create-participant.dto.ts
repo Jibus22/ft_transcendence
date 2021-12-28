@@ -1,10 +1,9 @@
-import { ApiExtraModels, ApiProperty } from "@nestjs/swagger";
-import { IsUUID } from "class-validator";
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
+import { IsUUID } from 'class-validator';
 
 @ApiExtraModels()
 export class CreateParticipantDto {
-
-	@ApiProperty()
-	@IsUUID()
-	id: string;
+  @ApiProperty()
+  @IsUUID()
+  id: string;
 }

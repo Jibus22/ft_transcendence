@@ -104,16 +104,16 @@ export class ChatService {
       .orWhere('room.is_private = false')
       .orWhere('user.id = :id', { id: user.id })
       .getMany();
-    }
+  }
 
-    async findOne(id: string) {
-      return this.repoRoom.findOne(id);
-    }
+  async findOne(id: string) {
+    return this.repoRoom.findOne(id);
+  }
 
-    async findOneWithRelations(id: string) {
-      return await this.repoRoom
+  async findOneWithRelations(id: string) {
+    return await this.repoRoom
       .createQueryBuilder('room')
-      .where("room.id = :id", { id })
+      .where('room.id = :id', { id })
       .leftJoinAndSelect('room.participants', 'participants')
       .leftJoinAndSelect('participants.user', 'user')
       .getOne();

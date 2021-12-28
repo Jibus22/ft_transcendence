@@ -18,7 +18,10 @@ import { UsersController } from './users.controller';
 import { UsersPhotoController } from './usersphoto.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserPhoto, Room, Participant]), HttpModule],
+  imports: [
+    TypeOrmModule.forFeature([User, UserPhoto, Room, Participant]),
+    HttpModule,
+  ],
   providers: [
     UsersPhotoService,
     MeService,
@@ -28,9 +31,12 @@ import { UsersPhotoController } from './usersphoto.controller';
     AuthService,
     ChatService,
   ],
-  controllers: [UsersController, UsersPhotoController, AuthController, MeController],
-  exports: [UsersService]
+  controllers: [
+    UsersController,
+    UsersPhotoController,
+    AuthController,
+    MeController,
+  ],
+  exports: [UsersService],
 })
-
-export class UsersModule {
-}
+export class UsersModule {}

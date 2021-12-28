@@ -1,55 +1,54 @@
-import { BadRequestException, NotFoundException } from "@nestjs/common";
-import { Test } from "@nestjs/testing";
-import { AuthService } from "./auth.service";
-import { User } from "../entities/users.entity";
-import { UsersService } from "../service-users/users.service";
-
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { User } from '../entities/users.entity';
+import { UsersService } from '../service-users/users.service';
 
 describe('AuthService', () => {
-	let service: AuthService;
-	let fakeUsersService: Partial<UsersService>;
+  let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
 
-	beforeEach( async () => {
-		// create fake copy of users service
-		const users: User[] = [];
-		fakeUsersService = {
-			find: (login: string) => {
-				const filteredUsers = users.filter(users => users.login === login);
-				return Promise.resolve(filteredUsers);
-			},
+  beforeEach(async () => {
+    // create fake copy of users service
+    const users: User[] = [];
+    fakeUsersService = {
+      find: (login: string) => {
+        const filteredUsers = users.filter((users) => users.login === login);
+        return Promise.resolve(filteredUsers);
+      },
 
-			// create: (login: string, login_42: string) => {
-			// 	const user = { login, login_42} as User;
-			// 	users.push(user);
-			// 	return Promise.resolve(user);
-			// }
-		}
+      // create: (login: string, login_42: string) => {
+      // 	const user = { login, login_42} as User;
+      // 	users.push(user);
+      // 	return Promise.resolve(user);
+      // }
+    };
 
-		const module = await Test.createTestingModule({
-			providers: [
-				AuthService,
-				{
-					provide: UsersService,
-					useValue: fakeUsersService
-				}
-			]
-		}).compile();
+    const module = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: fakeUsersService,
+        },
+      ],
+    }).compile();
 
-		service = module.get(AuthService);
-	});
+    service = module.get(AuthService);
+  });
 
-	it('creates an instance of auth service', async () => {
-		expect(service).toBeDefined();
-	})
-})
-	// it('creates a new user with a salted and hashed password', async () => {
-	// 	const testPassword = 'aaaaaaaa'
-	// 	const user = await service.signup('abc@def.com', testPassword);
-	// 	expect(user.password).not.toEqual(testPassword);
-	// 	const [salt, hash] = user.password.split('.');
-	// 	expect(salt).toBeDefined();
-	// 	expect(hash).toBeDefined();
-	// });
+  it('creates an instance of auth service', async () => {
+    expect(service).toBeDefined();
+  });
+});
+// it('creates a new user with a salted and hashed password', async () => {
+// 	const testPassword = 'aaaaaaaa'
+// 	const user = await service.signup('abc@def.com', testPassword);
+// 	expect(user.password).not.toEqual(testPassword);
+// 	const [salt, hash] = user.password.split('.');
+// 	expect(salt).toBeDefined();
+// 	expect(hash).toBeDefined();
+// });
 
 // ################# SIGNUP
 
@@ -60,14 +59,13 @@ describe('AuthService', () => {
 // 	let promise = service.signup('test@test.com', 'pass');
 // 	await expect(promise).rejects.toBeInstanceOf(BadRequestException);
 
-	// Testing new signup
+// Testing new signup
 
-	// promise = service.signup('test________@test.com', 'pass');
-	// expect(promise).toBeTruthy();
+// promise = service.signup('test________@test.com', 'pass');
+// expect(promise).toBeTruthy();
 // });
 
 // // ################# SIGNIN
-
 
 // it('throws if signin is called with unused email', async () => {
 // 	const user = await service.signup('test@test.com', 'pass');
@@ -76,7 +74,6 @@ describe('AuthService', () => {
 // 	const promise = service.signin('xxxxxxx@test.com', 'pass');
 // 	await expect(promise).rejects.toBeInstanceOf(NotFoundException);
 // });
-
 
 // it('throws if invalid password is provided', async () => {
 
@@ -94,6 +91,5 @@ describe('AuthService', () => {
 // 	console.log(user);
 // 	expect(user).toBeDefined();
 // });
-
 
 // })

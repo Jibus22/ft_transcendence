@@ -32,7 +32,7 @@ export class TargetedRoomMiddleware implements NestMiddleware {
           logger.log('Could not find Room targeted: ', error); // TODO remove debug
         });
     } else {
-      if (!currentUser) logger.log('No user id in session')
+      if (!currentUser) logger.log('No user id in session');
       if (!targetedRoomId) logger.log('No targeted room request');
     }
 

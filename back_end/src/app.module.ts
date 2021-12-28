@@ -3,7 +3,7 @@ import {
   CacheModule,
   MiddlewareConsumer,
   Module,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
@@ -68,11 +68,11 @@ export class AppModule {
         }),
       )
       .forRoutes('*');
-      /*
-      * The order of the MiddleWear is important for the TargetedRoom middlewear
-      * to have access to the CurrentUser
-      */
-      consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
-      consumer.apply(TargetedRoomMiddleware).forRoutes(ChatController);
+    /*
+     * The order of the MiddleWear is important for the TargetedRoom middlewear
+     * to have access to the CurrentUser
+     */
+    consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
+    consumer.apply(TargetedRoomMiddleware).forRoutes(ChatController);
   }
 }

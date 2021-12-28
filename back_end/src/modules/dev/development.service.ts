@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  Injectable
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/users.entity';
@@ -10,13 +7,14 @@ import { UsersService } from '../users/service-users/users.service';
 @Injectable()
 export class DevelopmentService {
   constructor(
-		@InjectRepository(User) private repoUser: Repository<User>,
-    private usersService: UsersService) {}
+    @InjectRepository(User) private repoUser: Repository<User>,
+    private usersService: UsersService,
+  ) {}
 
   async dev_logUser(login: string) {
     const users = await this.repoUser.find({
-      where: { 'login': login}
-    })
+      where: { login: login },
+    });
     if (!users[0]) {
       throw new BadRequestException(`No user ${login}`);
     }
@@ -32,12 +30,12 @@ export class DevelopmentService {
   async dev_deleteUserBatch(users: Partial<User>[]) {
     users.forEach(async (val) => {
       if (val.login) {
-      return await this.usersService
-        .remove(val.login)
-        .then((val) => val)
-        .catch((e) => {
-          throw new BadRequestException(e);
-        });
+        return await this.usersService
+          .remove(val.login)
+          .then((val) => val)
+          .catch((e) => {
+            throw new BadRequestException(e);
+          });
       }
     });
   }

@@ -4,39 +4,39 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, ManyToOne, PrimaryGeneratedColumn
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../../modules/users/entities/users.entity';
 import { Room } from './room.entity';
 
-
-const conf = new ConfigService;
+const conf = new ConfigService();
 
 @Entity()
 export class Participant {
-
   /*
-  ** Data
-  */
+   ** Data
+   */
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(type => User)
+  @ManyToOne((type) => User)
   user: User;
 
-  @ManyToOne(type => Room, {onDelete: 'CASCADE'})
+  @ManyToOne((type) => Room, { onDelete: 'CASCADE' })
   room: Room;
 
-  @Column({default: false})
+  @Column({ default: false })
   is_owner: boolean;
 
-  @Column({default: false})
+  @Column({ default: false })
   is_moderator: boolean;
 
   /*
-  ** Lifecycle functions
-  */
+   ** Lifecycle functions
+   */
 
   @AfterInsert()
   logInsert() {

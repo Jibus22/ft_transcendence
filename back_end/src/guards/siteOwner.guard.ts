@@ -1,11 +1,15 @@
-import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 @Injectable()
 export class SiteOwnerGuard implements CanActivate {
-
   canActivate(context: ExecutionContext) {
-
-		const logger = new Logger( '💂‍♂️ Site Owner Guard'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger('💂‍♂️ Site Owner Guard'); //TODO REMOVE LOGGER HERE
     const session = context.switchToHttp().getRequest().session;
 
     return true; // TODO REMOVE !!!!!! ---- FOR TEST ONLY
@@ -17,4 +21,3 @@ export class SiteOwnerGuard implements CanActivate {
     throw new UnauthorizedException();
   }
 }
-

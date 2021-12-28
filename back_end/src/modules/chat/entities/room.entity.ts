@@ -4,25 +4,26 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ChatMessage } from './chatMessage.entity';
 import { Participant } from './participant.entity';
 
-
-const conf = new ConfigService;
+const conf = new ConfigService();
 
 @Entity()
 export class Room {
-
   /*
-  ** Data
-  */
+   ** Data
+   */
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(type => Participant, (participant) => participant.room)
+  @OneToMany((type) => Participant, (participant) => participant.room)
   participants: Participant[];
 
   @Column({ nullable: true })
@@ -31,12 +32,12 @@ export class Room {
   @Column()
   is_private: boolean;
 
-  @ManyToOne(type => ChatMessage, (message) => message.id)
-  messages: ChatMessage[]
+  @ManyToOne((type) => ChatMessage, (message) => message.id)
+  messages: ChatMessage[];
 
   /*
-  ** Lifecycle functions
-  */
+   ** Lifecycle functions
+   */
 
   @AfterInsert()
   logInsert() {

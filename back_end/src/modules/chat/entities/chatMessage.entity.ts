@@ -5,23 +5,25 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
-
-const conf = new ConfigService;
+const conf = new ConfigService();
 
 @Entity()
 export class ChatMessage {
-
   /*
-  ** Data
-  */
+   ** Data
+   */
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(type => User, (user) => user.id)
+  @ManyToOne((type) => User, (user) => user.id)
   sender: User;
 
   @Column()
@@ -34,10 +36,9 @@ export class ChatMessage {
   // @Column()
   // game: Game;
 
-
   /*
-  ** Lifecycle functions
-  */
+   ** Lifecycle functions
+   */
 
   @AfterInsert()
   logInsert() {
