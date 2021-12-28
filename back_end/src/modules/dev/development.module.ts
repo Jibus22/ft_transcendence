@@ -6,8 +6,8 @@ import { DevelopmentController } from './development.controller';
 import { DevelopmentService } from './development.service';
 
 @Module({
-	imports: [UsersModule, TypeOrmModule.forFeature([User])],
-	providers: [DevelopmentService],
-	controllers: [DevelopmentController]
+  imports: [UsersModule, TypeOrmModule.forFeature([User])],
+  providers: [DevelopmentService],
+  controllers: [DevelopmentController],
 })
 export class DevelopmentModule {}
