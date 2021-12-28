@@ -48,7 +48,7 @@ export class ChatController {
   @ApiOperation({
     summary: 'Create one room',
   })
-  @ApiResponse({ type: Room, isArray: false })
+  @ApiResponse({ type: RoomDto, isArray: false })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Newly create room infos',
@@ -68,7 +68,7 @@ export class ChatController {
   @ApiOperation({
     summary: 'Get all existing rooms',
   })
-  @ApiResponse({ type: RoomDto, isArray: true })
+  @ApiResponse({ type: RoomDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Every rooms in the system',
@@ -81,6 +81,7 @@ export class ChatController {
     return this.chatService.findAll();
   }
 
+  /*
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.chatService.findOne(id);
@@ -90,6 +91,7 @@ export class ChatController {
   update(@Param('id') id: string, @Body() updateChatDto: UpdateRoomDto) {
     return this.chatService.update(+id, updateChatDto);
   }
+*/
 
   @UseGuards(RoomGuard)
   @Post(':room_id/message')

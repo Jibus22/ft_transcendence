@@ -13,7 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -23,6 +23,7 @@ import { UsersPhotoService } from './service-file/userPhoto.service';
 import { MeService } from './service-me/me.service';
 
 @ApiTags('Photos')
+@ApiCookieAuth()
 @UseGuards(AuthGuard)
 @Controller()
 export class UsersPhotoController {
