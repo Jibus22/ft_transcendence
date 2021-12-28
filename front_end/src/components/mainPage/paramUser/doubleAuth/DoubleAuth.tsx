@@ -17,7 +17,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
 		width: '27%',
-		height: '57%',
+		height: '58%',
 		bgcolor: 'white',
 		border: '1px solid #000',
 		borderRadius: '6%',

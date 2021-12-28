@@ -7,66 +7,72 @@ interface Type {
 	id: number;
 	login: string;
 	photo_url: string;
+	status: string;
 	storeCustomPhoto: boolean;
 	hasTwoFASecret: boolean;
 }
 
 interface IMainPageContext {
-	timeSnack: boolean;
-	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
-	testString: string;
-	setTestString: React.Dispatch<React.SetStateAction<string>>;
-	timer: number;
-	setTimer: React.Dispatch<React.SetStateAction<number>>;
-	printSnackBar: () => void;
-	isDisable: boolean;
-	setIsDisable: React.Dispatch<React.SetStateAction<boolean>>;
-	loading: boolean;
-	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	data: Array<Type>;
-	setData: React.Dispatch<React.SetStateAction<never[]>>;
-	// fetchData: () => void;
-	fetchDataUserMe: () => void;
-	userName: string;
-	setUserName: React.Dispatch<React.SetStateAction<string>>;
-	userImg: string;
-	setUserImg: React.Dispatch<React.SetStateAction<string>>;
+	timeSnack: boolean;
+	isDisable: boolean;
 	isFriends: boolean;
-	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
+	loading: boolean;
 	customPhoto: boolean;
-	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
 	openSure: boolean;
+	isUpload: boolean;
+	openUpload: boolean;
+	userStatus: boolean;
+	selectedImage: File;
+	timer: number;
+	userName: string;
+	userImg: string;
+	pathPop: string;
+	statusUser: string;
+
+	setData: React.Dispatch<React.SetStateAction<never[]>>;
+	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsDisable: React.Dispatch<React.SetStateAction<boolean>>;
+	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
 	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
+	setIsUpload: React.Dispatch<React.SetStateAction<boolean>>;
+	setOpenUpload: React.Dispatch<React.SetStateAction<boolean>>;
+	setSelectedImage: React.Dispatch<React.SetStateAction<File>>;
+	setTimer: React.Dispatch<React.SetStateAction<number>>;
+	setUserName: React.Dispatch<React.SetStateAction<string>>;
+	setUserImg: React.Dispatch<React.SetStateAction<string>>;
+	setPathPop: React.Dispatch<React.SetStateAction<string>>;
+	setStatusUser: React.Dispatch<React.SetStateAction<string>>;
+
+	printSnackBar: () => void;
+	fetchDataUserMe: () => void;
 	onSubmit: (file: File, path: string) => void;
 	onSubmitUpload: (file: File) => void;
-	pathPop: string;
-	setPathPop: React.Dispatch<React.SetStateAction<string>>;
-	isUpload: boolean;
-	setIsUpload: React.Dispatch<React.SetStateAction<boolean>>;
-	selectedImage: File;
-	setSelectedImage: React.Dispatch<React.SetStateAction<File>>;
-	openUpload: boolean;
-	setOpenUpload: React.Dispatch<React.SetStateAction<boolean>>;
 	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
+	setStatusColor: (status: string) => string;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
 
 const MainPageProvider = (props: any) => {
-	const [timeSnack, setTimeSnack] = useState(false);
-	const [timer, setTimer] = useState(5000);
-	const [isDisable, setIsDisable] = useState(true);
-	const [loading, setLoading] = useState(false);
 	const [data, setData] = useState([]);
+	const [timeSnack, setTimeSnack] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [isFriends, setIsFriends] = useState(false);
+	const [openSure, setOpenSure] = useState(false);
+	const [isUpload, setIsUpload] = useState(false);
+	const [openUpload, setOpenUpload] = useState(false);
+	const [isDisable, setIsDisable] = useState(true);
+	const [customPhoto, setCustomPhoto] = useState(true);
+	const [timer, setTimer] = useState(5000);
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
-	const [isFriends, setIsFriends] = useState(false);
-	const [customPhoto, setCustomPhoto] = useState(true);
-	const [openSure, setOpenSure] = useState(false);
+	const [userStatus, setUserStatus] = useState('');
 	const [pathPop, setPathPop] = useState('');
-	const [isUpload, setIsUpload] = useState(false);
 	const [selectedImage, setSelectedImage] = useState();
-	const [openUpload, setOpenUpload] = useState(false);
+	const [statusUser, setStatusUser] = useState('');
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -144,40 +150,55 @@ const MainPageProvider = (props: any) => {
 		);
 	};
 
+	const setStatusColor = (status: string): string => {
+		if (status === 'offline') {
+			return 'red';
+		}
+		if (status === 'online') {
+			return 'green';
+		}
+		if (status === 'ingame') {
+			return 'orange';
+		} else {
+			return 'green';
+		}
+	};
+
 	const ProviderValue = {
 		timeSnack,
-		setTimeSnack,
 		timer,
-		setTimer,
 		isDisable,
-		setIsDisable,
 		loading,
-		setLoading,
 		data,
+		userName,
+		userImg,
+		isFriends,
+		customPhoto,
+		openSure,
+		pathPop,
+		isUpload,
+		selectedImage,
+		openUpload,
+		statusUser,
+		setCustomPhoto,
+		setTimeSnack,
+		setTimer,
+		setIsDisable,
+		setLoading,
 		setData,
 		fetchDataUserMe,
-		// fetchData,
-		userName,
 		setUserName,
-		userImg,
 		setUserImg,
-		isFriends,
 		setIsFriends,
-		customPhoto,
-		setCustomPhoto,
-		openSure,
 		setOpenSure,
 		onSubmit,
 		onSubmitUpload,
-		pathPop,
 		setPathPop,
-		isUpload,
 		setIsUpload,
-		selectedImage,
 		setSelectedImage,
-		openUpload,
 		setOpenUpload,
 		dialogMui,
+		setStatusUser,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

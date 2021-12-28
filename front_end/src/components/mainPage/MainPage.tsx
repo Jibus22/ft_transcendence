@@ -11,7 +11,6 @@ const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack } = useMainPage();
 	const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
 	const [errorAuth, setErrorAuth] = useState(false);
-	const [state, setState] = useState({});
 
 	const [isHeader, setIsHeader] = useState(true);
 
@@ -75,12 +74,12 @@ const MainPage = () => {
 
 	useEffect(() => {
 		fetchDataUserMe();
+		connectWsStatus();
 
-		// connectWsStatus();
-		return () => {
-			setState({});
-		};
-	}, [state]);
+		// return () => {
+		// 	setState({});
+		// };
+	}, []);
 
 	const resetTimeSnack = () => {
 		setTimeSnack(false);
