@@ -1,18 +1,19 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   HttpException,
   HttpStatus,
-  InternalServerErrorException, Param,
+  Param,
   Post,
   Response,
   StreamableFile,
   UploadedFile,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -22,6 +23,7 @@ import { UsersPhotoService } from './service-file/userPhoto.service';
 import { MeService } from './service-me/me.service';
 
 @ApiTags('Photos')
+@ApiCookieAuth()
 @UseGuards(AuthGuard)
 @Controller()
 export class UsersPhotoController {
@@ -54,15 +56,13 @@ export class UsersPhotoController {
   async uploadPhoto(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
-    ) {
-    await this.meService.uploadPhoto(user, file)
-    .catch((error) => {
-      this.usersPhotoService.delete(file.filename)
+  ) {
+    await this.meService.uploadPhoto(user, file).catch((error) => {
+      this.usersPhotoService.delete(file.filename);
       if (error.status) {
         throw new HttpException(error, error.status);
-      }
-      else {
-        throw new InternalServerErrorException(error);
+      } else {
+        throw new BadRequestException(error);
       }
     });
   }
@@ -103,14 +103,14 @@ export class UsersPhotoController {
     @Param('fileName') fileName,
     @Response({ passthrough: true }) res,
   ) {
-    return await this.usersPhotoService.serveFile(fileName, res)
+    return await this.usersPhotoService
+      .serveFile(fileName, res)
       .catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      }
-      else {
-        throw new InternalServerErrorException(error);
-      }
-    });
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        } else {
+          throw new BadRequestException(error);
+        }
+      });
   }
 }

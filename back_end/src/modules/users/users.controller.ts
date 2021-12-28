@@ -2,13 +2,19 @@ import {
   Body,
   Controller,
   Delete,
-  Get, HttpStatus,
+  Get,
+  HttpStatus,
   NotFoundException,
-  Param, Post, Session, UseGuards
+  Param,
+  Post,
+  Session,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
-  ApiOperation, ApiResponse, ApiTags
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
@@ -16,7 +22,7 @@ import { editRelationDto } from './dtos/edit-relation.dto';
 import { UserDto } from './dtos/user.dto';
 import {
   RelationsService,
-  RelationType
+  RelationType,
 } from './service-relations/relations.service';
 import { UsersService } from './service-users/users.service';
 
@@ -54,7 +60,7 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.OK, description: "User's public data" })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
   async getUserById(@Param() { login }) {
-    return await this.usersService.find({login}).then((users) => {
+    return await this.usersService.find({ login }).then((users) => {
       if (!users[0]) {
         throw new NotFoundException('user not found');
       }

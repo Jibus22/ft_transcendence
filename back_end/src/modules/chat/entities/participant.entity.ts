@@ -5,16 +5,16 @@ import {
   AfterUpdate,
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './users.entity';
+import { User } from '../../../modules/users/entities/users.entity';
+import { Room } from './room.entity';
 
 const conf = new ConfigService();
 
 @Entity()
-export class UserPhoto {
+export class Participant {
   /*
    ** Data
    */
@@ -22,14 +22,17 @@ export class UserPhoto {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => User, (owner) => owner.id, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  owner: User;
+  @ManyToOne((type) => User)
+  user: User;
 
-  @Column({ unique: true, nullable: false })
-  fileName: string;
+  @ManyToOne((type) => Room, { onDelete: 'CASCADE' })
+  room: Room;
 
-  // ----------------------
+  @Column({ default: false })
+  is_owner: boolean;
+
+  @Column({ default: false })
+  is_moderator: boolean;
 
   /*
    ** Lifecycle functions
@@ -37,22 +40,23 @@ export class UserPhoto {
 
   @AfterInsert()
   logInsert() {
+    // TODO: add owner to moderator list!
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Inserted UserPhoto: ', this);
+      console.log('Inserted Participant: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Removed UserPhoto: ', this);
+      console.log('Removed Participant: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Updated UserPhoto: ', this);
+      console.log('Updated Participant: ', this);
     }
   }
 }
