@@ -4,28 +4,27 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, PrimaryGeneratedColumn
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
 } from 'typeorm';
+import { ChatMessage } from './chatMessage.entity';
+import { Participant } from './participant.entity';
 
-
-const conf = new ConfigService;
+const conf = new ConfigService();
 
 @Entity()
 export class Room {
-
   /*
-  ** Data
-  */
+   ** Data
+   */
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @ManyToOne(type => User, (owner) => owner.rooms_ownership)
-  // owner: User;
-
-  // @ManyToMany(type => User, (moderators) => moderators.rooms_moderation)
-  // @JoinTable()
-  // moderators: User[];
+  @OneToMany((type) => Participant, (participant) => participant.room)
+  participants: Participant[];
 
   @Column({ nullable: true })
   password: string;
@@ -33,34 +32,31 @@ export class Room {
   @Column()
   is_private: boolean;
 
-  // @ManyToOne(type => ChatMessage, (chat) => user.id)
-  // messages: ChatMessage
-
-  // participants
+  @ManyToOne((type) => ChatMessage, (message) => message.id)
+  messages: ChatMessage[];
 
   /*
-  ** Lifecycle functions
-  */
+   ** Lifecycle functions
+   */
 
   @AfterInsert()
   logInsert() {
-    // TODO: add owner to moderator list!
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted User: ', this);
+      console.log('Inserted Room: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed User: ', this);
+      console.log('Removed Room: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated User: ', this);
+      console.log('Updated Room: ', this);
     }
   }
 }

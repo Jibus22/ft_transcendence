@@ -7,13 +7,12 @@ import {
   Get,
   HttpStatus,
   Inject,
-  InternalServerErrorException,
   Post,
   Query,
   Redirect,
   Res,
   Session,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -45,7 +44,7 @@ export class AuthController {
   ) {
     const user = await this.authService.registerUser(query.code, query.state);
     if (!user) {
-      throw new InternalServerErrorException('Could not identify user.');
+      throw new BadRequestException('Could not identify user.');
     }
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;

@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  NestMiddleware
-} from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../entities/users.entity';
 import { AuthService } from '../service-auth/auth.service';
@@ -22,8 +18,8 @@ declare global {
 export class CurrentUserMiddleware implements NestMiddleware {
   constructor(
     private usersService: UsersService,
-    private authService: AuthService
-    ) {}
+    private authService: AuthService,
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     // if (req.baseUrl.includes('/socket.io')) { // TODO remove debug
@@ -31,7 +27,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
     // }
 
     const { userId } = req.session || {};
-    const logger = new Logger(' 🛠 ⛓ Middlewear'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger(' 🛠 👥  User Middlewear');
     logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
     if (userId) {
       await this.usersService
@@ -41,12 +37,13 @@ export class CurrentUserMiddleware implements NestMiddleware {
           req.currentUser = user;
         })
         .catch((error) => {
+          logger.log('User Not Found: Clearing Session'); // TODO remove debug
+          logger.log(error); // TODO remove debug
           this.authService.clearSession(req.session);
         });
-			} else {
-        logger.log('No user id in session');
-      }
-
+    } else {
+      logger.log('No user id in session');
+    }
     next();
   }
 }

@@ -1,7 +1,13 @@
 import {
   BadRequestException,
   Body,
-  Controller, Get, HttpStatus, Patch, Res, Session, UseGuards
+  Controller,
+  Get,
+  HttpStatus,
+  Patch,
+  Res,
+  Session,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -12,11 +18,12 @@ import {
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { ChatService } from '../chat/chat.service';
+import { RoomDto } from '../chat/dto/room.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
 import { User } from './entities/users.entity';
-import { MeService } from './service-me/me.service';
 import { UsersService } from './service-users/users.service';
 
 @ApiTags('Me')
@@ -29,7 +36,7 @@ import { UsersService } from './service-users/users.service';
 export class MeController {
   constructor(
     private usersService: UsersService,
-    private meService: MeService,
+    private chatService: ChatService,
   ) {}
 
   /*****************************************************************************
@@ -51,19 +58,39 @@ export class MeController {
     return user;
   }
 
+  @Get('/rooms')
+  @UseGuards(AuthGuard)
+  @Serialize(RoomDto)
+  @ApiOperation({
+    summary: 'Get infos of the currently logged user',
+  })
+  @ApiResponse({ type: privateUserDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User private informations',
+  })
+  async getMyRooms(@CurrentUser() user: User) {
+    return await this.chatService.findUserRoomList(user);
+  }
+
   @Get('/is-logged')
   @ApiOperation({
     summary: 'Get authentication status of current user',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User is logged with OAuth and header Completed-Auth is set according to 2FA status',
+    description:
+      'User is logged with OAuth and header Completed-Auth is set according to 2FA status',
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'User is not logged with OAuth',
   })
-  async isLogged(@CurrentUser() user: User, @Session() session, @Res() res: Response) {
+  async isLogged(
+    @CurrentUser() user: User,
+    @Session() session,
+    @Res() res: Response,
+  ) {
     if (user.useTwoFA) {
       return res.set('Completed-Auth', session.isTwoFAutanticated).send();
     }

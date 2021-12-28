@@ -1,9 +1,35 @@
-import { Controller, Get, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  UseGuards
+} from '@nestjs/common';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomGuard } from '../../guards/room.guard';
+import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
-import { UserDto } from '../users/dtos/user.dto';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { User } from '../users/entities/users.entity';
 import { ChatService } from './chat.service';
+import { TargetedRoom } from './decorators/targeted-room.decorator';
+import { createMessageDto } from './dto/create-message.dto';
+import { CreateRoomDto } from './dto/create-room.dto';
+import { RoomDto } from './dto/room.dto';
+import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
 
 @ApiTags('Chat')
@@ -13,23 +39,83 @@ import { Room } from './entities/room.entity';
   description: 'User not logged',
 })
 @UseGuards(AuthGuard)
-@Serialize(UserDto)
-@Controller('/chat')
+@Serialize(RoomDto)
+@Controller('/room')
 export class ChatController {
-  constructor(
-    private chatService: ChatService,
-  ) {}
+  constructor(private readonly chatService: ChatService) {}
 
-	@Get('/')
+  @Post()
   @ApiOperation({
-    summary: 'Get every chatrooms in the database',
+    summary: 'Create one room',
   })
-  @ApiResponse({ type: Room, isArray: true })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Rooms array' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No users' })
-  async getAllChats() {
-    return ;
+  @ApiResponse({ type: Room, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Newly create room infos',
+  })
+  async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
+    return await this.chatService.create(user, createRoomDto).catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      } else {
+        throw new BadRequestException(error);
+      }
+    });
   }
 
+  @Get()
+  // @UseGuards(SiteOwnerGuard) // TODO implement
+  @ApiOperation({
+    summary: 'Get all existing rooms',
+  })
+  @ApiResponse({ type: RoomDto, isArray: true })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Every rooms in the system',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User must role is not high enough',
+  })
+  findAll() {
+    return this.chatService.findAll();
+  }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.chatService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateChatDto: UpdateRoomDto) {
+    return this.chatService.update(+id, updateChatDto);
+  }
+
+  @UseGuards(RoomGuard)
+  @Post(':room_id/message')
+  addMessage(
+    @Param('room_id') id: string,
+    @CurrentUser() user: User,
+    @Body() body: createMessageDto,
+  ) {}
+
+  @ApiOperation({
+    summary: 'Delete one room if user is the owner or site owner',
+  })
+  @ApiResponse({ type: RoomDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Infos of the deleted room',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @UseGuards(RoomOwnerGuard)
+  @Delete(':room_id')
+  async remove(@TargetedRoom() targetedRoom: Room) {
+    return await this.chatService.remove(targetedRoom).catch((error) => {
+      throw new NotFoundException(error);
+    });
+  }
 }

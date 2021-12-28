@@ -4,17 +4,15 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
+  Entity, ManyToOne,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { User } from './users.entity';
+import { User } from '../../users/entities/users.entity';
 
 const conf = new ConfigService();
 
 @Entity()
-export class UserPhoto {
+export class ChatMessage {
   /*
    ** Data
    */
@@ -22,14 +20,18 @@ export class UserPhoto {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToOne(() => User, (owner) => owner.id, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  owner: User;
+  @ManyToOne((type) => User, (user) => user.id)
+  sender: User;
 
-  @Column({ unique: true, nullable: false })
-  fileName: string;
+  @Column()
+  timestamp: string; //Date type ?
 
-  // ----------------------
+  @Column()
+  body: string;
+
+  // @ManyToOne(type => Game, (game) => game.id)
+  // @Column()
+  // game: Game;
 
   /*
    ** Lifecycle functions
@@ -37,22 +39,23 @@ export class UserPhoto {
 
   @AfterInsert()
   logInsert() {
+    // TODO: add owner to moderator list!
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Inserted UserPhoto: ', this);
+      console.log('Inserted ChatMessage: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Removed UserPhoto: ', this);
+      console.log('Removed ChatMessage: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Updated UserPhoto: ', this);
+      console.log('Updated ChatMessage: ', this);
     }
   }
 }

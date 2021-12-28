@@ -1,9 +1,8 @@
 import {
-  Controller,
+  BadRequestException, Controller,
   Get,
   HttpException,
-  HttpStatus,
-  InternalServerErrorException, Param,
+  HttpStatus, Param,
   Post,
   Response,
   StreamableFile,
@@ -54,15 +53,13 @@ export class UsersPhotoController {
   async uploadPhoto(
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
-    ) {
-    await this.meService.uploadPhoto(user, file)
-    .catch((error) => {
-      this.usersPhotoService.delete(file.filename)
+  ) {
+    await this.meService.uploadPhoto(user, file).catch((error) => {
+      this.usersPhotoService.delete(file.filename);
       if (error.status) {
         throw new HttpException(error, error.status);
-      }
-      else {
-        throw new InternalServerErrorException(error);
+      } else {
+        throw new BadRequestException(error);
       }
     });
   }
@@ -103,14 +100,14 @@ export class UsersPhotoController {
     @Param('fileName') fileName,
     @Response({ passthrough: true }) res,
   ) {
-    return await this.usersPhotoService.serveFile(fileName, res)
+    return await this.usersPhotoService
+      .serveFile(fileName, res)
       .catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      }
-      else {
-        throw new InternalServerErrorException(error);
-      }
-    });
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        } else {
+          throw new BadRequestException(error);
+        }
+      });
   }
 }
