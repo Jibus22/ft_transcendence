@@ -33,6 +33,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^4.1.17",
     "global": "^4.4.0",
+    "gsap": "^3.9.1",
     "node-sass": "^6.0.1",
     "npm": "^8.1.0",
     "postcss": "^8.4.5",
