@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Room } from '../modules/chat/entities/room.entity';
 import { User } from '../modules/users/entities/users.entity';

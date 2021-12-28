@@ -1,12 +1,9 @@
-import {
-  CACHE_MANAGER,
-  Inject
-} from '@nestjs/common';
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
   GatewayMetadata,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Socket } from 'socket.io';

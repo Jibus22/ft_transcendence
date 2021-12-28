@@ -3,7 +3,7 @@ import {
   HttpStatus,
   Injectable,
   Logger,
-  StreamableFile
+  StreamableFile,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';

@@ -1,14 +1,16 @@
 import {
-  BadRequestException, Controller,
+  BadRequestException,
+  Controller,
   Get,
   HttpException,
-  HttpStatus, Param,
+  HttpStatus,
+  Param,
   Post,
   Response,
   StreamableFile,
   UploadedFile,
   UseGuards,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';

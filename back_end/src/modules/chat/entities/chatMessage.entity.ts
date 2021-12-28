@@ -4,8 +4,9 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, ManyToOne,
-  PrimaryGeneratedColumn
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 
