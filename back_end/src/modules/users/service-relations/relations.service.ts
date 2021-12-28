@@ -18,7 +18,7 @@ export class RelationsService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
   async readAllRelations(userId: string, relation: RelationType) {
-    return await getConnection()
+    return await this.repo
       .createQueryBuilder()
       .relation(User, relation)
       .of(userId)
@@ -39,7 +39,7 @@ export class RelationsService {
     if (targetId === userId) {
       throw new BadRequestException(`Cannot add oneself as a ${relation}`);
     }
-    await getConnection()
+    await this.repo
       .createQueryBuilder()
       .relation(User, relation)
       .of(userId)
@@ -54,7 +54,7 @@ export class RelationsService {
     targetId: string,
     relation: RelationType,
   ) {
-    await getConnection()
+    await this.repo
       .createQueryBuilder()
       .relation(User, relation)
       .of(userId)
