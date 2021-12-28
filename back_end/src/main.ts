@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { UsersModule } from './module-users/users.module';
-import { DevelopmentModule } from './module-development/development.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,10 +25,11 @@ async function bootstrap() {
   /**
    * App listen port from the env, or defaults to 3000
    */
-   app.enableCors({
-     origin: 'http://localhost:3001', credentials: true,
-   });
-
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+    exposedHeaders: ['secretKey', 'Completed-Auth'],
+  });
 
   await app.listen(process.env.PORT || 3000);
 }

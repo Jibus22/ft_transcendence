@@ -87,69 +87,7 @@ describe('user controller: /me routes (e2e)', () => {
     await commons
       .logUser('non_existing_user')
       .then((response) => commons.getCookies(response))
-      .then((tmpCookies) => expect(tmpCookies).toBeUndefined());
-  });
-
-  /*
-    ===================================================================
-    -------------------------------------------------------------------
-          Subset of test with user being deleted after logging
-    -------------------------------------------------------------------
-    ===================================================================
-    */
-
-  it('tries to get user own infos after logging, with a cookie, after user was deleted', async () => {
-    await commons
-      .deleteFakeUsers([
-        {
-          login: loggedUser.login,
-        },
-      ])
-      .then(async (resp) => {
-        expect(resp.status).toBe(HttpStatus.OK);
-        return await request(app.getHttpServer()).get('/dev/users');
-      })
-      .then((resp) => {
-        expect(resp.body).toBeDefined();
-        expect(resp.body).toHaveLength(commons.testUserBatch.length - 1);
-        for (let i = 0; i < resp.body.length; i++) {
-          expect(resp.body[i].login).not.toEqual(loggedUser.login);
-        }
-      })
-      .then(async () => await commons.getMe(cookies))
-      .then((resp) => {
-        const newCookies = commons.getCookies(resp);
-        expect(cookies).toHaveLength(2);
-        expect(newCookies).not.toBeDefined();
-        expect(resp.status).toEqual(HttpStatus.UNAUTHORIZED);
-      })
-      .then(async () => await request(app.getHttpServer()).get('/me'))
-      .then((resp) => {
-        expect(resp.status).toEqual(HttpStatus.UNAUTHORIZED);
-      });
-  });
-
-  it('tries to log with another user after user was deleted', async () => {
-    await commons
-      .deleteFakeUsers([
-        {
-          login: loggedUser.login,
-        },
-      ])
-      .then(async () => await commons.logUser(commons.testUserBatch[1].login))
-      .then(async (resp) => {
-        const newCookies = commons.getCookies(resp);
-        return await commons.getMe(newCookies);
-      })
-      .then((resp) => {
-        expect(resp.status).toEqual(HttpStatus.OK);
-      })
-      .then(async () => {
-        return await commons.getMe(cookies);
-      })
-      .then((resp) => {
-        expect(resp.status).toEqual(HttpStatus.UNAUTHORIZED);
-      });
+      .then((tmpCookies) => expect(tmpCookies.length).toBe(0));
   });
 
   /*
@@ -199,6 +137,27 @@ describe('user controller: /me routes (e2e)', () => {
           await patchMe(
             {
               login: commons.testUserBatch[1].login,
+            },
+            cookies,
+          ),
+      )
+      .then((response) => {
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+  });
+
+  it('updates user with invalid value', async () => {
+    await commons
+      .createFakeUsers()
+      .then(async () => await commons.logUser(loggedUser.login))
+      .then((response) => {
+        cookies = commons.getCookies(response);
+      })
+      .then(
+        async () =>
+          await patchMe(
+            {
+              login: 42
             },
             cookies,
           ),
