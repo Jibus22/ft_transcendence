@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, CircularProgress } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -34,7 +34,7 @@ export default function FormAuth({ closeQR }: Props) {
 		setTimeout(function () {
 			setOpen(false);
 			disconectAuth();
-		}, 5000);
+		}, 4000);
 	};
 
 	const validationSchema = yup.object({
@@ -45,7 +45,7 @@ export default function FormAuth({ closeQR }: Props) {
 			key: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: async (values) => {
+		onSubmit: async (values, { setErrors, resetForm }) => {
 			const token = {
 				token: values.key,
 			};
@@ -61,8 +61,8 @@ export default function FormAuth({ closeQR }: Props) {
 			} catch (error) {
 				const err = error as AxiosError;
 				if (err.response?.status === 400) {
-					formik.errors.key = 'Invalid key';
-					return;
+					setErrors({ key: 'Wrong key' });
+					resetForm();
 				}
 			}
 		},
@@ -89,7 +89,7 @@ export default function FormAuth({ closeQR }: Props) {
 						endAdornment: (
 							<InputAdornment position="end">
 								<IconButton type="submit">
-									<SendIcon sx={{ color: '#e0e0e0', width: 2 / 2, height: 2 / 2 }} />
+									<SendIcon sx={{ color: '#ca6c88', width: 2 / 2, height: 2 / 2 }} />
 								</IconButton>
 							</InputAdornment>
 						),
@@ -113,6 +113,7 @@ export default function FormAuth({ closeQR }: Props) {
 				<DialogContent className="contentDialogMui">
 					<DialogContentText id="alert-dialog-description">You will be disconnected.</DialogContentText>
 					<DialogContentText id="alert-dialog-description">Please identify yourself on the home page</DialogContentText>
+					<CircularProgress className="circularDialogMui" />
 				</DialogContent>
 			</Dialog>
 		</div>

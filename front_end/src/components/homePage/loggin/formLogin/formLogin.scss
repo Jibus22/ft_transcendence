@@ -49,9 +49,18 @@
 	}
 	.MuiFormHelperText-root {
 		color: red !important;
-		font-size: 0.9vw !important;
-		margin: 3% auto;
+		font-size: 0.7vw !important;
+
+		position: absolute;
+		left: 45%;
+		position: absolute;
+		top: 120%;
+		transform: translate(-50%, -50%);
 	}
+	// .css-1pysi21-MuiFormLabel-root-MuiInputLabel-root.Mui-error {
+	// 	border: red;
+	// }
+
 	.formDivButtonAnim {
 		animation-name: shake-horizontal;
 		animation-duration: 0.6s;
