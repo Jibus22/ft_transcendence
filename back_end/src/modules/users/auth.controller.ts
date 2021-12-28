@@ -7,7 +7,6 @@ import {
   Get,
   HttpStatus,
   Inject,
-  InternalServerErrorException,
   Post,
   Query,
   Redirect,
@@ -16,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -45,7 +44,7 @@ export class AuthController {
   ) {
     const user = await this.authService.registerUser(query.code, query.state);
     if (!user) {
-      throw new InternalServerErrorException('Could not identify user.');
+      throw new BadRequestException('Could not identify user.');
     }
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;
@@ -73,6 +72,7 @@ export class AuthController {
   //TODO use guard ?
 
   @Post('/2fa/generate')
+  @ApiCookieAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary:
@@ -100,6 +100,7 @@ export class AuthController {
 
   @Post('/2fa/turn-off')
   @Serialize(privateUserDto)
+  @ApiCookieAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Turns off the 2fa, effectively removing the key from the db',
@@ -121,6 +122,7 @@ export class AuthController {
 
   @Post('/2fa/turn-on')
   @Serialize(privateUserDto)
+  @ApiCookieAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Turns on the 2fa if token is valid',
@@ -132,17 +134,14 @@ export class AuthController {
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
   async turn2fa_on(@Session() session, @Body() body: { token: string }) {
-    // TODO: use dto for body !
     return await this.authService
       .turn2fa_on(session, body.token)
       .catch((err) => {
         throw new BadRequestException(err);
       });
-    // redirect login ?
   }
 
   @Post('/2fa/authenticate')
-  // @UseGuards(AuthGuard)
   @Serialize(privateUserDto)
   @ApiOperation({
     summary: 'Authenticate user if 2fa is activated',
@@ -167,6 +166,7 @@ export class AuthController {
     */
 
   @Get('/ws/token')
+  @ApiCookieAuth()
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Returns a token for websocket connection',
