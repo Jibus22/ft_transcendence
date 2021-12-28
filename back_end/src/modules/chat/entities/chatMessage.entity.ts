@@ -1,16 +1,13 @@
 import { ConfigService } from '@nestjs/config';
-import { User } from '../../users/entities/users.entity';
 import {
   AfterInsert,
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
+  Entity, ManyToOne,
+  PrimaryGeneratedColumn
 } from 'typeorm';
+import { User } from '../../users/entities/users.entity';
 
 const conf = new ConfigService();
 

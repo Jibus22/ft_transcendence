@@ -1,9 +1,9 @@
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 import {
   CacheModule,
   MiddlewareConsumer,
   Module,
-  ValidationPipe,
+  ValidationPipe
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';

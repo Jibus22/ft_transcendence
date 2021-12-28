@@ -1,13 +1,8 @@
 import {
-  Session,
-  UseGuards,
-  Controller,
-  Post,
-  Body,
-  Get,
-  Delete,
+  Body, Controller, Delete, Get, Post, Session,
+  UseGuards
 } from '@nestjs/common';
-import { ApiTags, ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { DevGuard } from '../../guards/dev.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { privateUserDto } from '../users/dtos/private-user.dto';

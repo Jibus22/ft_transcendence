@@ -2,11 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig } from 'axios';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
 import { User } from '../entities/users.entity';
 import { UsersService } from '../service-users/users.service';
-import { authenticator } from 'otplib';
-import { toFileStream } from 'qrcode';
 
 @Injectable()
 export class AuthService {

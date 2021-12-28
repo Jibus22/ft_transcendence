@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform, Exclude } from 'class-transformer';
-import { User } from '../entities/users.entity';
+import { Exclude, Expose, Transform } from 'class-transformer';
 
 @Exclude()
 export class UserDto {

@@ -8,13 +8,13 @@ import {
   Param,
   Post,
   Session,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
@@ -22,7 +22,7 @@ import { editRelationDto } from './dtos/edit-relation.dto';
 import { UserDto } from './dtos/user.dto';
 import {
   RelationsService,
-  RelationType,
+  RelationType
 } from './service-relations/relations.service';
 import { UsersService } from './service-users/users.service';
 
