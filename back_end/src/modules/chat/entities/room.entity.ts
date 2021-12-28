@@ -5,9 +5,8 @@ import {
   AfterUpdate,
   Column,
   Entity,
-  ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { ChatMessage } from './chatMessage.entity';
 import { Participant } from './participant.entity';
@@ -23,16 +22,16 @@ export class Room {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany((type) => Participant, (participant) => participant.room)
-  participants: Participant[];
-
   @Column({ nullable: true })
   password: string;
 
   @Column()
   is_private: boolean;
 
-  @ManyToOne((type) => ChatMessage, (message) => message.id)
+  @OneToMany((type) => Participant, (participant) => participant.room)
+  participants: Participant[];
+
+  @OneToMany((type) => ChatMessage, (message) => message.room)
   messages: ChatMessage[];
 
   /*

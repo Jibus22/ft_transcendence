@@ -36,7 +36,7 @@ const cookieSession = require('cookie-session');
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: process.env.DB_NAME,
-      entities: [User, UserPhoto, Room, ChatMessage, Participant],
+      entities: [User, UserPhoto, Room, ChatMessage, Participant, ChatMessage],
       synchronize: true,
     }),
     HttpModule,

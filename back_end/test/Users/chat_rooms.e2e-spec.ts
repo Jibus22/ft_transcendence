@@ -6,6 +6,9 @@ import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
+var faker = require('faker');
+
+
 describe('chat controller: chat rooms routes (e2e)', () => {
   let app: INestApplication;
   let commons: CommonTest;
@@ -56,6 +59,19 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     return await request(app.getHttpServer())
       .get('/room')
       .set('Cookie', cookies);
+  }
+
+  async function getRoomMessages(tmpCookies: string[], room_id: string) {
+    return await request(app.getHttpServer())
+      .get(`/room/${room_id}/message`)
+      .set('Cookie', tmpCookies);
+  }
+
+  async function postMessages(tmpCookies: string[], room_id: string, bodyRequest: Object) {
+    return await request(app.getHttpServer())
+      .post(`/room/${room_id}/message`)
+      .set('Cookie', tmpCookies)
+      .send(bodyRequest);
   }
 
   async function getUserRooms() {
@@ -352,4 +368,109 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         expect(returnedRooms.length).toBe(expectedRooms.length);
       });
   });
+
+  /*
+    ===================================================================
+    -------------------------------------------------------------------
+          MESSAGES
+    -------------------------------------------------------------------
+    ===================================================================
+    */
+
+  it("creates random rooms and post a message a room owned and fetch it", async () => {
+    const nbOfRooms = 50;
+    let createdRooms: RandomRoom[];
+    let loggedUserId: CreatedParticipant = { id: '' };
+    let testMessage: string = faker.lorem.paragraph();
+    let destRoom: RandomRoom;
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        return commons.getMe(cookies);
+      })
+      .then(async (response) => {
+        loggedUserId.id = response.body.id;
+        expect(loggedUserId).toBeDefined();
+        expect(loggedUserId.id.length).toBeGreaterThan(0);
+
+        destRoom  = createdRooms.find(r => r.owner_created.id === loggedUserId.id);
+        return await postMessages(cookies, destRoom.id, {
+          body: testMessage
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        expect(response.body).toHaveProperty('body', testMessage);
+        expect(response.body).toHaveProperty('sender.id', loggedUserId.id);
+        expect(response.body).toHaveProperty('body', testMessage);
+        expect(response.body).toHaveProperty('timestamp');
+        return await getRoomMessages(cookies, destRoom.id)
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body.messages).toHaveLength(1);
+        expect(response.body).toHaveProperty('messages[0].body', testMessage);
+        expect(response.body).toHaveProperty('messages[0].sender.id', loggedUserId.id);
+        expect(response.body).toHaveProperty('messages[0].timestamp');
+      });
+  });
+
+  it("creates random rooms and try to POST message to a room NOT owned NOR participant of", async () => {
+    const nbOfRooms = 50;
+    let createdRooms: RandomRoom[];
+    let loggedUserId: CreatedParticipant = { id: '' };
+    let testMessage: string = faker.lorem.paragraph();
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        return commons.getMe(cookies);
+      })
+      .then(async (response) => {
+        loggedUserId.id = response.body.id;
+        expect(loggedUserId).toBeDefined();
+        expect(loggedUserId.id.length).toBeGreaterThan(0);
+
+        const destRoom = createdRooms.find(r =>
+          r.owner_created.id !== loggedUserId.id &&
+          !r.participants.some(p => p.id === loggedUserId.id));
+        return await postMessages(cookies, destRoom.id, {
+          body: testMessage
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+      });
+  });
+
+  it("creates random rooms and try to GET message a room NOT owned NOR participant of", async () => {
+    const nbOfRooms = 50;
+    let createdRooms: RandomRoom[];
+    let loggedUserId: CreatedParticipant = { id: '' };
+    let testMessage: string = faker.lorem.paragraph();
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        return commons.getMe(cookies);
+      })
+      .then(async (response) => {
+        loggedUserId.id = response.body.id;
+        expect(loggedUserId).toBeDefined();
+        expect(loggedUserId.id.length).toBeGreaterThan(0);
+
+        const destRoom = createdRooms.find(r =>
+          r.owner_created.id !== loggedUserId.id &&
+          !r.participants.some(p => p.id === loggedUserId.id));
+        return await getRoomMessages(cookies, destRoom.id);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+      });
+  });
+
 });
