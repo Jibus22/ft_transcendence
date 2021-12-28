@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
+import { ChatMessageDto } from './chatMessade.dto';
 import { ParticipantDto } from './participant.dto';
 
 @Exclude()
@@ -26,25 +27,10 @@ export class RoomDto {
   })
   participants: ParticipantDto[];
 
-  // @ApiProperty()
-  // @Expose()
-  // @Transform((value) => {
-  // 	const participants: Participant[] = value.obj.participants;
-  //   return plainToClass(UserDto, participants.filter((user) => user.is_moderator));
-  // })
-  // moderators: UserDto[];
-
-  // @Expose()
-  // @Transform((value) => {
-  //   return plainToClass(UserDto, value.obj.participants);
-  // })
-  // bans: Ban[];
-
-  // @ApiProperty()
-  // @Expose()
-  // @Transform((value) => {
-  // 	const participants: Participant[] = value.obj.participants;
-  //   return plainToClass(UserDto, participants.find((user) => user.is_owner));
-  // })
-  // owner: UserDto;
+  @ApiProperty()
+  @Expose()
+  @Transform((value) => {
+    return plainToClass(ChatMessageDto, value.obj.messages);
+  })
+  messages: ChatMessageDto[];
 }

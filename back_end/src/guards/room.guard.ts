@@ -12,7 +12,7 @@ import { User } from '../modules/users/entities/users.entity';
 export class RoomGuard implements CanActivate {
   private isRoomAccessible(currentUser: User, targetedRoom: Room): boolean {
     return targetedRoom.participants.some(
-      (participant) => participant.user === currentUser,
+      (participant) => participant.user.id === currentUser.id,
     );
   }
 
@@ -22,7 +22,7 @@ export class RoomGuard implements CanActivate {
     const targetRoom: Room = context.switchToHttp().getRequest().targetedRoom;
     if (currentUser && targetRoom) {
       logger.log(
-        `User id: ${currentUser.id}, trying to target room: ${targetRoom}`,
+        `User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`,
       );
       const ret = this.isRoomAccessible(currentUser, targetRoom);
       logger.log(`ACCESS GRANTED ? ${ret}`);

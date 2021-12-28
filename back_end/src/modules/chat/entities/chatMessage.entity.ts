@@ -6,9 +6,10 @@ import {
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
+import { Room } from './room.entity';
 
 const conf = new ConfigService();
 
@@ -24,8 +25,12 @@ export class ChatMessage {
   @ManyToOne((type) => User, (user) => user.id)
   sender: User;
 
+  @ManyToOne((type) => Room, { onDelete: 'CASCADE' })
+  room: Room;
+
   @Column()
-  timestamp: string; //Date type ?
+  // timestamp: string; //Date type ?
+  timestamp: number; //Date type ?
 
   @Column()
   body: string;

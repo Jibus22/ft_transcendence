@@ -8,6 +8,7 @@ import { UsersService } from '../users/service-users/users.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Room } from './entities/room.entity';
 
@@ -17,10 +18,19 @@ const scrypt = promisify(_scrypt);
 export class ChatService {
   constructor(
     @InjectRepository(Room) private repoRoom: Repository<Room>,
+    @InjectRepository(ChatMessage) private repoMessage: Repository<ChatMessage>,
     @InjectRepository(Participant)
     private repoParticipants: Repository<Participant>,
     private usersService: UsersService,
   ) {}
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        ROOMS METHODS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
   private async encodePassword(password: string) {
     const salt = randomBytes(8).toString('hex');
@@ -28,12 +38,21 @@ export class ChatService {
     return salt + '.' + hash.toString('hex');
   }
 
-  // private async validatePassword(encodedPassword: string, userEntry: string) {
-  //   const [salt, storedHash] = encodedPassword.split('.');
+  /*
+    // if (room.password.length &&
+    //   (await this.validatePassword(room.password, messageDto.password)) === false) {
+    //     throw {
+    //       status: HttpStatus.BAD_REQUEST,
+    //       error: 'invalid password',
+    //     };
+    // }
+  private async validatePassword(encodedPassword: string, userEntry: string) {
+    const [salt, storedHash] = encodedPassword.split('.');
 
-  //   const hash = (await scrypt(userEntry, salt, 32)) as Buffer;
-  //   return storedHash === hash.toString('hex');
-  // }
+    const hash = (await scrypt(userEntry, salt, 32)) as Buffer;
+    return storedHash === hash.toString('hex');
+  }
+*/
 
   private async createParticipant(
     participant: CreateParticipantDto,
@@ -119,11 +138,40 @@ export class ChatService {
       .getOne();
   }
 
+  async findOneWithMessages(id: string) {
+    return await this.repoRoom
+      .createQueryBuilder('room')
+      .where('room.id = :id', { id })
+      .leftJoinAndSelect('room.messages', 'messages')
+      .leftJoinAndSelect('messages.sender', 'sender')
+      .getOne();
+  }
+
   update(id: number, updateChatDto: UpdateRoomDto) {
     return `This action updates a #${id} chat`;
   }
 
   async remove(targetedRoom: Room) {
     return await this.repoRoom.remove(targetedRoom);
+  }
+
+  /*
+    ===================================================================
+    -------------------------------------------------------------------
+          MESSAGES METHODS
+    -------------------------------------------------------------------
+    ===================================================================
+    */
+
+  async createMessage(
+    room: Room,
+    user: User,
+    messageDto: Partial<ChatMessage>,
+  ) {
+    messageDto.room = room;
+    messageDto.sender = user;
+    messageDto.timestamp = Date.now();
+    const message = this.repoMessage.create(messageDto);
+    return await this.repoMessage.save(message);
   }
 }

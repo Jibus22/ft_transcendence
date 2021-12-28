@@ -62,12 +62,12 @@ export class MeController {
   @UseGuards(AuthGuard)
   @Serialize(RoomDto)
   @ApiOperation({
-    summary: 'Get infos of the currently logged user',
+    summary: 'Get rooms in which the currently logged user is owner/moderator/participant',
   })
-  @ApiResponse({ type: privateUserDto })
+  @ApiResponse({ type: RoomDto })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User private informations',
+    description: 'rooms in which the currently logged user is owner/moderator/participant',
   })
   async getMyRooms(@CurrentUser() user: User) {
     return await this.chatService.findUserRoomList(user);
