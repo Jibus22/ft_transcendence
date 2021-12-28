@@ -1,13 +1,13 @@
 import {
-  ForbiddenException, HttpStatus,
+  ForbiddenException,
+  HttpStatus,
   Injectable,
-  Logger, StreamableFile
+  Logger,
+  StreamableFile
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  createReadStream, renameSync, statSync, unlink
-} from 'fs';
+import { createReadStream, renameSync, statSync, unlink } from 'fs';
 import { extname, join } from 'path';
 import { Repository } from 'typeorm';
 import { UserPhoto } from '../entities/users_photo.entity';
