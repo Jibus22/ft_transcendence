@@ -9,7 +9,7 @@ import { Room } from '../modules/chat/entities/room.entity';
 import { User } from '../modules/users/entities/users.entity';
 
 @Injectable()
-export class RoomGuard implements CanActivate {
+export class RoomParticipantGuard implements CanActivate {
   private isRoomAccessible(currentUser: User, targetedRoom: Room): boolean {
     return targetedRoom.participants.some(
       (participant) => participant.user.id === currentUser.id,
@@ -28,6 +28,6 @@ export class RoomGuard implements CanActivate {
       logger.log(`ACCESS GRANTED ? ${ret}`);
       return ret;
     }
-    throw new UnauthorizedException('User must be logged and own the room');
+    throw new UnauthorizedException('User must be logged and be participant in the room');
   }
 }

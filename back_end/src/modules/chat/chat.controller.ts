@@ -18,8 +18,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
-import { RoomGuard } from '../../guards/room.guard';
-import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
+import { RoomOwnerGuard } from '../../guards/roomModerator.guard';
+import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
@@ -158,7 +158,7 @@ export class ChatController {
   })
   @Post(':room_id/message')
   @Serialize(ChatMessageDto)
-  @UseGuards(RoomGuard)
+  @UseGuards(RoomParticipantGuard)
   async addMessage(
     @TargetedRoom() room: Room,
     @CurrentUser() user: User,
@@ -182,7 +182,7 @@ export class ChatController {
   })
   @Get(':room_id/message')
   @Serialize(RoomDto)
-  @UseGuards(RoomGuard)
+  @UseGuards(RoomParticipantGuard)
   async getMessages(@Param('room_id') room_id: string) {
     return await this.chatService.findOneWithMessages(room_id);
   }
