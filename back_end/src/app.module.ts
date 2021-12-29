@@ -66,7 +66,7 @@ export class AppModule {
       .apply(
         cookieSession({
           keys: [this.configService.get('COOKIE_KEY')],
-          sameSite: 'Lax'
+          sameSite: 'Lax',
         }),
       )
       .forRoutes('*');
@@ -75,6 +75,8 @@ export class AppModule {
      * to have access to the CurrentUser
      */
     consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
-    consumer.apply(TargetedRoomMiddleware).forRoutes(ChatController, MeController);
+    consumer
+      .apply(TargetedRoomMiddleware)
+      .forRoutes(ChatController, MeController);
   }
 }

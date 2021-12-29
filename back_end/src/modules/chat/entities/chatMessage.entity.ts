@@ -6,7 +6,7 @@ import {
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Room } from './room.entity';

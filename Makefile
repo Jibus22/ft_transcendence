@@ -1,6 +1,11 @@
 all:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ; docker-compose rm -fsv
 
+
+# usage: `make test TARGET=chat`
+test:
+	docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'jest --config ./test/jest-e2e.json --maxWorkers=1 --watch --verbose --testLocationInResults --testRegex="$(TARGET)"'
+
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
 
