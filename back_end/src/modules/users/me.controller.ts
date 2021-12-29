@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -142,16 +141,18 @@ export class MeController {
   @UseGuards(AuthGuard)
   @UseGuards(RoomPublicGuard)
   @ApiOperation({
-    summary:
-      'Join a public room',
+    summary: 'Join a public room with or without password',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description:
-      'successfully joined',
+    description: 'successfully joined',
   })
-  async joinRoom(@CurrentUser() user: User, @TargetedRoom() room: Room, @Body() body: {password: string}) {
-    return await this.chatService.joinRoom(user, room, body).catch(error => {
+  async joinRoom(
+    @CurrentUser() user: User,
+    @TargetedRoom() room: Room,
+    @Body() body: { password: string },
+  ) {
+    return await this.chatService.joinRoom(user, room, body).catch((error) => {
       if (error.status) {
         throw new HttpException(error, error.status);
       } else {

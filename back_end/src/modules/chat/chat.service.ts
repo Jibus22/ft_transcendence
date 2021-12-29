@@ -81,8 +81,7 @@ export class ChatService {
     participantsDto: CreateParticipantDto[],
     roomOwner: User,
   ) {
-
-    let participants = new Set(participantsDto.map(p => p.id));
+    let participants = new Set(participantsDto.map((p) => p.id));
     participants.add(roomOwner.id);
     return participants;
   }
@@ -120,7 +119,7 @@ export class ChatService {
   async findAllPublic() {
     return await this.repoRoom.find({
       relations: ['participants', 'participants.user'],
-      where: 'room.is_private = false'
+      where: 'room.is_private = false',
     });
   }
 
