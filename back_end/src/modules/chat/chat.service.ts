@@ -46,14 +46,14 @@ export class ChatService {
   }
 
   private async createParticipant(
-    participant: CreateParticipantDto,
+    participantId: string,
     room: Room,
     roomOwner: User,
   ) {
-    const user = await this.usersService.findOne(participant.id);
+    const user = await this.usersService.findOne(participantId);
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
-      const isOwner = roomOwner.id === participant.id;
+      const isOwner = roomOwner.id === participantId;
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       await this.repoParticipants.save(newParticipant).catch((error) => {
@@ -77,6 +77,16 @@ export class ChatService {
     });
   }
 
+  private cleanParticipants(
+    participantsDto: CreateParticipantDto[],
+    roomOwner: User,
+  ) {
+
+    let participants = new Set(participantsDto.map(p => p.id));
+    participants.add(roomOwner.id);
+    return participants;
+  }
+
   async create(currentUser: User, createRoomDto: CreateRoomDto) {
     // TODO can we encode it in DTO Transform?
     if (createRoomDto.password?.length) {
@@ -88,13 +98,15 @@ export class ChatService {
     }
 
     const room = await this.createRoom(createRoomDto);
-    await this.createParticipant(currentUser, room, currentUser);
-
-    for (let i = 0; i < createRoomDto.participants.length; i++) {
-      const participant = createRoomDto.participants[i];
-      if (participant.id !== currentUser.id) {
-        await this.createParticipant(participant, room, currentUser);
-      }
+    // await this.createParticipant(currentUser, room, currentUser);
+    const participants = this.cleanParticipants(
+      createRoomDto.participants,
+      currentUser,
+    );
+    // console.log(participants);
+    for (const p of participants) {
+      // console.log('add p:', p);
+      await this.createParticipant(p, room, currentUser);
     }
     return room;
   }
@@ -109,9 +121,12 @@ export class ChatService {
     const roomIds: { id: string }[] =
       await this.usersService.findRoomParticipations(user.id);
 
-    const rooms = await this.repoRoom.findByIds(roomIds.map(item => item.id), {
-      relations: ['participants', 'participants.user'],
-    });
+    const rooms = await this.repoRoom.findByIds(
+      roomIds.map((item) => item.id),
+      {
+        relations: ['participants', 'participants.user'],
+      },
+    );
     return rooms;
   }
 
@@ -164,7 +179,7 @@ export class ChatService {
       };
     }
     const roomOwner = room.participants.find((p) => p.is_owner);
-    return await this.createParticipant(user, room, roomOwner.user).catch(
+    return await this.createParticipant(user.id, room, roomOwner.user).catch(
       (error) => {
         throw {
           status: HttpStatus.BAD_REQUEST,
