@@ -19,6 +19,7 @@ import { TargetedRoomMiddleware } from './modules/chat/middleware/targeted-room.
 import { DevelopmentModule } from './modules/dev/development.module';
 import { User } from './modules/users/entities/users.entity';
 import { UserPhoto } from './modules/users/entities/users_photo.entity';
+import { MeController } from './modules/users/me.controller';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
@@ -74,6 +75,6 @@ export class AppModule {
      * to have access to the CurrentUser
      */
     consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
-    consumer.apply(TargetedRoomMiddleware).forRoutes(ChatController);
+    consumer.apply(TargetedRoomMiddleware).forRoutes(ChatController, MeController);
   }
 }

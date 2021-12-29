@@ -23,7 +23,7 @@ export class TargetedRoomMiddleware implements NestMiddleware {
 
     if (currentUser && targetedRoomId) {
       await this.chatService
-        .findOneWithRelations(targetedRoomId)
+        .findOneWithParticipants(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
           logger.log(`Room targeted: ${req.targetedRoom.id}`); // TODO remove debug

@@ -36,6 +36,18 @@ export class UsersService {
     });
   }
 
+  async findRoomParticipations(id: string) {
+    if (!id) {
+      return null;
+    }
+    return await this.repoUser.createQueryBuilder('user')
+    .where('user.id = :id', { id: id })
+    .innerJoin('user.room_participations', 'participations')
+    .innerJoin('participations.room', 'room')
+    .select('room.id', 'id')
+    .getRawMany();
+  }
+
   async find(user: Partial<User>) {
     return await this.repoUser.find({
       where: user,
