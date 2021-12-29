@@ -196,7 +196,8 @@ export class ChatService {
   }
 
   async leaveRoom(user: User, room: Room) {
-    throw new Error('Method not implemented.');
+    const participant = room.participants.find(p => p.user.id === user.id);
+    await this.repoParticipants.remove(participant);
   }
 
   /*

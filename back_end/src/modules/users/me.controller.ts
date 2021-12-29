@@ -162,20 +162,19 @@ export class MeController {
     });
   }
 
-  // @Delete('/rooms/:room_id')
-  // @UseGuards(AuthGuard)
-  // @Serialize(RoomDto)
-  // @ApiOperation({
-  //   summary:
-  //     'Get rooms in which the currently logged user is owner/moderator/participant',
-  // })
-  // @ApiResponse({ type: RoomDto })
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description:
-  //     'rooms in which the currently logged user is owner/moderator/participant',
-  // })
-  // async joinRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
-  //   return await this.chatService.joinRoom(user, room);
-  // }
+  @Delete('/rooms/:room_id')
+  @UseGuards(AuthGuard)
+  @Serialize(RoomDto)
+  @ApiOperation({
+    summary: 'Leave a joined room',
+  })
+  @ApiResponse({ type: RoomDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'room was left',
+  })
+  async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
+    return await this.chatService.leaveRoom(user, room);
+  }
 }

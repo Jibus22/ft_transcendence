@@ -73,6 +73,12 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       .send(bodyRequest);
   }
 
+  async function leaveRoom(tmpCookies: string[], room_id: string) {
+    return await request(app.getHttpServer())
+      .delete(`/me/rooms/${room_id}`)
+      .set('Cookie', tmpCookies);
+  }
+
   async function getRoomMessages(tmpCookies: string[], room_id: string) {
     return await request(app.getHttpServer())
       .get(`/room/${room_id}/message`)
@@ -574,54 +580,54 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       });
   });
 
+  async function getJoinedRooms() {
+    return await getUserRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some(
+          (p) => p.user.id === loggedUser.id && p.is_owner === false,
+        ),
+      );
+    });
+  }
+
   async function leaveManyRooms(
-    nbOfJoins: number,
-    publicRooms: RoomDto[],
+    nbOfLeaves: number,
     createdRooms: RandomRoom[],
   ) {
-    // let userRoomsLen = await (
-    //   await getUserRooms().then((r) => r.body as RoomDto[])
-    // ).length;
-    // for (let i = 0; i < nbOfJoins && publicRooms.length > 0; i++) {
-    //   const targetRoom = publicRooms.at(publicRooms.length - 1);
-    //   const originalRoom = createdRooms.find(
-    //     (cr) => cr.id === targetRoom.id,
-    //   );
-    //   await leaveRoom(cookies, targetRoom.id, {password: originalRoom.password})
-    //     .then((response) => {
-    //       expect(response.status).toBe(HttpStatus.OK);
-    //     });
-    //   publicRooms.pop();
-    //   const index = createdRooms.indexOf(originalRoom)
-    //   createdRooms.slice(index, index);
-    //   const newUserRoomsLen = (
-    //     await getUserRooms().then((r) => r.body as RoomDto[])
-    //   ).length;
-    //   expect(newUserRoomsLen).toBe(userRoomsLen + 1);
-    //   userRoomsLen = newUserRoomsLen;
-    // }
+    const joinedRooms = await getJoinedRooms();
+    let joinedRoomsLen = joinedRooms.length;
+
+    for (let i = 0; i < nbOfLeaves && joinedRooms.length > 0; i++) {
+      const targetRoom = joinedRooms.at(joinedRooms.length - 1);
+      const originalRoom = createdRooms.find((cr) => cr.id === targetRoom.id);
+      await leaveRoom(cookies, targetRoom.id).then((response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+      });
+      joinedRooms.pop();
+      const index = createdRooms.indexOf(originalRoom);
+      createdRooms.slice(index, index);
+      const newjoinedRoomsLen = await (await getJoinedRooms()).length;
+
+      expect(newjoinedRoomsLen).toBe(joinedRoomsLen - 1);
+      joinedRoomsLen = newjoinedRoomsLen;
+    }
   }
 
   it('creates random rooms and leave some', async () => {
     let createdRooms: RandomRoom[];
 
-    await generateManyRandomRooms(nbOfRooms)
-      .then(async (rooms: RandomRoom[]) => {
+    await generateManyRandomRooms(nbOfRooms).then(
+      async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
         expect(loggedUser.id).toBeDefined();
         expect(loggedUser.id.length).toBeGreaterThan(0);
-        return await getUserRooms();
-      })
-      .then(async (response) => {
-        const joinedRooms = (response.body as RoomDto[]).filter((r) =>
-          r.participants.some(
-            (p) => p.user.id === loggedUser.id && p.is_owner === false,
-          ),
-        );
-        expect(joinedRooms.length).not.toBe(0);
 
-        await leaveManyRooms(joinedRooms.length, joinedRooms, createdRooms);
-      });
+        const joinedRooms = await getJoinedRooms();
+        expect(joinedRooms.length).not.toBe(0);
+        await leaveManyRooms(joinedRooms.length, createdRooms);
+      },
+    );
   });
 }); // <<< end of describBlock
