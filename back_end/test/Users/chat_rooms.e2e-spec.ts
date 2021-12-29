@@ -33,9 +33,10 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       });
     expect(users.length).toEqual(commons.testUserBatch.length);
 
-    cookies = await commons
-      .logUser(loggedUser.login)
-      .then((response) => commons.getCookies(response));
+    cookies = await commons.logUser(loggedUser.login).then((response) => {
+      loggedUser.id = response.body.id;
+      return commons.getCookies(response);
+    });
     expect(cookies.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -251,6 +252,10 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         );
         expect(typeof element.is_password_protected).toBe('boolean');
         expect(element).toHaveProperty('is_private', rooms[index].is_private);
+        const owner = element.participants.filter(
+          (p) => p.user.id === loggedUser.id && p.is_owner === true,
+        );
+        expect(owner.length).toBe(1);
       });
     });
   });
@@ -268,21 +273,23 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         const participants: Participant[] = resp.body[0].participants;
         expect(participants).toBeDefined();
         expect(participants.length).toEqual(2);
-        expect(
-          participants.some(
-            (p) => p.id === loggedUser.id && p.is_owner === true,
-          ),
+        const owner = participants.filter(
+          (p) => p.user.id === loggedUser.id && p.is_owner === true,
         );
+        expect(owner.length).toBe(1);
       });
   });
 
-  it('creates room with twice the same user', async () => {
+  it('creates room with 3 times the same user', async () => {
+    const createdParticipants = [
+      { id: users[1].id },
+      { id: users[2].id },
+      { id: users[2].id },
+      { id: users[2].id }, // <<<<< same user twice
+    ];
+
     await createSimpleRoom({
-      participants: [
-        { id: users[1].id },
-        { id: users[2].id },
-        { id: users[2].id },
-      ],
+      participants: createdParticipants,
       is_private: true,
     })
       .then(async (resp) => {
@@ -292,12 +299,12 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       .then((resp) => {
         const participants: Participant[] = resp.body[0].participants;
         expect(participants).toBeDefined();
-        expect(participants.length).toEqual(4);
-        expect(
-          participants.some(
-            (p) => p.id === loggedUser.id && p.is_owner === true,
-          ),
+        expect(participants.length).toEqual(createdParticipants.length - 2 + 1);
+        // - 2 for 2 extra inserts +1 for owner added to participants
+        const owner = participants.filter(
+          (p) => p.user.id === loggedUser.id && p.is_owner === true,
         );
+        expect(owner.length).toBe(1);
       });
   });
 
@@ -329,7 +336,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
           expect(returnedRoom.participants.length).toBe(expectedLen);
           returnedRoom.participants.forEach((participant) => {
             expect(
-              room.participants.some(p => p.id === participant.id),
+              room.participants.some((p) => p.id === participant.id),
             ).not.toBe(-1);
           });
         });
@@ -339,26 +346,23 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   it("creates many random rooms and get user's rooms list on /me/rooms", async () => {
     const nbOfRooms = 80;
     let createdRooms: RandomRoom[];
-    let loggedUserId: CreatedParticipant = { id: '' };
 
     await generateManyRandomRooms(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
-        return commons.getMe(cookies);
-      })
-      .then(async (response) => {
-        loggedUserId.id = response.body.id;
-        expect(loggedUserId).toBeDefined();
-        expect(loggedUserId.id.length).toBeGreaterThan(0);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
         return await getUserRooms();
       })
       .then(async (response) => {
         const returnedRooms: RoomDto[] = response.body;
         const expectedRooms: RandomRoom[] = createdRooms.filter(
           (room: RandomRoom) => {
-            return room.participants.some(p => p.id === loggedUserId.id) ||
-              room.owner_created.id === loggedUserId.id;
+            return (
+              room.participants.some((p) => p.id === loggedUser.id) ||
+              room.owner_created.id === loggedUser.id
+            );
           },
         );
         expect(returnedRooms.length).toBe(expectedRooms.length);
@@ -376,7 +380,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   it('creates random rooms and post a message a room owned and fetch it', async () => {
     const nbOfRooms = 50;
     let createdRooms: RandomRoom[];
-    let loggedUserId: CreatedParticipant = { id: '' };
     let testMessage: string = faker.lorem.paragraph();
     let destRoom: RandomRoom;
 
@@ -384,15 +387,11 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
-        return commons.getMe(cookies);
-      })
-      .then(async (response) => {
-        loggedUserId.id = response.body.id;
-        expect(loggedUserId).toBeDefined();
-        expect(loggedUserId.id.length).toBeGreaterThan(0);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
 
         destRoom = createdRooms.find(
-          (r) => r.owner_created.id === loggedUserId.id,
+          (r) => r.owner_created.id === loggedUser.id,
         );
         return await postMessages(cookies, destRoom.id, {
           body: testMessage,
@@ -401,7 +400,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.CREATED);
         expect(response.body).toHaveProperty('body', testMessage);
-        expect(response.body).toHaveProperty('sender.id', loggedUserId.id);
+        expect(response.body).toHaveProperty('sender.id', loggedUser.id);
         expect(response.body).toHaveProperty('body', testMessage);
         expect(response.body).toHaveProperty('timestamp');
         return await getRoomMessages(cookies, destRoom.id);
@@ -412,7 +411,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         expect(response.body).toHaveProperty('messages[0].body', testMessage);
         expect(response.body).toHaveProperty(
           'messages[0].sender.id',
-          loggedUserId.id,
+          loggedUser.id,
         );
         expect(response.body).toHaveProperty('messages[0].timestamp');
       });
@@ -421,24 +420,19 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   it('creates random rooms and try to POST message to a room NOT owned NOR participant of', async () => {
     const nbOfRooms = 50;
     let createdRooms: RandomRoom[];
-    let loggedUserId: CreatedParticipant = { id: '' };
     let testMessage: string = faker.lorem.paragraph();
 
     await generateManyRandomRooms(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
-        return commons.getMe(cookies);
-      })
-      .then(async (response) => {
-        loggedUserId.id = response.body.id;
-        expect(loggedUserId).toBeDefined();
-        expect(loggedUserId.id.length).toBeGreaterThan(0);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
 
         const destRoom = createdRooms.find(
           (r) =>
-            r.owner_created.id !== loggedUserId.id &&
-            !r.participants.some((p) => p.id === loggedUserId.id),
+            r.owner_created.id !== loggedUser.id &&
+            !r.participants.some((p) => p.id === loggedUser.id),
         );
         return await postMessages(cookies, destRoom.id, {
           body: testMessage,
@@ -452,24 +446,19 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   it('creates random rooms and try to GET message a room NOT owned NOR participant of', async () => {
     const nbOfRooms = 50;
     let createdRooms: RandomRoom[];
-    let loggedUserId: CreatedParticipant = { id: '' };
     let testMessage: string = faker.lorem.paragraph();
 
     await generateManyRandomRooms(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
-        return commons.getMe(cookies);
-      })
-      .then(async (response) => {
-        loggedUserId.id = response.body.id;
-        expect(loggedUserId).toBeDefined();
-        expect(loggedUserId.id.length).toBeGreaterThan(0);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
 
         const destRoom = createdRooms.find(
           (r) =>
-            r.owner_created.id !== loggedUserId.id &&
-            !r.participants.some((p) => p.id === loggedUserId.id),
+            r.owner_created.id !== loggedUser.id &&
+            !r.participants.some((p) => p.id === loggedUser.id),
         );
         return await getRoomMessages(cookies, destRoom.id);
       })
