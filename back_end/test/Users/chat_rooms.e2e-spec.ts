@@ -49,6 +49,50 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   ===================================================================
   */
 
+  async function getJoinedRooms() {
+    return await getUserRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some(
+          (p) => p.user.id === loggedUser.id && p.is_owner === false,
+        ),
+      );
+    });
+  }
+
+  async function getAllUnjoinedRooms() {
+    return await getAllRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some(
+          (p) => !r.participants.some((p) => p.user.id === loggedUser.id),
+        ),
+      );
+    });
+  }
+
+  async function getPublicUnjoinedRooms() {
+    return await getPublicRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some(
+          (p) => !r.participants.some((p) => p.user.id === loggedUser.id),
+        ),
+      );
+    });
+  }
+
+  async function getOwnedRooms() {
+    return await getUserRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some((p) =>
+          r.participants.some((p) => p.is_owner && p.user.id === loggedUser.id),
+        ),
+      );
+    });
+  }
+
   async function createSimpleRoom(bodyRequest) {
     return await request(app.getHttpServer())
       .post('/room')
@@ -521,7 +565,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        JOIN / LEAVE ROOMS
+        JOIN ROOM
   -------------------------------------------------------------------
   ===================================================================
   */
@@ -558,18 +602,14 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   it('creates random rooms and join a public room', async () => {
     let createdRooms: RandomRoom[];
 
-    await generateManyRandomRooms(nbOfRooms)
-      .then(async (rooms: RandomRoom[]) => {
+    await generateManyRandomRooms(nbOfRooms).then(
+      async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
         expect(loggedUser.id).toBeDefined();
         expect(loggedUser.id.length).toBeGreaterThan(0);
-        return await getPublicRooms();
-      })
-      .then(async (response) => {
-        const unjoindedPublicRooms = (response.body as RoomDto[]).filter(
-          (r) => !r.participants.some((p) => p.user.id === loggedUser.id),
-        );
+
+        const unjoindedPublicRooms = await getPublicUnjoinedRooms();
         expect(unjoindedPublicRooms.length).not.toBe(0);
 
         await joinManyRooms(
@@ -577,19 +617,17 @@ describe('chat controller: chat rooms routes (e2e)', () => {
           unjoindedPublicRooms,
           createdRooms,
         );
-      });
+      },
+    );
   });
 
-  async function getJoinedRooms() {
-    return await getUserRooms().then((response) => {
-      const rooms = response.body as RoomDto[];
-      return rooms.filter((r) =>
-        r.participants.some(
-          (p) => p.user.id === loggedUser.id && p.is_owner === false,
-        ),
-      );
-    });
-  }
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        LEAVE ROOM
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
   async function leaveManyRooms(
     nbOfLeaves: number,
@@ -627,6 +665,68 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         const joinedRooms = await getJoinedRooms();
         expect(joinedRooms.length).not.toBe(0);
         await leaveManyRooms(joinedRooms.length, createdRooms);
+      },
+    );
+  });
+
+  it('creates random rooms and leave rooms which user is NOT participant', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms).then(
+      async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        const unjoinedRooms = await getAllUnjoinedRooms();
+        const userRoomsLen: number = await getUserRooms().then(
+          (r) => r.body.length,
+        );
+
+        expect(unjoinedRooms.length).not.toBe(0);
+        await Promise.all(
+          unjoinedRooms.map(async (r) => {
+            await leaveRoom(cookies, r.id).then((response) => {
+              expect(response.status).toBe(HttpStatus.FORBIDDEN);
+            });
+          }),
+        ).then(async () => {
+          expect(await getUserRooms().then((r) => r.body.length)).toBe(
+            userRoomsLen,
+          );
+        });
+      },
+    );
+  });
+
+  it.only('creates random rooms and leave rooms which user is OWNER', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms).then(
+      async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        const ownedRooms = await getOwnedRooms();
+        const userRoomsLen: number = await getOwnedRooms().then(
+          (r) => r.length,
+        );
+
+        expect(ownedRooms.length).not.toBe(0);
+        await Promise.all(
+          ownedRooms.map(async (r) => {
+            await leaveRoom(cookies, r.id).then((response) => {
+              expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+            });
+          }),
+        ).then(async () => {
+          expect(await getOwnedRooms().then((r) => r.length)).toBe(
+            userRoomsLen,
+          );
+        });
       },
     );
   });

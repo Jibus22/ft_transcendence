@@ -26,14 +26,14 @@ export class TargetedRoomMiddleware implements NestMiddleware {
         .findOneWithParticipants(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
-          logger.log(`Room targeted: ${req.targetedRoom.id}`); // TODO remove debug
+          logger.log(`Room targeted: ${req?.targetedRoom?.id}`); // TODO remove debug
         })
         .catch((error) => {
           logger.log('Could not find Room targeted: ', error); // TODO remove debug
         });
     } else {
-      if (!currentUser) logger.log('No user id in session');
       if (!targetedRoomId) logger.log('No targeted room request');
+      if (!currentUser) logger.log('No user id in session');
     }
 
     next();

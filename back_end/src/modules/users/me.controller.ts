@@ -9,16 +9,17 @@ import {
   Patch,
   Res,
   Session,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { RoomPublicGuard } from '../../guards/roomPublic.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { ChatService } from '../chat/chat.service';
@@ -164,6 +165,7 @@ export class MeController {
 
   @Delete('/rooms/:room_id')
   @UseGuards(AuthGuard)
+  @UseGuards(RoomParticipantGuard)
   @Serialize(RoomDto)
   @ApiOperation({
     summary: 'Leave a joined room',
@@ -171,10 +173,16 @@ export class MeController {
   @ApiResponse({ type: RoomDto })
   @ApiResponse({
     status: HttpStatus.OK,
-    description:
-      'room was left',
+    description: 'room was left',
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
-    return await this.chatService.leaveRoom(user, room);
+    return await this.chatService.leaveRoom(user, room)
+    .catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      } else {
+        throw new BadRequestException(error);
+      }
+    });
   }
 }
