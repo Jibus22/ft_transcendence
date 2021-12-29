@@ -14,7 +14,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   let commons: CommonTest;
   let users: User[];
   let cookies: string[];
-  let loggedUser;
+  let loggedUser: Partial<User>;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -60,6 +60,17 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     return await request(app.getHttpServer())
       .get('/room/all')
       .set('Cookie', cookies);
+  }
+
+  async function joinRoom(
+    tmpCookies: string[],
+    room_id: string,
+    bodyRequest: { password: string },
+  ) {
+    return await request(app.getHttpServer())
+      .patch(`/me/rooms/${room_id}`)
+      .set('Cookie', tmpCookies)
+      .send(bodyRequest);
   }
 
   async function getRoomMessages(tmpCookies: string[], room_id: string) {
@@ -116,7 +127,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       owner_created: { id: '' },
       participants: participants,
       is_private: Math.random() < 0.5,
-      password: Math.random() < 0.3 ? 'fake_password' : '',
+      password: Math.random() < 0.3 ? faker.internet.password() : '',
     };
   }
 
@@ -237,17 +248,14 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         const returnedRooms: RoomDto[] = response.body;
         const expectedRooms: RandomRoom[] = createdRooms.filter(
           (room: RandomRoom) => {
-            return (
-              room.is_private === false
-            );
+            return room.is_private === false;
           },
         );
         expect(returnedRooms.length).toBe(expectedRooms.length);
-        const privateRooms = returnedRooms.filter(r => r.is_private === true);
+        const privateRooms = returnedRooms.filter((r) => r.is_private === true);
         expect(privateRooms.length).toBe(0);
       });
   });
-
 
   /*
   ===================================================================
@@ -410,12 +418,12 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   });
 
   /*
-    ===================================================================
-    -------------------------------------------------------------------
-          MESSAGES
-    -------------------------------------------------------------------
-    ===================================================================
-    */
+  ===================================================================
+  -------------------------------------------------------------------
+        MESSAGES
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
   it('creates random rooms and post a message a room owned and fetch it', async () => {
     let createdRooms: RandomRoom[];
@@ -503,4 +511,117 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         expect(response.status).toBe(HttpStatus.FORBIDDEN);
       });
   });
-});
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        JOIN / LEAVE ROOMS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async function joinManyRooms(
+    nbOfJoins: number,
+    publicRooms: RoomDto[],
+    createdRooms: RandomRoom[],
+  ) {
+    let userRoomsLen = await (
+      await getUserRooms().then((r) => r.body as RoomDto[])
+    ).length;
+
+    for (let i = 0; i < nbOfJoins && publicRooms.length > 0; i++) {
+      const targetRoom = publicRooms.at(publicRooms.length - 1);
+      const originalRoom = createdRooms.find((cr) => cr.id === targetRoom.id);
+      await joinRoom(cookies, targetRoom.id, {
+        password: originalRoom.password,
+      }).then((response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+      });
+      publicRooms.pop();
+      const index = createdRooms.indexOf(originalRoom);
+      createdRooms.slice(index, index);
+
+      const newUserRoomsLen = (
+        await getUserRooms().then((r) => r.body as RoomDto[])
+      ).length;
+      expect(newUserRoomsLen).toBe(userRoomsLen + 1);
+      userRoomsLen = newUserRoomsLen;
+    }
+  }
+
+  it('creates random rooms and join a public room', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+        return await getPublicRooms();
+      })
+      .then(async (response) => {
+        const unjoindedPublicRooms = (response.body as RoomDto[]).filter(
+          (r) => !r.participants.some((p) => p.user.id === loggedUser.id),
+        );
+        expect(unjoindedPublicRooms.length).not.toBe(0);
+
+        await joinManyRooms(
+          unjoindedPublicRooms.length,
+          unjoindedPublicRooms,
+          createdRooms,
+        );
+      });
+  });
+
+  async function leaveManyRooms(
+    nbOfJoins: number,
+    publicRooms: RoomDto[],
+    createdRooms: RandomRoom[],
+  ) {
+    // let userRoomsLen = await (
+    //   await getUserRooms().then((r) => r.body as RoomDto[])
+    // ).length;
+    // for (let i = 0; i < nbOfJoins && publicRooms.length > 0; i++) {
+    //   const targetRoom = publicRooms.at(publicRooms.length - 1);
+    //   const originalRoom = createdRooms.find(
+    //     (cr) => cr.id === targetRoom.id,
+    //   );
+    //   await leaveRoom(cookies, targetRoom.id, {password: originalRoom.password})
+    //     .then((response) => {
+    //       expect(response.status).toBe(HttpStatus.OK);
+    //     });
+    //   publicRooms.pop();
+    //   const index = createdRooms.indexOf(originalRoom)
+    //   createdRooms.slice(index, index);
+    //   const newUserRoomsLen = (
+    //     await getUserRooms().then((r) => r.body as RoomDto[])
+    //   ).length;
+    //   expect(newUserRoomsLen).toBe(userRoomsLen + 1);
+    //   userRoomsLen = newUserRoomsLen;
+    // }
+  }
+
+  it('creates random rooms and leave some', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const joinedRooms = (response.body as RoomDto[]).filter((r) =>
+          r.participants.some(
+            (p) => p.user.id === loggedUser.id && p.is_owner === false,
+          ),
+        );
+        expect(joinedRooms.length).not.toBe(0);
+
+        await leaveManyRooms(joinedRooms.length, joinedRooms, createdRooms);
+      });
+  });
+}); // <<< end of describBlock

@@ -174,10 +174,10 @@ export class ChatService {
   ===================================================================
   */
 
-  async joinRoom(user: User, room: Room, body: { password: string }) {
+  async joinRoom(user: User, room: Room, body: { password?: string }) {
     if (
-      room.password.length &&
-      (await this.checkPassword(room.password, body.password)) === false
+      room.password?.length &&
+      (await this.checkPassword(room.password, body?.password)) === false
     ) {
       throw {
         status: HttpStatus.FORBIDDEN,

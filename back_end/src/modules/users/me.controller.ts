@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -150,7 +151,7 @@ export class MeController {
   async joinRoom(
     @CurrentUser() user: User,
     @TargetedRoom() room: Room,
-    @Body() body: { password: string },
+    @Body() body: { password?: string },
   ) {
     return await this.chatService.joinRoom(user, room, body).catch((error) => {
       if (error.status) {
