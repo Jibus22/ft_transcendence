@@ -33,7 +33,7 @@ export class CurrentUserMiddleware implements NestMiddleware {
       await this.usersService
         .findOneWithRelations(userId)
         .then((user) => {
-          logger.log(`By user: ${user.login}`); // TODO remove debug
+          logger.log(`By user: ${user?.login}`); // TODO remove debug
           req.currentUser = user;
         })
         .catch((error) => {
