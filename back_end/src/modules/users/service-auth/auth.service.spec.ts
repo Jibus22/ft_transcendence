@@ -11,10 +11,10 @@ describe('AuthService', () => {
     // create fake copy of users service
     const users: User[] = [];
     fakeUsersService = {
-      find: (login: string) => {
-        const filteredUsers = users.filter((users) => users.login === login);
-        return Promise.resolve(filteredUsers);
-      },
+      // find: (login: string) => {
+      //   const filteredUsers = users.filter((users) => users.login === login);
+      //   return Promise.resolve(filteredUsers);
+      // },
 
       // create: (login: string, login_42: string) => {
       // 	const user = { login, login_42} as User;

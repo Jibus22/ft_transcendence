@@ -38,30 +38,22 @@ export class ChatService {
     return salt + '.' + hash.toString('hex');
   }
 
-  /*
-    // if (room.password.length &&
-    //   (await this.validatePassword(room.password, messageDto.password)) === false) {
-    //     throw {
-    //       status: HttpStatus.BAD_REQUEST,
-    //       error: 'invalid password',
-    //     };
-    // }
-  private async validatePassword(encodedPassword: string, userEntry: string) {
+  private async checkPassword(encodedPassword: string, userEntry: string) {
     const [salt, storedHash] = encodedPassword.split('.');
 
     const hash = (await scrypt(userEntry, salt, 32)) as Buffer;
     return storedHash === hash.toString('hex');
   }
-*/
 
   private async createParticipant(
     participant: CreateParticipantDto,
     room: Room,
-    isOwner: boolean,
+    roomOwner: User,
   ) {
     const user = await this.usersService.findOne(participant.id);
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
+      const isOwner = roomOwner.id === participant.id;
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       await this.repoParticipants.save(newParticipant).catch((error) => {
@@ -96,40 +88,38 @@ export class ChatService {
     }
 
     const room = await this.createRoom(createRoomDto);
-    await this.createParticipant(currentUser, room, true);
+    await this.createParticipant(currentUser, room, currentUser);
 
     for (let i = 0; i < createRoomDto.participants.length; i++) {
       const participant = createRoomDto.participants[i];
       if (participant.id !== currentUser.id) {
-        await this.createParticipant(participant, room, false);
+        await this.createParticipant(participant, room, currentUser);
       }
     }
     return room;
   }
 
   async findAll() {
-    return await this.repoRoom
-      .createQueryBuilder('room')
-      .leftJoinAndSelect('room.participants', 'participants')
-      .leftJoinAndSelect('participants.user', 'user')
-      .getMany();
+    return await this.repoRoom.find({
+      relations: ['participants', 'participants.user'],
+    });
   }
 
   async findUserRoomList(user: User) {
-    return await this.repoRoom
-      .createQueryBuilder('room')
-      .leftJoinAndSelect('room.participants', 'participants')
-      .leftJoinAndSelect('participants.user', 'user')
-      .orWhere('room.is_private = false')
-      .orWhere('user.id = :id', { id: user.id })
-      .getMany();
+    const roomIds: { id: string }[] =
+      await this.usersService.findRoomParticipations(user.id);
+
+    const rooms = await this.repoRoom.findByIds(roomIds.map(item => item.id), {
+      relations: ['participants', 'participants.user'],
+    });
+    return rooms;
   }
 
   async findOne(id: string) {
     return this.repoRoom.findOne(id);
   }
 
-  async findOneWithRelations(id: string) {
+  async findOneWithParticipants(id: string) {
     return await this.repoRoom
       .createQueryBuilder('room')
       .where('room.id = :id', { id })
@@ -156,12 +146,45 @@ export class ChatService {
   }
 
   /*
-    ===================================================================
-    -------------------------------------------------------------------
-          MESSAGES METHODS
-    -------------------------------------------------------------------
-    ===================================================================
-    */
+  ===================================================================
+  -------------------------------------------------------------------
+        ROOM PARTICIPATION
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async joinRoom(user: User, room: Room, body: { password: string }) {
+    if (
+      room.password.length &&
+      (await this.checkPassword(room.password, body.password)) === false
+    ) {
+      throw {
+        status: HttpStatus.FORBIDDEN,
+        error: 'invalid password',
+      };
+    }
+    const roomOwner = room.participants.find((p) => p.is_owner);
+    return await this.createParticipant(user, room, roomOwner.user).catch(
+      (error) => {
+        throw {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'could not save to database',
+        };
+      },
+    );
+  }
+
+  async leaveRoom(user: User, room: Room) {
+    throw new Error('Method not implemented.');
+  }
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        MESSAGES METHODS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
   async createMessage(
     room: Room,

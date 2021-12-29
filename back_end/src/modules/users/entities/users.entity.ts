@@ -62,7 +62,7 @@ export class User {
   is_in_game: boolean;
 
   @OneToMany((type) => Participant, (participant) => participant.user)
-  rooms_participation: Participant[];
+  room_participations: Participant[];
 
   /*
    ** Lifecycle functions
