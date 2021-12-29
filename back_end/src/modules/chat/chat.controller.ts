@@ -70,7 +70,6 @@ export class ChatController {
     });
   }
 
-  // @UseGuards(SiteOwnerGuard) // TODO implement
   @ApiOperation({
     summary: 'Get all existing rooms',
   })
@@ -83,10 +82,25 @@ export class ChatController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'User must role is not high enough',
   })
-  @Get()
+  @Get('/all')
+  // @UseGuards(SiteOwnerGuard) // TODO implement !!
   @Serialize(RoomDto)
   findAll() {
     return this.chatService.findAll();
+  }
+
+  @ApiOperation({
+    summary: 'Get all public rooms',
+  })
+  @ApiResponse({ type: RoomDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Every public rooms, joined or not by the logged user',
+  })
+  @Get('/publics')
+  @Serialize(RoomDto)
+  findAllPublic() {
+    return this.chatService.findAllPublic();
   }
 
   /*

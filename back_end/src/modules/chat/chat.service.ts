@@ -117,6 +117,13 @@ export class ChatService {
     });
   }
 
+  async findAllPublic() {
+    return await this.repoRoom.find({
+      relations: ['participants', 'participants.user'],
+      where: 'room.is_private = false'
+    });
+  }
+
   async findUserRoomList(user: User) {
     const roomIds: { id: string }[] =
       await this.usersService.findRoomParticipations(user.id);

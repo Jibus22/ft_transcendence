@@ -9,6 +9,7 @@ import { CommonTest } from '../helpers';
 var faker = require('faker');
 
 describe('chat controller: chat rooms routes (e2e)', () => {
+  const nbOfRooms = 50;
   let app: INestApplication;
   let commons: CommonTest;
   let users: User[];
@@ -57,7 +58,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
 
   async function getAllRooms() {
     return await request(app.getHttpServer())
-      .get('/room')
+      .get('/room/all')
       .set('Cookie', cookies);
   }
 
@@ -81,6 +82,12 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   async function getUserRooms() {
     return await request(app.getHttpServer())
       .get('/me/rooms')
+      .set('Cookie', cookies);
+  }
+
+  async function getPublicRooms() {
+    return await request(app.getHttpServer())
+      .get('/room/publics')
       .set('Cookie', cookies);
   }
 
@@ -113,10 +120,10 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     };
   }
 
-  async function generateManyRandomRooms(nbOfRooms: number) {
+  async function generateManyRandomRooms(nbRoomTested: number) {
     let createdRooms: RandomRoom[] = [];
 
-    for (let i = 0; i < nbOfRooms; i++) {
+    for (let i = 0; i < nbRoomTested; i++) {
       const ran = Math.floor((Math.random() * 100) % users.length);
       let roomOwnerId: { id: string };
       const tmpCookie = await commons
@@ -206,6 +213,41 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
     });
   });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+  Get PUBLIC All Rooms
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  it('creates random rooms and get only public rooms', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+        return await getPublicRooms();
+      })
+      .then(async (response) => {
+        const returnedRooms: RoomDto[] = response.body;
+        const expectedRooms: RandomRoom[] = createdRooms.filter(
+          (room: RandomRoom) => {
+            return (
+              room.is_private === false
+            );
+          },
+        );
+        expect(returnedRooms.length).toBe(expectedRooms.length);
+        const privateRooms = returnedRooms.filter(r => r.is_private === true);
+        expect(privateRooms.length).toBe(0);
+      });
+  });
+
 
   /*
   ===================================================================
@@ -309,7 +351,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   });
 
   it('creates many random rooms', async () => {
-    const nbOfRooms = 80;
     let createdRooms: RandomRoom[];
 
     await generateManyRandomRooms(nbOfRooms)
@@ -344,7 +385,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   });
 
   it("creates many random rooms and get user's rooms list on /me/rooms", async () => {
-    const nbOfRooms = 80;
     let createdRooms: RandomRoom[];
 
     await generateManyRandomRooms(nbOfRooms)
@@ -378,7 +418,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     */
 
   it('creates random rooms and post a message a room owned and fetch it', async () => {
-    const nbOfRooms = 50;
     let createdRooms: RandomRoom[];
     let testMessage: string = faker.lorem.paragraph();
     let destRoom: RandomRoom;
@@ -418,7 +457,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   });
 
   it('creates random rooms and try to POST message to a room NOT owned NOR participant of', async () => {
-    const nbOfRooms = 50;
     let createdRooms: RandomRoom[];
     let testMessage: string = faker.lorem.paragraph();
 
@@ -444,7 +482,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   });
 
   it('creates random rooms and try to GET message a room NOT owned NOR participant of', async () => {
-    const nbOfRooms = 50;
     let createdRooms: RandomRoom[];
     let testMessage: string = faker.lorem.paragraph();
 
