@@ -6,7 +6,7 @@ import {
   Column,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ChatMessage } from './chatMessage.entity';
 import { Participant } from './participant.entity';

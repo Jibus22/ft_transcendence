@@ -9,7 +9,15 @@ import { Participant } from './entities/participant.entity';
 import { Room } from './entities/room.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Room, User, ChatMessage, Participant, ChatMessage])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Room,
+      User,
+      ChatMessage,
+      Participant,
+      ChatMessage,
+    ]),
+  ],
   controllers: [ChatController],
   providers: [UsersService, ChatService],
   exports: [ChatService],

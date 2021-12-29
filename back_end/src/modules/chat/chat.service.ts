@@ -81,8 +81,7 @@ export class ChatService {
     participantsDto: CreateParticipantDto[],
     roomOwner: User,
   ) {
-
-    let participants = new Set(participantsDto.map(p => p.id));
+    let participants = new Set(participantsDto.map((p) => p.id));
     participants.add(roomOwner.id);
     return participants;
   }
@@ -114,6 +113,13 @@ export class ChatService {
   async findAll() {
     return await this.repoRoom.find({
       relations: ['participants', 'participants.user'],
+    });
+  }
+
+  async findAllPublic() {
+    return await this.repoRoom.find({
+      relations: ['participants', 'participants.user'],
+      where: 'room.is_private = false',
     });
   }
 
@@ -168,10 +174,10 @@ export class ChatService {
   ===================================================================
   */
 
-  async joinRoom(user: User, room: Room, body: { password: string }) {
+  async joinRoom(user: User, room: Room, body: { password?: string }) {
     if (
-      room.password.length &&
-      (await this.checkPassword(room.password, body.password)) === false
+      room.password?.length &&
+      (await this.checkPassword(room.password, body?.password)) === false
     ) {
       throw {
         status: HttpStatus.FORBIDDEN,
@@ -190,7 +196,8 @@ export class ChatService {
   }
 
   async leaveRoom(user: User, room: Room) {
-    throw new Error('Method not implemented.');
+    const participant = room.participants.find(p => p.user.id === user.id);
+    await this.repoParticipants.remove(participant);
   }
 
   /*
