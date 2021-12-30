@@ -1,8 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import exp from 'constants';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
+import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
+import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
+import { UpdateParticipantDto } from '../../src/modules/chat/dto/update-participant.dto';
 import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
@@ -82,12 +87,38 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     });
   }
 
+  async function getPublicPasswordProtectedUnjoinedRooms() {
+    return await getPublicRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter(
+        (r) =>
+          r.is_password_protected &&
+          r.participants.some(
+            (p) => !r.participants.some((p) => p.user.id === loggedUser.id),
+          ),
+      );
+    });
+  }
+
   async function getOwnedRooms() {
     return await getUserRooms().then((response) => {
       const rooms = response.body as RoomDto[];
       return rooms.filter((r) =>
         r.participants.some((p) =>
           r.participants.some((p) => p.is_owner && p.user.id === loggedUser.id),
+        ),
+      );
+    });
+  }
+
+  async function getParticipatingNotOwnedRooms() {
+    return await getUserRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some((p) =>
+          r.participants.some(
+            (p) => p.is_owner === false && p.user.id === loggedUser.id,
+          ),
         ),
       );
     });
@@ -113,6 +144,17 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   ) {
     return await request(app.getHttpServer())
       .patch(`/me/rooms/${room_id}`)
+      .set('Cookie', tmpCookies)
+      .send(bodyRequest);
+  }
+
+  async function updateModerators(
+    tmpCookies: string[],
+    room_id: string,
+    bodyRequest: UpdateParticipantDto,
+  ) {
+    return await request(app.getHttpServer())
+      .patch(`/room/${room_id}/moderator`)
       .set('Cookie', tmpCookies)
       .send(bodyRequest);
   }
@@ -475,7 +517,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   ===================================================================
   */
 
-  it('creates random rooms and post a message a room owned and fetch it', async () => {
+  it('creates random rooms and post a message to a room owned by user, and fetch it', async () => {
     let createdRooms: RandomRoom[];
     let testMessage: string = faker.lorem.paragraph();
     let destRoom: RandomRoom;
@@ -496,7 +538,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.CREATED);
-        expect(response.body).toHaveProperty('body', testMessage);
         expect(response.body).toHaveProperty('sender.id', loggedUser.id);
         expect(response.body).toHaveProperty('body', testMessage);
         expect(response.body).toHaveProperty('timestamp');
@@ -504,13 +545,58 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
-        expect(response.body.messages).toHaveLength(1);
-        expect(response.body).toHaveProperty('messages[0].body', testMessage);
-        expect(response.body).toHaveProperty(
-          'messages[0].sender.id',
-          loggedUser.id,
+        const messages: ChatMessageDto[] = response.body;
+        expect(messages).toHaveLength(1);
+        expect(messages[0]).toHaveProperty('body', testMessage);
+        expect(messages[0]).toHaveProperty('sender.id', loggedUser.id);
+        expect(messages[0]).toHaveProperty('timestamp');
+      });
+  });
+
+  it('creates a room and post MANY messages, and fetch them', async () => {
+    let createdRoom: RoomDto;
+
+    const randomMessages: createMessageDto[] = [];
+    while (randomMessages.length < 100) {
+      randomMessages.push({ body: faker.lorem.text() as string });
+    }
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        createdRoom = response.body;
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        await Promise.all(
+          randomMessages.map(async (message) => {
+            await postMessages(cookies, createdRoom.id, message).then(
+              async (response) => {
+                expect(response.status).toBe(HttpStatus.CREATED);
+                expect(response.body).toHaveProperty('body', message.body);
+                expect(response.body).toHaveProperty(
+                  'sender.id',
+                  loggedUser.id,
+                );
+                expect(response.body).toHaveProperty('timestamp');
+              },
+            );
+          }),
         );
-        expect(response.body).toHaveProperty('messages[0].timestamp');
+
+        return await getRoomMessages(cookies, createdRoom.id);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const returnedMessages: ChatMessageDto[] = response.body;
+        expect(returnedMessages).toHaveLength(randomMessages.length);
+        returnedMessages.map((message, index) => {
+          expect(message).toHaveProperty('body', randomMessages[index].body);
+        });
       });
   });
 
@@ -621,6 +707,58 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     );
   });
 
+  async function joinManyRoomsWithWrongPassword(
+    nbOfJoins: number,
+    publicRooms: RoomDto[],
+    createdRooms: RandomRoom[],
+  ) {
+    let userRoomsLen = await (
+      await getUserRooms().then((r) => r.body as RoomDto[])
+    ).length;
+
+    for (let i = 0; i < nbOfJoins && publicRooms.length > 0; i++) {
+      const targetRoom = publicRooms.at(publicRooms.length - 1);
+      const originalRoom = createdRooms.find((cr) => cr.id === targetRoom.id);
+      await joinRoom(cookies, targetRoom.id, {
+        password: originalRoom.password + 'wrong_password',
+      }).then((response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        expect(response.body.error).toBe('invalid password');
+      });
+      publicRooms.pop();
+      const index = createdRooms.indexOf(originalRoom);
+      createdRooms.slice(index, index);
+
+      const newUserRoomsLen = (
+        await getUserRooms().then((r) => r.body as RoomDto[])
+      ).length;
+      expect(newUserRoomsLen).toBe(userRoomsLen);
+    }
+  }
+
+  it('creates random rooms and join password protected rooms with WRONG password ', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms).then(
+      async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        const unjoindedPublicRooms =
+          await getPublicPasswordProtectedUnjoinedRooms();
+        expect(unjoindedPublicRooms.length).not.toBe(0);
+
+        await joinManyRoomsWithWrongPassword(
+          unjoindedPublicRooms.length,
+          unjoindedPublicRooms,
+          createdRooms,
+        );
+      },
+    );
+  });
+
   /*
   ===================================================================
   -------------------------------------------------------------------
@@ -700,7 +838,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     );
   });
 
-  it.only('creates random rooms and leave rooms which user is OWNER', async () => {
+  it('creates random rooms and leave rooms which user is OWNER', async () => {
     let createdRooms: RandomRoom[];
 
     await generateManyRandomRooms(nbOfRooms).then(
@@ -729,5 +867,199 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         });
       },
     );
+  });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        MODERATION
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  it('creates a room and change participants to moderator then back to regulat participant', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+        return await updateModerators(cookies, returnedRoom.id, {
+          participant_id: targetParticipant.id,
+          is_moderator: true,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body).toHaveProperty('is_moderator', true);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const { id: roomId, participants } = response.body[0] as RoomDto;
+        targetParticipant = participants.find(
+          (p) => p.id === targetParticipant.id,
+        );
+        expect(targetParticipant.is_moderator).toBe(true);
+        return await updateModerators(cookies, roomId, {
+          participant_id: targetParticipant.id,
+          is_moderator: false,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body).toHaveProperty('is_moderator', false);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const { participants } = response.body[0] as RoomDto;
+        targetParticipant = participants.find(
+          (p) => p.id === targetParticipant.id,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+      });
+  });
+
+  it('creates a room try to change non existing participant', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+        return await updateModerators(cookies, returnedRoom.id, {
+          participant_id: targetParticipant.id + 'nonexisting',
+          is_moderator: true,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+  });
+
+  it('creates a room try to change participant with wrong room_id', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+        return await updateModerators(
+          cookies,
+          returnedRoom.id + 'nonexisting',
+          {
+            participant_id: targetParticipant.id,
+            is_moderator: true,
+          },
+        );
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      });
+  });
+
+  it('creates many random rooms and try to change participant in room not owned', async () => {
+    let targetParticipant: ParticipantDto;
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (response) => {
+        expect(response.length).toBe(nbOfRooms);
+        return await getParticipatingNotOwnedRooms();
+      })
+      .then(async (rooms) => {
+        expect(rooms.length).not.toBe(0);
+
+        const targetParticipant = rooms[0].participants.find(
+          (p) => p.is_moderator === false,
+        );
+
+        return await updateModerators(
+          cookies,
+          targetParticipant.id,
+          {
+            participant_id: targetParticipant.id,
+            is_moderator: true,
+          },
+        );
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      });
+  });
+
+  it('creates a room, log as non owner and try change participants to moderator', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+
+        const tmpCookies = await commons
+          .logUser(users[2].login)
+          .then((r) => commons.getCookies(r));
+
+        return await updateModerators(tmpCookies, returnedRoom.id, {
+          participant_id: targetParticipant.id,
+          is_moderator: true,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const { participants } = response.body[0] as RoomDto;
+        targetParticipant = participants.find(
+          (p) => p.id === targetParticipant.id,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+      });
   });
 }); // <<< end of describBlock
