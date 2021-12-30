@@ -1,4 +1,5 @@
-import { IsUUID, IsInt } from 'class-validator';
+import { IsUUID } from 'class-validator';
+// import { User } from '../../users/entities/users.entity';
 
 // without class-validator (ex: @IsUUID), data don't pass in 'create' route:
 // they're all printed as 'undefined' and 'ormrepo.save()' has an error bc

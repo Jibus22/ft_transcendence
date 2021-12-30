@@ -4,18 +4,20 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Entity,
+  ManyToOne,
 } from 'typeorm';
+import { User } from '../../users/entities/users.entity';
 
 @Entity()
 export class Game {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
-  uuidP1: string;
+  @ManyToOne(() => User, (user1) => user1.games)
+  player1: User;
 
-  @Column({ type: 'uuid' })
-  uuidP2: string;
+  @ManyToOne(() => User, (user2) => user2.games)
+  player2: User;
 
   @Column({ type: 'int', default: 0 })
   scoreP1: number;

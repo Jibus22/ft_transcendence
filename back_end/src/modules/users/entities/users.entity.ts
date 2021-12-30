@@ -4,21 +4,25 @@ import {
   AfterRemove,
   AfterUpdate,
   Column,
-  Entity, JoinTable,
-  ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Room } from '../../chat/entities/room.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
+import { Game } from '../../game/entities/game.entity';
 
-const conf = new ConfigService;
+const conf = new ConfigService();
 
 @Entity()
 export class User {
-
   /*
-  ** Data
-  */
+   ** Data
+   */
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -35,28 +39,31 @@ export class User {
   @Column()
   use_local_photo: boolean;
 
-  @OneToOne(() => UserPhoto, photo => photo.owner)
+  @OneToOne(() => UserPhoto, (photo) => photo.owner)
   local_photo: UserPhoto;
 
-  @ManyToMany(type => User, (user) => user.friends_list)
+  @ManyToMany(() => User, (user) => user.friends_list)
   @JoinTable()
   friends_list: UserDto[];
 
-  @ManyToMany(type => User, (user) => user.blocked_list)
+  @ManyToMany(() => User, (user) => user.blocked_list)
   @JoinTable()
   blocked_list: UserDto[];
 
   @Column({ nullable: true })
-  twoFASecret: string
+  twoFASecret: string;
 
   @Column({ default: false })
-  useTwoFA: boolean
+  useTwoFA: boolean;
 
   @Column({ nullable: true, unique: true })
   ws_id: string;
 
   @Column({ default: false })
-  is_in_game: boolean
+  is_in_game: boolean;
+
+  @OneToMany(() => Game, (game) => game.player1)
+  games: Game[];
 
   // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
   // rooms_ownership: Room[];
@@ -65,8 +72,8 @@ export class User {
   // rooms_moderation: Room[];
 
   /*
-  ** Lifecycle functions
-  */
+   ** Lifecycle functions
+   */
 
   @AfterInsert()
   logInsert() {
