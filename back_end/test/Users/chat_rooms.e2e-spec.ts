@@ -2,6 +2,8 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
+import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
@@ -488,7 +490,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   ===================================================================
   */
 
-  it('creates random rooms and post a message a room owned and fetch it', async () => {
+  it('creates random rooms and post a message to a room owned by user, and fetch it', async () => {
     let createdRooms: RandomRoom[];
     let testMessage: string = faker.lorem.paragraph();
     let destRoom: RandomRoom;
@@ -509,7 +511,6 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.CREATED);
-        expect(response.body).toHaveProperty('body', testMessage);
         expect(response.body).toHaveProperty('sender.id', loggedUser.id);
         expect(response.body).toHaveProperty('body', testMessage);
         expect(response.body).toHaveProperty('timestamp');
@@ -517,13 +518,58 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
-        expect(response.body.messages).toHaveLength(1);
-        expect(response.body).toHaveProperty('messages[0].body', testMessage);
-        expect(response.body).toHaveProperty(
-          'messages[0].sender.id',
-          loggedUser.id,
+        const messages: ChatMessageDto[] = response.body;
+        expect(messages).toHaveLength(1);
+        expect(messages[0]).toHaveProperty('body', testMessage);
+        expect(messages[0]).toHaveProperty('sender.id', loggedUser.id);
+        expect(messages[0]).toHaveProperty('timestamp');
+      });
+  });
+
+  it.only('creates a room and post MANY messages, and fetch them', async () => {
+    let createdRoom: RoomDto;
+
+    const randomMessages: createMessageDto[] = [];
+    while (randomMessages.length < 100) {
+      randomMessages.push({ body: faker.lorem.text() as string });
+    }
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        createdRoom = response.body;
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        await Promise.all(
+          randomMessages.map(async (message) => {
+            await postMessages(cookies, createdRoom.id, message)
+            .then(async (response) => {
+                expect(response.status).toBe(HttpStatus.CREATED);
+                expect(response.body).toHaveProperty('body', message.body);
+                expect(response.body).toHaveProperty(
+                  'sender.id',
+                  loggedUser.id,
+                );
+                expect(response.body).toHaveProperty('timestamp');
+              },
+            );
+          }),
         );
-        expect(response.body).toHaveProperty('messages[0].timestamp');
+
+        return await getRoomMessages(cookies, createdRoom.id);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const returnedMessages: ChatMessageDto[] = response.body;
+        expect(returnedMessages).toHaveLength(randomMessages.length);
+        returnedMessages.map( (message, index) => {
+          expect(message).toHaveProperty('body', randomMessages[index].body);
+        })
       });
   });
 
