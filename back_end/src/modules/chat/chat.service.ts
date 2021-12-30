@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
+import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Room } from './entities/room.entity';
+import { partition } from 'rxjs';
 
 const scrypt = promisify(_scrypt);
 
@@ -156,10 +158,10 @@ export class ChatService {
       .leftJoinAndSelect('room.messages', 'messages')
       .leftJoinAndSelect('messages.sender', 'sender')
       .getOne();
-    }
+  }
 
-    async findAllMessages(id: string) {
-      return await this.repoMessage
+  async findAllMessages(id: string) {
+    return await this.repoMessage
       .createQueryBuilder('message')
       .innerJoin('message.room', 'room')
       .innerJoinAndSelect('message.sender', 'sender')
@@ -213,6 +215,28 @@ export class ChatService {
       };
     }
     await this.repoParticipants.remove(participant);
+  }
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        MODERATION
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async updateParticipant(updateDto: UpdateParticipantDto) {
+    const participant = await this.repoParticipants.findOne(
+      updateDto.participant_id,
+    );
+    if (!participant) {
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: `participant missing`,
+      };
+    }
+    participant.is_moderator = updateDto.is_moderator;
+    return await this.repoParticipants.save(participant);
   }
 
   /*

@@ -1,10 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import exp from 'constants';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
 import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
+import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
+import { UpdateParticipantDto } from '../../src/modules/chat/dto/update-participant.dto';
 import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
@@ -108,6 +111,19 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     });
   }
 
+  async function getParticipatingNotOwnedRooms() {
+    return await getUserRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some((p) =>
+          r.participants.some(
+            (p) => p.is_owner === false && p.user.id === loggedUser.id,
+          ),
+        ),
+      );
+    });
+  }
+
   async function createSimpleRoom(bodyRequest) {
     return await request(app.getHttpServer())
       .post('/room')
@@ -128,6 +144,17 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   ) {
     return await request(app.getHttpServer())
       .patch(`/me/rooms/${room_id}`)
+      .set('Cookie', tmpCookies)
+      .send(bodyRequest);
+  }
+
+  async function updateModerators(
+    tmpCookies: string[],
+    room_id: string,
+    bodyRequest: UpdateParticipantDto,
+  ) {
+    return await request(app.getHttpServer())
+      .patch(`/room/${room_id}/moderator`)
       .set('Cookie', tmpCookies)
       .send(bodyRequest);
   }
@@ -526,7 +553,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       });
   });
 
-  it.only('creates a room and post MANY messages, and fetch them', async () => {
+  it('creates a room and post MANY messages, and fetch them', async () => {
     let createdRoom: RoomDto;
 
     const randomMessages: createMessageDto[] = [];
@@ -547,8 +574,8 @@ describe('chat controller: chat rooms routes (e2e)', () => {
 
         await Promise.all(
           randomMessages.map(async (message) => {
-            await postMessages(cookies, createdRoom.id, message)
-            .then(async (response) => {
+            await postMessages(cookies, createdRoom.id, message).then(
+              async (response) => {
                 expect(response.status).toBe(HttpStatus.CREATED);
                 expect(response.body).toHaveProperty('body', message.body);
                 expect(response.body).toHaveProperty(
@@ -567,9 +594,9 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         expect(response.status).toBe(HttpStatus.OK);
         const returnedMessages: ChatMessageDto[] = response.body;
         expect(returnedMessages).toHaveLength(randomMessages.length);
-        returnedMessages.map( (message, index) => {
+        returnedMessages.map((message, index) => {
           expect(message).toHaveProperty('body', randomMessages[index].body);
-        })
+        });
       });
   });
 
@@ -840,5 +867,199 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         });
       },
     );
+  });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        MODERATION
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  it.only('creates a room and change participants to moderator then back to regulat participant', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+        return await updateModerators(cookies, returnedRoom.id, {
+          participant_id: targetParticipant.id,
+          is_moderator: true,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body).toHaveProperty('is_moderator', true);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const { id: roomId, participants } = response.body[0] as RoomDto;
+        targetParticipant = participants.find(
+          (p) => p.id === targetParticipant.id,
+        );
+        expect(targetParticipant.is_moderator).toBe(true);
+        return await updateModerators(cookies, roomId, {
+          participant_id: targetParticipant.id,
+          is_moderator: false,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body).toHaveProperty('is_moderator', false);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const { participants } = response.body[0] as RoomDto;
+        targetParticipant = participants.find(
+          (p) => p.id === targetParticipant.id,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+      });
+  });
+
+  it.only('creates a room try to change non existing participant', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+        return await updateModerators(cookies, returnedRoom.id, {
+          participant_id: targetParticipant.id + 'nonexisting',
+          is_moderator: true,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+      });
+  });
+
+  it.only('creates a room try to change participant with wrong room_id', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+        return await updateModerators(
+          cookies,
+          returnedRoom.id + 'nonexisting',
+          {
+            participant_id: targetParticipant.id,
+            is_moderator: true,
+          },
+        );
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      });
+  });
+
+  it.only('creates many random rooms and try to change participant in room not owned', async () => {
+    let targetParticipant: ParticipantDto;
+
+    await generateManyRandomRooms(nbOfRooms)
+      .then(async (response) => {
+        expect(response.length).toBe(nbOfRooms);
+        return await getParticipatingNotOwnedRooms();
+      })
+      .then(async (rooms) => {
+        expect(rooms.length).not.toBe(0);
+
+        const targetParticipant = rooms[0].participants.find(
+          (p) => p.is_moderator === false,
+        );
+
+        return await updateModerators(
+          cookies,
+          targetParticipant.id,
+          {
+            participant_id: targetParticipant.id,
+            is_moderator: true,
+          },
+        );
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      });
+  });
+
+  it('creates a room, log as non owner and try change participants to moderator', async () => {
+    const room = {
+      participants: [{ id: users[1].id }, { id: users[2].id }],
+      is_private: true,
+    };
+    let targetParticipant: ParticipantDto;
+
+    await createSimpleRoom(room)
+      .then(async (response) => {
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        const returnedRoom = response.body[0] as RoomDto;
+        expect(returnedRoom.participants.length).toBe(3);
+        targetParticipant = returnedRoom.participants.find(
+          (p) => p.is_moderator === false,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+
+        const tmpCookies = await commons
+          .logUser(users[2].login)
+          .then((r) => commons.getCookies(r));
+
+        return await updateModerators(tmpCookies, returnedRoom.id, {
+          participant_id: targetParticipant.id,
+          is_moderator: true,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        return await getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        const { participants } = response.body[0] as RoomDto;
+        targetParticipant = participants.find(
+          (p) => p.id === targetParticipant.id,
+        );
+        expect(targetParticipant.is_moderator).toBe(false);
+      });
   });
 }); // <<< end of describBlock
