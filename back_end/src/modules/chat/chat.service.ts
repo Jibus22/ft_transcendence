@@ -156,6 +156,15 @@ export class ChatService {
       .leftJoinAndSelect('room.messages', 'messages')
       .leftJoinAndSelect('messages.sender', 'sender')
       .getOne();
+    }
+
+    async findAllMessages(id: string) {
+      return await this.repoMessage
+      .createQueryBuilder('message')
+      .innerJoin('message.room', 'room')
+      .innerJoinAndSelect('message.sender', 'sender')
+      .where('room.id = :id', { id })
+      .getMany();
   }
 
   update(id: number, updateChatDto: UpdateRoomDto) {
