@@ -10,13 +10,13 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomModeratorGuard } from '../../guards/roomModerator.guard';
@@ -28,11 +28,11 @@ import { User } from '../users/entities/users.entity';
 import { ChatService } from './chat.service';
 import { TargetedRoom } from './decorators/targeted-room.decorator';
 import { ChatMessageDto } from './dto/chatMessade.dto';
-import { CreateBanDto } from './dto/create-ban.dto';
 import { createMessageDto } from './dto/create-message.dto';
+import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
-import { RoomDto } from './dto/room.dto';
+import { RoomDto, FullRoomDto } from './dto/room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Room } from './entities/room.entity';
 
@@ -86,7 +86,7 @@ export class ChatController {
   @ApiOperation({
     summary: 'Get all existing rooms',
   })
-  @ApiResponse({ type: RoomDto, isArray: true })
+  @ApiResponse({ type: FullRoomDto, isArray: true })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Every rooms in the system',
@@ -97,9 +97,9 @@ export class ChatController {
   })
   @Get('/all')
   // @UseGuards(SiteOwnerGuard) // TODO implement !!
-  @Serialize(RoomDto)
-  findAll() {
-    return this.chatService.findAll();
+  @Serialize(FullRoomDto)
+  async findAll() {
+    return await this.chatService.findAll();
   }
 
   @ApiOperation({
@@ -112,8 +112,8 @@ export class ChatController {
   })
   @Get('/publics')
   @Serialize(RoomDto)
-  findAllPublic() {
-    return this.chatService.findAllPublic();
+  async findAllPublic() {
+    return await this.chatService.findAllPublic();
   }
 
   @ApiOperation({
@@ -220,29 +220,34 @@ export class ChatController {
         } else {
           throw new BadRequestException(error);
         }
-    });
+      });
   }
 
   @ApiOperation({
-    summary: 'Ban a user from a room for a given time',
+    summary: 'Restriction a user from a room for a given time',
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Ban was created',
+    description: 'Restriction was created',
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'not enough rights',
   })
-  @Patch(':room_id/ban')
+  @Post(':room_id/restriction')
   @UseGuards(RoomModeratorGuard)
-  async addBan(@TargetedRoom() room: Room, @Body() createBanDto: CreateBanDto) {
-    return await this.chatService.addBan(room, createBanDto).catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      } else {
-        throw new BadRequestException(error);
-      }
-    });
+  async addRestriction(
+    @TargetedRoom() room: Room,
+    @Body() createRestrictionDto: CreateRestrictionDto,
+  ) {
+    return await this.chatService
+      .createRestriction(room, createRestrictionDto)
+      .catch((error) => {
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        } else {
+          throw new BadRequestException(error);
+        }
+      });
   }
 }

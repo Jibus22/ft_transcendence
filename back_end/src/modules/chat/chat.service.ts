@@ -5,15 +5,15 @@ import { Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { CreateParticipantDto } from './dto/create-participant.dto';
+import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
+import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
+import { Restriction } from './entities/restriction.entity';
 import { Room } from './entities/room.entity';
-import { partition } from 'rxjs';
-import { CreateBanDto } from './dto/create-ban.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -22,6 +22,7 @@ export class ChatService {
   constructor(
     @InjectRepository(Room) private repoRoom: Repository<Room>,
     @InjectRepository(ChatMessage) private repoMessage: Repository<ChatMessage>,
+    @InjectRepository(Restriction) private repoRestriction: Repository<Restriction>,
     @InjectRepository(Participant)
     private repoParticipants: Repository<Participant>,
     private usersService: UsersService,
@@ -115,7 +116,12 @@ export class ChatService {
 
   async findAll() {
     return await this.repoRoom.find({
-      relations: ['participants', 'participants.user'],
+      relations: [
+       'participants',
+       'participants.user',
+       'restrictions',
+       'restrictions.user'
+      ],
     });
   }
 
@@ -240,17 +246,36 @@ export class ChatService {
     return await this.repoParticipants.save(participant);
   }
 
-  async addBan(room: Room, createBanDto: CreateBanDto) {
+  async createRestriction(room: Room, restrictionDto: CreateRestrictionDto) {
     const targetedParticipant = room.participants.find(
-      (p) => p.user.id === createBanDto.id,
+      (p) => p.user.id === restrictionDto.user_id,
     );
     if (!targetedParticipant) {
       throw {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
       };
+    } else if (targetedParticipant.is_owner) {
+      throw {
+        status: HttpStatus.FORBIDDEN,
+        error: `owner of the room cannot be banned`,
+      };
     }
-    await this.repoParticipants.remove(targetedParticipant);
+
+    console.log(restrictionDto.expiration_time);
+
+    const restriction = this.repoRestriction.create({
+      user: targetedParticipant.user,
+      room: room,
+      restriction_type: restrictionDto.restriction_type,
+      expiration_time: restrictionDto.expiration_time // TO BE CHANGED with computed value
+    });
+    console.log(restriction);
+    await this.repoRestriction.save(restriction).catch(err => console.log(err));
+
+    if (restrictionDto.restriction_type === 'ban') {
+      await this.repoParticipants.remove(targetedParticipant);
+    }
   }
 
   /*
