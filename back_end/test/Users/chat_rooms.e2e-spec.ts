@@ -877,7 +877,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
   ===================================================================
   */
 
-  it.only('creates a room and change participants to moderator then back to regulat participant', async () => {
+  it('creates a room and change participants to moderator then back to regulat participant', async () => {
     const room = {
       participants: [{ id: users[1].id }, { id: users[2].id }],
       is_private: true,
@@ -932,7 +932,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       });
   });
 
-  it.only('creates a room try to change non existing participant', async () => {
+  it('creates a room try to change non existing participant', async () => {
     const room = {
       participants: [{ id: users[1].id }, { id: users[2].id }],
       is_private: true,
@@ -960,7 +960,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       });
   });
 
-  it.only('creates a room try to change participant with wrong room_id', async () => {
+  it('creates a room try to change participant with wrong room_id', async () => {
     const room = {
       participants: [{ id: users[1].id }, { id: users[2].id }],
       is_private: true,
@@ -992,7 +992,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
       });
   });
 
-  it.only('creates many random rooms and try to change participant in room not owned', async () => {
+  it('creates many random rooms and try to change participant in room not owned', async () => {
     let targetParticipant: ParticipantDto;
 
     await generateManyRandomRooms(nbOfRooms)
