@@ -13,6 +13,7 @@ import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Room } from './entities/room.entity';
 import { partition } from 'rxjs';
+import { CreateBanDto } from './dto/create-ban.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -237,6 +238,19 @@ export class ChatService {
     }
     participant.is_moderator = updateDto.is_moderator;
     return await this.repoParticipants.save(participant);
+  }
+
+  async addBan(room: Room, createBanDto: CreateBanDto) {
+    const targetedParticipant = room.participants.find(
+      (p) => p.user.id === createBanDto.id,
+    );
+    if (!targetedParticipant) {
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: `participant missing`,
+      };
+    }
+    await this.repoParticipants.remove(targetedParticipant);
   }
 
   /*

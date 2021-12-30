@@ -19,6 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomModeratorGuard } from '../../guards/roomModerator.guard';
 import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
@@ -27,6 +28,7 @@ import { User } from '../users/entities/users.entity';
 import { ChatService } from './chat.service';
 import { TargetedRoom } from './decorators/targeted-room.decorator';
 import { ChatMessageDto } from './dto/chatMessade.dto';
+import { CreateBanDto } from './dto/create-ban.dto';
 import { createMessageDto } from './dto/create-message.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
@@ -218,6 +220,29 @@ export class ChatController {
         } else {
           throw new BadRequestException(error);
         }
-      });
+    });
+  }
+
+  @ApiOperation({
+    summary: 'Ban a user from a room for a given time',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Ban was created',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @Patch(':room_id/ban')
+  @UseGuards(RoomModeratorGuard)
+  async addBan(@TargetedRoom() room: Room, @Body() createBanDto: CreateBanDto) {
+    return await this.chatService.addBan(room, createBanDto).catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      } else {
+        throw new BadRequestException(error);
+      }
+    });
   }
 }
