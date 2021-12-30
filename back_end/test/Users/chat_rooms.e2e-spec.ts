@@ -82,6 +82,19 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     });
   }
 
+  async function getPublicPasswordProtectedUnjoinedRooms() {
+    return await getPublicRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter(
+        (r) =>
+          r.is_password_protected &&
+          r.participants.some(
+            (p) => !r.participants.some((p) => p.user.id === loggedUser.id),
+          ),
+      );
+    });
+  }
+
   async function getOwnedRooms() {
     return await getUserRooms().then((response) => {
       const rooms = response.body as RoomDto[];
@@ -621,6 +634,58 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     );
   });
 
+  async function joinManyRoomsWithWrongPassword(
+    nbOfJoins: number,
+    publicRooms: RoomDto[],
+    createdRooms: RandomRoom[],
+  ) {
+    let userRoomsLen = await (
+      await getUserRooms().then((r) => r.body as RoomDto[])
+    ).length;
+
+    for (let i = 0; i < nbOfJoins && publicRooms.length > 0; i++) {
+      const targetRoom = publicRooms.at(publicRooms.length - 1);
+      const originalRoom = createdRooms.find((cr) => cr.id === targetRoom.id);
+      await joinRoom(cookies, targetRoom.id, {
+        password: originalRoom.password + 'wrong_password',
+      }).then((response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        expect(response.body.error).toBe('invalid password');
+      });
+      publicRooms.pop();
+      const index = createdRooms.indexOf(originalRoom);
+      createdRooms.slice(index, index);
+
+      const newUserRoomsLen = (
+        await getUserRooms().then((r) => r.body as RoomDto[])
+      ).length;
+      expect(newUserRoomsLen).toBe(userRoomsLen);
+    }
+  }
+
+  it('creates random rooms and join password protected rooms with WRONG password ', async () => {
+    let createdRooms: RandomRoom[];
+
+    await generateManyRandomRooms(nbOfRooms).then(
+      async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        const unjoindedPublicRooms =
+          await getPublicPasswordProtectedUnjoinedRooms();
+        expect(unjoindedPublicRooms.length).not.toBe(0);
+
+        await joinManyRoomsWithWrongPassword(
+          unjoindedPublicRooms.length,
+          unjoindedPublicRooms,
+          createdRooms,
+        );
+      },
+    );
+  });
+
   /*
   ===================================================================
   -------------------------------------------------------------------
@@ -700,7 +765,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
     );
   });
 
-  it.only('creates random rooms and leave rooms which user is OWNER', async () => {
+  it('creates random rooms and leave rooms which user is OWNER', async () => {
     let createdRooms: RandomRoom[];
 
     await generateManyRandomRooms(nbOfRooms).then(
