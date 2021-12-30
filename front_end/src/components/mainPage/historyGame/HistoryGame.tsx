@@ -7,7 +7,7 @@ import { pink } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { useSpring, animated } from 'react-spring';
 import FF from '../../homePage/section/photos/FF.png';
-import JB from '../../homePage/section/photos/jb.png';
+import JB from '../../homePage/section/photos/JB.png';
 import { InputAdornment, Button, AvatarGroup, Avatar, Badge } from '@mui/material';
 
 const CssTextField = styled(TextField)({
@@ -36,20 +36,10 @@ const HistoryGame = () => {
 		<div className="infoHistory ">
 			<div className="userImg d-flex ">
 				<AvatarGroup max={2}>
-					<Badge
-						overlap="circular"
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-						variant="dot"
-						sx={{}}
-					>
+					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
 						<Avatar alt="userImg" src={FF} variant="square" className="domUser" />
 					</Badge>
-					<Badge
-						overlap="circular"
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-						variant="dot"
-						sx={{}}
-					>
+					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
 						<Avatar alt="userImg" src={JB} variant="rounded" className="extUser" />
 					</Badge>
 				</AvatarGroup>

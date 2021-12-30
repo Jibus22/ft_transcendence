@@ -1,23 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
-import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre } from '..';
-import axios from 'axios';
+import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
+import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../MainPageContext';
 import { io, Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
 const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack } = useMainPage();
 	const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
+	const [errorAuth, setErrorAuth] = useState(false);
 
+	const [isHeader, setIsHeader] = useState(true);
+
+	let navigate = useNavigate();
 	const fetchDataUserMe = async () => {
 		try {
 			const { data } = await axios.get('http://localhost:3000/me', {
 				withCredentials: true,
 			});
+
 			setData([data]);
-		} catch (err) {
-			console.log(err);
+		} catch (error) {
+			const err = error as AxiosError;
+			if (err.response?.status === 401) {
+				setErrorAuth(true);
+				navigate('/');
+			}
 		}
 	};
 
@@ -57,6 +67,7 @@ const MainPage = () => {
 			})
 			.catch((error) => {
 				setWsStatus(undefined);
+
 				console.log(error);
 			});
 	};
@@ -64,24 +75,33 @@ const MainPage = () => {
 	useEffect(() => {
 		fetchDataUserMe();
 		connectWsStatus();
+
+		// return () => {
+		// 	setState({});
+		// };
 	}, []);
 
 	const resetTimeSnack = () => {
 		setTimeSnack(false);
 	};
 
+	// console.log(isHeader);
+
 	return (
-		<div className="mainPageBody d-flex flex-column ">
+		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
 			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
-			<div>
-				<Header />
-			</div>
+			{isHeader ? (
+				<div>
+					<Header />
+				</div>
+			) : null}
 
 			<Routes>
 				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser />} />
 				<Route path="/Rank" element={<UserRank />} />
+				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 		</div>
 	);

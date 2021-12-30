@@ -1,13 +1,10 @@
 import {
   CanActivate,
   ExecutionContext,
-  ForbiddenException,
-  HttpException,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { serialize } from 'class-transformer';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

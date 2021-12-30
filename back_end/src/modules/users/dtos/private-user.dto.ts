@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
+import { RoomDto } from '../../chat/dto/room.dto';
 import { UserDto } from './user.dto';
 import { Game } from '../../game/entities/game.entity';
 
@@ -12,19 +13,12 @@ export class privateUserDto extends UserDto {
   })
   storeCustomPhoto: boolean;
 
-  @ApiProperty({ type: UserDto, isArray: true })
+  @ApiProperty({ type: RoomDto, isArray: true })
   @Expose()
   @Transform((value) => {
-    return plainToClass(UserDto, value.obj.friends_list);
+    return plainToClass(RoomDto, value.obj.rooms_ownership);
   })
-  friends_list: UserDto[];
-
-  @ApiProperty({ type: UserDto, isArray: true })
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.blocked_list);
-  })
-  blocked_list: UserDto[];
+  rooms_owned: RoomDto[];
 
   @ApiProperty()
   @Expose()

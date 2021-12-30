@@ -11,7 +11,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Room } from '../../chat/entities/room.entity';
+import { Participant } from '../../chat/entities/participant.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
 import { Game } from '../../game/entities/game.entity';
@@ -68,8 +68,8 @@ export class User {
   // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
   // rooms_ownership: Room[];
 
-  // @ManyToMany(type => Room, (rooms_modaration) => rooms_modaration.id)
-  // rooms_moderation: Room[];
+  @OneToMany(() => Participant, (participant) => participant.user)
+  room_participations: Participant[];
 
   /*
    ** Lifecycle functions

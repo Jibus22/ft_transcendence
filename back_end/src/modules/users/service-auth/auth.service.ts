@@ -2,11 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig } from 'axios';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
 import { User } from '../entities/users.entity';
 import { UsersService } from '../service-users/users.service';
-import { authenticator } from 'otplib';
-import { toFileStream } from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -130,10 +130,11 @@ export class AuthService {
   }
 
   private async getValidUser(session) {
-    return await this.usersService.findOne(session.userId)
+    return await this.usersService
+      .findOne(session.userId)
       .then((user: User) => {
-        if (! user) throw 'no user logged';
-        if (! user.twoFASecret) throw 'user does not have 2fa secret';
+        if (!user) throw 'no user logged';
+        if (!user.twoFASecret) throw 'user does not have 2fa secret';
         return user;
       });
   }
@@ -166,7 +167,7 @@ export class AuthService {
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
 
-    if (! user.useTwoFA) {
+    if (!user.useTwoFA) {
       return this.turn2fa_off(session);
     }
 

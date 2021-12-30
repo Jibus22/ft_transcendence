@@ -1,0 +1,73 @@
+.mainFormLogin {
+	width: 70%;
+	margin: auto;
+
+	// taille du textfield
+	.MuiOutlinedInput-root {
+		width: 100%;
+		height: 50px;
+	}
+
+	// label materialUi input
+	.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+		margin-top: -3px;
+		font-size: 1vw;
+	}
+
+	// label material ui haut non focus
+	.css-1kty9di-MuiFormLabel-root-MuiInputLabel-root {
+		font-size: 1.2vw;
+		margin: 0% 0% 0% -0.6%;
+	}
+
+	// label materialUI haut focus
+	.css-1kty9di-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+		margin: 0% 0% 0% 0.2%;
+	}
+
+	.MuiIconButton-root {
+		width: 45px;
+		height: 45px;
+		margin: 0 -13px 0 0px;
+	}
+
+	.MuiOutlinedInput-notchedOutline {
+		border-color: #ca6c88;
+		border-radius: 15px;
+	}
+	.Mui-focused {
+		color: black;
+		font-size: 1.3vw;
+	}
+
+	.MuiOutlinedInput-input {
+		font-size: 1.2vw;
+	}
+
+	& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+		border: 1px solid #71dfe7;
+	}
+	.MuiFormHelperText-root {
+		color: red !important;
+		font-size: 0.7vw !important;
+
+		position: absolute;
+		left: 45%;
+		position: absolute;
+		top: 120%;
+		transform: translate(-50%, -50%);
+	}
+	// .css-1pysi21-MuiFormLabel-root-MuiInputLabel-root.Mui-error {
+	// 	border: red;
+	// }
+
+	.formDivButtonAnim {
+		animation-name: shake-horizontal;
+		animation-duration: 0.6s;
+		animation-timing-function: ease;
+		animation-delay: 0s;
+		animation-iteration-count: 1;
+		animation-direction: normal;
+		animation-fill-mode: none;
+	}
+}

@@ -1,15 +1,16 @@
-import { CACHE_MANAGER, Inject, UsePipes, ValidationPipe } from '@nestjs/common';
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
-  GatewayMetadata, SubscribeMessage,
+  GatewayMetadata,
+  SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Socket } from 'socket.io';
 import { User } from './modules/users/entities/users.entity';
 import { UsersService } from './modules/users/service-users/users.service';
 
-const options : GatewayMetadata = {
+const options: GatewayMetadata = {
   cors: {
     origin: ['http://localhost:3001', 'http://127.0.0.1:5500'], //TODO remove 127... for debug
     methods: ['GET', 'POST'],
@@ -64,8 +65,7 @@ export class StatusGateway {
   //   whitelist: true
   // }))
   @SubscribeMessage('ingame')
-  async upateIngame(client: Socket, data: string ) {
-
+  async upateIngame(client: Socket, data: string) {
     if (data === 'in') {
       console.log(true);
       await this.updateUser(client, {
