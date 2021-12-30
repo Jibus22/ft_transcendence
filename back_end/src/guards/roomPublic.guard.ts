@@ -17,7 +17,7 @@ export class RoomPublicGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const logger = new Logger('💂‍♂️ Room Public Guard'); //TODO REMOVE LOGGER HERE
     const currentUser: User = context.switchToHttp().getRequest().currentUser;
-    const targetRoom = context.switchToHttp().getRequest().params.room_id;
+    const targetRoom: Room = context.switchToHttp().getRequest().targetedRoom;
     if (currentUser && targetRoom) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom}`,

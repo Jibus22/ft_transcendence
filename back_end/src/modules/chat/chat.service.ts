@@ -6,10 +6,13 @@ import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
+import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
+import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
+import { Restriction } from './entities/restriction.entity';
 import { Room } from './entities/room.entity';
 
 const scrypt = promisify(_scrypt);
@@ -19,6 +22,7 @@ export class ChatService {
   constructor(
     @InjectRepository(Room) private repoRoom: Repository<Room>,
     @InjectRepository(ChatMessage) private repoMessage: Repository<ChatMessage>,
+    @InjectRepository(Restriction) private repoRestriction: Repository<Restriction>,
     @InjectRepository(Participant)
     private repoParticipants: Repository<Participant>,
     private usersService: UsersService,
@@ -112,7 +116,12 @@ export class ChatService {
 
   async findAll() {
     return await this.repoRoom.find({
-      relations: ['participants', 'participants.user'],
+      relations: [
+       'participants',
+       'participants.user',
+       'restrictions',
+       'restrictions.user'
+      ],
     });
   }
 
@@ -156,6 +165,15 @@ export class ChatService {
       .leftJoinAndSelect('room.messages', 'messages')
       .leftJoinAndSelect('messages.sender', 'sender')
       .getOne();
+  }
+
+  async findAllMessages(id: string) {
+    return await this.repoMessage
+      .createQueryBuilder('message')
+      .innerJoin('message.room', 'room')
+      .innerJoinAndSelect('message.sender', 'sender')
+      .where('room.id = :id', { id })
+      .getMany();
   }
 
   update(id: number, updateChatDto: UpdateRoomDto) {
@@ -204,6 +222,60 @@ export class ChatService {
       };
     }
     await this.repoParticipants.remove(participant);
+  }
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        MODERATION
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async updateParticipant(updateDto: UpdateParticipantDto) {
+    const participant = await this.repoParticipants.findOne(
+      updateDto.participant_id,
+    );
+    if (!participant) {
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: `participant missing`,
+      };
+    }
+    participant.is_moderator = updateDto.is_moderator;
+    return await this.repoParticipants.save(participant);
+  }
+
+  async createRestriction(room: Room, restrictionDto: CreateRestrictionDto) {
+    const targetedParticipant = room.participants.find(
+      (p) => p.user.id === restrictionDto.user_id,
+    );
+    if (!targetedParticipant) {
+      throw {
+        status: HttpStatus.NOT_FOUND,
+        error: `participant missing`,
+      };
+    } else if (targetedParticipant.is_owner) {
+      throw {
+        status: HttpStatus.FORBIDDEN,
+        error: `owner of the room cannot be banned`,
+      };
+    }
+
+    console.log(restrictionDto.expiration_time);
+
+    const restriction = this.repoRestriction.create({
+      user: targetedParticipant.user,
+      room: room,
+      restriction_type: restrictionDto.restriction_type,
+      expiration_time: restrictionDto.expiration_time // TO BE CHANGED with computed value
+    });
+    console.log(restriction);
+    await this.repoRestriction.save(restriction).catch(err => console.log(err));
+
+    if (restrictionDto.restriction_type === 'ban') {
+      await this.repoParticipants.remove(targetedParticipant);
+    }
   }
 
   /*
