@@ -634,7 +634,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         });
       })
       .then(async (response) => {
-        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
       });
   });
 
@@ -657,7 +657,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         return await getRoomMessages(cookies, destRoom.id);
       })
       .then(async (response) => {
-        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
       });
   });
 
@@ -839,7 +839,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         await Promise.all(
           unjoinedRooms.map(async (r) => {
             await leaveRoom(cookies, r.id).then((response) => {
-              expect(response.status).toBe(HttpStatus.FORBIDDEN);
+              expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
             });
           }),
         ).then(async () => {
@@ -1001,7 +1001,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         );
       })
       .then(async (response) => {
-        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
       });
   });
 
@@ -1026,7 +1026,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         });
       })
       .then(async (response) => {
-        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
       });
   });
 
@@ -1201,7 +1201,7 @@ describe('chat controller: chat rooms routes (e2e)', () => {
         });
       })
       .then(async (response) => {
-        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
         return await getAllRooms();
       })
       .then(async (response) => {
