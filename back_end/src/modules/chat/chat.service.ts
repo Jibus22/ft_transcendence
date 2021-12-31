@@ -262,15 +262,12 @@ export class ChatService {
       };
     }
 
-    console.log(restrictionDto.expiration_time);
-
     const restriction = this.repoRestriction.create({
       user: targetedParticipant.user,
       room: room,
       restriction_type: restrictionDto.restriction_type,
-      expiration_time: restrictionDto.expiration_time // TO BE CHANGED with computed value
+      expiration_time: Date.now() + (restrictionDto.duration * 1000 * 60)
     });
-    console.log(restriction);
     await this.repoRestriction.save(restriction).catch(err => console.log(err));
 
     if (restrictionDto.restriction_type === 'ban') {

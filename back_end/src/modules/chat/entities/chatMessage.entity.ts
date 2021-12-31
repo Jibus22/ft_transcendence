@@ -29,8 +29,7 @@ export class ChatMessage {
   room: Room;
 
   @Column()
-  // timestamp: string; //Date type ?
-  timestamp: number; //Date type ?
+  timestamp: number;
 
   @Column()
   body: string;
