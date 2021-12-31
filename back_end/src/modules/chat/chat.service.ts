@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
@@ -14,7 +14,6 @@ import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Restriction } from './entities/restriction.entity';
 import { Room } from './entities/room.entity';
-
 const scrypt = promisify(_scrypt);
 
 @Injectable()
@@ -22,7 +21,8 @@ export class ChatService {
   constructor(
     @InjectRepository(Room) private repoRoom: Repository<Room>,
     @InjectRepository(ChatMessage) private repoMessage: Repository<ChatMessage>,
-    @InjectRepository(Restriction) private repoRestriction: Repository<Restriction>,
+    @InjectRepository(Restriction)
+    private repoRestriction: Repository<Restriction>,
     @InjectRepository(Participant)
     private repoParticipants: Repository<Participant>,
     private usersService: UsersService,
@@ -117,10 +117,10 @@ export class ChatService {
   async findAll() {
     return await this.repoRoom.find({
       relations: [
-       'participants',
-       'participants.user',
-       'restrictions',
-       'restrictions.user'
+        'participants',
+        'participants.user',
+        'restrictions',
+        'restrictions.user',
       ],
     });
   }
@@ -150,12 +150,14 @@ export class ChatService {
   }
 
   async findOneWithParticipants(id: string) {
-    return await this.repoRoom
-      .createQueryBuilder('room')
-      .where('room.id = :id', { id })
-      .leftJoinAndSelect('room.participants', 'participants')
-      .leftJoinAndSelect('participants.user', 'user')
-      .getOne();
+    return await this.repoRoom.findOne(id, {
+      relations: [
+        'participants',
+        'participants.user',
+        'restrictions',
+        'restrictions.user',
+      ],
+    });
   }
 
   async findOneWithMessages(id: string) {
@@ -180,7 +182,7 @@ export class ChatService {
     return `This action updates a #${id} chat`;
   }
 
-  async remove(targetedRoom: Room) {
+  async removeRoom(targetedRoom: Room) {
     return await this.repoRoom.remove(targetedRoom);
   }
 
@@ -246,6 +248,14 @@ export class ChatService {
     return await this.repoParticipants.save(participant);
   }
 
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        RESTRINCTIONS METHODS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
   async createRestriction(room: Room, restrictionDto: CreateRestrictionDto) {
     const targetedParticipant = room.participants.find(
       (p) => p.user.id === restrictionDto.user_id,
@@ -266,13 +276,43 @@ export class ChatService {
       user: targetedParticipant.user,
       room: room,
       restriction_type: restrictionDto.restriction_type,
-      expiration_time: Date.now() + (restrictionDto.duration * 1000 * 60)
+      expiration_time: Date.now() + restrictionDto.duration * 1000 * 60,
     });
-    await this.repoRestriction.save(restriction).catch(err => console.log(err));
+    await this.repoRestriction
+      .save(restriction)
+      .catch((err) => console.log(err));
 
     if (restrictionDto.restriction_type === 'ban') {
       await this.repoParticipants.remove(targetedParticipant);
     }
+  }
+
+  async removeRestrictions(restrictions: Restriction[]) {
+    return await this.repoRestriction.remove(restrictions);
+  }
+
+  async getRestrictions(type?: string) {
+    const options: FindManyOptions = type
+      ? { where: { restriction_type: type } }
+      : {};
+    return await this.repoRestriction.find(options);
+  }
+
+  extractValidRestrictions(room: Room, type?: string) {
+    return room.restrictions.filter((r) => {
+      return (
+        (!type || r.restriction_type === type) &&
+        r.expiration_time - Date.now() > 0
+      );
+    });
+  }
+
+  extractExpiredRestrictions(restrictions: Restriction[]) {
+    return restrictions.filter((r) => {
+      return (
+        Date.now() - r.expiration_time > 0
+      );
+    });
   }
 
   /*

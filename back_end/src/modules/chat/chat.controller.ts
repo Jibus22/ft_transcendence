@@ -10,16 +10,18 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomBanGuard } from '../../guards/roomBan.guard';
 import { RoomModeratorGuard } from '../../guards/roomModerator.guard';
+import { RoomMuteGuard } from '../../guards/roomMute.guard';
 import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
@@ -32,7 +34,7 @@ import { createMessageDto } from './dto/create-message.dto';
 import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
-import { RoomDto, FullRoomDto } from './dto/room.dto';
+import { FullRoomDto, RoomDto } from './dto/room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Room } from './entities/room.entity';
 
@@ -132,7 +134,7 @@ export class ChatController {
   @Serialize(RoomDto)
   @UseGuards(RoomOwnerGuard)
   async remove(@TargetedRoom() targetedRoom: Room) {
-    return await this.chatService.remove(targetedRoom).catch((error) => {
+    return await this.chatService.removeRoom(targetedRoom).catch((error) => {
       throw new NotFoundException(error);
     });
   }
@@ -159,6 +161,8 @@ export class ChatController {
   })
   @Post(':room_id/message')
   @Serialize(ChatMessageDto)
+  @UseGuards(RoomBanGuard)
+  @UseGuards(RoomMuteGuard)
   @UseGuards(RoomParticipantGuard)
   async addMessage(
     @TargetedRoom() room: Room,
