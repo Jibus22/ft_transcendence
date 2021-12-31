@@ -1,12 +1,15 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ChatService } from '../chat.service';
+import { Restriction } from '../entities/restriction.entity';
 import { Room } from '../entities/room.entity';
 
 declare global {
   namespace Express {
     interface Request {
       targetedRoom?: Room;
+      targetedRoomActiveBan?: Restriction[];
+      targetedRoomActiveMute?: Restriction[];
     }
   }
 }
@@ -26,6 +29,8 @@ export class TargetedRoomMiddleware implements NestMiddleware {
         .findOneWithParticipants(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
+          req.targetedRoomActiveBan = this.chatService.extractValidRestrictions(room, 'ban');
+          req.targetedRoomActiveMute = this.chatService.extractValidRestrictions(room, 'mute');
           logger.log(`Room targeted: ${req?.targetedRoom?.id}`); // TODO remove debug
         })
         .catch((error) => {
