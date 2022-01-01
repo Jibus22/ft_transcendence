@@ -1,7 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import exp from 'constants';
-import { partition } from 'rxjs';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
@@ -1248,11 +1246,14 @@ describe('chat controller: chat rooms routes (e2e)', () => {
           user_id: loggedUser.id,
           restriction_type: 'ban',
           duration: 2,
-        })
+        });
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.FORBIDDEN);
-        expect(response.body).toHaveProperty('error', 'owner of the room cannot be banned');
+        expect(response.body).toHaveProperty(
+          'error',
+          'owner of the room cannot be banned',
+        );
         return await getUserRooms();
       })
       .then(async (response) => {
