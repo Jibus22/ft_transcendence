@@ -9,6 +9,7 @@ import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
@@ -49,15 +50,11 @@ export class ChatService {
     return storedHash === hash.toString('hex');
   }
 
-  private async createParticipant(
-    participantId: string,
-    room: Room,
-    roomOwner: User,
-  ) {
-    const user = await this.usersService.findOne(participantId);
+  async createParticipant(userId: string, room: Room, roomOwner: User) {
+    const user = await this.usersService.findOne(userId);
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
-      const isOwner = roomOwner.id === participantId;
+      const isOwner = roomOwner.id === userId;
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       await this.repoParticipants.save(newParticipant).catch((error) => {
@@ -66,7 +63,7 @@ export class ChatService {
     }
   }
 
-  private async createRoom(createRoomDto: CreateRoomDto) {
+  private async addRoom(createRoomDto: CreateRoomDto) {
     const newRoom = this.repoRoom.create({
       is_private: createRoomDto.is_private,
       password: createRoomDto.password,
@@ -90,8 +87,7 @@ export class ChatService {
     return participants;
   }
 
-  async create(currentUser: User, createRoomDto: CreateRoomDto) {
-    // TODO can we encode it in DTO Transform?
+  async createRoom(currentUser: User, createRoomDto: CreateRoomDto) {
     if (createRoomDto.password?.length) {
       createRoomDto.password = await this.encodePassword(
         createRoomDto.password,
@@ -100,15 +96,12 @@ export class ChatService {
       createRoomDto.password = null;
     }
 
-    const room = await this.createRoom(createRoomDto);
-    // await this.createParticipant(currentUser, room, currentUser);
+    const room = await this.addRoom(createRoomDto);
     const participants = this.cleanParticipants(
       createRoomDto.participants,
       currentUser,
     );
-    // console.log(participants);
     for (const p of participants) {
-      // console.log('add p:', p);
       await this.createParticipant(p, room, currentUser);
     }
     return room;
@@ -178,8 +171,13 @@ export class ChatService {
       .getMany();
   }
 
-  update(id: number, updateChatDto: UpdateRoomDto) {
-    return `This action updates a #${id} chat`;
+  async updatePassword(room: Room, updatePasswordDto: UpdatePasswordDto) {
+    if (updatePasswordDto.password.length === 0) {
+      room.password = null;
+    } else {
+      room.password = await this.encodePassword(updatePasswordDto.password);
+    }
+    return this.repoRoom.save(room);
   }
 
   async removeRoom(targetedRoom: Room) {
@@ -193,6 +191,17 @@ export class ChatService {
   -------------------------------------------------------------------
   ===================================================================
   */
+
+  async addParticipant(room: Room, createPaticipant: CreateParticipantDto) {
+    if (room.participants.some((p) => p.user.id === createPaticipant.id)) {
+      throw {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'user already participant in this room',
+      };
+    }
+    const {user: roomOwner} = room.participants.find(p => p.is_owner);
+    return await this.createParticipant(createPaticipant.id, room, roomOwner);
+  }
 
   async joinRoom(user: User, room: Room, body: { password?: string }) {
     if (
@@ -309,9 +318,7 @@ export class ChatService {
 
   extractExpiredRestrictions(restrictions: Restriction[]) {
     return restrictions.filter((r) => {
-      return (
-        Date.now() - r.expiration_time > 0
-      );
+      return Date.now() - r.expiration_time > 0;
     });
   }
 
