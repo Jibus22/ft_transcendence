@@ -51,6 +51,19 @@ export class ChatHelpers {
     });
   }
 
+  async getPrivateUnjoinedRooms() {
+    return await this.getAllRooms().then((response) => {
+      const rooms = response.body as RoomDto[];
+      return rooms.filter((r) =>
+        r.participants.some(
+          (p) =>
+          r.is_private &&
+          !r.participants.some((p) => p.user.id === this.loggedUser.id),
+        ),
+      );
+    });
+  }
+
   async getPublicUnjoinedRooms() {
     return await this.getPublicRooms().then((response) => {
       const rooms = response.body as RoomDto[];
@@ -118,12 +131,14 @@ export class ChatHelpers {
   async joinRoom(
     tmpCookies: string[],
     room_id: string,
-    bodyRequest: { password: string },
+    bodyRequest?: { password: string },
   ) {
+    const body = bodyRequest ? bodyRequest : {};
+
     return await request(this.app.getHttpServer())
       .patch(`/me/rooms/${room_id}`)
       .set('Cookie', tmpCookies)
-      .send(bodyRequest);
+      .send(body);
   }
 
   async updateModerators(

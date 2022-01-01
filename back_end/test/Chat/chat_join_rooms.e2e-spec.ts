@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import exp from 'constants';
 import { AppModule } from '../../src/app.module';
 import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
 import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
@@ -109,6 +110,27 @@ describe('CHAT: Join/leave rooms', () => {
       });
   });
 
+  it('try join a private room', async () => {
+    let createdRooms: RandomRoom[];
+
+    await chatHelper
+      .generateManyRandomRooms(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        const unjoindedPrivateRooms = await chatHelper.getPrivateUnjoinedRooms();
+        const targetRoom = unjoindedPrivateRooms.find( r => r.is_password_protected === false);
+        expect(targetRoom).toBeDefined();
+        return await chatHelper.joinRoom(cookies, targetRoom.id);
+      })
+      .then(response => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+      });
+  });
+
   async function joinManyRoomsWithWrongPassword(
     nbOfJoins: number,
     publicRooms: RoomDto[],
@@ -140,7 +162,7 @@ describe('CHAT: Join/leave rooms', () => {
     }
   }
 
-  it('join password protected rooms with WRONG password ', async () => {
+  it('try join password protected rooms with WRONG password ', async () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
@@ -160,118 +182,6 @@ describe('CHAT: Join/leave rooms', () => {
           unjoindedPublicRooms,
           createdRooms,
         );
-      });
-  });
-
-  /*
-  ===================================================================
-  -------------------------------------------------------------------
-        LEAVE ROOM
-  -------------------------------------------------------------------
-  ===================================================================
-  */
-
-  async function leaveManyRooms(
-    nbOfLeaves: number,
-    createdRooms: RandomRoom[],
-  ) {
-    const joinedRooms = await chatHelper.getJoinedRooms();
-    let joinedRoomsLen = joinedRooms.length;
-
-    for (let i = 0; i < nbOfLeaves && joinedRooms.length > 0; i++) {
-      const targetRoom = joinedRooms.at(joinedRooms.length - 1);
-      const originalRoom = createdRooms.find((cr) => cr.id === targetRoom.id);
-      await chatHelper.leaveRoom(cookies, targetRoom.id).then((response) => {
-        expect(response.status).toBe(HttpStatus.OK);
-      });
-      joinedRooms.pop();
-      const index = createdRooms.indexOf(originalRoom);
-      createdRooms.slice(index, index);
-      const newjoinedRoomsLen = await (
-        await chatHelper.getJoinedRooms()
-      ).length;
-
-      expect(newjoinedRoomsLen).toBe(joinedRoomsLen - 1);
-      joinedRoomsLen = newjoinedRoomsLen;
-    }
-  }
-
-  it('leave some joined rooms', async () => {
-    let createdRooms: RandomRoom[];
-
-    await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
-      .then(async (rooms: RandomRoom[]) => {
-        createdRooms = rooms;
-        expect(createdRooms.length).toEqual(nbOfRooms);
-        expect(loggedUser.id).toBeDefined();
-        expect(loggedUser.id.length).toBeGreaterThan(0);
-
-        const joinedRooms = await chatHelper.getJoinedRooms();
-        expect(joinedRooms.length).not.toBe(0);
-        await leaveManyRooms(joinedRooms.length, createdRooms);
-      });
-  });
-
-  it('try leave rooms which user is NOT participant', async () => {
-    let createdRooms: RandomRoom[];
-
-    await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
-      .then(async (rooms: RandomRoom[]) => {
-        createdRooms = rooms;
-        expect(createdRooms.length).toEqual(nbOfRooms);
-        expect(loggedUser.id).toBeDefined();
-        expect(loggedUser.id.length).toBeGreaterThan(0);
-
-        const unjoinedRooms = await chatHelper.getAllUnjoinedRooms();
-        const userRoomsLen: number = await chatHelper
-          .getUserRooms()
-          .then((r) => r.body.length);
-
-        expect(unjoinedRooms.length).not.toBe(0);
-        await Promise.all(
-          unjoinedRooms.map(async (r) => {
-            await chatHelper.leaveRoom(cookies, r.id).then((response) => {
-              expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
-            });
-          }),
-        ).then(async () => {
-          expect(
-            await chatHelper.getUserRooms().then((r) => r.body.length),
-          ).toBe(userRoomsLen);
-        });
-      });
-  });
-
-  it('try leave rooms which user is OWNER', async () => {
-    let createdRooms: RandomRoom[];
-
-    await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
-      .then(async (rooms: RandomRoom[]) => {
-        createdRooms = rooms;
-        expect(createdRooms.length).toEqual(nbOfRooms);
-        expect(loggedUser.id).toBeDefined();
-        expect(loggedUser.id.length).toBeGreaterThan(0);
-
-        const ownedRooms = await chatHelper.getOwnedRooms();
-        const userRoomsLen: number = await chatHelper
-          .getOwnedRooms()
-          .then((r) => r.length);
-
-        expect(ownedRooms.length).not.toBe(0);
-        await Promise.all(
-          ownedRooms.map(async (r) => {
-            await chatHelper.leaveRoom(cookies, r.id).then((response) => {
-              expect(response.status).toBe(HttpStatus.BAD_REQUEST);
-            });
-          }),
-        ).then(async () => {
-          expect(await chatHelper.getOwnedRooms().then((r) => r.length)).toBe(
-            userRoomsLen,
-          );
-        });
       });
   });
 
