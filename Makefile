@@ -5,8 +5,8 @@ all:
 
 
 # usage:
-#  run specific: `make test TARGET=chat`
-#  or run all: `make test`
+#  run all tests: `make test`
+#  run chat specific tests : `make test TARGET=chat`
 test:
 	docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'jest --config ./test/jest-e2e.json --maxWorkers=1 --watch --verbose --testLocationInResults $(TEST_ARG)' ; docker-compose rm -fsv
 
