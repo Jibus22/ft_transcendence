@@ -1,7 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { privateUserDto } from '../src/modules/users/dtos/private-user.dto';
-import { UserDto } from '../src/modules/users/dtos/user.dto';
 import { User } from '../src/modules/users/entities/users.entity';
 
 export class CommonTest {

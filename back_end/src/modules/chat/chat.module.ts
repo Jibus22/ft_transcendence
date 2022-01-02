@@ -21,7 +21,7 @@ import { TaskerService } from './tasker.service';
     ]),
   ],
   controllers: [ChatController],
-  providers: [TaskerService, UsersService, ChatService],
-  exports: [ChatService],
+  providers: [UsersService, ChatService, TaskerService],
+  exports: [ChatService, TaskerService],
 })
 export class ChatModule {}
