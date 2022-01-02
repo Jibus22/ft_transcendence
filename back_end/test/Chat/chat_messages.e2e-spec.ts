@@ -1,11 +1,10 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
+import { ChatService } from '../../src/modules/chat/chat.service';
 import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
 import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
-import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
-import { Participant } from '../../src/modules/chat/entities/participant.entity';
+import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 import { ChatHelpers, RandomRoom } from './helpers';
@@ -19,8 +18,15 @@ describe('CHAT: Messages Creation', () => {
   let users: User[];
   let cookies: string[];
   let loggedUser: Partial<User>;
+  let getNowValue: number;
+  let getNowMock: jest.SpyInstance;
 
   beforeEach(async () => {
+    getNowValue = Date.now();
+    getNowMock = jest
+      .spyOn(ChatService.prototype, 'getNow')
+      .mockImplementation(() => getNowValue);
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -191,5 +197,70 @@ describe('CHAT: Messages Creation', () => {
       });
   });
 
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        MESSAGES RESTRICTIONS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
 
+  it('try to POST a message after being MUTED', async () => {
+    let createdRooms: RandomRoom[];
+    let targetRoom: RoomDto;
+    const targetPoster = users[1];
+    const testSize = 1;
+    const restrictionDuration = 10;
+    let tmpCookies: string[];
+
+    await chatHelper
+      .generateManyRandomRoomsForLoggedUser(testSize, 1, 1, 0)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(testSize);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+        return await chatHelper.getUserRooms();
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body.length).toBe(testSize);
+        targetRoom = response.body[0];
+        expect(
+          targetRoom.participants.some(
+            (p) => p.user.login === targetPoster.login,
+          ),
+        ).toBeDefined();
+        return await chatHelper.addRestriction(cookies, targetRoom.id, {
+          user_id: targetPoster.id,
+          restriction_type: 'mute',
+          duration: restrictionDuration,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        return await commons.logUser(targetPoster.login);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        tmpCookies = commons.getCookies(response);
+        return await chatHelper.postMessages(tmpCookies, targetRoom.id, {
+          body: faker.lorem.paragraph(),
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+        /*
+         ** Change getNow returned value to emulate time passing and ban expiring
+         */
+        getNowValue = Date.now() + 1000 * 60 * (restrictionDuration + 1);
+        return await chatHelper.postMessages(tmpCookies, targetRoom.id, {
+          body: faker.lorem.paragraph(),
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        expect(getNowMock).toHaveBeenCalled();
+      });
+  });
 }); // <<< end of describBlock

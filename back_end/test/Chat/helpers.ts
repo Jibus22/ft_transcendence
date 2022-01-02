@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
 import { CreateRestrictionDto } from '../../src/modules/chat/dto/create-restriction.dto';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { UpdateParticipantDto } from '../../src/modules/chat/dto/update-participant.dto';
@@ -178,7 +179,7 @@ export class ChatHelpers {
   async postMessages(
     tmpCookies: string[],
     room_id: string,
-    bodyRequest: Object,
+    bodyRequest: createMessageDto,
   ) {
     return await request(this.app.getHttpServer())
       .post(`/room/${room_id}/message`)
