@@ -24,8 +24,11 @@ export class RoomBanGuard implements CanActivate {
       .switchToHttp()
       .getRequest()?.targetedRoomActiveBan;
 
-    if (currentUser && targetRoomBan &&
-      this.isUserBanned(currentUser, targetRoomBan) === false) {
+    if (
+      currentUser &&
+      targetRoomBan &&
+      this.isUserBanned(currentUser, targetRoomBan) === false
+    ) {
       logger.log(`BAN ACCESS GRANTED, user is not banned !`);
       return true;
     }

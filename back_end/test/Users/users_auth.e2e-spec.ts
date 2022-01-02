@@ -92,6 +92,7 @@ describe('user controller: auth routes (e2e)', () => {
         if (response.status === HttpStatus.BAD_REQUEST) {
           response = await turn2Fa_on({ token: await totp(secret) }, cookies);
         }
+        expect(response.status).toBe(HttpStatus.CREATED);
         cookies = commons.updateCookies(response, cookies);
       });
   }
@@ -106,6 +107,7 @@ describe('user controller: auth routes (e2e)', () => {
         if (response.status === HttpStatus.BAD_REQUEST) {
           response = await authenticate2fa({ token: await totp(secret) }, cookies);
         }
+        expect(response.status).toBe(HttpStatus.CREATED);
         cookies = commons.updateCookies(response, cookies);
       });
   }
@@ -274,11 +276,13 @@ describe('user controller: auth routes (e2e)', () => {
         return await authenticate2fa({ token: '000000' }, cookies);
       })
       .then(async (response) => {
-        // second try in case the TOTP was sent at expire time
-
         expect(response.body).toHaveProperty('message', 'invalid token');
         expect(response.status).toBe(HttpStatus.BAD_REQUEST);
         response = await authenticate2fa({ token: await totp(secret) }, cookies);
+        // second try in case the TOTP was sent at expire time
+        if (response.status === HttpStatus.BAD_REQUEST) {
+          response = await turn2Fa_on({ token: await totp(secret) }, cookies);
+        }
         expect(response.status).toBe(HttpStatus.CREATED);
         cookies = commons.updateCookies(response, cookies);
         return await commons.getMe(cookies);
