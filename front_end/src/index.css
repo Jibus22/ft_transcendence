@@ -14,21 +14,8 @@ code {
 }
 
 #root {
-<<<<<<< HEAD
-  --borderLight: rgba(255, 255, 255, .1);
-  --colorHover: rgba(255, 255, 255, .6);
-  --colorBlueC: #2E4266;
-  --colorBlueF: #303a52;
-  
-}
-
-*:focus {
-  outline: none;
-}
-=======
 	--borderLight: rgba(255, 255, 255, 0.1);
 	--colorHover: rgba(255, 255, 255, 0.6);
 	--colorBlueC: #2e4266;
 	--colorBlueF: #303a52;
 }
->>>>>>> dev
