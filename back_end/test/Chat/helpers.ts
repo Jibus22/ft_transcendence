@@ -117,7 +117,7 @@ export class ChatHelpers {
     });
   }
 
-  async createSimpleRoom(bodyRequest: CreateRoomDto) {
+  async createSimpleRoom(bodyRequest: CreateRoomDto | {}) {
     return await request(this.app.getHttpServer())
       .post('/room')
       .set('Cookie', this.cookies)
@@ -146,7 +146,7 @@ export class ChatHelpers {
   async joinRoom(
     tmpCookies: string[],
     room_id: string,
-    bodyRequest?: { password: string } | {},
+    bodyRequest?: { password: string },
   ) {
     const body = bodyRequest ? bodyRequest : {};
 
@@ -174,6 +174,17 @@ export class ChatHelpers {
   ) {
     return await request(this.app.getHttpServer())
       .post(`/room/${room_id}/restriction`)
+      .set('Cookie', tmpCookies)
+      .send(bodyRequest);
+  }
+
+  async addParticipant(
+    tmpCookies: string[],
+    room_id: string,
+    bodyRequest: CreatedParticipant,
+  ) {
+    return await request(this.app.getHttpServer())
+      .post(`/room/${room_id}/participant`)
       .set('Cookie', tmpCookies)
       .send(bodyRequest);
   }

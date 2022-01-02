@@ -1,10 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
-import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
-import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
-import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
+import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
@@ -214,7 +211,7 @@ describe('CHAT: Room Creation', () => {
       });
   });
 
-  it('creates many random rooms and get user\'s rooms list on /me/rooms', async () => {
+  it("creates many random rooms and get user's rooms list on /me/rooms", async () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
@@ -239,6 +236,4 @@ describe('CHAT: Room Creation', () => {
         expect(returnedRooms.length).toBe(expectedRooms.length);
       });
   });
-
-
 }); // <<< end of describBlock

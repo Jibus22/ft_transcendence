@@ -7,7 +7,7 @@ import { CommonTest } from '../helpers';
 import { ChatHelpers } from './helpers';
 var faker = require('faker');
 
-describe('CHAT: Room Creation', () => {
+describe('CHAT: Room Password manipulations', () => {
   const nbOfRooms = 25;
   let app: INestApplication;
   let chatHelper: ChatHelpers;
@@ -47,12 +47,12 @@ describe('CHAT: Room Creation', () => {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        Room creation
+        Room passwords
   -------------------------------------------------------------------
   ===================================================================
   */
 
-  it('creates a simple private room with password and CHANGE PASSWORD', async () => {
+  it('creates a simple public room with password and CHANGE PASSWORD', async () => {
     const passwords: string[] = [
       faker.internet.password(),
       faker.internet.password(),
@@ -113,7 +113,7 @@ describe('CHAT: Room Creation', () => {
       });
   });
 
-  it('creates a simple private room with password and UNSET PASSWORD', async () => {
+  it('creates a simple public room with password and UNSET PASSWORD', async () => {
     const passwords: string[] = [faker.internet.password(), ''];
     let tmpCookies: string[];
     let createdRoom: RoomDto;

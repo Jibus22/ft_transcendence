@@ -1,11 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
-import { CreateParticipantDto } from './create-participant.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class UpdatePasswordDto {
-
   @ApiProperty()
   @IsString()
   password: string;
-
 }
