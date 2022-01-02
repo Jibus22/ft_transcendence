@@ -1,28 +1,38 @@
-import React, {useState } from 'react';
-
+import React from 'react';
+import { Socket } from "socket.io-client";
 import { Play, OnlineGame } from '../..';
+import { useMainPage } from '../../../MainPageContext';
 
+interface Props {
+    wsStatus: Socket | undefined;
+  }
 
-export default function Game() {
+export default function Game({wsStatus}: Props) {
+	const { setTimeSnack, timer, setIsDisable, setLoading, setIsFriends } = useMainPage();
 
-    const[loading, setLoading] = useState<boolean>(false);
-    const[isDisable, setIsDisable] = useState<boolean>(true)
-    function handleClick() {
-        setLoading(true);
-        setIsDisable(false);
-        setTimeout(function () {
-            setLoading(false);
-            setIsDisable(true);
-        }, 5000);
-    }
+	function handleClick() {
+        /*
+         TEST MESSAGE EMIT for ingame status: set
+         TODO: add `wsStatus && wsStatus.emit('ingame', 'out');`
+            when user exits game!
+        */
+        wsStatus && wsStatus.emit('ingame', 'in');
 
-    
+		setLoading(true);
+		setIsDisable(false);
+		setTimeSnack(false);
+		setIsFriends(false);
+		setTimeout(function () {
+			setLoading(false);
+			setIsDisable(true);
+			setTimeSnack(true);
+		}, timer);
+	}
 
-    return (
-        <div className='d-flex MainGame'>
-            <Play Loadingclick={handleClick} disable={isDisable} loading={loading} />
-            <OnlineGame Loadingclick={handleClick} loading={loading}/>
-          
-        </div>
-    )
+	return (
+		<div className="d-flex MainGame">
+			<Play Loadingclick={handleClick} />
+			<OnlineGame Loadingclick={handleClick} />
+		</div>
+	);
 }

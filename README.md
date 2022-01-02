@@ -14,7 +14,7 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up [--build] [bac
 docker-compose -f docker-compose.yml -f docker-compose.debug.yml up [--build] [back_end_server|front_end_server]
 
 ### Run end-to-end test mode for backend:
-docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'npm run test:e2e'
+docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'npm run test:e2ewatch'
 
 
 ### Run production mode:

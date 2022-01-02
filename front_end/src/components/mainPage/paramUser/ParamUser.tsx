@@ -1,101 +1,136 @@
-import React, { useState, useEffect} from 'react';
-import './paramUser.scss'
-import PopUpUser from './PopUpUser';
-import { useSpring, animated } from 'react-spring'
-import {Switch, FormControlLabel, Button, IconButton } from '@mui/material';
+import React, { useState, useRef, useEffect } from 'react';
+import PopUpUser from './PopUp/PopUpUser';
+import { useSpring, animated } from 'react-spring';
+import { CircularProgress, Button, IconButton, Avatar } from '@mui/material';
+import Backdrop from '@mui/material/Backdrop';
 import FormUser from './FormUser';
-import PencilIcon from './photos/pencil-icon.png'
+import PencilIcon from './photos/pencil-icon.png';
+import { useMainPage } from '../../../MainPageContext';
+import { useHover } from 'ahooks';
+import DoubleAuth from './doubleAuth/DoubleAuth';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-interface TypeCategoriesProps {
-  data: Array<Type>;
-}
-interface Type {
-  id: number; login: string; photo_url: string;
-}
+export default function ParamUser() {
+	const props = useSpring({
+		opacity: 1,
+		transform: 'translate(0px, 0px)',
+		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		config: {
+			delay: 350,
+			duration: 350,
+		},
+	});
 
+	const { userImg, userName, dialogMui, data } = useMainPage();
+	const ref = useRef<HTMLDivElement>(null);
+	const isHovering = useHover(ref);
 
-export default function ParamUser({data} : TypeCategoriesProps ) {
-  const props = useSpring({
-    opacity: 1,
-    transform: "translate(0px, 0px)",
-    from: { opacity: 0, transform: "translate(0px, 500px)" } ,
-    config: {
-        delay: 350,
-        duration: 350,
-    },
-  });
+	let navigate = useNavigate();
 
-    const[isModif, setIsModif] = useState<boolean>(false)
-    const[isPop, setIsPop] = useState<boolean>(false)
+	const [isPop, setIsPop] = useState<boolean>(false);
+	const [time, setTime] = useState(false);
 
-    const [userName, setUserName] = useState('');
-    const [userImg, setUserImg] = useState('');
-    useEffect(() => {
-        data.map(item => (
-            setUserName(item.login),
-            setUserImg(item.photo_url)
-        ))
-      });
+	const [dataFa, setDataFa] = useState(false);
 
-    function toggleModif() {
-      setIsModif(!isModif)
-    }
-    function printPopup()  {
-      setIsPop(!isPop)
-    }
+	useEffect(() => {
+		if (data.length > 0) {
+			if (data[0].hasTwoFASecret === true) {
+				setDataFa(data[0].hasTwoFASecret);
+			}
+		}
+	});
 
-    return (
-      <animated.div  style={props} className='w-100 '> 
-       <div className="mainParamUser d-flex flex-column">
-          
-          { isPop ? (
-             <PopUpUser printPopup={printPopup}/>
-          ) : null}
+	function printPopup() {
+		setIsPop(!isPop);
+	}
 
-          <div onMouseEnter={toggleModif} onMouseLeave={toggleModif} className='imgUser '>
-            <img src={userImg} alt="" className={`${ isModif &&  !isPop ?  'imgFilter ' : 'none'} `} />
-            {isModif && !isPop ? (
-                <div className='userModif'>
-                  <IconButton sx={{width: 2/2, height: 2/2}} className="" onClick={printPopup} >
-                      <img src={PencilIcon} alt="" />
-                    </IconButton>
-                </div>
-            ) : null}   
-          </div> 
-          <div className={`${isPop ?  'mainStatUserBlur' : 'mainStatUser'} `} >
+	const [open, setOpen] = useState(false);
+	const disagree = () => {
+		setOpen(false);
+	};
 
-              
-            <div className="StatUser d-flex flex-column">
-              <div className='infoStatUser d-flex '>
-                <div className=''><p>Game</p></div>
-                <div className=''><p>Win</p></div>
-                <div className=''><p>Looses</p></div>
-              </div>
-              <div className="statNbUser d-flex ">
-              <div className=''><p>15</p></div>
-                <div className='middleNbUser'><p>2</p></div>
-                <div className=''><p>13</p></div>
-              </div>
-            </div>
-            <div className='mainMaterialUiText '>
-                 <FormUser isPop={isPop} userName={userName}/>
-            </div>
-            <div className='switchMui '>
-            <FormControlLabel disabled={isPop} control={
-              <Switch  defaultChecked   />
-            }label="2FA" labelPlacement="start"
-            />
-           </div>
-           <div className='disconectMui'>
-             <Button disabled={isPop} variant="text">Disconnect</Button>
-           </div>  
-        </div>
-            
-             
-        </div>  
+	const agree = async () => {
+		setOpen(false);
+		try {
+			await axios.delete('http://localhost:3000/auth/signout', {
+				withCredentials: true,
+			});
+			setTime(true);
+			setTimeout(function () {
+				setTime(false);
+				navigate('/');
+			}, 1500);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-        </animated.div>
-    
-      
-    )
+	const disconect = async () => {
+		setOpen(true);
+	};
+
+	return (
+		<animated.div style={props} className="w-100 ">
+			<div className="mainParamUser d-flex flex-column">
+				{isPop ? <PopUpUser printPopup={printPopup} /> : null}
+				<div ref={ref} className="imgUser ">
+					<Avatar
+						alt="userImg"
+						src={userImg}
+						sx={{ width: 2 / 2, height: 2 / 2 }}
+						className={`${isHovering && !isPop ? 'imgFilter ' : ''} `}
+					/>
+
+					{isHovering && !isPop ? (
+						<div className="userModif">
+							<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="" onClick={printPopup}>
+								<img src={PencilIcon} alt="" />
+							</IconButton>
+						</div>
+					) : null}
+				</div>
+				<div className={`${isPop ? 'mainStatUserBlur' : 'mainStatUser'} `}>
+					<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
+						<CircularProgress color="inherit" />
+					</Backdrop>
+					<div className="StatUser d-flex flex-column">
+						<div className="infoStatUser d-flex ">
+							<div className="">
+								<p>Game</p>
+							</div>
+							<div className="">
+								<p>Win</p>
+							</div>
+							<div className="">
+								<p>Looses</p>
+							</div>
+						</div>
+						<div className="statNbUser d-flex ">
+							<div className="">
+								<p>15</p>
+							</div>
+							<div className="middleNbUser">
+								<p>2</p>
+							</div>
+							<div className="">
+								<p>13</p>
+							</div>
+						</div>
+					</div>
+					<div className="mainMaterialUiText ">
+						<FormUser isPop={isPop} userName={userName} />
+					</div>
+
+					<DoubleAuth isPop={isPop} dataFa={dataFa} />
+					<div className="disconectMui">
+						<Button disabled={isPop} onClick={disconect} variant="text">
+							Disconnect
+						</Button>
+					</div>
+				</div>
+				{dialogMui(open, disagree, agree, 'Warning !', 'Are you sure you want to disconnect ?')}
+			</div>
+		</animated.div>
+	);
 }

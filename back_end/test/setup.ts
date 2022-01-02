@@ -1,11 +1,12 @@
 import { rm } from 'fs/promises'
 import { join } from 'path'
+import { dirname } from 'path/posix';
 import { getConnection } from 'typeorm';
 
 global.beforeEach( async () => {
 
-	try {
-		await rm(join(__dirname, '..', process.env.DB_NAME));
+  try {
+    await rm(process.env.DB_NAME);
 	}
 	catch (err) {}
 
