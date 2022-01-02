@@ -1,12 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import exp from 'constants';
 import { AppModule } from '../../src/app.module';
-import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
-import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
+import { ChatService } from '../../src/modules/chat/chat.service';
 import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
-import { Participant } from '../../src/modules/chat/entities/participant.entity';
+import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 import { ChatHelpers, RandomRoom } from './helpers';
@@ -20,8 +17,14 @@ describe('CHAT: Join/leave rooms', () => {
   let users: User[];
   let cookies: string[];
   let loggedUser: Partial<User>;
+  let getNowValue: number;
 
   beforeEach(async () => {
+    getNowValue = Date.now();
+    jest
+      .spyOn(ChatService.prototype, 'getNow')
+      .mockImplementation(() => getNowValue);
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -88,11 +91,11 @@ describe('CHAT: Join/leave rooms', () => {
     }
   }
 
-  it('join a public room', async () => {
+  it('join many random public rooms, with/without password', async () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -114,19 +117,22 @@ describe('CHAT: Join/leave rooms', () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
         expect(loggedUser.id).toBeDefined();
         expect(loggedUser.id.length).toBeGreaterThan(0);
 
-        const unjoindedPrivateRooms = await chatHelper.getPrivateUnjoinedRooms();
-        const targetRoom = unjoindedPrivateRooms.find( r => r.is_password_protected === false);
+        const unjoindedPrivateRooms =
+          await chatHelper.getPrivateUnjoinedRooms();
+        const targetRoom = unjoindedPrivateRooms.find(
+          (r) => r.is_password_protected === false,
+        );
         expect(targetRoom).toBeDefined();
         return await chatHelper.joinRoom(cookies, targetRoom.id);
       })
-      .then(response => {
+      .then((response) => {
         expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
       });
   });
@@ -166,7 +172,7 @@ describe('CHAT: Join/leave rooms', () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms, 0, 0.2, 1)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -185,4 +191,67 @@ describe('CHAT: Join/leave rooms', () => {
       });
   });
 
+  /*
+    ===================================================================
+    -------------------------------------------------------------------
+          JOINING BANNED ROOMS
+    -------------------------------------------------------------------
+    ===================================================================
+    */
+
+  it('try join a room after being banned from it ', async () => {
+    let createdRooms: RandomRoom[];
+    let targetRoom: RoomDto;
+    let targetParticipant: ParticipantDto;
+    let tmpCookies: string[];
+    const banDuration = 10;
+    const testSize = 2;
+
+    await chatHelper
+      .generateManyRandomRoomsForLoggedUser(testSize, 0, 1, 0)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(testSize);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+
+        const userRooms = await chatHelper.getOwnedRooms();
+        expect(userRooms.length).toBe(testSize);
+        targetRoom = userRooms.find(
+          (r) =>
+            r.participants.length >= 2 &&
+            r.is_password_protected === false &&
+            r.is_private === false,
+        );
+        expect(targetRoom).toBeDefined();
+        targetParticipant = targetRoom.participants.find((p) => !p.is_owner);
+        expect(targetParticipant).toBeDefined();
+        return await chatHelper.addRestriction(cookies, targetRoom.id, {
+          user_id: targetParticipant.user.id,
+          restriction_type: 'ban',
+          duration: banDuration,
+        });
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        return await commons.logUser(targetParticipant.user.login);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.CREATED);
+        tmpCookies = commons.getCookies(response);
+        return await chatHelper.joinRoom(tmpCookies, targetRoom.id);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
+        expect(response.body).toHaveProperty('message', 'User is banned');
+        /*
+         ** Change getNow returned value to emulate time passing and ban expiring
+         */
+        getNowValue = Date.now() + 1000 * 60 * (banDuration + 1);
+        return await chatHelper.joinRoom(tmpCookies, targetRoom.id);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.OK);
+      });
+  });
 }); // <<< end of describBlock

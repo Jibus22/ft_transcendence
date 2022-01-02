@@ -61,7 +61,7 @@ describe('CHAT: Get Rooms', () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);

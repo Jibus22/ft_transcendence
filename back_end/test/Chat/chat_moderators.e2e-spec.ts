@@ -178,7 +178,7 @@ describe('CHAT: Moderators', () => {
     let targetParticipant: ParticipantDto;
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (response) => {
         expect(response.length).toBe(nbOfRooms);
         return await chatHelper.getParticipatingNotOwnedRooms();

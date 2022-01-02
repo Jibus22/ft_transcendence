@@ -183,7 +183,7 @@ describe('CHAT: Room Creation', () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -218,7 +218,7 @@ describe('CHAT: Room Creation', () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);

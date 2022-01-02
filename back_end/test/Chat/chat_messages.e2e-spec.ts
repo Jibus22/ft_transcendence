@@ -62,7 +62,7 @@ describe('CHAT: Messages Creation', () => {
     let destRoom: RandomRoom;
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -146,7 +146,7 @@ describe('CHAT: Messages Creation', () => {
     let testMessage: string = faker.lorem.paragraph();
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -172,7 +172,7 @@ describe('CHAT: Messages Creation', () => {
     let testMessage: string = faker.lorem.paragraph();
 
     await chatHelper
-      .generateManyRandomRooms(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);

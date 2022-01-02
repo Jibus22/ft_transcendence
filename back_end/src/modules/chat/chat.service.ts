@@ -10,7 +10,6 @@ import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Restriction } from './entities/restriction.entity';
@@ -199,7 +198,7 @@ export class ChatService {
         error: 'user already participant in this room',
       };
     }
-    const {user: roomOwner} = room.participants.find(p => p.is_owner);
+    const { user: roomOwner } = room.participants.find((p) => p.is_owner);
     return await this.createParticipant(createPaticipant.id, room, roomOwner);
   }
 
@@ -260,10 +259,14 @@ export class ChatService {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        RESTRINCTIONS METHODS
+        RESTRICTIONS METHODS
   -------------------------------------------------------------------
   ===================================================================
   */
+
+  getNow() {
+    return Date.now();
+  }
 
   async createRestriction(room: Room, restrictionDto: CreateRestrictionDto) {
     const targetedParticipant = room.participants.find(
@@ -285,7 +288,7 @@ export class ChatService {
       user: targetedParticipant.user,
       room: room,
       restriction_type: restrictionDto.restriction_type,
-      expiration_time: Date.now() + restrictionDto.duration * 1000 * 60,
+      expiration_time: this.getNow() + restrictionDto.duration * 1000 * 60,
     });
     await this.repoRestriction
       .save(restriction)
@@ -311,14 +314,14 @@ export class ChatService {
     return room.restrictions.filter((r) => {
       return (
         (!type || r.restriction_type === type) &&
-        r.expiration_time - Date.now() > 0
+        r.expiration_time - this.getNow() > 0
       );
     });
   }
 
   extractExpiredRestrictions(restrictions: Restriction[]) {
     return restrictions.filter((r) => {
-      return Date.now() - r.expiration_time > 0;
+      return this.getNow() - r.expiration_time > 0;
     });
   }
 
@@ -337,7 +340,7 @@ export class ChatService {
   ) {
     messageDto.room = room;
     messageDto.sender = user;
-    messageDto.timestamp = Date.now();
+    messageDto.timestamp = this.getNow();
     const message = this.repoMessage.create(messageDto);
     return await this.repoMessage.save(message);
   }

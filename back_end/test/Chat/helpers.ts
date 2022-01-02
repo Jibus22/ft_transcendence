@@ -26,7 +26,7 @@ export class ChatHelpers {
     private loggedUser: Partial<User>,
     private app: INestApplication,
     private users: User[],
-    private commons: CommonTest
+    private commons: CommonTest,
   ) {}
 
   async getJoinedRooms() {
@@ -57,8 +57,8 @@ export class ChatHelpers {
       return rooms.filter((r) =>
         r.participants.some(
           (p) =>
-          r.is_private &&
-          !r.participants.some((p) => p.user.id === this.loggedUser.id),
+            r.is_private &&
+            !r.participants.some((p) => p.user.id === this.loggedUser.id),
         ),
       );
     });
@@ -198,10 +198,14 @@ export class ChatHelpers {
       .set('Cookie', this.cookies);
   }
 
-  makeOneRandomRoom(): RandomRoom {
+  makeOneRandomRoom(
+    probPrivate = 0.5,
+    probaParticipant = 0.4,
+    probaPassword = 0.3,
+  ): RandomRoom {
     let participants: CreatedParticipant[] = [];
     this.users.forEach((user) => {
-      if (Math.random() < 0.4) {
+      if (Math.random() < probaParticipant) {
         participants.push({ id: user.id });
       }
     });
@@ -210,12 +214,48 @@ export class ChatHelpers {
       id: '',
       owner_created: { id: '' },
       participants: participants,
-      is_private: Math.random() < 0.5,
-      password: Math.random() < 0.3 ? faker.internet.password() : '',
+      is_private: Math.random() < probPrivate,
+      password: Math.random() < probaPassword ? faker.internet.password() : '',
     };
   }
 
-  async generateManyRandomRooms(nbRoomTested: number) {
+  async generateManyRandomRoomsForLoggedUser(
+    nbRoomTested: number,
+    probPrivate?: number,
+    probaParticipant?: number,
+    probaPassword?: number,
+  ) {
+    let createdRooms: RandomRoom[] = [];
+    for (let i = 0; i < nbRoomTested; i++) {
+      const randomRoom = this.makeOneRandomRoom(
+        probPrivate,
+        probaParticipant,
+        probaPassword,
+      );
+      randomRoom.owner_created.id = this.loggedUser.id;
+
+      await request(this.app.getHttpServer())
+        .post('/room')
+        .set('Cookie', this.cookies)
+        .send(randomRoom)
+        .then((resp) => {
+          expect(resp.status).toBe(HttpStatus.CREATED);
+          expect(resp.body.is_private).toBeDefined();
+          expect(resp.body.is_password_protected).toBeDefined();
+          expect(resp.body.id).toBeDefined();
+          randomRoom.id = resp.body.id;
+        });
+      createdRooms.push(randomRoom);
+    }
+    return createdRooms;
+  }
+
+  async generateManyRandomRoomsForRandomUsers(
+    nbRoomTested: number,
+    probPrivate?: number,
+    probaParticipant?: number,
+    probaPassword?: number,
+  ) {
     let createdRooms: RandomRoom[] = [];
 
     for (let i = 0; i < nbRoomTested; i++) {
@@ -228,7 +268,11 @@ export class ChatHelpers {
           return this.commons.getCookies(response);
         });
 
-      const randomRoom = this.makeOneRandomRoom();
+      const randomRoom = this.makeOneRandomRoom(
+        probPrivate,
+        probaParticipant,
+        probaPassword,
+      );
       randomRoom.owner_created.id = roomOwnerId.id;
 
       await request(this.app.getHttpServer())
