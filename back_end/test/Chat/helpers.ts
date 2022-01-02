@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
 import { CreateRestrictionDto } from '../../src/modules/chat/dto/create-restriction.dto';
+import { CreateRoomDto } from '../../src/modules/chat/dto/create-room.dto';
 import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { UpdateParticipantDto } from '../../src/modules/chat/dto/update-participant.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
@@ -116,7 +117,7 @@ export class ChatHelpers {
     });
   }
 
-  async createSimpleRoom(bodyRequest) {
+  async createSimpleRoom(bodyRequest: CreateRoomDto) {
     return await request(this.app.getHttpServer())
       .post('/room')
       .set('Cookie', this.cookies)
@@ -129,10 +130,23 @@ export class ChatHelpers {
       .set('Cookie', this.cookies);
   }
 
-  async joinRoom(
+  async updateRoomPassword(
     tmpCookies: string[],
     room_id: string,
     bodyRequest?: { password: string },
+  ) {
+    const body = bodyRequest ? bodyRequest : {};
+
+    return await request(this.app.getHttpServer())
+      .patch(`/room/${room_id}/password`)
+      .set('Cookie', tmpCookies)
+      .send(body);
+  }
+
+  async joinRoom(
+    tmpCookies: string[],
+    room_id: string,
+    bodyRequest?: { password: string } | {},
   ) {
     const body = bodyRequest ? bodyRequest : {};
 
