@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsNumber, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateRestrictionDto {
   @ApiProperty()
@@ -11,8 +11,11 @@ export class CreateRestrictionDto {
   restriction_type: 'ban' | 'mute';
 
   @ApiProperty()
-  // VALIDATION FOR DATE FORMAT TBD
-  // @IsDate()
-  @IsNumber()
-  expiration_time: number;
+  @Min(1)
+  @IsNumber({
+    allowNaN: false,
+    allowInfinity: false,
+    maxDecimalPlaces: 0
+  })
+  duration: number;
 }

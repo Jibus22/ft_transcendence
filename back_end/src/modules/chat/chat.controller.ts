@@ -10,16 +10,18 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomBanGuard } from '../../guards/roomBan.guard';
 import { RoomModeratorGuard } from '../../guards/roomModerator.guard';
+import { RoomMuteGuard } from '../../guards/roomMute.guard';
 import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
@@ -29,11 +31,13 @@ import { ChatService } from './chat.service';
 import { TargetedRoom } from './decorators/targeted-room.decorator';
 import { ChatMessageDto } from './dto/chatMessade.dto';
 import { createMessageDto } from './dto/create-message.dto';
+import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
-import { RoomDto, FullRoomDto } from './dto/room.dto';
+import { FullRoomDto, RoomDto } from './dto/room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Room } from './entities/room.entity';
 
 /*
@@ -73,8 +77,8 @@ export class ChatController {
   })
   @Post()
   @Serialize(RoomDto)
-  async create(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
-    return await this.chatService.create(user, createRoomDto).catch((error) => {
+  async createRoom(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
+    return await this.chatService.createRoom(user, createRoomDto).catch((error) => {
       if (error.status) {
         throw new HttpException(error, error.status);
       } else {
@@ -132,7 +136,7 @@ export class ChatController {
   @Serialize(RoomDto)
   @UseGuards(RoomOwnerGuard)
   async remove(@TargetedRoom() targetedRoom: Room) {
-    return await this.chatService.remove(targetedRoom).catch((error) => {
+    return await this.chatService.removeRoom(targetedRoom).catch((error) => {
       throw new NotFoundException(error);
     });
   }
@@ -159,6 +163,8 @@ export class ChatController {
   })
   @Post(':room_id/message')
   @Serialize(ChatMessageDto)
+  @UseGuards(RoomBanGuard)
+  @UseGuards(RoomMuteGuard)
   @UseGuards(RoomParticipantGuard)
   async addMessage(
     @TargetedRoom() room: Room,
@@ -195,6 +201,34 @@ export class ChatController {
   -------------------------------------------------------------------
   ===================================================================
   */
+
+  @ApiOperation({
+    summary: 'Add one participant to an existing room',
+  })
+  @ApiResponse({ type: ParticipantDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @Post(':room_id/participant')
+  @UseGuards(RoomModeratorGuard)
+  async addParticipant(
+    @TargetedRoom() room: Room,
+    @Body() createPaticipant: CreateParticipantDto
+    ) {
+    return await this.chatService
+      .addParticipant(room, createPaticipant)
+      .catch((error) => {
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        } else {
+          throw new BadRequestException(error);
+        }
+      });
+  }
 
   @ApiOperation({
     summary: 'Change participant status into moderator',
@@ -250,4 +284,43 @@ export class ChatController {
         }
       });
   }
+
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        OWNER ROUTES
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+
+  @ApiOperation({
+    summary: 'Update a owned room\'s password',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password updated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @Patch(':room_id/password')
+  @UseGuards(RoomOwnerGuard)
+  async updatePassword(
+    @TargetedRoom() room: Room,
+    @Body() updatePasswordDto:UpdatePasswordDto,
+  ) {
+    return await this.chatService
+      .updatePassword(room, updatePasswordDto)
+      .catch((error) => {
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        } else {
+          throw new BadRequestException(error);
+        }
+      });
+  }
+
 }

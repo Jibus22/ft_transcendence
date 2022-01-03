@@ -15,17 +15,20 @@ export class RoomPublicGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💂‍♂️ Room Public Guard'); //TODO REMOVE LOGGER HERE
-    const currentUser: User = context.switchToHttp().getRequest().currentUser;
-    const targetRoom: Room = context.switchToHttp().getRequest().targetedRoom;
-    if (currentUser && targetRoom) {
+    const logger = new Logger('💬 💂‍♂️ Room Public Guard'); //TODO REMOVE LOGGER HERE
+    const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
+    const targetRoom: Room = context.switchToHttp().getRequest()?.targetedRoom;
+    if (
+      currentUser &&
+      targetRoom &&
+      this.isRoomPublic(currentUser, targetRoom)
+    ) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom}`,
       );
-      const ret = this.isRoomPublic(currentUser, targetRoom);
-      logger.log(`ACCESS GRANTED ? ${ret}`);
-      return ret;
+      logger.log(`PUBLIC ROOM ACCESS GRANTED !`);
+      return true;
     }
-    throw new UnauthorizedException('User must be logged and own the room');
+    throw new UnauthorizedException('User must be logged and target a Public Room');
   }
 }

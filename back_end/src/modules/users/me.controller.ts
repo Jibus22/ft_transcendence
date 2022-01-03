@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomBanGuard } from '../../guards/roomBan.guard';
 import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { RoomPublicGuard } from '../../guards/roomPublic.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
@@ -41,8 +42,8 @@ import { UsersService } from './service-users/users.service';
 @Controller('me')
 export class MeController {
   constructor(
-    private usersService: UsersService,
-    private chatService: ChatService,
+    private readonly usersService: UsersService,
+    private readonly chatService: ChatService,
   ) {}
 
   /*
@@ -142,6 +143,7 @@ export class MeController {
   @Patch('/rooms/:room_id')
   @UseGuards(AuthGuard)
   @UseGuards(RoomPublicGuard)
+  @UseGuards(RoomBanGuard)
   @ApiOperation({
     summary: 'Join a public room with or without password',
   })
