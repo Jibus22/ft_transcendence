@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
 import FF from '../img/FF.png';
 import { Avatar, Badge } from '@mui/material';
+import axios, { AxiosError } from 'axios';
 
 import Button from '@mui/material/Button';
 
@@ -24,11 +25,7 @@ const Rankfriends = () => {
 					<h1>1</h1>
 				</div>
 				<div className="imgUser ">
-					<Badge
-						overlap="circular"
-						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-						variant="dot"
-					>
+					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
 						<Avatar alt="userImg" src={FF} variant="square" className="domUser" />
 					</Badge>
 				</div>
@@ -48,11 +45,7 @@ const Rankfriends = () => {
 				</div>
 			</div>
 			<div className="buttonDIv d-flex">
-				<Button
-					className="muiButton"
-					variant="contained"
-					sx={{ width: 2 / 2, textTransform: 'none' }}
-				>
+				<Button className="muiButton" variant="contained" sx={{ width: 2 / 2, textTransform: 'none' }}>
 					Challenge
 				</Button>
 			</div>

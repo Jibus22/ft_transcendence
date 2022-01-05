@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
 import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
@@ -6,11 +6,12 @@ import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../MainPageContext';
 import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { useMount } from 'ahooks';
+import { useSafeState } from 'ahooks';
 
 const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack } = useMainPage();
-	const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
-	const [errorAuth, setErrorAuth] = useState(false);
+	const [wsStatus, setWsStatus] = useSafeState<Socket | undefined>(undefined);
 
 	const [isHeader, setIsHeader] = useState(true);
 
@@ -25,61 +26,62 @@ const MainPage = () => {
 		} catch (error) {
 			const err = error as AxiosError;
 			if (err.response?.status === 401) {
-				setErrorAuth(true);
 				navigate('/');
 			}
 		}
 	};
 
 	const connectWsStatus = async () => {
-		await axios('http://localhost:3000/auth/ws/token', {
-			withCredentials: true,
-		})
-			.then((response) => {
-				const { token } = response.data;
-				if (!token) {
-					throw new Error('no valid token');
-				}
-				const socket = io('ws://localhost:3000', {
-					auth: {
-						key: token,
-					},
-				});
-
-				socket.on('connect_error', (err) => {
-					setWsStatus(undefined);
-					console.log(`ws connect_error due to ${err.message}`);
-				});
-
-				socket.on('connect', () => {
-					setWsStatus(socket);
-					console.log(`WS CONNECTED`);
-				});
-
-				socket.on('error', (error) => {
-					console.log(error);
-				});
-
-				socket.on('disconnect', () => {
-					setWsStatus(undefined);
-					console.log(`WS DISCONNECTED`);
-				});
-			})
-			.catch((error) => {
+		try {
+			const response = await axios('http://localhost:3000/auth/ws/token', {
+				withCredentials: true,
+			});
+			const { token } = response.data;
+			if (!token) {
+				throw new Error('no valid token');
+			}
+			const socket = io('ws://localhost:3000', {
+				auth: {
+					key: token,
+				},
+			});
+			socket.on('connect_error', (err) => {
 				setWsStatus(undefined);
+				console.log(`ws connect_error due to ${err.message}`);
+			});
 
+			socket.on('connect', () => {
+				setWsStatus(socket);
+				console.log(`WS CONNECTED`);
+			});
+
+			socket.on('error', (error) => {
 				console.log(error);
 			});
+
+			socket.on('disconnect', () => {
+				setWsStatus(undefined);
+				console.log(`WS DISCONNECTED`);
+			});
+		} catch (error) {
+			const err = error as AxiosError;
+			if (err.response?.status === 401) {
+				navigate('/');
+			}
+			setWsStatus(undefined);
+		}
 	};
 
-	useEffect(() => {
+	// useEffect(() => {
+	// 	fetchDataUserMe();
+	// 	connectWsStatus();
+
+	// }, []);
+
+	useMount(() => {
 		fetchDataUserMe();
 		connectWsStatus();
-
-		// return () => {
-		// 	setState({});
-		// };
-	}, []);
+	});
 
 	const resetTimeSnack = () => {
 		setTimeSnack(false);
