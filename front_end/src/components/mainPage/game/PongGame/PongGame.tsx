@@ -8,6 +8,10 @@ import "./PongGame.css"
 const W3CWebSocket = require('websocket').w3cwebsocket;
 let client= new W3CWebSocket('ws://localhost:8000');
 
+function getRandomInt(max : number) {
+	return Math.floor(Math.random() * max);
+}
+
 class PongGame extends React.Component {
 	width = 700;
 	height = 600;
@@ -34,18 +38,22 @@ class PongGame extends React.Component {
 		super(props);
 	}
 
+	_printText(str:string){
+		this._ctx!.font = '30px Arial';
+		this._ctx!.fillStyle = 'grey';
+		this._ctx!.fillText(str,
+			this.width / 2 - ((15 * str.length) / 2) + 2,
+			this.height / 2 + 2);
+		this._ctx!.fillStyle = 'white';
+		this._ctx!.fillText(str,
+			this.width / 2 - ((15 * str.length) / 2),
+			this.height / 2);
+	}
+
 	_initPongGame() {
 		this._canvas = document.querySelector('canvas')!;
 		this._ctx = this._canvas.getContext('2d')!;
-		this._ctx.font = '30px Arial';
-		this._ctx.fillStyle = 'grey';
-		this._ctx.fillText('Starting Game',
-			this.width / 2 - ((15 * 13) / 2) + 2,
-			this.height / 2 + 2);
-		this._ctx.fillStyle = 'white';
-		this._ctx.fillText('Starting Game',
-			this.width / 2 - ((15 * 13) / 2),
-			this.height / 2);
+		this._printText('Starting Game')
 	}
 
 	private _update(): void{
@@ -54,15 +62,38 @@ class PongGame extends React.Component {
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0) // someone scored
 			{
+				let random = getRandomInt(100);
 				if (ret == 2)
-				{
-					//J2 score
-					this.scoreP1++;
-				}
+					this.scoreP1++;//J2 score
 				if (ret == 1)
-				{
-					//J1 score
 					this.scoreP2++;
+				if (random < 5)
+				{
+					//Power up large paddle
+					if (ret == 1)
+						this._playerOne._largePaddle();
+					if (ret == 2)
+					{
+						client.send(JSON.stringify({
+							type: "message",
+							object: "PowerUp",
+							powerUp : "largePaddle"
+						}))
+					}
+				}
+				if (random >= 95)
+				{
+					//Power Up controle inverse
+					if (ret == 2)
+						this._playerOne._invertControlTemporarily();
+					if (ret == 1)
+					{
+						client.send(JSON.stringify({
+							type: "message",
+							object: "PowerUp",
+							powerUp : "invertControl"
+						}))
+					}
 				}
 				this._ball.y = this.height/2;
 				this._ball.x = this.width/2;
@@ -174,6 +205,13 @@ class PongGame extends React.Component {
 			{
 				this.scoreP1 = data.P1;
 				this.scoreP2 = data.P2;
+			}
+			if(this._P2 && data.object === "PowerUp")
+			{
+				if (data.powerUp == "invertControl")
+					this._playerTwo._invertControlTemporarily();
+				if (data.powerUp == "largePaddle")
+					this._playerTwo._largePaddle();
 			}
 		};
 		setTimeout(() => this._startGame(), 1000);

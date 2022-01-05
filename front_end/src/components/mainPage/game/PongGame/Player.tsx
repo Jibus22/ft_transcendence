@@ -67,4 +67,23 @@ export class Player {
 				this.y -= deplacement;
 		}
 	}
+
+	_invertControl()
+	{
+		let swap = this.keyDown;
+		this.keyDown = this.keyUp;
+		this.keyUp = swap;
+	}
+
+	_invertControlTemporarily(){
+		this._invertControl();
+		setTimeout(() => this._invertControl(), 10 * 1000);
+	}
+
+	_largePaddle()
+	{
+		this.size += 20;
+		setTimeout(() => this.size-=20, 10 * 1000);
+
+	}
 }
