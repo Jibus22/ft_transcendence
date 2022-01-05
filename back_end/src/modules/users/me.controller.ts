@@ -2,24 +2,31 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  HttpException,
   HttpStatus,
   Patch,
   Res,
   Session,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
+import { RoomBanGuard } from '../../guards/roomBan.guard';
+import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
+import { RoomPublicGuard } from '../../guards/roomPublic.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { ChatService } from '../chat/chat.service';
+import { TargetedRoom } from '../chat/decorators/targeted-room.decorator';
 import { RoomDto } from '../chat/dto/room.dto';
+import { Room } from '../chat/entities/room.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
 import { UpdateUserDto } from './dtos/update-users.dto';
@@ -35,13 +42,17 @@ import { UsersService } from './service-users/users.service';
 @Controller('me')
 export class MeController {
   constructor(
-    private usersService: UsersService,
-    private chatService: ChatService,
+    private readonly usersService: UsersService,
+    private readonly chatService: ChatService,
   ) {}
 
-  /*****************************************************************************
-   *    CURRENTLY LOGGED USER INFOS
-   *****************************************************************************/
+  /*
+    ===================================================================
+    -------------------------------------------------------------------
+          USERS INFOS
+    -------------------------------------------------------------------
+    ===================================================================
+    */
 
   @Get('/')
   @UseGuards(AuthGuard)
@@ -58,19 +69,26 @@ export class MeController {
     return user;
   }
 
-  @Get('/rooms')
+  @Patch('/')
   @UseGuards(AuthGuard)
-  @Serialize(RoomDto)
+  @Serialize(privateUserDto)
   @ApiOperation({
-    summary: 'Get rooms in which the currently logged user is owner/moderator/participant',
+    summary: 'Update infos of the currently logged user',
   })
-  @ApiResponse({ type: RoomDto })
+  @ApiResponse({ type: privateUserDto })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'rooms in which the currently logged user is owner/moderator/participant',
+    description: 'User private informations updated',
   })
-  async getMyRooms(@CurrentUser() user: User) {
-    return await this.chatService.findUserRoomList(user);
+  async update(@Body() body: UpdateUserDto, @Session() session) {
+    return this.usersService.update(session.userId, body).catch((error) => {
+      const message = error.message as string;
+      if (message?.includes('UNIQUE')) {
+        throw new BadRequestException('already used');
+      } else {
+        throw new BadRequestException(error);
+      }
+    });
   }
 
   @Get('/is-logged')
@@ -97,22 +115,73 @@ export class MeController {
     return res.set('Completed-Auth', 'true').send();
   }
 
-  @Patch('/')
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        CHAT ROOM
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  @Get('/rooms')
   @UseGuards(AuthGuard)
-  @Serialize(privateUserDto)
+  @Serialize(RoomDto)
   @ApiOperation({
-    summary: 'Update infos of the currently logged user',
+    summary:
+      'Get rooms in which the currently logged user is owner/moderator/participant',
   })
-  @ApiResponse({ type: privateUserDto })
+  @ApiResponse({ type: RoomDto })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'User private informations updated',
+    description:
+      'rooms in which the currently logged user is owner/moderator/participant',
   })
-  async update(@Body() body: UpdateUserDto, @Session() session) {
-    return this.usersService.update(session.userId, body).catch((error) => {
-      const message = error.message as string;
-      if (message?.includes('UNIQUE')) {
-        throw new BadRequestException('already used');
+  async getMyRooms(@CurrentUser() user: User) {
+    return await this.chatService.findUserRoomList(user);
+  }
+
+  @Patch('/rooms/:room_id')
+  @UseGuards(AuthGuard)
+  @UseGuards(RoomPublicGuard)
+  @UseGuards(RoomBanGuard)
+  @ApiOperation({
+    summary: 'Join a public room with or without password',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'successfully joined',
+  })
+  async joinRoom(
+    @CurrentUser() user: User,
+    @TargetedRoom() room: Room,
+    @Body() body: { password?: string },
+  ) {
+    return await this.chatService.joinRoom(user, room, body).catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
+      } else {
+        throw new BadRequestException(error);
+      }
+    });
+  }
+
+  @Delete('/rooms/:room_id')
+  @UseGuards(AuthGuard)
+  @UseGuards(RoomParticipantGuard)
+  @Serialize(RoomDto)
+  @ApiOperation({
+    summary: 'Leave a joined room',
+  })
+  @ApiResponse({ type: RoomDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'room was left',
+  })
+  async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
+    return await this.chatService.leaveRoom(user, room)
+    .catch((error) => {
+      if (error.status) {
+        throw new HttpException(error, error.status);
       } else {
         throw new BadRequestException(error);
       }

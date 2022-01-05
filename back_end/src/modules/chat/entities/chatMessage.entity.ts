@@ -6,7 +6,7 @@ import {
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Room } from './room.entity';
@@ -29,8 +29,7 @@ export class ChatMessage {
   room: Room;
 
   @Column()
-  // timestamp: string; //Date type ?
-  timestamp: number; //Date type ?
+  timestamp: number;
 
   @Column()
   body: string;

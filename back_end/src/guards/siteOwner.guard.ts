@@ -10,7 +10,7 @@ import {
 export class SiteOwnerGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const logger = new Logger('💂‍♂️ Site Owner Guard'); //TODO REMOVE LOGGER HERE
-    const session = context.switchToHttp().getRequest().session;
+    const session = context.switchToHttp().getRequest()?.session;
 
     return true; // TODO REMOVE !!!!!! ---- FOR TEST ONLY
 
