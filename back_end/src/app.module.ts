@@ -86,7 +86,7 @@ export class AppModule {
      * The order of the MiddleWear is important for the TargetedRoom middlewear
      * to have access to the CurrentUser
      */
-    consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
+    consumer.apply(CurrentUserMiddleware).exclude('/dev/(.*)').forRoutes('*');
     consumer
       .apply(TargetedRoomMiddleware)
       .forRoutes(ChatController, MeController);
