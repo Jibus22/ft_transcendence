@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './errorPage.scss';
-import { useMount, useBoolean } from 'ahooks';
-import Button from '@mui/material/Button';
+import { useMount } from 'ahooks';
 import { gsap, Linear } from 'gsap';
 
 interface Props {
@@ -22,21 +21,6 @@ export default function ErrorPage({ isHeader }: Props) {
 		gsap.to(boxCog2.current, { transformOrigin: '50% 50%', rotation: '+=360', repeat: -1, duration: 8, ease: Linear.easeNone });
 		gsap.to(boxCog2.current, { transformOrigin: '50% 50%', rotation: '+=360', repeat: -1, duration: 8, ease: Linear.easeNone });
 	});
-
-	// t3.fromTo(
-	// 	'.wrong-para',
-	// 	{
-	// 		opacity: 0,
-	// 	},
-	// 	{
-	// 		opacity: 1,
-	// 		duration: 1,
-	// 		stagger: {
-	// 			repeat: -1,
-	// 			yoyo: true,
-	// 		},
-	// 	},
-	// );
 
 	return (
 		<div className="mainErrorPage">

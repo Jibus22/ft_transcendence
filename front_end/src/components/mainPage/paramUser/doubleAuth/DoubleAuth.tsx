@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../paramUser.scss';
-import { Modal, Box, FormControlLabel, Switch, Button } from '@mui/material';
+import { Modal, FormControlLabel, Switch, Button } from '@mui/material';
 import { useMainPage } from '../../../../MainPageContext';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import FormAuth from './form/FormAuth';
 import './modalAuth.scss';
 
@@ -81,7 +81,6 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 		<div className="switchMui ">
 			<FormControlLabel control={<Switch checked={iFa} onChange={handleChange} />} label="2FA" disabled={isPop} />
 			{dialogMui(openDeleteKey, disagree, agree, 'Warning !', 'Are you sure you want to remove your OAuth system ?')}
-			<button onClick={deleteKey}>OFF</button>
 			<Modal open={open} onClose={handleClose}>
 				<div className="modalBox ">
 					<div className="d-flex flex-column">
