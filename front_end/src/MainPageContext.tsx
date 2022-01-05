@@ -28,7 +28,6 @@ interface IMainPageContext {
 	userName: string;
 	userImg: string;
 	pathPop: string;
-	statusUser: string;
 
 	setData: React.Dispatch<React.SetStateAction<never[]>>;
 	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,7 +43,6 @@ interface IMainPageContext {
 	setUserName: React.Dispatch<React.SetStateAction<string>>;
 	setUserImg: React.Dispatch<React.SetStateAction<string>>;
 	setPathPop: React.Dispatch<React.SetStateAction<string>>;
-	setStatusUser: React.Dispatch<React.SetStateAction<string>>;
 
 	printSnackBar: () => void;
 	fetchDataUserMe: () => void;
@@ -69,10 +67,8 @@ const MainPageProvider = (props: any) => {
 	const [timer, setTimer] = useState(5000);
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
-	const [userStatus, setUserStatus] = useState('');
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
-	const [statusUser, setStatusUser] = useState('');
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -179,7 +175,6 @@ const MainPageProvider = (props: any) => {
 		isUpload,
 		selectedImage,
 		openUpload,
-		statusUser,
 		setCustomPhoto,
 		setTimeSnack,
 		setTimer,
@@ -198,7 +193,7 @@ const MainPageProvider = (props: any) => {
 		setSelectedImage,
 		setOpenUpload,
 		dialogMui,
-		setStatusUser,
+		setStatusColor,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
