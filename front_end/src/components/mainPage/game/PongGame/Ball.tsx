@@ -85,9 +85,9 @@ export class Ball {
 		this.y += this.y_dir;
 
 		if (this.x < 0)
-			return 1;
-		if (this.x > this.windowWidth)
 			return 2;
+		if (this.x > this.windowWidth)
+			return 1;
 	
 		return 0;
 	}
