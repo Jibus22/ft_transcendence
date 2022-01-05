@@ -37,8 +37,6 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		onSubmit: (values) => {
 			Loadingclick();
 			setIsFriends(true);
-
-			// console.log(values)
 		},
 	});
 
@@ -48,9 +46,7 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 				<div className="formDivButton">
 					<form
 						onSubmit={formik.handleSubmit}
-						className={`${
-							!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '
-						} d-flex w-100 h-100`}
+						className={`${!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '} d-flex w-100 h-100`}
 					>
 						<TextField
 							className="muiButtonInput"
