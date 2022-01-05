@@ -16,7 +16,6 @@ export default function Header() {
 			setUserImg(data[0].photo_url);
 			setlol(data[0].status);
 		}
-		// setStatusColor(lol);
 	});
 
 	// 	if (document.getElementById("changeColorDemo").value !== "") {

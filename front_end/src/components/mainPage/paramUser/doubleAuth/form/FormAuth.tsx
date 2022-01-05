@@ -7,6 +7,7 @@ import axios, { AxiosError } from 'axios';
 import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useNavigate } from 'react-router-dom';
+import { useMainPage } from '../../../../../MainPageContext';
 
 interface Props {
 	closeQR: React.Dispatch<React.SetStateAction<boolean>>;
