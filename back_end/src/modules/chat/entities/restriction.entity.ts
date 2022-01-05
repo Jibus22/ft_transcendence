@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { type } from 'os';
 import {
   AfterInsert,
   AfterRemove,
@@ -6,15 +7,15 @@ import {
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
-import { User } from '../../../modules/users/entities/users.entity';
+import { User } from '../../users/entities/users.entity';
 import { Room } from './room.entity';
 
 const conf = new ConfigService();
 
 @Entity()
-export class Participant {
+export class Restriction {
   /*
    ** Data
    */
@@ -28,11 +29,11 @@ export class Participant {
   @ManyToOne((type) => Room, { onDelete: 'CASCADE' })
   room: Room;
 
-  @Column({ default: false })
-  is_owner: boolean;
+  @Column()
+  restriction_type: 'ban' | 'mute';
 
-  @Column({ default: false })
-  is_moderator: boolean;
+  @Column()
+  expiration_time: number;
 
   /*
    ** Lifecycle functions
@@ -41,21 +42,21 @@ export class Participant {
   @AfterInsert()
   logInsert() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted Participant: ', this);
+      console.log('Inserted Restriction: ', this);
     }
   }
 
   @AfterRemove()
   logRemove() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed Participant: ', this);
+      console.log('Removed Restriction: ', this);
     }
   }
 
   @AfterUpdate()
   logUpdate() {
     if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated Participant: ', this);
+      console.log('Updated Restriction: ', this);
     }
   }
 }

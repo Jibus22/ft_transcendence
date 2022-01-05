@@ -10,7 +10,7 @@ export class CreateRoomDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  password: string;
+  password?: string;
 
   @ApiProperty()
   @IsBoolean()

@@ -9,29 +9,26 @@ import { Room } from '../modules/chat/entities/room.entity';
 import { User } from '../modules/users/entities/users.entity';
 
 @Injectable()
-export class RoomModeratorGuard implements CanActivate {
-  private isRoomModerator(currentUser: User, targetedRoom: Room): boolean {
-    return targetedRoom.participants.some(
-      (participant) =>
-        participant.user.id === currentUser.id && participant.is_moderator,
-    );
+export class RoomPublicGuard implements CanActivate {
+  private isRoomPublic(currentUser: User, targetedRoom: Room): boolean {
+    return !targetedRoom.is_private;
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💬 💂‍♂️ Room Moderator Guard'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger('💬 💂‍♂️ Room Public Guard'); //TODO REMOVE LOGGER HERE
     const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
     const targetRoom: Room = context.switchToHttp().getRequest()?.targetedRoom;
     if (
       currentUser &&
       targetRoom &&
-      this.isRoomModerator(currentUser, targetRoom)
+      this.isRoomPublic(currentUser, targetRoom)
     ) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom}`,
       );
-      logger.log(`MODERATOR ACCESS GRANTED !`);
+      logger.log(`PUBLIC ROOM ACCESS GRANTED !`);
       return true;
     }
-    throw new UnauthorizedException('User must be logged and be moderator');
+    throw new UnauthorizedException('User must be logged and target a Public Room');
   }
 }

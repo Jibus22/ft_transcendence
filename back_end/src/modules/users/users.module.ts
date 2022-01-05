@@ -5,7 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatService } from '../chat/chat.service';
 import { ChatMessage } from '../chat/entities/chatMessage.entity';
 import { Participant } from '../chat/entities/participant.entity';
+import { Restriction } from '../chat/entities/restriction.entity';
 import { Room } from '../chat/entities/room.entity';
+import { TaskerService } from '../chat/tasker.service';
 import { AuthController } from './auth.controller';
 import { User } from './entities/users.entity';
 import { UserPhoto } from './entities/users_photo.entity';
@@ -20,7 +22,7 @@ import { UsersPhotoController } from './usersphoto.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserPhoto, Room, Participant, ChatMessage]),
+    TypeOrmModule.forFeature([User, UserPhoto, Room, Participant, ChatMessage, Restriction]),
     HttpModule,
   ],
   providers: [
@@ -31,6 +33,7 @@ import { UsersPhotoController } from './usersphoto.controller';
     UsersService,
     AuthService,
     ChatService,
+    TaskerService,
   ],
   controllers: [
     UsersController,

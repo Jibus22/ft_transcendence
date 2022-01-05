@@ -6,8 +6,9 @@ import {
   Column,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Restriction } from './restriction.entity';
 import { ChatMessage } from './chatMessage.entity';
 import { Participant } from './participant.entity';
 
@@ -30,6 +31,9 @@ export class Room {
 
   @OneToMany((type) => Participant, (participant) => participant.room)
   participants: Participant[];
+
+  @OneToMany((type) => Restriction, (restrictions) => restrictions.room)
+  restrictions: Restriction[];
 
   @OneToMany((type) => ChatMessage, (message) => message.room)
   messages: ChatMessage[];

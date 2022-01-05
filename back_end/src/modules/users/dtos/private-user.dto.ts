@@ -22,7 +22,7 @@ export class privateUserDto extends UserDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    return value.obj.twoFASecret ? true : false;
+    return value.obj.twoFASecret && value.obj.useTwoFA ? true : false;
   })
   hasTwoFASecret: boolean;
 }

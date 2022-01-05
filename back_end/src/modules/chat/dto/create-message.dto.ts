@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, Length } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, Length } from 'class-validator';
 
 export class createMessageDto {
   @ApiProperty()

@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -11,7 +12,6 @@ import { User } from '../modules/users/entities/users.entity';
 @Injectable()
 export class RoomOwnerGuard implements CanActivate {
   private isRoomOwned(currentUser: User, targetedRoom: Room): boolean {
-    console.log('isRoomOwned', targetedRoom);
     return targetedRoom.participants.some(
       (participant) =>
         participant.user.id === currentUser.id && participant.is_owner,
@@ -19,17 +19,20 @@ export class RoomOwnerGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💂‍♂️ Room Owner Guard'); //TODO REMOVE LOGGER HERE
-    const currentUser: User = context.switchToHttp().getRequest().currentUser;
-    const targetRoom: Room = context.switchToHttp().getRequest().targetedRoom;
-    if (currentUser && targetRoom) {
+    const logger = new Logger('💬 💂‍♂️ Room Owner Guard'); //TODO REMOVE LOGGER HERE
+    const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
+    const targetRoom: Room = context.switchToHttp().getRequest()?.targetedRoom;
+    if (
+      currentUser &&
+      targetRoom &&
+      this.isRoomOwned(currentUser, targetRoom)
+    ) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`,
       );
-      const ret = this.isRoomOwned(currentUser, targetRoom);
-      logger.log(`ACCESS GRANTED ? ${ret}`);
-      return ret;
+      logger.log(`OWNER ACCESS GRANTED !`);
+      return true;
     }
-    throw new UnauthorizedException('User must be logged and own the room');
+    throw new ForbiddenException('User must be logged and own the room');
   }
 }

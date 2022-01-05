@@ -112,7 +112,7 @@ export class AuthService {
 
   async create2faKey(user: User) {
     // TODO uncomment to avoid key deletion
-    if (user.twoFASecret) {
+    if (user.twoFASecret && user.useTwoFA) {
       throw '2fa key already set';
     }
 
@@ -154,7 +154,7 @@ export class AuthService {
   async turn2fa_on(session, token: string) {
     const user = await this.getValidUser(session);
     if (user) {
-      if (!this.checkToken(token, user.twoFASecret)) {
+      if (!authenticator.check(token, user.twoFASecret)) {
         throw 'invalid token';
       }
       session.useTwoFA = true;
@@ -171,16 +171,10 @@ export class AuthService {
       return this.turn2fa_off(session);
     }
 
-    if (this.checkToken(token, user.twoFASecret)) {
+    if (authenticator.check(token, user.twoFASecret)) {
       session.isTwoFAutanticated = true;
     } else {
       throw 'invalid token';
     }
-  }
-
-  private checkToken(token: string, secret: string) {
-    const output = authenticator.check(token, secret);
-    // console.log(token, secret, ' verify =', output);
-    return output;
   }
 }
