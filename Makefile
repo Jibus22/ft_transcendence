@@ -16,6 +16,11 @@ back:
 front:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up front_end_server ; docker-compose rm -fsv
 
+prodbuild:
+	docker-compose up --build ; docker-compose rm -fsv
+
+prod:
+	docker-compose up ; docker-compose rm -fsv
 
 
 allbuild:
@@ -46,6 +51,9 @@ backstart:
 
 backbash:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash
+
+dbbash:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run database_server bash
 
 
 dbclean:
