@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
 import FF from '../img/FF.png';
 import { Avatar, Badge } from '@mui/material';
-import axios, { AxiosError } from 'axios';
-
 import Button from '@mui/material/Button';
 
 const Rankfriends = () => {
