@@ -8,7 +8,7 @@ switch (process.env.NODE_ENV) {
     Object.assign(dbConfig, {
       synchronize: true,
       type: 'better-sqlite3',
-      database: process.env.DB_NAME || 'dbDev.sqlite',
+      database:  './app/' + (process.env.DB_NAME || 'dbDev.sqlite'),
       entities: [
         "../dist/**/*.entity.js",
       ]
