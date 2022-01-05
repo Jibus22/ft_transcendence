@@ -4,11 +4,19 @@ all:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ; docker-compose rm -fsv
 
 
+## -----------------------------------------------------------------------------
+##		RUN
+## -----------------------------------------------------------------------------
+
+
 # usage:
 #  run all tests: `make test`
 #  run chat specific tests : `make test TARGET=chat`
 test:
 	docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'jest --config ./test/jest-e2e.json --maxWorkers=1 --watch --verbose --testLocationInResults $(TEST_ARG)' ; docker-compose rm -fsv
+
+db:
+	docker-compose -f docker-compose.yml -f docker-compose.yml up database_server ; docker-compose rm -fsv
 
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
@@ -16,15 +24,19 @@ back:
 front:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up front_end_server ; docker-compose rm -fsv
 
-prodbuild:
-	docker-compose up --build ; docker-compose rm -fsv
-
 prod:
 	docker-compose up ; docker-compose rm -fsv
 
 
+## -----------------------------------------------------------------------------
+##		BUILD
+## -----------------------------------------------------------------------------
+
 allbuild:
 	docker-compose build
+
+prodbuild:
+	docker-compose up --build ; docker-compose rm -fsv
 
 backbuild:
 	docker-compose build back_end_server
@@ -32,13 +44,9 @@ backbuild:
 frontbuild:
 	docker-compose build front_end_server
 
-
-
-dockerclean:
-	docker system prune
-	docker volume prune
-
-
+## -----------------------------------------------------------------------------
+##		BACK
+## -----------------------------------------------------------------------------
 
 backdoc:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run  -p 8080:8080 back_end_server bash -c 'npm run documentation:serve'
@@ -52,9 +60,19 @@ backstart:
 backbash:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash
 
+backbash_prod:
+	docker-compose -f docker-compose.yml -f docker-compose.yml run back_end_server bash
+
 dbbash:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run database_server bash
 
+## -----------------------------------------------------------------------------
+##		CLEAN
+## -----------------------------------------------------------------------------
+
+dockerclean:
+	docker system prune
+	docker volume prune
 
 dbclean:
 	${RM} back_end/dbDev.sqlite back_end/dbDev.sqlite-shm back_end/dbDev.sqlite-wal

@@ -29,7 +29,7 @@ switch (process.env.NODE_ENV) {
   case 'production':
     Object.assign(dbConfig,
       {
-        "url": "database_server:5432",
+        "url": "http://database_server:5432",
         "type": "postgres",
         "host": "database_server",
         "port": 5432,
@@ -37,7 +37,7 @@ switch (process.env.NODE_ENV) {
         "password": "admin",
         "database": "db_production",
         "entities": [
-          "../dist/**/*.entity.js",
+          "src/**/*.entity.ts",
         ],
         // "autoSchemaSync": true
       }
