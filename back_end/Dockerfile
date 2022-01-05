@@ -10,6 +10,7 @@ ENV PATH /usr/src/node_modules/.bin:$PATH
 # RUN npm install --no-optional && npm cache clean --force
 RUN yarn && yarn cache clean
 
+COPY ormconfig.js ./
 # In the app directory
 WORKDIR /usr/src/app
 
