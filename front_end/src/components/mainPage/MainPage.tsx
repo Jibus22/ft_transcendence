@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
 import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
@@ -72,12 +72,6 @@ const MainPage = () => {
 		}
 	};
 
-	// useEffect(() => {
-	// 	fetchDataUserMe();
-	// 	connectWsStatus();
-
-	// }, []);
-
 	useMount(() => {
 		fetchDataUserMe();
 		connectWsStatus();
@@ -86,8 +80,6 @@ const MainPage = () => {
 	const resetTimeSnack = () => {
 		setTimeSnack(false);
 	};
-
-	// console.log(isHeader);
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>

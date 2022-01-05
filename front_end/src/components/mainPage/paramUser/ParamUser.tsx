@@ -35,11 +35,9 @@ export default function ParamUser() {
 
 	useEffect(() => {
 		if (data.length > 0) {
-			if (data[0].hasTwoFASecret === true) {
-				setDataFa(data[0].hasTwoFASecret);
-			}
+			setDataFa(data[0].hasTwoFASecret);
 		}
-	});
+	}, [data]);
 
 	function printPopup() {
 		setIsPop(!isPop);
