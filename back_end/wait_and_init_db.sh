@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 wait_for_db_container() {
   until pg_isready --dbname=$POSTGRES_DB --host=$POSTGRES_HOST --port=$POSTGRES_PORT --username=$POSTGRES_USER > /dev/null; do
@@ -11,7 +11,7 @@ wait_for_db_container() {
   >&2 echo " ✅  Database is ready for backend"
 }
 
-if [ "$MODE_ENV" == "production" ]
+if [ "$NODE_ENV" == "production" ]
 then
     wait_for_db_container
 else
