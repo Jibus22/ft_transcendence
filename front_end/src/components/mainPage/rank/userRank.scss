@@ -372,6 +372,12 @@
 
 			.imgUser {
 				margin: 0 0 0 81px;
+				border-radius: 46%;
+
+				img {
+					width: 100%;
+					border-radius: 44%;
+				}
 
 				.MuiAvatar-root {
 					width: 70px;
@@ -410,19 +416,22 @@
 				}
 			}
 			.nbStatGame {
-				margin: 0 0 0 50px;
+				margin: 0 0 0 40px;
 				justify-content: center;
 				align-items: center;
+				width: 40px;
 			}
 			.nbStatWin {
-				margin: 0 0 0 100px;
+				margin: 0 0 0 73px;
 				justify-content: center;
 				align-items: center;
+				width: 40px;
 			}
 			.nbStatLoose {
-				margin: 0 0 0 100px;
+				margin: 0 0 0 73px;
 				justify-content: center;
 				align-items: center;
+				width: 40px;
 			}
 
 			.buttonDIv {
