@@ -15,10 +15,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./scripts:/tmp
       - ./database/:/var/lib/postgresql/data/
-    command: ./tmp/start_db.sh
-    # postgres -c stats_temp_directory=/tmp
 
   back_end_server:
     build: ./back_end
