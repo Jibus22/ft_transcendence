@@ -8,7 +8,6 @@ services:
 
   database_server:
     image: postgres
-    restart: always
     env_file:
       - .env
       - .env_prod.env
@@ -16,8 +15,10 @@ services:
     ports:
       - 5432:5432
     volumes:
+      - ./scripts:/tmp
       - ./database/:/var/lib/postgresql/data/
-    command: postgres -c stats_temp_directory=/tmp
+    command: ./tmp/start_db.sh
+    # postgres -c stats_temp_directory=/tmp
 
   back_end_server:
     build: ./back_end
