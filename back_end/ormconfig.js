@@ -8,10 +8,11 @@ switch (process.env.NODE_ENV) {
     Object.assign(dbConfig, {
       synchronize: true,
       type: 'better-sqlite3',
-      database: './app/' + (process.env.DB_NAME || 'dbDev.sqlite'),
-      entities: [
-        "../dist/**/*.entity.js",
-      ]
+      database: '/usr/src/app/' + (process.env.DB_NAME || 'dbDev.sqlite'),
+      entities: ["../dist/**/*.entity.js"],
+      cli: {
+        "migrationsDir": "migrations",
+      }
     });
     break;
 
@@ -20,30 +21,25 @@ switch (process.env.NODE_ENV) {
       synchronize: true,
       type: 'better-sqlite3',
       database: process.env.DB_NAME || '/tmp/dbTest.sqlite',
-      entities: [
-        "../dist/**/*.entity.js",
-      ]
+      entities: ["../dist/**/*.entity.js"]
     });
     break;
 
   case 'production':
     Object.assign(dbConfig,
       {
-        "url": "http://database_server:5432",
-        "type": "postgres",
-        "host": "database_server",
-        "port": 5432,
-        "admin": "admin",
-        "password": "admin",
-        "database": "db_production",
-        "entities": [
-          "src/**/*.entity.ts",
-        ],
-        // "autoSchemaSync": true
+        type: "postgres",
+        host: "database_server",
+        port: 5432,
+        username: process.env.POSTGRES_USER || 'admin',
+        password: process.env.POSTGRES_PASSWORD || 'admin',
+        database: "db_production",
+        entities: ["../dist/**/*.entity.js"],
+        migrations: ["migrations/*.ts"],
+        cli: {
+          "migrationsDir": "migrations",
+        }
       }
-      // type: 'better-sqlite3',
-      // database: process.env.DB_NAME || 'dbProduction.sqlite',
-      // entities: ['**/*.entity.ts'],
     );
     break;
 
