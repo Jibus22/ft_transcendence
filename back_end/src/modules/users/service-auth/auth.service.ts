@@ -2,11 +2,11 @@ import { HttpService } from '@nestjs/axios';
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig } from 'axios';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
 import { User } from '../entities/users.entity';
 import { UsersService } from '../service-users/users.service';
-import { authenticator } from 'otplib';
-import { toFileStream } from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -112,7 +112,7 @@ export class AuthService {
 
   async create2faKey(user: User) {
     // TODO uncomment to avoid key deletion
-    if (user.twoFASecret) {
+    if (user.twoFASecret && user.useTwoFA) {
       throw '2fa key already set';
     }
 
@@ -130,10 +130,11 @@ export class AuthService {
   }
 
   private async getValidUser(session) {
-    return await this.usersService.findOne(session.userId)
+    return await this.usersService
+      .findOne(session.userId)
       .then((user: User) => {
-        if (! user) throw 'no user logged';
-        if (! user.twoFASecret) throw 'user does not have 2fa secret';
+        if (!user) throw 'no user logged';
+        if (!user.twoFASecret) throw 'user does not have 2fa secret';
         return user;
       });
   }
@@ -153,7 +154,7 @@ export class AuthService {
   async turn2fa_on(session, token: string) {
     const user = await this.getValidUser(session);
     if (user) {
-      if (!this.checkToken(token, user.twoFASecret)) {
+      if (!authenticator.check(token, user.twoFASecret)) {
         throw 'invalid token';
       }
       session.useTwoFA = true;
@@ -166,20 +167,14 @@ export class AuthService {
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
 
-    if (! user.useTwoFA) {
+    if (!user.useTwoFA) {
       return this.turn2fa_off(session);
     }
 
-    if (this.checkToken(token, user.twoFASecret)) {
+    if (authenticator.check(token, user.twoFASecret)) {
       session.isTwoFAutanticated = true;
     } else {
       throw 'invalid token';
     }
-  }
-
-  private checkToken(token: string, secret: string) {
-    const output = authenticator.check(token, secret);
-    // console.log(token, secret, ' verify =', output);
-    return output;
   }
 }
