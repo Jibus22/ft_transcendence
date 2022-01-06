@@ -3,7 +3,7 @@ import {
   CacheModule,
   MiddlewareConsumer,
   Module,
-  ValidationPipe,
+  ValidationPipe
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
@@ -13,14 +13,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
-import { ChatMessage } from './modules/chat/entities/chatMessage.entity';
-import { Participant } from './modules/chat/entities/participant.entity';
-import { Restriction } from './modules/chat/entities/restriction.entity';
-import { Room } from './modules/chat/entities/room.entity';
 import { TargetedRoomMiddleware } from './modules/chat/middleware/targeted-room.middleware';
 import { DevelopmentModule } from './modules/dev/development.module';
 import { User } from './modules/users/entities/users.entity';
-import { UserPhoto } from './modules/users/entities/users_photo.entity';
 import { MeController } from './modules/users/me.controller';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
@@ -38,20 +33,7 @@ const cookieSession = require('cookie-session');
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: process.env.DB_NAME,
-      entities: [
-        User,
-        UserPhoto,
-        Room,
-        ChatMessage,
-        Participant,
-        ChatMessage,
-        Restriction,
-      ],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(),
     HttpModule,
     ChatModule,
     UsersModule,

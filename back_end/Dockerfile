@@ -9,7 +9,10 @@ COPY package.json ./
 ENV PATH /usr/src/node_modules/.bin:$PATH
 # RUN npm install --no-optional && npm cache clean --force
 RUN yarn && yarn cache clean
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-keyring.gpg ; apt update ;apt install -y postgresql-13
 
+
+COPY ormconfig.js ./
 # In the app directory
 WORKDIR /usr/src/app
 
