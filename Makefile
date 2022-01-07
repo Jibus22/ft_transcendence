@@ -90,3 +90,4 @@ photoclean:
 	${RM} data/users_photos_*/*
 
 fclean: dbclean photoclean
+	${RM} -rf back_end/dist

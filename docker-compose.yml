@@ -1,6 +1,7 @@
 version: '3.8'
 
 volumes:
+  dist_guest_back:
   node_modules_guest_back:
   node_modules_guest_front:
 
@@ -25,6 +26,7 @@ services:
       - .env_prod_database.env
     volumes:
       ### Important to make sure node_module is not imported from local
+      - dist_guest_back:/usr/src/app/dist
       - node_modules_guest_back:/usr/src/app/node_modules
       - ./back_end:/usr/src/app
       - type: bind
