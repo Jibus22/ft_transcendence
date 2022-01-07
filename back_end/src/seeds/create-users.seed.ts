@@ -4,39 +4,34 @@ import { User } from '../modules/users/entities/users.entity';
 
 export default class CreateSiteOwners implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
-    const isDbSeedable =
-      (await connection.query('SELECT * FROM USER WHERE is_site_owner = 1'))
-        .length === 0;
-
-    if (isDbSeedable) {
-      const owners: Partial<User>[] = [
-        {
-          login: 'bvalette',
-          login_42: 'bvalette',
-          photo_url_42: '',
-          is_site_owner: true,
-        }
-      ];
-
-      if (process.env.EXTRA_OWNER.length > 0) {
-        owners.push({
-          login: process.env.EXTRA_OWNER,
-          login_42: process.env.EXTRA_OWNER,
-          photo_url_42: '',
-          is_site_owner: true,
-        })
+    let owners = new Set<Partial<User>>();
+    owners.add(
+      {
+        login: 'bvalette',
+        login_42: 'bvalette',
+        is_site_owner: true,
       }
+    );
+    if (process.env.EXTRA_OWNER && process.env.EXTRA_OWNER.length > 0) {
+      owners.add({
+        login: process.env.EXTRA_OWNER,
+        login_42: process.env.EXTRA_OWNER,
+        is_site_owner: true,
+      });
+    }
 
+    if (owners.size) {
       await connection
         .createQueryBuilder()
         .insert()
         .into(User)
-        .values(owners)
+        .values(Array.from(owners))
+        .orUpdate({ conflict_target: ['login_42'], overwrite: ['is_site_owner']})
         .execute();
 
-        console.log(
-          await connection.query('SELECT * FROM USER WHERE is_site_owner = 1'),
-        );
+      console.log(
+        await connection.query('SELECT * FROM USER WHERE is_site_owner = 1'),
+      );
     }
   }
 }
