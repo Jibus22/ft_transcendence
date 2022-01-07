@@ -48,8 +48,13 @@ export class AuthController {
     @Session() session: any,
   ) {
     const user = await this.authService.registerUser(query.code, query.state);
-    if (!user) {
-      throw new BadRequestException('Could not identify user.');
+      // .catch(e => {
+      //   console.log(e);
+      //   return { url: this.configService.get('/') };
+      // });
+      if (!user) {
+          return { url: this.configService.get('/') };
+        // throw new BadRequestException('Could not identify user.');
     }
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;

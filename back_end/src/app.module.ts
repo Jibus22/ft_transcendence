@@ -53,9 +53,9 @@ const ormSqliteConfig: TypeOrmModuleOptions = {
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    process.env.NODE_ENV === 'production'
-      ? TypeOrmModule.forRoot()
-      : TypeOrmModule.forRoot(ormSqliteConfig),
+    process.env.NODE_ENV === 'test'
+      ? TypeOrmModule.forRoot(ormSqliteConfig)
+      : TypeOrmModule.forRoot(),
     HttpModule,
     ChatModule,
     UsersModule,

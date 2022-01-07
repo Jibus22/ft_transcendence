@@ -9,8 +9,10 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "seed:config": "ts-node ../node_modules/typeorm-seeding/dist/cli.js config",
+    "seed:run": "ts-node ../node_modules/typeorm-seeding/dist/cli.js seed",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "tsc && npm run seed:run && nest start --watch",
     "start:debug": "nest start --debug 0.0.0.0:9229 --watch",
     "start:prod": "./wait_and_init_db.sh && nest start",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -45,6 +47,7 @@
     "cookie-session": "^1.4.0",
     "faker": "^5.5.3",
     "mime-types": "^2.1.34",
+    "nestjs-seeder": "^0.2.0",
     "npm": "^6.14.15",
     "otplib": "^12.0.1",
     "pg": "^8.7.1",
@@ -54,7 +57,8 @@
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.1.6",
     "totp-generator": "^0.0.13",
-    "typeorm": "^0.2.38"
+    "typeorm": "^0.2.38",
+    "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
@@ -63,6 +67,7 @@
     "@types/cache-manager": "^3.4.2",
     "@types/cron": "^1.7.3",
     "@types/express": "^4.17.13",
+    "@types/faker": "^5.5.9",
     "@types/jest": "^27.0.1",
     "@types/multer": "^1.4.7",
     "@types/node": "^16.0.0",
