@@ -24,8 +24,8 @@ export class DevelopmentController {
 
   @ApiProperty()
   @Post('/signin')
-  async logDebugUser(@Body() user: { login_42: string }, @Session() session: any) {
-    const newUser = await this.developmentService.dev_logUser(user.login_42);
+  async logDebugUser(@Body() user: { login: string }, @Session() session: any) {
+    const newUser = await this.developmentService.dev_logUser(user.login);
     session.userId = newUser.id;
     session.useTwoFA = newUser.useTwoFA;
     session.isTwoFAutanticated = false;

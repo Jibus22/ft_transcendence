@@ -11,12 +11,12 @@ export class DevelopmentService {
     private usersService: UsersService,
   ) {}
 
-  async dev_logUser(login_42: string) {
+  async dev_logUser(login: string) {
     const users = await this.repoUser.find({
-      where: { login_42 },
+      where: { login },
     });
     if (!users[0]) {
-      throw new BadRequestException(`No user ${login_42}`);
+      throw new BadRequestException(`No user ${login}`);
     }
     return this.usersService.create(users[0]).catch((error) => {
       throw new BadRequestException(error.message);
