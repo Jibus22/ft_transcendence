@@ -125,9 +125,16 @@ export class ChatHelpers {
   }
 
   async getAllRooms() {
+    const SiteOwnerCookies = await this.commons
+      .logUser('fake-vgoldman-custome')
+      .then((r) => this.commons.getCookies(r));
+    expect(SiteOwnerCookies).toHaveLength(2);
+    expect(SiteOwnerCookies[0].length).toBeGreaterThan(1);
+    expect(SiteOwnerCookies[1].length).toBeGreaterThan(1);
+
     return await request(this.app.getHttpServer())
       .get('/room/all')
-      .set('Cookie', this.cookies);
+      .set('Cookie', SiteOwnerCookies);
   }
 
   async updateRoomPassword(
