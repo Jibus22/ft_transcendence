@@ -167,8 +167,8 @@ export class AuthService {
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
 
-    if (!user.useTwoFA) {
-      return this.turn2fa_off(session);
+    if (!user.useTwoFA || !user.twoFASecret) {
+      throw 'user has no 2fa activated secret';
     }
 
     if (authenticator.check(token, user.twoFASecret)) {
