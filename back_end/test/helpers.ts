@@ -42,6 +42,13 @@ export class CommonTest {
       photo_url_42: 'https://cdn.intra.42.fr/users/medium_default.png',
       use_local_photo: false,
     },
+    {
+      login: 'siteOwner',
+      login_42: 'siteOwner',
+      photo_url_42: 'https://cdn.intra.42.fr/users/medium_default.png',
+      use_local_photo: false,
+      is_site_owner: true,
+    },
   ];
 
   async logUser(login: string) {
