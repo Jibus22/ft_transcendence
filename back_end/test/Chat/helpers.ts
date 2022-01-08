@@ -43,7 +43,7 @@ export class ChatHelpers {
   }
 
   async getAllUnjoinedRooms() {
-    return await this.getAllRooms().then((response) => {
+    return await this.getAllRoomsAsSiteOwner().then((response) => {
       const rooms = response.body as RoomDto[];
       return rooms.filter((r) =>
         r.participants.some(
@@ -54,7 +54,7 @@ export class ChatHelpers {
   }
 
   async getPrivateUnjoinedRooms() {
-    return await this.getAllRooms().then((response) => {
+    return await this.getAllRoomsAsSiteOwner().then((response) => {
       const rooms = response.body as RoomDto[];
       return rooms.filter((r) =>
         r.participants.some(
@@ -124,7 +124,7 @@ export class ChatHelpers {
       .send(bodyRequest);
   }
 
-  async getAllRooms() {
+  async getAllRoomsAsSiteOwner() {
     const SiteOwnerCookies = await this.commons
       .logUser('siteOwner')
       .then((r) => this.commons.getCookies(r));
