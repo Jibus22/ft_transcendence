@@ -26,24 +26,29 @@ export class CurrentUserMiddleware implements NestMiddleware {
     //   return next();
     // }
 
-    const { userId } = req.session || {};
     const logger = new Logger(' 🛠 👥  User Middlewear');
     logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
-    if (userId) {
-      await this.usersService
-        .findOneWithRelations(userId)
-        .then((user) => {
-          logger.log(`By user: ${user?.login}`); // TODO remove debug
-          req.currentUser = user;
-        })
-        .catch((error) => {
-          logger.log('User Not Found: Clearing Session'); // TODO remove debug
-          logger.log(error); // TODO remove debug
-          this.authService.clearSession(req.session);
-        });
-    } else {
+
+    const { userId } = req.session || {};
+    if (!userId) {
       logger.log('No user id in session');
+      return next();
     }
+
+    const currentUser = await this.usersService
+      .findOneWithRelations(userId)
+      .catch((error) => {
+        logger.log(error);
+      });
+
+    if (currentUser) {
+      logger.log(`By user: ${currentUser.login} - ${currentUser.id}`);
+      req.currentUser = currentUser as User;
+    } else {
+      logger.log(`User Not Found from ${currentUser}: Clearing Session`);
+      this.authService.clearSession(req.session);
+    }
+
     next();
   }
 }

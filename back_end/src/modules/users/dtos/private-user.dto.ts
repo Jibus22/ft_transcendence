@@ -25,4 +25,8 @@ export class privateUserDto extends UserDto {
     return value.obj.twoFASecret && value.obj.useTwoFA ? true : false;
   })
   hasTwoFASecret: boolean;
+
+  @ApiProperty()
+  @Expose()
+  is_site_owner: boolean;
 }

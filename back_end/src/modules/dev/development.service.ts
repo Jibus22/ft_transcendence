@@ -13,7 +13,7 @@ export class DevelopmentService {
 
   async dev_logUser(login: string) {
     const users = await this.repoUser.find({
-      where: { login: login },
+      where: { login },
     });
     if (!users[0]) {
       throw new BadRequestException(`No user ${login}`);
