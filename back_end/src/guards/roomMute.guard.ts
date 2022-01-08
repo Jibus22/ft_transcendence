@@ -25,7 +25,7 @@ export class RoomMuteGuard implements CanActivate {
       .getRequest()?.targetedRoomActiveMute;
 
     if (currentUser && targetRoomMute &&
-      this.isUserMutted(currentUser, targetRoomMute) === false) {
+      (this.isUserMutted(currentUser, targetRoomMute) === false || currentUser.is_site_owner)) {
       logger.log(`MUTE ACCESS GRANTED, user is not mutted !`);
       return true;
     }
