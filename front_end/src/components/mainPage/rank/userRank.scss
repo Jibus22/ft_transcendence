@@ -207,10 +207,9 @@
 			.MuiBadge-badge {
 				width: 17%;
 				height: 16%;
-				background-color: #e6da6a;
-				color: #e6da6a;
+
 				border-radius: 100%;
-				box-shadow: 0 0 0 0.5px #e6da6a;
+
 				z-index: 3;
 			}
 			.MuiBadge-badge::after {
@@ -221,7 +220,7 @@
 				height: 100%;
 				border-radius: 50%;
 				animation: badgeAnim 1.2s infinite ease-in-out;
-				border: 1px solid #e6da6a;
+				border: 1px solid;
 				content: '';
 			}
 		}
@@ -387,10 +386,8 @@
 				.MuiBadge-badge {
 					width: 17%;
 					height: 16%;
-					background-color: #e6da6a;
-					color: #e6da6a;
 					border-radius: 100%;
-					box-shadow: 0 0 0 0.5px #e6da6a;
+					box-shadow: 0 0 0 0.5px;
 					z-index: 3;
 				}
 				.MuiBadge-badge::after {
@@ -401,7 +398,7 @@
 					height: 100%;
 					border-radius: 50%;
 					animation: badgeAnim 1.2s infinite ease-in-out;
-					border: 1px solid #e6da6a;
+					border: 1px solid;
 					content: '';
 				}
 			}

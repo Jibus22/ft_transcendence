@@ -62,7 +62,7 @@ export default function FormAuth({ closeQR }: Props) {
 				const err = error as AxiosError;
 				if (err.response?.status === 400) {
 					setErrors({ key: 'Wrong key' });
-					resetForm();
+					values.key = '';
 				}
 			}
 		},

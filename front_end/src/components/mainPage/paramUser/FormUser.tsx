@@ -6,8 +6,9 @@ import { TextField, InputAdornment, IconButton, Alert } from '@mui/material';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CheckIcon from '@mui/icons-material/Check';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../../MainPageContext';
+import { ClassNames } from '@emotion/react';
 
 export interface Props {
 	isPop: boolean;
@@ -37,24 +38,30 @@ export default function FormUser({ isPop, userName }: Props) {
 			nickname: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: async (values) => {
-			console.log(values);
+		onSubmit: async (values, { setErrors }) => {
 			const user = {
 				login: values.nickname,
 			};
-
-			await axios.patch('http://localhost:3000/me', user, {
-				withCredentials: true,
-			});
-			if (Boolean(formik.errors.nickname)) {
-				setIsDisable(false);
-			} else {
-				setIsDisable(true);
-				setIsValidate(true);
-				setTimeout(function () {
-					setIsValidate(false);
-				}, 2200);
-				fetchDataUserMe();
+			try {
+				await axios.patch('http://localhost:3000/me', user, {
+					withCredentials: true,
+				});
+				if (Boolean(formik.errors.nickname)) {
+					setIsDisable(false);
+				} else {
+					setIsDisable(true);
+					setIsValidate(true);
+					setTimeout(function () {
+						setIsValidate(false);
+					}, 2200);
+					fetchDataUserMe();
+				}
+			} catch (error) {
+				const err = error as AxiosError;
+				if (err.response?.status === 400) {
+					const dataError = err.response?.data;
+					setErrors({ nickname: dataError['message'] });
+				}
 			}
 		},
 	});
@@ -63,7 +70,7 @@ export default function FormUser({ isPop, userName }: Props) {
 	isDisable ? (placeHolder = userName) : (placeHolder = 'nickname');
 
 	return (
-		<div className="w-100 h-100  d-flex flex-column">
+		<div className="w-100 h-100  d-flex flex-column ">
 			<form onSubmit={formik.handleSubmit} className={`${Boolean(formik.errors.nickname) ? 'formDivButtonAnim' : 'none'} w-100 h-100 `}>
 				<TextField
 					sx={{ width: 2 / 2 }}
@@ -102,7 +109,7 @@ export default function FormUser({ isPop, userName }: Props) {
 			</form>
 
 			{isValidate ? (
-				<div className="alertValidateIcon `">
+				<div className="alertValidateIcon ">
 					<Alert sx={{ width: 2 / 2 }} severity="success" icon={<CheckIcon fontSize="inherit" />}>
 						Saved
 					</Alert>
