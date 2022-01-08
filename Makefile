@@ -74,8 +74,13 @@ dbbash:
 ## -----------------------------------------------------------------------------
 
 dockerclean:
-	docker system prune
 	docker volume prune
+	docker system prune
+
+dockerfclean:
+	@docker rmi $(docker images -a -q) 2>/dev/null
+	docker volume prune
+	docker system prune
 
 dbclean:
 	${RM} -rf database
@@ -85,3 +90,4 @@ photoclean:
 	${RM} data/users_photos_*/*
 
 fclean: dbclean photoclean
+	${RM} -rf back_end/dist

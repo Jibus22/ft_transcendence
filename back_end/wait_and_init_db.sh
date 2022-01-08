@@ -7,7 +7,7 @@ wait_for_db_container() {
   done
 
   >&2 echo " ✅  Postgres is up! --> Init database schema"
-  tsc && typeorm schema:sync
+  tsc && typeorm schema:sync && npm run seed:run
   >&2 echo " ✅  Database is ready for backend"
 }
 
