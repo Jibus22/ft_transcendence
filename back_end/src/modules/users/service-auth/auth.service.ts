@@ -75,11 +75,11 @@ export class AuthService {
   }
 
   async updateDatabase(user: Partial<User>) {
-    const users = await this.usersService.find(user);
+    const users = await this.usersService.find({ login_42: user.login_42});
     if (users.length) {
       return await this.usersService
         .update(users[0].id, {
-          photo_url_42: users[0].photo_url_42,
+          photo_url_42: user.photo_url_42,
         } as User)
         .catch((e) => {
           throw new BadGatewayException(e.message);
@@ -167,8 +167,8 @@ export class AuthService {
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
 
-    if (!user.useTwoFA) {
-      return this.turn2fa_off(session);
+    if (!user.useTwoFA || !user.twoFASecret) {
+      throw 'user has no 2fa activated secret';
     }
 
     if (authenticator.check(token, user.twoFASecret)) {
