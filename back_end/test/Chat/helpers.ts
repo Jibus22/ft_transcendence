@@ -126,7 +126,7 @@ export class ChatHelpers {
 
   async getAllRooms() {
     const SiteOwnerCookies = await this.commons
-      .logUser('fake-vgoldman-custome')
+      .logUser('siteOwner')
       .then((r) => this.commons.getCookies(r));
     expect(SiteOwnerCookies).toHaveLength(2);
     expect(SiteOwnerCookies[0].length).toBeGreaterThan(1);
