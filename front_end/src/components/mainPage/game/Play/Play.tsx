@@ -1,6 +1,6 @@
 import './play.scss';
 import React, { useState } from 'react';
-import IconGame from './img/Group.png';
+import IconGame from './img/raquette.png';
 import { useSpring, animated } from 'react-spring';
 import { Button, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -45,7 +45,7 @@ export default function Play({ Loadingclick }: Props) {
 						textTransform: 'none',
 					}}
 				>
-					Invit a friend
+					Invite a friend
 				</Button>
 			</div>
 		);

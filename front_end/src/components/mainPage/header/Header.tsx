@@ -8,8 +8,6 @@ import { Badge, Avatar } from '@mui/material';
 export default function Header() {
 	const { data, userName, userImg, setUserName, setUserImg } = useMainPage();
 
-	// const [lol, setlol] = useState('');
-
 	useEffect(() => {
 		if (data.length > 0) {
 			setUserName(data[0].login);
@@ -17,25 +15,6 @@ export default function Header() {
 			// setlol(data[0].status);
 		}
 	});
-
-	// 	if (document.getElementById("changeColorDemo").value !== "") {
-	// 		document.getElementById("buttonDemo").style.background = "green";
-	// 	 } else {
-	// 		document.getElementById("buttonDemo").style.background = "skyblue";
-	// 	 }
-	//   }
-
-	// const setStatusColor = (status: string) => {
-	// 	if (status === 'offline') {
-	// 		setColorStatus('red');
-	// 	}
-	// 	if (status === 'online') {
-	// 		setColorStatus('red');
-	// 	}
-	// 	if (status === 'ingame') {
-	// 		setColorStatus('orange');
-	// 	}
-	// };
 
 	return (
 		<div className=" d-flex flex-column mainHeader ">

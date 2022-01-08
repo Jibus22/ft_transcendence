@@ -140,6 +140,149 @@
 		font-family: Montserrat, sans-serif;
 	}
 }
+
+.mainGameWindow {
+	margin: 90px 0 0 190px;
+	width: 78%;
+	height: 700px;
+
+	border-radius: 23px;
+	// background-color: #2E4266;
+	border: 1px solid rgba(255, 255, 255, 0.7);
+
+	background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+
+	.msgPlay {
+		margin: 80px auto;
+		width: 55%;
+		h1 {
+			font-family: Montserrat, sans-serif;
+			color: white;
+			font-style: normal;
+			font-weight: 400;
+			font-size: 55px;
+			line-height: 70px;
+			text-align: center;
+		}
+	}
+	.iconePLayGame {
+		margin: -40px auto;
+		img {
+			width: 165px;
+		}
+	}
+
+	.buttonMui {
+		background-color: #ca6c88;
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		color: white;
+		font-family: Montserrat, sans-serif;
+		font-size: 27px;
+		font-weight: 500;
+	}
+	.buttonMui:hover {
+		font-size: 30px;
+		background-color: rgba(124, 90, 100, 0.9);
+	}
+	.MuiCircularProgress-root {
+		color: #ca6c88;
+	}
+	.buttonDiv {
+		.MuiCircularProgress-root {
+			margin-left: 12px;
+		}
+	}
+
+	.playRandom {
+		width: 40%;
+		height: 8%;
+		margin: 90px auto;
+	}
+
+	.playFriend {
+		width: 40%;
+		height: 8%;
+		margin: -60px auto;
+	}
+	.buttonMuiFriend {
+		margin: 30px 0 0 0;
+	}
+
+	.formDivButton {
+		margin-top: 30px;
+
+		height: 60px;
+	}
+
+	.formDivButtonAnim {
+		height: 60px;
+		animation-name: shake-horizontal;
+		animation-duration: 0.6s;
+		animation-timing-function: ease;
+		animation-delay: 0s;
+		animation-iteration-count: 1;
+		animation-direction: normal;
+		animation-fill-mode: none;
+	}
+
+	.formDivButton .muiButtonInput {
+		width: 100%;
+		height: 100%;
+		background-color: rgba(202, 108, 136, 0.7);
+		border-radius: 15px 0px 0px 15px;
+		font-family: Montserrat, sans-serif;
+		color: white;
+		font-size: 1.5em;
+		border-top: 1px solid rgba(255, 255, 255, 0.8);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+		border-left: 1px solid rgba(255, 255, 255, 0.8);
+		padding-left: 7px;
+
+		.MuiFormHelperText-root {
+			font-size: 20px;
+			font-family: Montserrat, sans-serif;
+			margin: 1% auto;
+			color: red;
+		}
+	}
+
+	.formDivButton .MuiOutlinedInput-input {
+		margin: 0px auto;
+		font-size: 20px;
+		color: white;
+	}
+
+	.formDivButton .MuiOutlinedInput-notchedOutline {
+		border: none;
+	}
+
+	.formDivButton .buttonDiv {
+		width: 60px;
+		border-radius: 0 10px 10px 0px;
+		background-color: white;
+
+		img {
+			width: 30px;
+		}
+		img:hover {
+			width: 40px;
+		}
+	}
+
+	.formDivButton:focus-visible {
+		outline: none;
+		text-decoration: none;
+	}
+	.formDivButton ::placeholder {
+		color: white;
+		font-size: 22px;
+		height: 30px;
+		font-family: Montserrat, sans-serif;
+	}
+}
 @keyframes shake-horizontal {
 	0% {
 		-webkit-transform: translateX(0);
@@ -278,17 +421,20 @@
 		border-radius: 23px;
 
 		.msgPlay {
-			margin: 60px auto;
-			width: 55%;
+			margin: 40px auto;
+			width: 63%;
 			h1 {
-				font-size: 40px;
+				font-size: 28px;
 				line-height: 50px;
+
+				font-family: 'Alfa Slab One', cursive;
+				font-family: 'Press Start 2P', cursive;
 			}
 		}
 		.iconePLayGame {
-			margin: -20px auto;
+			margin: -40px auto;
 			img {
-				width: 125px;
+				width: 180px;
 			}
 		}
 
