@@ -11,6 +11,7 @@ switch (process.env.NODE_ENV) {
         synchronize: true,
         type: 'better-sqlite3',
         database: process.env.DB_NAME,
+        factories: ['./dist/**/*.factory.js'],
         seeds: ['./dist/**/*.seed.js'],
         entities: ["./dist/**/*.entity.js"],
         migrations: ["migrations/*.ts"],
