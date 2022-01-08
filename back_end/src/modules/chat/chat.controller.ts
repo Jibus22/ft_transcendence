@@ -24,6 +24,7 @@ import { RoomModeratorGuard } from '../../guards/roomModerator.guard';
 import { RoomMuteGuard } from '../../guards/roomMute.guard';
 import { RoomOwnerGuard } from '../../guards/roomOwner.guard';
 import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
+import { SiteOwnerGuard } from '../../guards/siteOwner.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
@@ -78,13 +79,15 @@ export class ChatController {
   @Post()
   @Serialize(RoomDto)
   async createRoom(@CurrentUser() user, @Body() createRoomDto: CreateRoomDto) {
-    return await this.chatService.createRoom(user, createRoomDto).catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      } else {
-        throw new BadRequestException(error);
-      }
-    });
+    return await this.chatService
+      .createRoom(user, createRoomDto)
+      .catch((error) => {
+        if (error.status) {
+          throw new HttpException(error, error.status);
+        } else {
+          throw new BadRequestException(error);
+        }
+      });
   }
 
   @ApiOperation({
@@ -100,7 +103,7 @@ export class ChatController {
     description: 'User role is not high enough',
   })
   @Get('/all')
-  // @UseGuards(SiteOwnerGuard) // TODO implement !!
+  @UseGuards(SiteOwnerGuard)
   @Serialize(FullRoomDto)
   async findAll() {
     return await this.chatService.findAll();
@@ -217,8 +220,8 @@ export class ChatController {
   @UseGuards(RoomModeratorGuard)
   async addParticipant(
     @TargetedRoom() room: Room,
-    @Body() createPaticipant: CreateParticipantDto
-    ) {
+    @Body() createPaticipant: CreateParticipantDto,
+  ) {
     return await this.chatService
       .addParticipant(room, createPaticipant)
       .catch((error) => {
@@ -285,7 +288,6 @@ export class ChatController {
       });
   }
 
-
   /*
   ===================================================================
   -------------------------------------------------------------------
@@ -294,9 +296,8 @@ export class ChatController {
   ===================================================================
   */
 
-
   @ApiOperation({
-    summary: 'Update a owned room\'s password',
+    summary: "Update a owned room's password",
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -310,7 +311,7 @@ export class ChatController {
   @UseGuards(RoomOwnerGuard)
   async updatePassword(
     @TargetedRoom() room: Room,
-    @Body() updatePasswordDto:UpdatePasswordDto,
+    @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     return await this.chatService
       .updatePassword(room, updatePasswordDto)
@@ -322,5 +323,4 @@ export class ChatController {
         }
       });
   }
-
 }
