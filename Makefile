@@ -74,13 +74,18 @@ dbbash:
 ## -----------------------------------------------------------------------------
 
 dockerclean:
+	docker volume rm --force repo_dist_guest_back
+	docker volume rm --force repo_database_storage
 	docker volume prune
 	docker system prune
 
 dockerfclean:
-	@docker rmi $(docker images -a -q) 2>/dev/null
-	docker volume prune
-	docker system prune
+	@docker system prune
+	@docker builder prune
+	@docker volume prune
+	@docker system prune
+	@docker images -a -q | xargs -I % docker rmi %
+	@docker system df
 
 dbclean:
 	${RM} -rf database

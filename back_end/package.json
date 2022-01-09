@@ -6,11 +6,12 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist/*",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "seed:run": "tsc && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateSiteOwners",
+    "seed:run": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateSiteOwners",
+    "seed:random": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomUsers",
     "start:dev": "npm run seed:run && nest start --watch",
     "start:devNoSeed": "nest start --watch",
     "start:debug": "npm run seed:run && nest start --debug 0.0.0.0:9229 --watch",
@@ -84,7 +85,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.10.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.5.4"
   },
   "jest": {
     "moduleFileExtensions": [
