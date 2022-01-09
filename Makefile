@@ -18,6 +18,9 @@ test:
 db:
 	docker-compose -f docker-compose.yml up database_server ; docker-compose rm -fsv
 
+seed:
+	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:random'
+
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
 
@@ -74,13 +77,18 @@ dbbash:
 ## -----------------------------------------------------------------------------
 
 dockerclean:
+	docker volume rm --force repo_dist_guest_back
+	docker volume rm --force repo_database_storage
 	docker volume prune
 	docker system prune
 
 dockerfclean:
-	@docker rmi $(docker images -a -q) 2>/dev/null
-	docker volume prune
-	docker system prune
+	@docker system prune
+	@docker builder prune
+	@docker volume prune
+	@docker system prune
+	@docker images -a -q | xargs -I % docker rmi %
+	@docker system df
 
 dbclean:
 	${RM} -rf database
