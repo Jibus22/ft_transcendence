@@ -29,9 +29,11 @@ export default class CreateSiteOwners implements Seeder {
         .orUpdate({ conflict_target: ['login_42'], overwrite: ['is_site_owner']})
         .execute();
 
-      console.log(
-        await connection.query('SELECT * FROM USER WHERE is_site_owner = 1'),
-      );
+      const ownersInDb = await connection
+        .createQueryBuilder(User, 'user')
+        .where('user.is_site_owner = true')
+        .getRawMany();
+      console.log(ownersInDb);
     }
   }
 }

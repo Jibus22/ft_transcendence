@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/users.entity';
 import { UsersModule } from '../users/users.module';
@@ -7,7 +7,20 @@ import { DevelopmentService } from './development.service';
 
 @Module({
   imports: [UsersModule, TypeOrmModule.forFeature([User])],
-  providers: [DevelopmentService],
-  controllers: [DevelopmentController],
 })
-export class DevelopmentModule {}
+export class DevelopmentModule {
+  static forRoot(): DynamicModule {
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        module: DevelopmentModule,
+      };
+    }
+
+    return {
+      module: DevelopmentModule,
+      providers: [DevelopmentService],
+      exports: [DevelopmentService],
+      controllers: [DevelopmentController],
+    };
+  }
+}
