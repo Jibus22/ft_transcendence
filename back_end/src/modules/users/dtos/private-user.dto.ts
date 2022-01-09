@@ -23,7 +23,7 @@ export class privateUserDto extends UserDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    return value.obj.twoFASecret ? true : false;
+    return value.obj.twoFASecret && value.obj.useTwoFA ? true : false;
   })
   hasTwoFASecret: boolean;
 
@@ -31,7 +31,7 @@ export class privateUserDto extends UserDto {
   @Expose()
   games: Game[];
 
-  // TODO remove debug
+  @ApiProperty()
   @Expose()
-  useTwoFA: boolean;
+  is_site_owner: boolean;
 }

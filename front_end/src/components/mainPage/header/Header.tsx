@@ -1,42 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './header.scss';
 import { useMainPage } from '../../../MainPageContext';
 import { NavLink as Link } from 'react-router-dom';
 import { Badge, Avatar } from '@mui/material';
-import { withStyles } from '@material-ui/core/styles';
+// import { withStyles } from '@material-ui/core/styles';
 
 export default function Header() {
 	const { data, userName, userImg, setUserName, setUserImg } = useMainPage();
-
-	const [lol, setlol] = useState('');
 
 	useEffect(() => {
 		if (data.length > 0) {
 			setUserName(data[0].login);
 			setUserImg(data[0].photo_url);
-			setlol(data[0].status);
+			// setlol(data[0].status);
 		}
-		// setStatusColor(lol);
 	});
-
-	// 	if (document.getElementById("changeColorDemo").value !== "") {
-	// 		document.getElementById("buttonDemo").style.background = "green";
-	// 	 } else {
-	// 		document.getElementById("buttonDemo").style.background = "skyblue";
-	// 	 }
-	//   }
-
-	// const setStatusColor = (status: string) => {
-	// 	if (status === 'offline') {
-	// 		setColorStatus('red');
-	// 	}
-	// 	if (status === 'online') {
-	// 		setColorStatus('red');
-	// 	}
-	// 	if (status === 'ingame') {
-	// 		setColorStatus('orange');
-	// 	}
-	// };
 
 	return (
 		<div className=" d-flex flex-column mainHeader ">

@@ -133,7 +133,7 @@ describe('user controller: auth routes (e2e)', () => {
         return await commons.getMe(cookies);
       })
       .then(async (response) => {
-        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        expect(response.body).toHaveProperty('hasTwoFASecret', false);
         return await turn2Fa_on({ token: await totp(secret) }, cookies);
       })
       .then(async (response) => {
@@ -176,17 +176,14 @@ describe('user controller: auth routes (e2e)', () => {
       })
       .then(async (response) => {
         commons.updateCookies(response, cookies);
-        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        expect(response.body).toHaveProperty('hasTwoFASecret', false);
 
         return await authenticate2fa({ token: await totp(secret) }, cookies);
       })
       .then(async (response) => {
         // second try in case the TOTP was sent at expire time
-        if (response.status === HttpStatus.BAD_REQUEST) {
-          response = await authenticate2fa({ token: await totp(secret) }, cookies);
-        }
-        commons.updateCookies(response, cookies);
-        expect(response.status).toBe(HttpStatus.CREATED);
+        expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+        expect(response.body?.message).toBe('user has no 2fa activated secret');
         return await commons.getMe(cookies);
       })
       .then(async (response) => {
@@ -207,7 +204,7 @@ describe('user controller: auth routes (e2e)', () => {
         return await commons.getMe(cookies);
       })
       .then(async (response) => {
-        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        expect(response.body).toHaveProperty('hasTwoFASecret', false);
         return await turn2Fa_on({ token: '000000' }, cookies);
       })
       .then(async (response) => {
@@ -221,7 +218,7 @@ describe('user controller: auth routes (e2e)', () => {
       });
   });
 
-  it('generates 2fa qrCode, tries to activate with invalid token', async () => {
+  it('generates 2fa qrCode, tries to activate with invalid token format', async () => {
     let secret: string;
 
     await generateQrCode(null, cookies)
@@ -234,7 +231,7 @@ describe('user controller: auth routes (e2e)', () => {
         return await commons.getMe(cookies);
       })
       .then(async (response) => {
-        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        expect(response.body).toHaveProperty('hasTwoFASecret', false);
         return await turn2Fa_on({ token: 'asdbdnvdsf' }, cookies);
       })
       .then(async (response) => {
@@ -261,7 +258,7 @@ describe('user controller: auth routes (e2e)', () => {
         return await commons.getMe(cookies);
       })
       .then(async (response) => {
-        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        expect(response.body).toHaveProperty('hasTwoFASecret', false);
         return await turn2Fa_on({ token: await totp(secret) }, cookies);
       })
       .then(async (response) => {
@@ -276,8 +273,8 @@ describe('user controller: auth routes (e2e)', () => {
         return await authenticate2fa({ token: '000000' }, cookies);
       })
       .then(async (response) => {
-        expect(response.body).toHaveProperty('message', 'invalid token');
         expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+        expect(response.body).toHaveProperty('message', 'invalid token');
         response = await authenticate2fa({ token: await totp(secret) }, cookies);
         // second try in case the TOTP was sent at expire time
         if (response.status === HttpStatus.BAD_REQUEST) {
@@ -305,7 +302,7 @@ describe('user controller: auth routes (e2e)', () => {
         return await commons.getMe(cookies);
       })
       .then(async (response) => {
-        expect(response.body).toHaveProperty('hasTwoFASecret', true);
+        expect(response.body).toHaveProperty('hasTwoFASecret', false);
         return await turn2Fa_on({ token: await totp(secret) }, cookies);
       })
       .then(async (response) => {

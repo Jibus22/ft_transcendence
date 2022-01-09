@@ -1,4 +1,5 @@
 import {
+  BadGatewayException,
   BadRequestException,
   Body,
   CACHE_MANAGER,
@@ -47,9 +48,13 @@ export class AuthController {
     @Query() query: { code: string; state: string },
     @Session() session: any,
   ) {
-    const user = await this.authService.registerUser(query.code, query.state);
+    const user = await this.authService
+      .registerUser(query.code, query.state)
+      .catch((e) => {
+        console.log(e);
+      });
     if (!user) {
-      throw new BadRequestException('Could not identify user.');
+      throw new BadGatewayException('Sorry, something went wront, we could not identify user with 42 API');
     }
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;

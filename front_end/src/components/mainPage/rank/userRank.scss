@@ -207,10 +207,9 @@
 			.MuiBadge-badge {
 				width: 17%;
 				height: 16%;
-				background-color: #e6da6a;
-				color: #e6da6a;
+
 				border-radius: 100%;
-				box-shadow: 0 0 0 0.5px #e6da6a;
+
 				z-index: 3;
 			}
 			.MuiBadge-badge::after {
@@ -221,7 +220,7 @@
 				height: 100%;
 				border-radius: 50%;
 				animation: badgeAnim 1.2s infinite ease-in-out;
-				border: 1px solid #e6da6a;
+				border: 1px solid;
 				content: '';
 			}
 		}
@@ -372,6 +371,12 @@
 
 			.imgUser {
 				margin: 0 0 0 81px;
+				border-radius: 46%;
+
+				img {
+					width: 100%;
+					border-radius: 44%;
+				}
 
 				.MuiAvatar-root {
 					width: 70px;
@@ -381,10 +386,8 @@
 				.MuiBadge-badge {
 					width: 17%;
 					height: 16%;
-					background-color: #e6da6a;
-					color: #e6da6a;
 					border-radius: 100%;
-					box-shadow: 0 0 0 0.5px #e6da6a;
+					box-shadow: 0 0 0 0.5px;
 					z-index: 3;
 				}
 				.MuiBadge-badge::after {
@@ -395,7 +398,7 @@
 					height: 100%;
 					border-radius: 50%;
 					animation: badgeAnim 1.2s infinite ease-in-out;
-					border: 1px solid #e6da6a;
+					border: 1px solid;
 					content: '';
 				}
 			}
@@ -410,19 +413,22 @@
 				}
 			}
 			.nbStatGame {
-				margin: 0 0 0 50px;
+				margin: 0 0 0 40px;
 				justify-content: center;
 				align-items: center;
+				width: 40px;
 			}
 			.nbStatWin {
-				margin: 0 0 0 100px;
+				margin: 0 0 0 73px;
 				justify-content: center;
 				align-items: center;
+				width: 40px;
 			}
 			.nbStatLoose {
-				margin: 0 0 0 100px;
+				margin: 0 0 0 73px;
 				justify-content: center;
 				align-items: center;
+				width: 40px;
 			}
 
 			.buttonDIv {

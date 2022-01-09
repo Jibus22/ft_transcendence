@@ -225,13 +225,9 @@ export class ChatService {
 
   async leaveRoom(user: User, room: Room) {
     const participant = room.participants.find((p) => p.user.id === user.id);
-    if (participant.is_owner) {
-      throw {
-        status: HttpStatus.BAD_REQUEST,
-        error: `owner cannot leave room ${room?.id}, must delete it`,
-      };
+    if (participant) {
+      await this.repoParticipants.remove(participant);
     }
-    await this.repoParticipants.remove(participant);
   }
 
   /*

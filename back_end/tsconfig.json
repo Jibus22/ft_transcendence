@@ -8,7 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "../dist",
+    "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
@@ -19,5 +19,5 @@
     "noFallthroughCasesInSwitch": false,
     "allowJs": true,
   },
-  "exclude": ["node_modules", "documentation/*", "dist/**/*"]
+  "include": ["src/**/*", "test/**/*"]
 }

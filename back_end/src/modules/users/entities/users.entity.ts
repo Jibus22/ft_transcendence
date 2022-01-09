@@ -33,11 +33,14 @@ export class User {
   @Column({ unique: true })
   login_42: string;
 
-  @Column()
+  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png'})
   photo_url_42: string;
 
-  @Column()
+  @Column({ default: false })
   use_local_photo: boolean;
+
+  @Column({ default: false })
+  is_site_owner: boolean;
 
   @OneToOne(() => UserPhoto, (photo) => photo.owner)
   local_photo: UserPhoto;
