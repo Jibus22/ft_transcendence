@@ -18,6 +18,9 @@ test:
 db:
 	docker-compose -f docker-compose.yml up database_server ; docker-compose rm -fsv
 
+seed:
+	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:random'
+
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
 

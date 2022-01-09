@@ -11,7 +11,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "seed:run": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateSiteOwners",
-    "seed:random": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomUsers",
+    "seed:random": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomData",
     "start:dev": "npm run seed:run && nest start --watch",
     "start:devNoSeed": "nest start --watch",
     "start:debug": "npm run seed:run && nest start --debug 0.0.0.0:9229 --watch",
