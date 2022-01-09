@@ -225,7 +225,9 @@ export class ChatService {
 
   async leaveRoom(user: User, room: Room) {
     const participant = room.participants.find((p) => p.user.id === user.id);
-    await this.repoParticipants.remove(participant);
+    if (participant) {
+      await this.repoParticipants.remove(participant);
+    }
   }
 
   /*
