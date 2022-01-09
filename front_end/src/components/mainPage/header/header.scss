@@ -1,30 +1,53 @@
 .mainHeader {
+	// animation hover //
+	nav ul li h1,
+	nav ul li h1:after,
+	nav ul li h1:before {
+		transition: all 0.5s;
+	}
+
+	nav.stroke ul li h1,
+	nav.fill ul li h1 {
+		position: relative;
+	}
+	nav.stroke ul li h1:after,
+	nav.fill ul li h1:after {
+		position: absolute;
+		bottom: -4px;
+		left: 0;
+		right: 0;
+		margin: auto;
+		width: 0%;
+		content: '.';
+		color: transparent;
+		background: #e6da6a;
+		height: 3px;
+		height: 0.1vw;
+	}
+	nav.stroke ul li h1:hover:after {
+		width: 100%;
+	}
+
 	width: 100%;
 	justify-content: center;
-	height: 100px;
-	margin: 6% 0 0 0;
-
-	.logo {
-		width: 50px;
-		height: 50px;
-		margin: 0 0 0 20px;
-	}
+	height: 120px;
+	height: 5vw;
+	margin: 130px 0 0 0;
 
 	.menuHeader {
 		width: 80%;
-		height: 85px;
-
-		margin: 100px auto;
+		height: 100%;
+		margin: 0px auto;
 		display: flex;
-
 		background: rgba(230, 156, 106, 0.2);
 		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 		backdrop-filter: blur(7.5px);
 		-webkit-backdrop-filter: blur(7.5px);
-		border: 1px solid rgba(255, 255, 255, 0.8);
-		border-radius: 20px;
+		border: 2px solid rgba(255, 255, 255, 0.6);
+		border-radius: 30px;
 
 		.selectedNave {
+			// tester sur grand ecran
 			border-bottom: 2px #e6da6a solid;
 		}
 	}
@@ -38,14 +61,8 @@
 		display: flex;
 		justify-content: space-around;
 
-		.toNavLink {
-			width: 100%;
-		}
-
 		.iconHeader {
 			color: rgba(255, 255, 255, 0.2);
-
-			// margin: 0 80px 0 80px;
 		}
 		li {
 			width: 90px;
@@ -58,12 +75,11 @@
 			font-family: Montserrat, sans-serif;
 			color: white;
 			font-weight: 500;
-			font-size: 23px;
+			font-size: 1.4vw;
 			line-height: 35px;
-			margin: 0 auto;
 		}
 		h1:hover {
-			font-size: 26px;
+			font-size: 1.5vw;
 		}
 	}
 
@@ -75,34 +91,36 @@
 
 	.logHeader {
 		width: 15%;
-		margin: 0 0 0 0px;
 
 		.profil {
 			.profilLoggin {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-
+				width: 180px;
 				h2 {
 					font-family: Montserrat, sans-serif;
 					color: white;
 					font-weight: 500;
-					font-size: 23px;
+					font-size: 37px;
+					font-size: 1.4vw;
 					text-align: center;
 				}
 			}
 
 			.profilLogginImg {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 50%;
 				.MuiBadge-badge {
-					width: 17%;
+					width: 19%;
 					height: 19%;
-					// background-color: red;
-					// color: #44b700;
+
 					border-radius: 100%;
 					box-shadow: 0 0 0 0.5px;
 				}
 				.MuiBadge-badge::after {
-					position: absolute;
 					top: 0;
 					left: 0;
 					width: 100%;
@@ -114,23 +132,48 @@
 				}
 
 				.MuiAvatar-root {
-					width: 90px;
-					height: 80px;
+					width: 4.4vw;
+					height: 4.2vw;
 				}
 			}
 		}
 
 		.profil:hover {
 			h2 {
-				font-size: 26px;
+				font-size: 1.5vw;
 			}
 		}
 	}
 }
 
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
+@media screen and (max-width: 2100px) {
+	.mainHeader {
+		.profilLogginImg {
+			margin: 0% 0% 0% -20px;
+		}
+	}
+}
+
+@media screen and (max-width: 1700px) {
+	.mainHeader {
+		.menuHeader {
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			border-radius: 23px;
+		}
+	}
+}
+
+@media screen and (max-width: 1600px) {
+	.mainHeader {
+		.profilLogginImg {
+			margin: 0% 0% 0% -40px;
+		}
+	}
+}
+
+/////////////////////////////////////////////
+////// reponsive macbook 13 pouces  /////////
+/////////////////////////////////////////////
 
 @media screen and (max-width: 1440px) {
 	.mainHeader {
@@ -166,6 +209,7 @@
 
 		.menuHeader {
 			width: 81%;
+
 			height: 66px;
 			margin: 90px auto;
 			display: flex;
@@ -233,7 +277,7 @@
 				.profilLogginImg {
 					width: 60px;
 					height: 60px;
-
+					margin: 0% 0px 0% 0px;
 					.MuiBadge-colorPrimary {
 						color: #ff0000;
 					}
@@ -268,106 +312,6 @@
 			.profil:hover {
 				h2 {
 					font-size: 19px;
-				}
-			}
-		}
-	}
-}
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 1366px  /////////
-///////////////////////////////////////////////
-
-@media screen and (max-width: 1366px) {
-	.mainHeader {
-		width: 100%;
-		justify-content: center;
-
-		.menuHeader {
-			width: 80%;
-			height: 60px;
-
-			margin: 70px auto;
-			display: flex;
-			border: 1px solid rgba(255, 255, 255, 0.5);
-			border-radius: 16px;
-
-			.selectedNave {
-				border-bottom: 1px #e6da6a solid;
-			}
-		}
-
-		.mainNavMenu {
-			width: 80%;
-		}
-
-		.headerMenu {
-			margin: 0 auto;
-			display: flex;
-			justify-content: space-around;
-
-			.toNavLink {
-				width: 100%;
-			}
-
-			li {
-				width: 70px;
-			}
-			.leaderDiv {
-				width: 105px;
-			}
-
-			h1 {
-				font-weight: 500;
-				font-size: 16px;
-				line-height: 25px;
-				margin: 0 auto;
-			}
-			h1:hover {
-				font-size: 18px;
-			}
-		}
-
-		.nav-item {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
-
-		.logHeader {
-			width: 15%;
-			margin: 0 0 0 0px;
-
-			.profil {
-				.profilLoggin {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					h2 {
-						font-family: Montserrat, sans-serif;
-						color: white;
-						font-weight: 500;
-						font-size: 15px;
-						text-align: center;
-					}
-				}
-
-				.profilLogginImg {
-					// margin: 0 0 0 45px;
-
-					img {
-						width: 50px;
-						height: 50px;
-					}
-					.MuiBadge-colorPrimary {
-						color: #ff0000;
-					}
-				}
-			}
-
-			.profil:hover {
-				h2 {
-					font-size: 26px;
 				}
 			}
 		}

@@ -136,11 +136,13 @@ const MainPageProvider = (props: any) => {
 					<DialogContentText id="alert-dialog-description">{description}</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
-					<Button sx={{ color: 'red' }} onClick={disagree}>
+					<Button className="buttonMui" sx={{ color: 'red' }} onClick={disagree}>
 						Disagree
 					</Button>
 
-					<Button onClick={agree}>Agree</Button>
+					<Button className="buttonMui" onClick={agree}>
+						Agree
+					</Button>
 				</DialogActions>
 			</Dialog>
 		);
@@ -148,13 +150,13 @@ const MainPageProvider = (props: any) => {
 
 	const setStatusColor = (status: string): string => {
 		if (status === 'offline') {
-			return 'red';
+			return '#FF3F00';
 		}
 		if (status === 'online') {
 			return 'green';
 		}
 		if (status === 'ingame') {
-			return 'orange';
+			return '#FFC900';
 		} else {
 			return 'green';
 		}

@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
 import { Avatar, Badge } from '@mui/material';
 import axios, { AxiosError } from 'axios';
+
 import Button from '@mui/material/Button';
+import { useMainPage } from '../../../../MainPageContext';
 
 interface Users {
 	id: string;
@@ -12,6 +14,7 @@ interface Users {
 	game: number;
 	win: number;
 	looses: number;
+	status: string;
 }
 
 const RankWorld = () => {
@@ -26,18 +29,18 @@ const RankWorld = () => {
 	});
 
 	const [data, setData] = useState<Array<Users>>([]);
+	const { setStatusColor } = useMainPage();
 
 	useEffect(() => {
-		fetchDataUserMe();
+		fetchData();
 	}, []);
 
-	const fetchDataUserMe = async () => {
+	const fetchData = async () => {
 		try {
-			const { data } = await axios.get('https://run.mocky.io/v3/21326839-665f-4563-9fdc-6e7419dc1300', {
+			const { data } = await axios.get('https://run.mocky.io/v3/0fc0d0b5-3e27-439f-b6ed-e0f79845b2e9', {
 				withCredentials: true,
 			});
 			setData(data);
-			console.log(data);
 		} catch (error) {
 			const err = error as AxiosError;
 			console.log(err);
@@ -60,7 +63,22 @@ const RankWorld = () => {
 						<h1>{rank + 1}</h1>
 					</div>
 					<div className="imgUser ">
-						<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot">
+						<Badge
+							overlap="circular"
+							anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+							variant="dot"
+							sx={{
+								'.MuiBadge-badge': {
+									backgroundColor: setStatusColor(data.status),
+									color: setStatusColor(data.status),
+									borderColor: setStatusColor(data.status),
+									boxShadow: setStatusColor(data.status),
+								},
+								'.MuiBadge-badge::after': {
+									borderColor: setStatusColor(data.status),
+								},
+							}}
+						>
 							<Avatar alt="userImg" src={data.photo_url} variant="square" className="domUser" />
 						</Badge>
 					</div>
