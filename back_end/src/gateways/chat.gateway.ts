@@ -7,8 +7,8 @@ import {
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Socket } from 'socket.io';
-import { User } from './modules/users/entities/users.entity';
-import { UsersService } from './modules/users/service-users/users.service';
+import { User } from '../modules/users/entities/users.entity';
+import { UsersService } from '../modules/users/service-users/users.service';
 
 const options: GatewayMetadata = {
   cors: {
@@ -19,7 +19,7 @@ const options: GatewayMetadata = {
 };
 
 @WebSocketGateway(options)
-export class StatusGateway {
+export class ChatGateway {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private usersService: UsersService,
