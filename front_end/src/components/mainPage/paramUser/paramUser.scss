@@ -1,5 +1,6 @@
 .mainParamUser {
 	width: 37%;
+	min-width: 400px;
 	height: 37vw;
 	margin: 4% auto;
 	border-radius: 35px;
@@ -17,9 +18,8 @@
 	}
 
 	.imgUser {
-		width: 24%;
 		width: 9vw;
-		height: 22%;
+
 		height: 9vw;
 		margin: 18% auto;
 
@@ -33,9 +33,10 @@
 
 		.userModif {
 			position: absolute;
-			width: 22%;
-			height: 20%;
-			margin: -22% 0% 0% 0%;
+			width: 9vw;
+			height: 9vw;
+			margin: -25% 0% 0% 0%;
+			border-radius: 40%;
 
 			img {
 				width: 60%;
@@ -117,15 +118,16 @@
 
 		.MuiInputLabel-root.MuiInputLabel-shrink {
 			position: absolute;
-			top: -0.3vw;
+			left: 3px;
+			left: 0.1vw;
 			font-size: 1.2vw;
 		}
 
 		.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
-			left: 4vw;
+			left: 1.8vw;
 			position: absolute;
-			top: 50%;
-			transform: translate(-50%, -50%);
+			top: 13%;
+			// transform: translate(0%, -50%);
 			font-size: 1.1vw;
 		}
 
@@ -180,7 +182,24 @@
 		}
 		@-moz-document url-prefix() {
 			.alertValidateIcon {
-				margin: 2% auto;
+				// margin: 2% auto;
+
+				position: absolute;
+				left: 46%;
+				top: 32.8vw;
+
+				transform: translate(-50%, -50%);
+
+				.MuiSvgIcon-fontSizeInherit {
+					width: 1.5vw;
+					height: 1.5vw;
+				}
+				.MuiAlert-root {
+					background: transparent;
+					margin: 3% 0 0 -2%;
+					color: white;
+					font-size: 0.9vw;
+				}
 			}
 		}
 	}
@@ -234,8 +253,6 @@
 				width: 2.4vw;
 			}
 			.MuiSwitch-thumb {
-				// width: 50px;
-				// height: 50px;
 				width: 1.1vw;
 				height: 1.1vw;
 			}
@@ -253,319 +270,8 @@
 			border-radius: 40px;
 		}
 	}
-
-	.MuiBackdrop-root {
-		margin: -20% auto;
-	}
 }
 
-/////////////////////////////////////////////
-////// reponsive macbook 13 pouces  /////////
-/////////////////////////////////////////////
-
-@media screen and (max-width: 1440px) {
-	.mainParamUser {
-		width: 37%;
-		height: 560px;
-		margin: 4% auto;
-
-		border-radius: 23px;
-		border: 1px solid rgba(255, 255, 255, 0.7);
-		background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
-		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-
-		p,
-		h1,
-		h2,
-		h3 {
-			font-family: Montserrat, sans-serif;
-		}
-
-		.imgUser {
-			width: 24%;
-			height: 22%;
-			margin: 18% auto;
-			border-radius: 46%;
-
-			img {
-				width: 100%;
-				border-radius: 45%;
-			}
-			.imgFilter {
-				width: 100%;
-				filter: brightness(0.6);
-			}
-
-			.userModif {
-				position: absolute;
-				width: 22%;
-				height: 20%;
-				margin: -22% 0% 0% 0%;
-
-				img {
-					width: 60%;
-					filter: none;
-					margin: 0% 0% 0% 15%;
-				}
-			}
-		}
-
-		.mainStatUser {
-			margin: -17% 0% 0% 0%;
-		}
-		.mainStatUserBlur {
-			margin: -17% 0% 0% 0%;
-			filter: blur(6px);
-		}
-
-		.StatUser {
-			margin: 4% 0 0 0;
-			.infoStatUser {
-				width: 50%;
-				margin: 0 auto;
-				justify-content: space-between;
-
-				p {
-					color: #e6da6a;
-					font-size: 1.3vw;
-				}
-			}
-			.statNbUser {
-				width: 45%;
-				margin: 2% auto;
-				justify-content: space-between;
-				.middleNbUser {
-					margin: 0 3% 0 0;
-				}
-				p {
-					color: white;
-					font-size: 1.6vw;
-				}
-			}
-		}
-
-		.mainMaterialUiText {
-			margin: 4% auto;
-			width: 45%;
-
-			.formDivButtonAnim {
-				animation-name: shake-horizontal;
-				animation-duration: 0.6s;
-				animation-timing-function: ease;
-				animation-delay: 0s;
-				animation-iteration-count: 1;
-				animation-direction: normal;
-				animation-fill-mode: none;
-			}
-
-			.MuiOutlinedInput-root {
-				color: white;
-				font-family: Montserrat, sans-serif;
-			}
-			.MuiOutlinedInput-notchedOutline {
-				border-color: #ca6c88;
-				border-radius: 15px;
-			}
-			.Mui-focused {
-				color: white;
-				font-size: 1.2vw;
-			}
-			.MuiOutlinedInput-input {
-				font-size: 1vw;
-			}
-			.css-1pysi21-MuiFormLabel-root-MuiInputLabel-root.Mui-disabled {
-				left: 17%;
-				position: absolute;
-				top: 50%;
-				transform: translate(-50%, -50%);
-				font-size: 1.1vw;
-			}
-			.css-1pysi21-MuiFormLabel-root-MuiInputLabel-root {
-				left: 17%;
-				position: absolute;
-				top: 50%;
-				transform: translate(-50%, -50%);
-				font-size: 1vw;
-			}
-
-			& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-				border: 1px solid #71dfe7;
-			}
-
-			.MuiFormHelperText-root {
-				position: absolute;
-				font-size: 0.9vw;
-				font-family: Montserrat, sans-serif;
-				margin: 1% auto;
-				color: red;
-				margin: 18% 0 0 25%;
-				text-transform: capitalize;
-			}
-
-			////////////////////////////////////////////@
-
-			.MuiIconButton-root {
-				width: 35px;
-				height: 35px;
-				margin: 0 0 0 12px;
-			}
-			.MuiIconButton-root:hover {
-				width: 37px;
-				height: 37px;
-			}
-
-			.alertValidateIcon {
-				position: absolute;
-				margin: 6% auto;
-
-				.MuiAlert-root {
-					background: transparent;
-					margin: 3% 0 0 -2%;
-					color: white;
-					font-size: 12px;
-				}
-			}
-			@-moz-document url-prefix() {
-				.alertValidateIcon {
-					margin: 2% auto;
-				}
-			}
-		}
-
-		.switchMui {
-			width: 27%;
-			margin: 8% 0 0 24%;
-
-			.MuiFormControlLabel-label {
-				color: white;
-				font-family: Montserrat, sans-serif;
-				font-size: 1.1vw;
-			}
-			.MuiSwitch-root {
-				margin: 0 0 0 10%;
-			}
-		}
-
-		.disconectMui {
-			margin: 8% 0 0 0;
-			text-align: center;
-			.MuiButton-root {
-				color: red;
-				font-family: Montserrat, sans-serif;
-				text-transform: none;
-				font-size: 1vw;
-				border-radius: 40px;
-			}
-		}
-
-		.MuiBackdrop-root {
-			margin: -20% auto;
-		}
-	}
-}
-@media screen and (max-width: 1300px) {
-	.mainParamUser {
-		height: 500px;
-	}
-}
-
-@media screen and (max-width: 1155px) {
-	.mainParamUser {
-		height: 450px;
-		.userModif {
-			img {
-				width: 160px !important;
-				filter: none;
-				margin: 55px 0% 0% 73px !important;
-			}
-		}
-		.MuiOutlinedInput-input {
-			height: 13px;
-		}
-		.MuiFormHelperText-root {
-			padding-top: 6px;
-		}
-		.MuiIconButton-root {
-			width: 30px !important;
-			height: 30px !important;
-		}
-		.MuiIconButton-root:hover {
-			width: 31px !important;
-			height: 30px !important;
-		}
-		.MuiSwitch-root {
-			height: 34px;
-			width: 50px;
-		}
-		.MuiSwitch-thumb {
-			width: 15px;
-			height: 15px !important;
-		}
-		.mainMaterialUiText {
-			.alertValidateIcon {
-				position: absolute;
-				margin: 7% auto;
-
-				.MuiAlert-root {
-					background: transparent;
-					color: white;
-					font-size: 12px;
-				}
-			}
-			@-moz-document url-prefix() {
-				.alertValidateIcon {
-					margin: 2.5% auto;
-				}
-			}
-		}
-	}
-}
-
-@media screen and (max-width: 1000px) {
-	.mainParamUser {
-		height: 400px;
-		.MuiOutlinedInput-input {
-			height: 10px;
-		}
-	}
-}
-@media screen and (max-width: 900px) {
-	.mainParamUser {
-		height: 355px;
-		.userModif {
-			img {
-				margin: 30px 0% 0% 43px !important;
-			}
-		}
-		.StatUser {
-			.infoStatUser {
-				p {
-					font-size: 11px;
-				}
-			}
-			.statNbUser {
-				p {
-					font-size: 12px;
-				}
-			}
-		}
-		.switchMui {
-			.MuiFormControlLabel-label {
-				font-size: 10px;
-			}
-		}
-
-		.disconectMui {
-			.MuiButton-root {
-				font-size: 10px;
-			}
-		}
-	}
-}
-
-/*This will work for firefox*/
 @-moz-document url-prefix() {
 	.mainParamUser {
 		.imgUser {
@@ -582,65 +288,343 @@
 		}
 	}
 }
-
-@media screen and (min-width: 2560px) {
+@media screen and (max-width: 1600px) {
 	.mainParamUser {
-		height: 950px;
+		margin: 70px auto;
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		border-radius: 31px;
 
 		.mainMaterialUiText {
-			margin: 4% auto;
-			width: 45%;
-
-			///////////////////////////////////
-			.MuiOutlinedInput-root {
-				color: white;
-				font-family: Montserrat, sans-serif;
+			.MuiOutlinedInput-input {
+				height: 2vw;
 			}
-			.MuiOutlinedInput-notchedOutline {
-				border-color: #ca6c88;
-				border-radius: 15px;
-			}
-			.Mui-focused {
-				color: white;
+			.MuiInputLabel-root.MuiInputLabel-shrink {
+				position: absolute;
+				top: 0.1vw;
+				left: 0.1vw;
 				font-size: 1.2vw;
 			}
-			.MuiOutlinedInput-input {
-				font-size: 1vw;
+			.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+				top: 7%;
 			}
 
+			.MuiIconButton-root {
+				width: 2.5vw;
+				margin: 0 0 0 12px;
+			}
+			.MuiIconButton-root:hover {
+				width: 2.6vw;
+			}
+		}
+		.switchMui {
+			// width: 27%;
+			// margin: 8% 0 0 24%;
+
+			.MuiSwitch-thumb {
+				width: 18px !important;
+				height: 18px !important;
+			}
+			.MuiSwitch-root {
+				width: 57px !important;
+				height: 35px !important;
+			}
+			.Mui-checked {
+				width: 39px !important;
+			}
+		}
+		@-moz-document url-prefix() {
+			.alertValidateIcon {
+				left: 46%;
+				top: 35.5vw !important;
+				top: 70% !important;
+			}
+		}
+	}
+}
+
+///////////////////////////////////////////////
+///////////////////////////////////////////////
+////////////////////////////////////////////////
+@media screen and (max-width: 1440px) {
+	.mainParamUser {
+		height: 555px !important;
+		// margin: 60px auto !important;
+		// width: 400px !important;
+		// width: 40px !important;
+		.imgUser {
+			width: 130px !important;
+			height: 130px !important;
+			margin: 18% auto;
+		}
+		.userModif {
+			width: 130px !important;
+			height: 130px !important;
+			margin: -130px 0 0 0 !important;
+			img {
+				width: 45% !important;
+				margin: 0% 0% 0% 10% !important;
+			}
+		}
+		.StatUser {
+			margin: 8% 0 0 0;
+			.infoStatUser {
+				width: 50%;
+				margin: 0 auto;
+				justify-content: space-between;
+
+				p {
+					font-size: 15px !important;
+				}
+			}
+			.statNbUser {
+				width: 45%;
+				margin: 2% auto;
+				.middleNbUser {
+					margin: 0 3% 0 0;
+				}
+				p {
+					font-size: 19px !important;
+				}
+			}
+		}
+
+		.mainMaterialUiText {
+			margin-top: 30px;
+			.MuiOutlinedInput-input {
+				font-size: 14px !important;
+				margin-left: 0.8vw;
+				height: 25px !important;
+			}
+
+			.MuiOutlinedInput-notchedOutline {
+				border-radius: 14px !important;
+				border: 2px solid !important;
+			}
 			& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-				border: 1px solid #71dfe7;
+				border-radius: 14px !important;
+				border: 2px solid #71dfe7 !important;
+			}
+
+			.MuiInputLabel-root.MuiInputLabel-shrink {
+				left: 2px !important;
+				top: 3px !important;
+				font-size: 12px !important;
+			}
+
+			.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+				left: 1.8vw;
+				top: 4px !important;
+				font-size: 12px !important;
+			}
+
+			& .MuiInputLabel-shrink,
+			& fieldset {
+				font-size: 14px !important;
+			}
+
+			.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
+				margin-left: -1.1vw;
+				top: 4px !important;
+			}
+
+			.MuiIconButton-root {
+				width: 33px !important;
+				margin: 0 0 0 12px;
+			}
+			.MuiIconButton-root:hover {
+				width: 34px !important;
 			}
 
 			.MuiFormHelperText-root {
 				position: absolute;
 				font-size: 0.9vw;
 				font-family: Montserrat, sans-serif;
-				margin: 1% auto;
 				color: red;
-				margin: 18% 0 0 25%;
-			}
-
-			////////////////////////////////////////////@
-
-			.MuiIconButton-root {
-				width: 35px;
-				height: 35px;
-				margin: 0 0 0 12px;
-			}
-			.MuiIconButton-root:hover {
-				width: 37px;
-				height: 37px;
-			}
-
-			.alertValidateIcon {
 				position: absolute;
-				margin: 2% auto;
-				.MuiAlert-root {
-					background: transparent;
-					margin: 0% auto;
-					color: white;
+				left: 50%;
+				top: 4.2vw;
+				transform: translate(-50%, -50%);
+				text-transform: capitalize;
+				width: 8vw;
+			}
+		}
+		.alertValidateIcon {
+			top: 430px !important;
+
+			.MuiSvgIcon-fontSizeInherit {
+				width: 18px !important;
+				height: 18px !important;
+			}
+			.MuiAlert-root {
+				background: transparent;
+				font-size: 9px !important;
+			}
+			.MuiAlert-message {
+				margin: 3% 0% 0% -6%;
+			}
+		}
+		// @-moz-document url-prefix() {
+		// 	.alertValidateIcon {
+		// 		margin: 2% auto;
+
+		// 		position: absolute;
+		// 		left: 46%;
+		// 		top: 31vw;
+		// 		transform: translate(-50%, -50%);
+		// 	}
+		// }
+
+		.switchMui {
+			margin: 8% 0 0 24% !important;
+			.MuiSwitch-thumb {
+				width: 15px !important;
+				height: 15px !important;
+			}
+			.MuiSwitch-root {
+				width: 50px !important;
+				height: 33px !important;
+			}
+			.Mui-checked {
+				width: 33px !important;
+			}
+			.MuiFormControlLabel-label {
+				font-size: 12px !important;
+				// margin-left: 0.4vw;
+			}
+		}
+
+		.disconectMui {
+			margin: 20px auto !important;
+
+			.MuiButton-root {
+				color: red;
+				font-family: Montserrat, sans-serif;
+				text-transform: none;
+				font-size: 14px !important;
+				border-radius: 40px;
+			}
+		}
+	}
+	@-moz-document url-prefix() {
+		.mainParamUser {
+			.imgUser {
+				.userModif {
+					width: 130px !important;
+					height: 133px !important;
+					margin: -130px 0 0 0 !important;
 				}
+			}
+			.mainMaterialUiText {
+				.alertValidateIcon {
+					position: absolute;
+					left: 46%;
+
+					top: 500px !important;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1350px) {
+	.mainParamUser {
+		.alertValidateIcon {
+			top: 416px !important;
+		}
+		.switchMui {
+			margin: 7% 0 0 24% !important;
+		}
+		.disconectMui {
+			margin: 20px auto !important;
+		}
+	}
+}
+
+@media screen and (max-width: 1300px) {
+	.mainParamUser {
+		.alertValidateIcon {
+			top: 428px !important;
+		}
+		.mainMaterialUiText {
+			margin-top: 50px;
+		}
+		.disconectMui {
+			margin: 20px auto !important;
+		}
+	}
+}
+
+@media screen and (max-width: 1250px) {
+	.mainParamUser {
+		.alertValidateIcon {
+			top: 424px !important;
+		}
+		.switchMui {
+			margin: 11% 0 0 24% !important;
+		}
+		.disconectMui {
+			margin: 20px auto !important;
+		}
+	}
+	@-moz-document url-prefix() {
+		.mainParamUser {
+			.mainMaterialUiText {
+				.alertValidateIcon {
+					position: absolute;
+					left: 46%;
+
+					top: 495px !important;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1180px) {
+	.mainParamUser {
+		.alertValidateIcon {
+			top: 414px !important;
+		}
+	}
+	@-moz-document url-prefix() {
+		.mainParamUser {
+			.mainMaterialUiText {
+				.alertValidateIcon {
+					position: absolute;
+					left: 46%;
+
+					top: 485px !important;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1100px) {
+	.mainParamUser {
+		.alertValidateIcon {
+			top: 410px !important;
+		}
+		.switchMui {
+			margin: 11% 0 0 24% !important;
+		}
+		.disconectMui {
+			margin: 20px auto !important;
+		}
+	}
+}
+
+@media screen and (max-width: 650px) {
+	.mainParamUser {
+		.mainMaterialUiText {
+			.MuiInputLabel-root.MuiInputLabel-shrink {
+				top: 6px !important;
+			}
+			.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+				top: 4px !important;
+			}
+			.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
+				top: 4px !important;
 			}
 		}
 	}
