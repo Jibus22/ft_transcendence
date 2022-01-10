@@ -10,13 +10,13 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomBanGuard } from '../../guards/roomBan.guard';
@@ -106,7 +106,7 @@ export class ChatController {
   @UseGuards(SiteOwnerGuard)
   @Serialize(FullRoomDto)
   async findAll() {
-    return await this.chatService.findAll();
+    return await this.chatService.findAll().catch((err) => console.log(err));
   }
 
   @ApiOperation({
@@ -120,7 +120,9 @@ export class ChatController {
   @Get('/publics')
   @Serialize(RoomDto)
   async findAllPublic() {
-    return await this.chatService.findAllPublic();
+    return await this.chatService
+      .findAllPublic()
+      .catch((err) => console.log(err));
   }
 
   @ApiOperation({
@@ -174,8 +176,13 @@ export class ChatController {
     @CurrentUser() user: User,
     @Body() body: createMessageDto,
   ) {
-    return await this.chatService.createMessage(room, user, body);
-    // TODO here add websocket send function to all people in the room
+    return await this.chatService
+      .createMessage(room, user, body)
+      .then((message) => {
+        console.log(message);
+        return message;
+      })
+      .catch((err) => console.log(err));
   }
 
   @ApiOperation({
@@ -194,7 +201,9 @@ export class ChatController {
   @Serialize(ChatMessageDto)
   @UseGuards(RoomParticipantGuard)
   async getMessages(@Param('room_id') room_id: string) {
-    return await this.chatService.findAllMessages(room_id);
+    return await this.chatService
+      .findAllMessages(room_id)
+      .catch((err) => console.log(err));
   }
 
   /*

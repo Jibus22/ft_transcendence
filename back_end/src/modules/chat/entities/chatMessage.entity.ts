@@ -1,24 +1,9 @@
-import { ConfigService } from '@nestjs/config';
-import {
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Room } from './room.entity';
 
-const conf = new ConfigService();
-
 @Entity()
 export class ChatMessage {
-  /*
-   ** Data
-   */
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,5 +22,4 @@ export class ChatMessage {
   // @ManyToOne(type => Game, (game) => game.id)
   // @Column()
   // game: Game;
-
 }

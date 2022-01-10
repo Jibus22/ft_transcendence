@@ -1,4 +1,4 @@
-import { classToClass, classToClassFromExist, classToPlain, plainToClass, serialize } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import {
   Connection,
   EntitySubscriberInterface,
@@ -29,7 +29,8 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
       JSON.stringify(
         plainToClass(RoomDto, event.entity, {
           excludeExtraneousValues: true,
-        })),
+        }),
+      ),
     );
   }
 
@@ -39,7 +40,8 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
       JSON.stringify(
         plainToClass(RoomDto, event.entity, {
           excludeExtraneousValues: true,
-        })),
+        }),
+      ),
     );
   }
 }

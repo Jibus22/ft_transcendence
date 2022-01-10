@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { UserDto } from '../../users/dtos/user.dto';
-import { RoomDto } from './room.dto';
 
 @Exclude()
 export class ChatMessageDto {
@@ -15,6 +14,16 @@ export class ChatMessageDto {
     return plainToClass(UserDto, value.obj.sender);
   })
   sender: UserDto;
+
+  // @ApiProperty()
+  // @Expose()
+  // @Transform((value) => {
+  //   // console.log('HERE -> ', Date.now(), value.obj.room.id);
+  //   // return plainToClass(RoomDto, value.obj?.room);
+  //   return 'ee';
+  // })
+  // // room_id: RoomDto;
+  // room: string;
 
   @ApiProperty()
   @Expose()

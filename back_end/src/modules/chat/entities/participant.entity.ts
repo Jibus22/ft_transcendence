@@ -15,10 +15,6 @@ const conf = new ConfigService();
 
 @Entity()
 export class Participant {
-  /*
-   ** Data
-   */
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

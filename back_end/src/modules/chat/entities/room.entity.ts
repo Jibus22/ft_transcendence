@@ -1,25 +1,10 @@
-import { ConfigService } from '@nestjs/config';
-import {
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Restriction } from './restriction.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ChatMessage } from './chatMessage.entity';
 import { Participant } from './participant.entity';
-
-const conf = new ConfigService();
+import { Restriction } from './restriction.entity';
 
 @Entity()
 export class Room {
-  /*
-   ** Data
-   */
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,5 +22,4 @@ export class Room {
 
   @OneToMany((type) => ChatMessage, (message) => message.room)
   messages: ChatMessage[];
-
 }

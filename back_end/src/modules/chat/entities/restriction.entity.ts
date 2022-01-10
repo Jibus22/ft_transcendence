@@ -1,13 +1,9 @@
 import { ConfigService } from '@nestjs/config';
-import { type } from 'os';
 import {
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
   Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Room } from './room.entity';
@@ -16,10 +12,6 @@ const conf = new ConfigService();
 
 @Entity()
 export class Restriction {
-  /*
-   ** Data
-   */
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

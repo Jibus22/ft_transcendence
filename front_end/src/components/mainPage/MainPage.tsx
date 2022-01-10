@@ -71,6 +71,10 @@ const MainPage = () => {
 				console.log('🚮  publicRoomRemoved', message)
 			});
 
+			socket.on('newMessage', (message) => {
+				console.log(`✅  NEW MESSAGE in room: message.room_id`, message)
+			});
+
 		} catch (error) {
 			const err = error as AxiosError;
 			if (err.response?.status === 401) {
