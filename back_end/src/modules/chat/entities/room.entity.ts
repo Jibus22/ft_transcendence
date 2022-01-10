@@ -38,28 +38,4 @@ export class Room {
   @OneToMany((type) => ChatMessage, (message) => message.room)
   messages: ChatMessage[];
 
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted Room: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed Room: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated Room: ', this);
-    }
-  }
 }

@@ -38,29 +38,4 @@ export class ChatMessage {
   // @Column()
   // game: Game;
 
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    // TODO: add owner to moderator list!
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted ChatMessage: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed ChatMessage: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated ChatMessage: ', this);
-    }
-  }
 }

@@ -35,28 +35,4 @@ export class Restriction {
   @Column()
   expiration_time: number;
 
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted Restriction: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed Restriction: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated Restriction: ', this);
-    }
-  }
 }

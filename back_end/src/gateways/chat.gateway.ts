@@ -1,19 +1,17 @@
-import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
   GatewayMetadata,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
+  WebSocketServer
 } from '@nestjs/websockets';
-import { Cache } from 'cache-manager';
+import { Server } from 'http';
 import { Socket } from 'socket.io';
-import { User } from '../modules/users/entities/users.entity';
-import { UsersService } from '../modules/users/service-users/users.service';
+import { ChatGatewayService } from './chatGateway.service';
 
 const options: GatewayMetadata = {
   namespace: 'chat',
   cors: {
-    origin: ['http://localhost:3001', 'http://127.0.0.1:5500'], //TODO remove 127... for debug
+    origin: ['http://localhost:3001'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -21,80 +19,32 @@ const options: GatewayMetadata = {
 
 @WebSocketGateway(options)
 export class ChatGateway {
-  constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private usersService: UsersService,
-  ) {}
+  constructor(private readonly chatGatewayService: ChatGatewayService) {}
 
   @WebSocketServer()
-  server;
+  server: Server;
 
-  async updateUser(client: Socket, userData: Partial<User>) {
-    const user = await this.usersService
-      .find({ ws_id: client.id })
-      .catch((err) => {
-        console.log(err.message);
-        client._error({ message: err.message });
-        return client.disconnect();
-      });
-
-    if (user[0]) {
-      return await this.usersService
-        .update(user[0].id, userData)
-        .catch((err) => {
-          console.log(err.message);
-          client._error({ message: err.message });
-          return client.disconnect();
-        });
-    }
-  }
-
-  async getUserIdFromToken(token: string) {
-    return await this.cacheManager.get<string>(token);
+  afterInit(server: Server) {
+    this.server = server;
   }
 
   async handleConnection(client: Socket) {
-    const { key: token } = client.handshake.auth;
-    const userId = await this.getUserIdFromToken(token);
-
-    if (!userId) {
-      client._error({ message: 'wrong token' });
-      return client.disconnect();
-    }
-    return await this.usersService
-      .update(userId, {
-        ws_id: client.id,
-      })
-      .catch((err) => {
-        console.log(err.message);
-        client._error({ message: err.message });
-        return client.disconnect();
-      });
+    return this.chatGatewayService.handleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
-    await this.updateUser(client, {
-      ws_id: null,
-      is_in_game: false,
-    });
+    return this.chatGatewayService.handleDisconnect(client);
+  }
+
+  broadcastEvent(event: string, message: string){
+    return this.chatGatewayService.broadcastEvent(this.server, event, message);
   }
 
   // @UsePipes(new ValidationPipe({
   //   whitelist: true
   // }))
   @SubscribeMessage('ingame')
-  async upateIngame(client: Socket, data: string) {
-    if (data === 'in') {
-      console.log(true);
-      await this.updateUser(client, {
-        is_in_game: true,
-      }).catch((err) => console.log(err));
-    } else if (data === 'out') {
-      console.log(false);
-      await this.updateUser(client, {
-        is_in_game: false,
-      }).catch((err) => console.log(err));
-    }
+  async updateIngane(client: Socket, data: string) {
+    return await this.chatGatewayService.setUserIngame(client, data);
   }
 }
