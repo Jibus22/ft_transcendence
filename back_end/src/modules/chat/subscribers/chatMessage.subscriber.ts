@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer';
 import {
   Connection,
   EntitySubscriberInterface,
@@ -6,6 +7,7 @@ import {
 } from 'typeorm';
 import { ChatGateway } from '../../../gateways/chat.gateway';
 import { ChatGatewayService } from '../../../gateways/chatGateway.service';
+import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ChatMessage } from '../entities/chatMessage.entity';
 @EventSubscriber()
 export class ChatMessageSubscriber
@@ -27,12 +29,11 @@ export class ChatMessageSubscriber
     this.chatGateway.broadcastEventToRoom(
       event.entity.room,
       'newMessage',
-      'llll',
-      // JSON.stringify(
-      //   plainToClass(ChatMessageDto, event.entity, {
-      //     excludeExtraneousValues: true,
-      //   }),
-      // ),
+      JSON.stringify(
+        plainToClass(ChatMessageDto, event.entity, {
+          excludeExtraneousValues: true,
+        }),
+      ),
     );
   }
 }
