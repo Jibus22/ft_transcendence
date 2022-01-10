@@ -1,5 +1,6 @@
-import { Logger, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ChatGateway } from '../../gateways/chat.gateway';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
 import { ChatController } from './chat.controller';
@@ -21,7 +22,7 @@ import { TaskerService } from './tasker.service';
     ]),
   ],
   controllers: [ChatController],
-  providers: [UsersService, ChatService, TaskerService],
+  providers: [ChatGateway, UsersService, ChatService, TaskerService],
   exports: [ChatService, TaskerService],
 })
 export class ChatModule {}

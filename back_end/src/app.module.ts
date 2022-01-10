@@ -40,7 +40,6 @@ const cookieSession = require('cookie-session');
   ],
   controllers: [AppController],
   providers: [
-    ChatGateway,
     AuthService,
     AppService,
     {

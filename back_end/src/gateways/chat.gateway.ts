@@ -30,10 +30,22 @@ export class ChatGateway {
   server;
 
   async updateUser(client: Socket, userData: Partial<User>) {
-    const user = await this.usersService.find({ ws_id: client.id });
+    const user = await this.usersService
+      .find({ ws_id: client.id })
+      .catch((err) => {
+        console.log(err.message);
+        client._error({ message: err.message });
+        return client.disconnect();
+      });
 
     if (user[0]) {
-      return await this.usersService.update(user[0].id, userData);
+      return await this.usersService
+        .update(user[0].id, userData)
+        .catch((err) => {
+          console.log(err.message);
+          client._error({ message: err.message });
+          return client.disconnect();
+        });
     }
   }
 
@@ -49,9 +61,15 @@ export class ChatGateway {
       client._error({ message: 'wrong token' });
       return client.disconnect();
     }
-    return await this.usersService.update(userId, {
-      ws_id: client.id,
-    });
+    return await this.usersService
+      .update(userId, {
+        ws_id: client.id,
+      })
+      .catch((err) => {
+        console.log(err.message);
+        client._error({ message: err.message });
+        return client.disconnect();
+      });
   }
 
   async handleDisconnect(client: Socket) {

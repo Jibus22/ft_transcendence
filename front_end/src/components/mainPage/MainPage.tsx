@@ -56,13 +56,21 @@ const MainPage = () => {
 			});
 
 			socket.on('error', (error) => {
-				console.log(error);
+				console.log('RECEIVED ERROR', error);
 			});
 
 			socket.on('disconnect', () => {
 				setWsStatus(undefined);
 				console.log(`WS DISCONNECTED`);
 			});
+
+			socket.on('✅  publicRoomCreated', (message) => {
+				console.log('✅  publicRoomCreated', message)
+			});
+			socket.on('🚮  publicRoomRemoved', (message) => {
+				console.log('🚮  publicRoomRemoved', message)
+			});
+
 		} catch (error) {
 			const err = error as AxiosError;
 			if (err.response?.status === 401) {
