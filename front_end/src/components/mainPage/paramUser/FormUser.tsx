@@ -87,7 +87,7 @@ export default function FormUser({ isPop, userName }: Props) {
 					helperText={formik && formik.errors.nickname}
 					disabled={disableInputPop()}
 					inputProps={{
-						maxLength: 18,
+						maxLength: 10,
 					}}
 					InputProps={{
 						endAdornment: (
