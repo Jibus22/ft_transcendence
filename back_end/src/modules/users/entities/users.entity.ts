@@ -9,7 +9,7 @@ import {
   ManyToMany,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { Participant } from '../../chat/entities/participant.entity';
 import { UserDto } from '../dtos/user.dto';

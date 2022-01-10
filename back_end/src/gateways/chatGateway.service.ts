@@ -1,11 +1,10 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
-import { WebSocketServer } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Server } from 'http';
 import { Socket } from 'socket.io';
+import { Room } from '../modules/chat/entities/room.entity';
 import { User } from '../modules/users/entities/users.entity';
 import { UsersService } from '../modules/users/service-users/users.service';
-import { ChatGateway } from './chat.gateway';
 
 @Injectable()
 export class ChatGatewayService {
@@ -21,6 +20,17 @@ export class ChatGatewayService {
 	-------------------------------------------------------------------
 	===================================================================
 	*/
+
+  private async joinRoomsAtConnection(client: Socket, user: User) {
+    await this.usersService
+      .findRoomParticipations(user.id)
+      .then( rooms => {
+        if (rooms.length) {
+          client.join(rooms.map(r => r.id));
+        }
+      })
+      .catch(err => console.log(err));
+  }
 
   private async updateUser(client: Socket, userData: Partial<User>) {
     const user = await this.usersService
@@ -54,7 +64,7 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  async handleConnection(client: Socket) {
+  async handleConnection(server: Server, client: Socket) {
     const { key: token } = client.handshake.auth;
     const userId = await this.getUserIdFromToken(token);
 
@@ -62,7 +72,7 @@ export class ChatGatewayService {
       client._error({ message: 'wrong token' });
       return client.disconnect();
     }
-    return await this.usersService
+    await this.usersService
       .update(userId, {
         ws_id: client.id,
       })
@@ -70,15 +80,18 @@ export class ChatGatewayService {
         console.log(err.message);
         client._error({ message: err.message });
         return client.disconnect();
+      })
+      .then((user: User) => {
+        this.joinRoomsAtConnection(client, user);
       });
   }
 
-  async handleDisconnect(client: Socket) {
+  async handleDisconnect(server: Server, client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
     await this.updateUser(client, {
       ws_id: null,
       is_in_game: false,
-    });
+    }).catch(err => console.log(err));
   }
 
   /*
@@ -89,9 +102,12 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  broadcastEvent(server: Server, event: string, message: string) {
-    console.log(typeof server);
-    console.log(event, message);
+  broadcastEventToServer(server: Server, event: string, message: string) {
+    server.emit(event, message);
+  }
+
+  broadcastEventToRoom(server: Server, room: Room, event: string, message: string) {
+    server.emit(event, message);
   }
 
   /*
@@ -102,13 +118,13 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  async setUserIngame(client: Socket, data: string) {
-    if (data === 'in') {
+  async setUserIngame(client: Socket, data: { value: 'in' | 'out'}) {
+    if (data.value === 'in') {
       console.log(true);
       await this.updateUser(client, {
         is_in_game: true,
       }).catch((err) => console.log(err));
-    } else if (data === 'out') {
+    } else if (data.value === 'out') {
       console.log(false);
       await this.updateUser(client, {
         is_in_game: false,

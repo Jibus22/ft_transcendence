@@ -6,7 +6,6 @@ import { Restriction } from '../modules/chat/entities/restriction.entity';
 import { Room } from '../modules/chat/entities/room.entity';
 import { User } from '../modules/users/entities/users.entity';
 import { UsersService } from '../modules/users/service-users/users.service';
-import { ChatGateway } from './chat.gateway';
 import { ChatGatewayService } from './chatGateway.service';
 
 @Module({
@@ -22,6 +21,8 @@ import { ChatGatewayService } from './chatGateway.service';
       Restriction,
     ]),
   ],
-  providers: [ChatGateway, ChatGatewayService, UsersService],
+  providers: [
+    ChatGatewayService,
+    UsersService],
 })
 export class ChatGatewayModule {}

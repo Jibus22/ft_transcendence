@@ -1,17 +1,19 @@
+import { classToClass, classToClassFromExist, classToPlain, plainToClass, serialize } from 'class-transformer';
 import {
   Connection,
   EntitySubscriberInterface,
   EventSubscriber,
   InsertEvent,
+  RemoveEvent
 } from 'typeorm';
 import { ChatGateway } from '../../../gateways/chat.gateway';
-import { ChatGatewayService } from '../../../gateways/chatGateway.service';
+import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
 
 @EventSubscriber()
 export class RoomSubscriber implements EntitySubscriberInterface<Room> {
   constructor(
-    // private readonly chatGateway: ChatGateway,
+    private readonly chatGateway: ChatGateway,
     connection: Connection,
   ) {
     connection.subscribers.push(this);
@@ -21,11 +23,23 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     return Room;
   }
 
-  beforeInsert?(event: InsertEvent<Room>): Promise<any> | void {
+  afterInsert(event: InsertEvent<Room>) {
+    this.chatGateway.broadcastEventToServer(
+      'publicRoomCreated',
+      JSON.stringify(
+        plainToClass(RoomDto, event.entity, {
+          excludeExtraneousValues: true,
+        })),
+    );
   }
 
-  afterInsert?(event: InsertEvent<Room>): Promise<any> | void {
-    console.log('LOG HERE');
-    // this.chatGateway.broadcastEvent('eventTest', 'hello');
+  afterRemove(event: RemoveEvent<Room>) {
+    this.chatGateway.broadcastEventToServer(
+      'publicRoomRemoved',
+      JSON.stringify(
+        plainToClass(RoomDto, event.entity, {
+          excludeExtraneousValues: true,
+        })),
+    );
   }
 }

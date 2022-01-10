@@ -64,10 +64,10 @@ const MainPage = () => {
 				console.log(`WS DISCONNECTED`);
 			});
 
-			socket.on('✅  publicRoomCreated', (message) => {
+			socket.on('publicRoomCreated', (message) => {
 				console.log('✅  publicRoomCreated', message)
 			});
-			socket.on('🚮  publicRoomRemoved', (message) => {
+			socket.on('publicRoomRemoved', (message) => {
 				console.log('🚮  publicRoomRemoved', message)
 			});
 
