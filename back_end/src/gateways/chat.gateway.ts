@@ -11,6 +11,7 @@ import { User } from '../modules/users/entities/users.entity';
 import { UsersService } from '../modules/users/service-users/users.service';
 
 const options: GatewayMetadata = {
+  namespace: 'chat',
   cors: {
     origin: ['http://localhost:3001', 'http://127.0.0.1:5500'], //TODO remove 127... for debug
     methods: ['GET', 'POST'],

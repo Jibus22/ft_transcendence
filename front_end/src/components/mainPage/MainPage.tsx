@@ -40,7 +40,7 @@ const MainPage = () => {
 			if (!token) {
 				throw new Error('no valid token');
 			}
-			const socket = io('ws://localhost:3000', {
+			const socket = io('ws://localhost:3000/chat', {
 				auth: {
 					key: token,
 				},
