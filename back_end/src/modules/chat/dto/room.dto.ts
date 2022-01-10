@@ -45,7 +45,7 @@ export class FullRoomDto extends RoomDto {
     const output: Restriction[] = value.obj?.restrictions;
     return plainToClass(
       UserDto,
-      output.filter((r) => r.restriction_type === 'ban').map(r => r.user),
+      output.filter((r) => r.restriction_type === 'ban').map((r) => r.user),
     );
   })
   bans: UserDto[];
@@ -56,7 +56,7 @@ export class FullRoomDto extends RoomDto {
     const output: Restriction[] = value.obj?.restrictions;
     return plainToClass(
       UserDto,
-      output.filter((r) => r.restriction_type === 'mute').map(r => r.user),
+      output.filter((r) => r.restriction_type === 'mute').map((r) => r.user),
     );
   })
   mutes: UserDto[];

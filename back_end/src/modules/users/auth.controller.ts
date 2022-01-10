@@ -54,7 +54,9 @@ export class AuthController {
         console.log(e);
       });
     if (!user) {
-      throw new BadGatewayException('Sorry, something went wront, we could not identify user with 42 API');
+      throw new BadGatewayException(
+        'Sorry, something went wront, we could not identify user with 42 API',
+      );
     }
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;

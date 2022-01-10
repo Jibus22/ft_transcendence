@@ -9,13 +9,13 @@ import {
   Patch,
   Res,
   Session,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -178,8 +178,7 @@ export class MeController {
     description: 'room was left',
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
-    return await this.chatService.leaveRoom(user, room)
-    .catch((error) => {
+    return await this.chatService.leaveRoom(user, room).catch((error) => {
       if (error.status) {
         throw new HttpException(error, error.status);
       } else {
