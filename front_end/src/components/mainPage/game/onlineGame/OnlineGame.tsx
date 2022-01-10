@@ -80,7 +80,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		<animated.div style={props} className="w-100">
 			<div className="mainOnlineGame d-flex flex-column ">
 				<div className="title">
-					<h1>Online game</h1>
+					<h1>Onlines game</h1>
 				</div>
 				<div className="pageOverflow">
 					<div className="onlineDiv">

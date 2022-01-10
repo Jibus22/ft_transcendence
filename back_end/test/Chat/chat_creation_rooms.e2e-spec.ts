@@ -76,7 +76,7 @@ describe('CHAT: Room Creation', () => {
         expect(response.body).toHaveProperty('is_private', true);
       });
 
-    await chatHelper.getAllRooms().then((response) => {
+    await chatHelper.getAllRoomsAsSiteOwner().then((response) => {
       expect(response.body[0].participants).toHaveLength(1);
     });
   });
@@ -134,7 +134,7 @@ describe('CHAT: Room Creation', () => {
       })
       .then(async (resp) => {
         expect(resp.status).toBe(HttpStatus.CREATED);
-        return await chatHelper.getAllRooms();
+        return await chatHelper.getAllRoomsAsSiteOwner();
       })
       .then((resp) => {
         const participants: Participant[] = resp.body[0].participants;
@@ -162,7 +162,7 @@ describe('CHAT: Room Creation', () => {
       })
       .then(async (resp) => {
         expect(resp.status).toBe(HttpStatus.CREATED);
-        return await chatHelper.getAllRooms();
+        return await chatHelper.getAllRoomsAsSiteOwner();
       })
       .then((resp) => {
         const participants: Participant[] = resp.body[0].participants;
@@ -184,7 +184,7 @@ describe('CHAT: Room Creation', () => {
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
-        return await chatHelper.getAllRooms();
+        return await chatHelper.getAllRoomsAsSiteOwner();
       })
       .then((response) => {
         const returnedRooms = response.body as RoomDto[];

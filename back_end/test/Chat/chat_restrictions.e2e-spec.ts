@@ -92,7 +92,7 @@ describe('CHAT: Restrictions', () => {
           (p) => p.id === targetParticipant.id,
         );
         expect(bannedParticipant).toBeUndefined();
-        return await chatHelper.getAllRooms();
+        return await chatHelper.getAllRoomsAsSiteOwner();
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
@@ -141,7 +141,7 @@ describe('CHAT: Restrictions', () => {
           (p) => p.id === targetParticipant.id,
         );
         expect(mutedParticipant).toEqual(targetParticipant);
-        return await chatHelper.getAllRooms();
+        return await chatHelper.getAllRoomsAsSiteOwner();
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
@@ -181,7 +181,7 @@ describe('CHAT: Restrictions', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.UNAUTHORIZED);
-        return await chatHelper.getAllRooms();
+        return await chatHelper.getAllRoomsAsSiteOwner();
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);

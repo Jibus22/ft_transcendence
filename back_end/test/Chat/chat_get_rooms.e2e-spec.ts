@@ -1,11 +1,8 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
-import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
-import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
-import { Participant } from '../../src/modules/chat/entities/participant.entity';
+import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 import { ChatHelpers, RandomRoom } from './helpers';
@@ -47,7 +44,6 @@ describe('CHAT: Get Rooms', () => {
     expect(cookies.length).toBeGreaterThanOrEqual(1);
     chatHelper = new ChatHelpers(cookies, loggedUser, app, users, commons);
   });
-
 
   /*
   ===================================================================
@@ -116,7 +112,7 @@ describe('CHAT: Get Rooms', () => {
       await chatHelper.createSimpleRoom(rooms[i]);
     }
 
-    await chatHelper.getAllRooms().then((response) => {
+    await chatHelper.getAllRoomsAsSiteOwner().then((response) => {
       expect(response.status).toBe(HttpStatus.OK);
       expect(typeof response.body).toBe('object');
       expect(response.body.length).toBe(rooms.length);
@@ -135,4 +131,23 @@ describe('CHAT: Get Rooms', () => {
     });
   });
 
+  it('get list of all sites rooms as regular user', async () => {
+    let createdRooms: RandomRoom[];
+
+    await chatHelper
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
+      .then(async (rooms: RandomRoom[]) => {
+        createdRooms = rooms;
+        expect(createdRooms.length).toEqual(nbOfRooms);
+        expect(loggedUser.id).toBeDefined();
+        expect(loggedUser.id.length).toBeGreaterThan(0);
+        return await request(app.getHttpServer())
+          .get('/room/all')
+          .set('Cookie', cookies);
+      })
+      .then(async (response) => {
+        expect(response.status).toBe(HttpStatus.FORBIDDEN);
+        expect(response.body).toHaveProperty('message', 'User must be site owner');
+      });
+  });
 }); // <<< end of describBlock
