@@ -12,9 +12,18 @@ function getRandomInt(max : number) {
 	return Math.floor(Math.random() * max);
 }
 
+function sleep(milliseconds:number) {
+	const date = Date.now();
+	let currentDate = null;
+	do {
+	  currentDate = Date.now();
+	} while (currentDate - date < milliseconds);
+  }
+
 class PongGame extends React.Component {
 	width = 700;
 	height = 600;
+	sleepduration = 5000;
 	_canvasStyle = {
 		'margin': 'auto',
 		'width': this.width,
@@ -38,7 +47,13 @@ class PongGame extends React.Component {
 		super(props);
 	}
 
+	sleep() {
+		sleep(this.sleepduration);
+	}
+
 	_printText(str:string){
+		this._ctx!.fillStyle = "black";
+		this._ctx!.fillRect(0, 0, this.width, this.height);
 		this._ctx!.font = '30px Arial';
 		this._ctx!.fillStyle = 'grey';
 		this._ctx!.fillText(str,
@@ -56,55 +71,82 @@ class PongGame extends React.Component {
 		this._printText('Starting Game')
 	}
 
-	private _update(): void{
+	private _score(ret :number){
+		let random = getRandomInt(100);
+		if (ret == 2)
+			this.scoreP1++;//J2 score
+		if (ret == 1)
+			this.scoreP2++;
+		if (random < 5)
+		{
+			//Power up large paddle
+			if (ret == 1)
+			{
+				this._playerOne._largePaddle();
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "largePaddle",
+					J : ret
+				}))
+				this._printText("Player One large Paddle");
+				this.sleep();
+			}
+			if (ret == 2)
+			{
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "largePaddle",
+					J : ret
+				}));
+				this._printText("Player Two large Paddle");
+				this.sleep();
+			}
+		}
+		if (random >= 95)
+		{
+			//Power Up controle inverse
+			if (ret == 2)
+			{
+				this._playerOne._invertControlTemporarily();
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "invertControl",
+					J : ret
+				}));
+				this._printText("Player One inverted Control");
+				this.sleep();
+			}
+			if (ret == 1)
+			{
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "invertControl",
+					J : ret
+				}))
+				this._printText("Player Two inverted Control");
+				this.sleep();
+			}
+		}
+		this._ball.y = this.height/2;
+		this._ball.x = this.width/2;
+		client.send(JSON.stringify({
+			type: "message",
+			object: "Score",
+			P1: this.scoreP1,
+			P2: this.scoreP2
+		}));
+	}
+
+	private _update(){
 		if (this._P1)
 		{
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0) // someone scored
-			{
-				let random = getRandomInt(100);
-				if (ret == 2)
-					this.scoreP1++;//J2 score
-				if (ret == 1)
-					this.scoreP2++;
-				if (random < 5)
-				{
-					//Power up large paddle
-					if (ret == 1)
-						this._playerOne._largePaddle();
-					if (ret == 2)
-					{
-						client.send(JSON.stringify({
-							type: "message",
-							object: "PowerUp",
-							powerUp : "largePaddle"
-						}))
-					}
-				}
-				if (random >= 95)
-				{
-					//Power Up controle inverse
-					if (ret == 2)
-						this._playerOne._invertControlTemporarily();
-					if (ret == 1)
-					{
-						client.send(JSON.stringify({
-							type: "message",
-							object: "PowerUp",
-							powerUp : "invertControl"
-						}))
-					}
-				}
-				this._ball.y = this.height/2;
-				this._ball.x = this.width/2;
-				client.send(JSON.stringify({
-					type: "message",
-					object: "Score",
-					P1: this.scoreP1,
-					P2: this.scoreP2
-				}))
-				
-			}
+				this._score(ret);
 			client.send(JSON.stringify({
 				type: "message",
 				object: "Ball",
@@ -178,8 +220,6 @@ class PongGame extends React.Component {
 
 	componentDidMount() {
 		console.log(client);
-		//if (client.readyState !== WebSocket.OPEN)
-		//	return;
 		let rep = prompt("J1 J2 ou W");
 		if (rep === 'J1')
 			this._P1 = true;
@@ -188,29 +228,29 @@ class PongGame extends React.Component {
 		this._initPongGame();
 		client.onmessage = (message: any) => {
 			const data = JSON.parse(message.data)
-			if (this._P1 && data.object === "Player2")
+			if (!this._P2 && data.object === "Player2")
 			{
 				this._playerTwo = data.player;
 			}
-			if (this._P2 && data.object === "Player1")
+			if (!this._P1 && data.object === "Player1")
 			{
 				this._playerOne = data.player ;
 			}
-			if (this._P2 && data.object === "Ball")
+			if (!this._P1 && data.object === "Ball")
 			{
 				this._ball.x = data.x;
 				this._ball.y = data.y;
 			}
-			if(this._P2 && data.object === "Score")
+			if(!this._P1 && data.object === "Score")
 			{
 				this.scoreP1 = data.P1;
 				this.scoreP2 = data.P2;
 			}
-			if(this._P2 && data.object === "PowerUp")
+			if(!this._P1 && data.object === "PowerUp")
 			{
-				if (data.powerUp == "invertControl")
+				if (data.powerUp == "invertControl" && data.J == 1)
 					this._playerTwo._invertControlTemporarily();
-				if (data.powerUp == "largePaddle")
+				if (data.powerUp == "largePaddle" && data.J == 2)
 					this._playerTwo._largePaddle();
 			}
 		};

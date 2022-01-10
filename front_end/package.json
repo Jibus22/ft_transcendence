@@ -60,6 +60,7 @@
 		"typescript": "^4.4.4",
 		"web-vitals": "^2.1.2",
 		"webpack": "4.44.2",
+		"websocket": "^1.0.34",
 		"yup": "^0.32.11"
 	},
 	"scripts": {
