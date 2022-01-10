@@ -14,7 +14,7 @@ import {
 import { Participant } from '../../chat/entities/participant.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
-import { Game } from '../../game/entities/game.entity';
+import { Player } from '../../game/entities/player.entity';
 
 const conf = new ConfigService();
 
@@ -33,7 +33,7 @@ export class User {
   @Column({ unique: true })
   login_42: string;
 
-  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png'})
+  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png' })
   photo_url_42: string;
 
   @Column({ default: false })
@@ -65,8 +65,8 @@ export class User {
   @Column({ default: false })
   is_in_game: boolean;
 
-  @OneToMany(() => Game, (game) => game.player1)
-  games: Game[];
+  @OneToMany(() => Player, (player) => player.user)
+  players: Player[];
 
   // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
   // rooms_ownership: Room[];
