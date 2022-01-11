@@ -6,9 +6,9 @@ wait_for_db_container() {
     sleep 2
   done
 
-  >&2 echo " ✅  Postgres is up! --> Init database schema"
-  tsc && typeorm schema:sync && npm run seed:run
-  >&2 echo " ✅  Database is ready for backend"
+  >&2 echo " ✅  Postgres is up! --> Will init database schema and seed data"
+  npm run build && typeorm schema:sync && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateSiteOwners
+  >&2 echo " ✅  Database is ready and seeded!"
 }
 
 if [ "$NODE_ENV" == "production" ]
