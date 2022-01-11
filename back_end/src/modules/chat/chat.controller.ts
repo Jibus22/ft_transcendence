@@ -178,10 +178,6 @@ export class ChatController {
   ) {
     return await this.chatService
       .createMessage(room, user, body)
-      .then((message) => {
-        console.log(message);
-        return message;
-      })
       .catch((err) => console.log(err));
   }
 

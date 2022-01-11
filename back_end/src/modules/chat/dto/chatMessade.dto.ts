@@ -19,7 +19,7 @@ export class ChatMessageDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    return value.obj?.room.id;
+    return value.obj?.room?.id;
   })
   room_id: string;
 

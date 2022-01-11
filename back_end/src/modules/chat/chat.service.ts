@@ -338,7 +338,6 @@ export class ChatService {
     newMessage.sender = user;
     newMessage.timestamp = this.getNow();
     const message = this.repoMessage.create(newMessage);
-    console.log(message);
     return await this.repoMessage.save(message);
   }
 }

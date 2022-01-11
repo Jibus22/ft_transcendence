@@ -24,7 +24,6 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
   }
 
   afterInsert(event: InsertEvent<Room>) {
-    console.log(event.entity);
     if (event.entity.is_private === false) {
       this.chatGateway.broadcastEventToServer(
         'publicRoomCreated',
