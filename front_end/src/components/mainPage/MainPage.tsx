@@ -32,33 +32,31 @@ const MainPage = () => {
 	};
 
 	const setWsCallbacks = (socket: Socket) => {
+		/* -----------------------
+		** Connection
+		* -----------------------*/
+
 		socket.on('connect', () => {
-			setWsStatus(socket);
-			console.log(`WS CONNECTED`);
+			console.log(`WS CONNECT`);
 		});
 
 		socket.on('disconnect', () => {
-			setWsStatus(undefined);
 			console.log(`WS DISCONNECTED`);
+			doConnect(socket);
 		});
 
-		socket.io.on("reconnect_attempt", async () => {
-			console.log('🛑 RECONNECT ATTEMPT');
-			setTimeout(async () => {
-				await doConnectWs();
-			}, (500));
+		socket.on('connect_error', async (err) => {
+			console.log('connect_error', err);
+			connectWsStatus();
 		});
 
-		socket.io.on("error", async (error) => {
-			console.log('🛑  ERROR', error);
-			setTimeout(async () => {
-				await doConnectWs();
-			}, (500));
+		socket.io.on('error', (error) => {
+			console.log('⚠️ RECEIVED ERROR', error);
 		});
 
-		// socket.io.on('error', (error) => {
-		// 	console.log('RECEIVED ERROR', error);
-		// });
+		/* -----------------------
+		** Events
+		* -----------------------*/
 
 		socket.on('publicRoomCreated', (message) => {
 			console.log('✅  publicRoomCreated', message);
@@ -95,44 +93,9 @@ const MainPage = () => {
 			console.log(`💌  Event: userModeration ->`, message);
 		});
 
-		socket.on('connect_error', async (err) => {
-			console.log('connect_error', err);
-		});
-		// socket.on('connect_error', async (err) => {
-		// 	setWsStatus(undefined);
-		// 	console.log(`ws connect_error due to ${err.message}: trying again...`);
-		// 	await doConnectWs()
-		// 		.then(async (socket) => {
-		// 			if (socket.connected) {
-		// 				console.log(`WS connected after retry.`, socket);
-		// 				setWsStatus(socket);
-		// 			} else {
-		// 				console.log(`WS seems not connecter, retrying...`);
-		// 				return await doConnectWs();
-		// 			}
-		// 		})
-		// 		.then((socket) => {
-		// 			console.log(`WS connected after retry.`, socket);
-		// 			setWsStatus(socket);
-		// 		})
-		// 		.catch((err) => {
-		// 			console.log(`WS failed to connect after retry: ${err}`);
-		// 		});
-		// });
 	};
 
-	// const tryReconnect = (socket: Socket) => {
-	// 	console.log('try reconnect...........');
-	// 	setTimeout(() => {
-	// 		socket.io.open((err) => {
-	// 			if (err) {
-	// 				tryReconnect(socket);
-	// 			}
-	// 		});
-	// 	}, 2000);
-	// }
-
-	const doConnectWs = async () => {
+	const getAuthToken = async () => {
 		return await axios('http://localhost:3000/auth/ws/token', {
 			withCredentials: true,
 		}).then((response) => {
@@ -140,39 +103,46 @@ const MainPage = () => {
 			if (!token) {
 				throw new Error('no valid token');
 			}
-			return io('ws://localhost:3000/chat', {
-				auth: {
-					key: token,
-				},
-			});
+			return token;
 		});
 	};
 
-	const connectWsStatus = async () => {
-		try {
-			await doConnectWs()
-				.then((socket) => socket)
-				.catch(async (err) => {
-					console.log(`ws connection process failed due to: ${err}. [trying again...]`);
-					return await doConnectWs();
-				})
-				.then((socket) => {
-					setWsCallbacks(socket);
-				})
-				.catch((err) => {
-					throw Error(err);
-				});
+	const doConnect = async (socket: Socket) => {
+		setTimeout(async () => {
+			await getAuthToken()
+			.then(token => {
+				console.log('DO CONNECT');
+				socket.auth = { key: `${token}` };
+				socket.connect();
+			})
+			.catch(err => {
+				console.log('DO CONNECT ERROR ->', err)
+				setWsStatus(undefined);
+				doConnect(socket);
+			});
+		}, 1000);
+	}
 
-		} catch (error) {
-			const err = error as AxiosError;
-			console.log(`ws connection process failed due to: ${err.message}`);
-			setWsStatus(undefined);
-			if (err.response?.status === 401) {
-				// -> TODO : je pense que ds tous les cas il faut faire une redirection:
-				//la ws va servir au jeu et au chat donc sans elle, rien ne marche
-				navigate('/');
-			}
-		}
+	const connectWsStatus = async () => {
+		console.log('ConnectWsStatus function');
+		const socket = io('ws://localhost:3000/chat', {
+			autoConnect: false,
+			reconnection: false
+		});
+		setWsCallbacks(socket);
+		setWsStatus(socket);
+		doConnect(socket);
+
+		// try {
+		// } catch (error) {
+		// 	const err = error as AxiosError;
+		// 	setWsStatus(undefined);
+		// 	if (err.response?.status === 401) {
+		// 		// -> TODO : je pense que ds tous les cas il faut faire une redirection:
+		// 		//la ws va servir au jeu et au chat donc sans elle, rien ne marche
+		// 		navigate('/');
+		// 	}
+		// }
 	};
 
 	useMount(() => {

@@ -53,7 +53,9 @@ export class ChatGatewayService {
   }
 
   private async getUserIdFromToken(token: string) {
-    return await this.cacheManager.get<string>(token);
+    if (token) {
+      return await this.cacheManager.get<string>(token);
+    }
   }
 
   /*
