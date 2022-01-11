@@ -1,9 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { type } from 'os';
 import {
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
   Column,
   Entity,
   ManyToOne,
@@ -16,10 +12,6 @@ const conf = new ConfigService();
 
 @Entity()
 export class Restriction {
-  /*
-   ** Data
-   */
-
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -35,28 +27,4 @@ export class Restriction {
   @Column()
   expiration_time: number;
 
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted Restriction: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed Restriction: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated Restriction: ', this);
-    }
-  }
 }

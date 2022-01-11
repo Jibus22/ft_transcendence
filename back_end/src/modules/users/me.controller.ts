@@ -178,8 +178,7 @@ export class MeController {
     description: 'room was left',
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
-    return await this.chatService.leaveRoom(user, room)
-    .catch((error) => {
+    return await this.chatService.leaveRoom(user, room).catch((error) => {
       if (error.status) {
         throw new HttpException(error, error.status);
       } else {

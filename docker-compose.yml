@@ -2,6 +2,7 @@ version: '3.8'
 
 volumes:
   dist_guest_back:
+  database_storage:
   node_modules_guest_back:
   node_modules_guest_front:
 
@@ -16,7 +17,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./database/:/var/lib/postgresql/data/
+      - database_storage:/var/lib/postgresql/data/
 
   back_end_server:
     build: ./back_end

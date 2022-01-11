@@ -9,7 +9,7 @@ import {
   ManyToMany,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { Participant } from '../../chat/entities/participant.entity';
 import { UserDto } from '../dtos/user.dto';
@@ -32,7 +32,7 @@ export class User {
   @Column({ unique: true })
   login_42: string;
 
-  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png'})
+  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png' })
   photo_url_42: string;
 
   @Column({ default: false })

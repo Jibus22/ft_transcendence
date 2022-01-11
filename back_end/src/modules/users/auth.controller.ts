@@ -54,7 +54,9 @@ export class AuthController {
         console.log(e);
       });
     if (!user) {
-      throw new BadGatewayException('Sorry, something went wront, we could not identify user with 42 API');
+      throw new BadGatewayException(
+        'Sorry, something went wront, we could not identify user with 42 API',
+      );
     }
     session.userId = user.id;
     session.useTwoFA = user.useTwoFA;
@@ -188,7 +190,7 @@ export class AuthController {
   })
   async producteWsToken(@CurrentUser() user) {
     const token = randomUUID() + '.' + user.id;
-    await this.cacheManager.set(token, user.id, { ttl: 240 }); //TODO reduce length, debug only
+    await this.cacheManager.set(token, user.id, { ttl: 4});
     console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
     return { token };
   }
