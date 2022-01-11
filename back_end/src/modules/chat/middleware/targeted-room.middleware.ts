@@ -29,8 +29,12 @@ export class TargetedRoomMiddleware implements NestMiddleware {
         .findOneWithParticipants(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
-          req.targetedRoomActiveBan = this.chatService.extractValidRestrictions(room, 'ban');
-          req.targetedRoomActiveMute = this.chatService.extractValidRestrictions(room, 'mute');
+          req.targetedRoomActiveBan = this.chatService.extractValidRestrictions(
+            room,
+            'ban',
+          );
+          req.targetedRoomActiveMute =
+            this.chatService.extractValidRestrictions(room, 'mute');
           logger.log(`Room targeted: ${req?.targetedRoom?.id}`); // TODO remove debug
         })
         .catch((error) => {

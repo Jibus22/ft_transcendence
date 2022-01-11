@@ -23,7 +23,8 @@ export class RoomParticipantGuard implements CanActivate {
     if (
       currentUser &&
       targetRoom &&
-      (this.isRoomAccessible(currentUser, targetRoom) || currentUser.is_site_owner)
+      (this.isRoomAccessible(currentUser, targetRoom) ||
+        currentUser.is_site_owner)
     ) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`,
