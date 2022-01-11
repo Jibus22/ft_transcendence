@@ -22,7 +22,14 @@ import { UsersPhotoController } from './usersphoto.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserPhoto, Room, Participant, ChatMessage, Restriction]),
+    TypeOrmModule.forFeature([
+      User,
+      UserPhoto,
+      Room,
+      Participant,
+      ChatMessage,
+      Restriction,
+    ]),
     HttpModule,
   ],
   providers: [

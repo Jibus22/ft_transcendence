@@ -24,7 +24,8 @@ export class RoomModeratorGuard implements CanActivate {
     if (
       currentUser &&
       targetRoom &&
-      (this.isRoomModerator(currentUser, targetRoom) || currentUser.is_site_owner)
+      (this.isRoomModerator(currentUser, targetRoom) ||
+        currentUser.is_site_owner)
     ) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom}`,

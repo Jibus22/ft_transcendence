@@ -11,7 +11,6 @@ import { UserPhoto } from '../users/entities/users_photo.entity';
   imports: [TypeOrmModule.forFeature([User])],
 })
 export class DatabaseModule {
-
   static forRoot(): DynamicModule {
     const testerOrmConfig: TypeOrmModuleOptions = {
       type: 'better-sqlite3',
@@ -26,10 +25,10 @@ export class DatabaseModule {
         Restriction,
       ],
       synchronize: true,
-  };
+    };
 
-   return process.env.NODE_ENV === 'test'
-    ? TypeOrmModule.forRoot(testerOrmConfig)
-    : TypeOrmModule.forRoot();
+    return process.env.NODE_ENV === 'test'
+      ? TypeOrmModule.forRoot(testerOrmConfig)
+      : TypeOrmModule.forRoot();
   }
 }

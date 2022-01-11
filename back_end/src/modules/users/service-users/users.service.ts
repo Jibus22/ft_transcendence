@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Room } from '../../chat/entities/room.entity';
 import { User } from '../entities/users.entity';
 
 @Injectable()
@@ -36,7 +37,7 @@ export class UsersService {
     });
   }
 
-  async findRoomParticipations(id: string) {
+  async findRoomParticipations(id: string): Promise<Room[]> {
     if (!id) {
       return null;
     }
