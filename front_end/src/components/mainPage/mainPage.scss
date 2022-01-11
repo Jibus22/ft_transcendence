@@ -3,13 +3,14 @@
 	// height: 100vh;
 }
 
-// @media screen and (min-width: 2560px) {
-// 	.mainPageBody {
-// 		width: 100%;
-// 		height: 1300vh;
-// 		border: 1px solid red;
-// 	}
-// }
+@media screen and (max-width: 1440px) {
+	.mainPageBody {
+		width: 100%;
+
+		// height: 885px;
+		// height: 100vh;
+	}
+}
 
 @keyframes badgeAnim {
 	0% {

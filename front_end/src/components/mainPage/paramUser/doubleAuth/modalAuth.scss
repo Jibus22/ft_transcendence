@@ -69,7 +69,8 @@
 			font-weight: 500;
 			border-radius: 15px;
 			border-radius: 0.5vw;
-			height: 1.8vw;
+			height: 50px;
+			height: 60% !important;
 			width: 100%;
 		}
 		.buttonMui:hover {
@@ -85,7 +86,7 @@
 		.MuiOutlinedInput-input {
 			font-size: 0.8vw;
 			margin-left: 0.3vw;
-			height: 0.5vw;
+			height: 15px;
 			color: black;
 		}
 
@@ -153,11 +154,114 @@
 		@media screen and (max-width: 1900px) {
 			.MuiOutlinedInput-input {
 				margin-left: 0.3vw;
-				height: 0.2vw;
+				height: 5px;
 			}
 			.MuiFormHelperText-root {
 				left: 70%;
 			}
+		}
+	}
+}
+
+@media screen and (max-width: 2150px) {
+	.buttonInput {
+		.buttonQR {
+			// .buttonMui {
+			// 	height: 2.1vw !important;
+			// }
+		}
+	}
+}
+
+@media screen and (max-width: 1750px) {
+	.modalBox {
+		width: 430px;
+		height: 460px;
+		border-radius: 6%;
+		box-shadow: 24;
+		padding: 2%;
+
+		.titleInfo {
+			h1 {
+				font-size: 25px;
+			}
+		}
+		.infoKey {
+			margin: 1% 0% 0% 0%;
+			h2 {
+				font-size: 21px;
+			}
+			h3 {
+				font-size: 14px;
+			}
+		}
+	}
+	.buttonQR {
+		width: 250px;
+		height: 100%;
+		.buttonMui {
+			font-size: 12px !important;
+			border-radius: 8px !important;
+			height: 1px !important;
+			height: 34px !important;
+		}
+		.buttonMui:hover {
+			font-size: 13px !important;
+			background-color: rgba(124, 90, 100, 0.9);
+		}
+	}
+	.inputQR {
+		.MuiOutlinedInput-input {
+			height: 4px !important;
+			font-size: 13px !important;
+			margin-left: -3px !important;
+		}
+		.MuiOutlinedInput-notchedOutline {
+			border: 2px solid #ca6c88;
+			border-radius: 0.8vw;
+			border-radius: 12px !important;
+		}
+		& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+			border: 2px solid #71dfe7;
+			border-radius: 12px !important;
+		}
+
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+			top: 1px !important;
+			left: 1px !important;
+			font-size: 16px !important;
+		}
+
+		.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+			left: 25px !important;
+
+			font-size: 14px !important;
+		}
+
+		& .MuiInputLabel-shrink,
+		& fieldset {
+			top: -3px !important;
+			font-size: 18px !important;
+		}
+
+		.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
+			margin-left: -1.1vw;
+			margin-left: 1px !important;
+		}
+
+		.MuiFormHelperText-root {
+			width: 85px !important;
+			left: 48px !important;
+			top: 50px !important;
+			font-size: 13px !important;
+		}
+
+		.MuiIconButton-root {
+			width: 31px !important;
+			// margin: 0 0 0 50px !important;
+		}
+		.MuiIconButton-root:hover {
+			width: 2.1vw !important;
 		}
 	}
 }
