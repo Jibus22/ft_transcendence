@@ -4,7 +4,7 @@ import {
   EntitySubscriberInterface,
   EventSubscriber,
   InsertEvent,
-  RemoveEvent
+  RemoveEvent,
 } from 'typeorm';
 import { ChatGateway } from '../../../gateways/chat.gateway';
 import { RoomDto } from '../dto/room.dto';
@@ -24,24 +24,27 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
   }
 
   afterInsert(event: InsertEvent<Room>) {
-    this.chatGateway.broadcastEventToServer(
-      'publicRoomCreated',
-      JSON.stringify(
-        plainToClass(RoomDto, event.entity, {
-          excludeExtraneousValues: true,
-        }),
-      ),
-    );
+    console.log(event.entity);
+    if (event.entity.is_private === false) {
+      this.chatGateway.broadcastEventToServer(
+        'publicRoomCreated',
+        JSON.stringify(
+          plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
+        ),
+      );
+    }
   }
 
-  afterRemove(event: RemoveEvent<Room>) {
-    this.chatGateway.broadcastEventToServer(
-      'publicRoomRemoved',
-      JSON.stringify(
-        plainToClass(RoomDto, event.entity, {
-          excludeExtraneousValues: true,
-        }),
-      ),
-    );
+  beforeRemove(event: RemoveEvent<Room>) {
+    if (event.entity.is_private === false) {
+      delete event.entity?.participants;
+      delete event.entity?.restrictions;
+      this.chatGateway.broadcastEventToServer(
+        'publicRoomRemoved',
+        JSON.stringify(
+          plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
+        ),
+      );
+    }
   }
 }

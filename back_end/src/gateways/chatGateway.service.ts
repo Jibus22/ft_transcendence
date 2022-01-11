@@ -24,12 +24,12 @@ export class ChatGatewayService {
   private async joinRoomsAtConnection(client: Socket, user: User) {
     await this.usersService
       .findRoomParticipations(user.id)
-      .then( rooms => {
+      .then((rooms) => {
         if (rooms.length) {
-          client.join(rooms.map(r => r.id));
+          client.join(rooms.map((r) => r.id));
         }
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   private async updateUser(client: Socket, userData: Partial<User>) {
@@ -67,8 +67,10 @@ export class ChatGatewayService {
   async handleConnection(server: Server, client: Socket) {
     const { key: token } = client.handshake.auth;
     const userId = await this.getUserIdFromToken(token);
+    console.log(`handleConnection: ${client.id} | token ${token}`);
 
     if (!userId) {
+      console.log(`handleConnection: TOKEN KO!  Client disconnected !🛑 `);
       client._error({ message: 'wrong token' });
       return client.disconnect();
     }
@@ -79,9 +81,11 @@ export class ChatGatewayService {
       .catch((err) => {
         console.log(err.message);
         client._error({ message: err.message });
+        console.log(`handleConnection: Client disconnected !🛑 `);
         return client.disconnect();
       })
       .then((user: User) => {
+        console.log(`handleConnection: Client connected ! ✅`);
         this.joinRoomsAtConnection(client, user);
       });
   }
@@ -91,7 +95,7 @@ export class ChatGatewayService {
     await this.updateUser(client, {
       ws_id: null,
       is_in_game: false,
-    }).catch(err => console.log(err));
+    }).catch((err) => console.log(err));
   }
 
   /*
@@ -106,7 +110,12 @@ export class ChatGatewayService {
     server.emit(event, message);
   }
 
-  broadcastEventToRoom(server: Server, room: Room, event: string, message: string) {
+  broadcastEventToRoom(
+    server: Server,
+    room: Room,
+    event: string,
+    message: string,
+  ) {
     server.emit(event, message);
   }
 
@@ -118,7 +127,7 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  async setUserIngame(client: Socket, data: { value: 'in' | 'out'}) {
+  async setUserIngame(client: Socket, data: { value: 'in' | 'out' }) {
     if (data.value === 'in') {
       console.log(true);
       await this.updateUser(client, {
