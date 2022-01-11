@@ -6,6 +6,7 @@ import JB from './photos/JB.png';
 import VG from './photos/VG.png';
 import BG from './photos/BG.png';
 import { useSpring, animated } from 'react-spring';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
 	img: string;
@@ -25,6 +26,8 @@ const UserInfo = ({ img, name, info, translate, duration }: Props) => {
 			duration: duration,
 		},
 	});
+
+	const query = useMediaQuery('(max-width:1000px)');
 
 	return (
 		<animated.div style={anim} className="w-100">

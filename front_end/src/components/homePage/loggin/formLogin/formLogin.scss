@@ -1,6 +1,6 @@
 .mainFormLogin {
 	width: 70%;
-	margin: auto;
+	margin: 3% auto;
 
 	// taille du textfield
 	.MuiOutlinedInput-root {
@@ -49,7 +49,7 @@
 	}
 	.MuiFormHelperText-root {
 		color: red !important;
-		font-size: 0.7vw !important;
+		font-size: 0.9vw !important;
 
 		position: absolute;
 		left: 45%;
@@ -69,5 +69,62 @@
 		animation-iteration-count: 1;
 		animation-direction: normal;
 		animation-fill-mode: none;
+	}
+}
+
+@media screen and (max-width: 1366px) {
+	.mainFormLogin {
+		.MuiOutlinedInput-input {
+		}
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+		}
+		.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+			margin-top: -2px;
+		}
+		& .MuiInputLabel-shrink,
+		& fieldset {
+		}
+		.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
+		}
+	}
+}
+
+@media screen and (max-width: 1220px) {
+	.mainFormLogin {
+		margin-top: 20px !important;
+
+		.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+			margin-top: -3px;
+			font-size: 15px !important;
+		}
+
+		.css-1kty9di-MuiFormLabel-root-MuiInputLabel-root {
+			font-size: 17px !important;
+			margin: 0% 0% 0% 0%;
+		}
+
+		.MuiIconButton-root {
+			width: 43px !important;
+			height: 43px !important;
+		}
+
+		.Mui-focused {
+			font-size: 14px !important;
+		}
+
+		.MuiOutlinedInput-input {
+			font-size: 17px !important;
+		}
+
+		.MuiFormHelperText-root {
+			color: red !important;
+			font-size: 0.9vw !important;
+
+			position: absolute;
+			left: 45%;
+			position: absolute;
+			top: 120%;
+			transform: translate(-50%, -50%);
+		}
 	}
 }

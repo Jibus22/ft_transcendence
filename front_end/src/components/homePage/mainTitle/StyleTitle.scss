@@ -135,6 +135,65 @@
 	}
 }
 
+@media screen and (max-width: 900px) {
+	.MainTitlePage {
+		// margin: 5% 0% 0% 10%;
+
+		// margin: 40px 0 0 100px;
+		width: 65%;
+		width: 450px;
+		height: 20%;
+		height: 150px !important;
+
+		margin: 50px auto !important;
+
+		// position: absolute;
+		// left: 35%;
+		// top: 7%;
+		// transform: translate(-50%, -50%);
+
+		h1 {
+			font-family: Montserrat, sans-serif;
+			font-style: normal;
+		}
+
+		.MainTitle {
+			text-align: center;
+
+			h1 {
+				// font-weight: 900;
+				// color: #ffffff;
+				// letter-spacing: 4px;
+				// font-size: 5vw;
+				// text-align: center;
+				// line-height: 88px;
+			}
+
+			.TitleText {
+				text-align: center;
+
+				h5 {
+					// font-weight: 500;
+					// font-size: 30px;
+					// line-height: 60px;
+					// color: #e69c6a;
+				}
+			}
+			.sepTitle {
+				hr {
+					// height: 3px;
+					// width: 100%;
+					// margin: 20px auto;
+					// animation-name: slideHr;
+					// animation-delay: 0s;
+					// animation-duration: 4s;
+					// color: #ca6c88;
+				}
+			}
+		}
+	}
+}
+
 ///////////////////////////////////////////////
 ///////////////// Animation  //////////////////
 ///////////////////////////////////////////////
