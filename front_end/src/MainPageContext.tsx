@@ -28,7 +28,6 @@ interface IMainPageContext {
 	userName: string;
 	userImg: string;
 	pathPop: string;
-	statusUser: string;
 
 	setData: React.Dispatch<React.SetStateAction<never[]>>;
 	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,7 +43,6 @@ interface IMainPageContext {
 	setUserName: React.Dispatch<React.SetStateAction<string>>;
 	setUserImg: React.Dispatch<React.SetStateAction<string>>;
 	setPathPop: React.Dispatch<React.SetStateAction<string>>;
-	setStatusUser: React.Dispatch<React.SetStateAction<string>>;
 
 	printSnackBar: () => void;
 	fetchDataUserMe: () => void;
@@ -69,10 +67,8 @@ const MainPageProvider = (props: any) => {
 	const [timer, setTimer] = useState(5000);
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
-	const [userStatus, setUserStatus] = useState('');
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
-	const [statusUser, setStatusUser] = useState('');
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -140,11 +136,13 @@ const MainPageProvider = (props: any) => {
 					<DialogContentText id="alert-dialog-description">{description}</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
-					<Button sx={{ color: 'red' }} onClick={disagree}>
+					<Button className="buttonMui" sx={{ color: 'red' }} onClick={disagree}>
 						Disagree
 					</Button>
 
-					<Button onClick={agree}>Agree</Button>
+					<Button className="buttonMui" onClick={agree}>
+						Agree
+					</Button>
 				</DialogActions>
 			</Dialog>
 		);
@@ -152,13 +150,13 @@ const MainPageProvider = (props: any) => {
 
 	const setStatusColor = (status: string): string => {
 		if (status === 'offline') {
-			return 'red';
+			return '#FF3F00';
 		}
 		if (status === 'online') {
 			return 'green';
 		}
 		if (status === 'ingame') {
-			return 'orange';
+			return '#FFC900';
 		} else {
 			return 'green';
 		}
@@ -179,7 +177,6 @@ const MainPageProvider = (props: any) => {
 		isUpload,
 		selectedImage,
 		openUpload,
-		statusUser,
 		setCustomPhoto,
 		setTimeSnack,
 		setTimer,
@@ -198,7 +195,7 @@ const MainPageProvider = (props: any) => {
 		setSelectedImage,
 		setOpenUpload,
 		dialogMui,
-		setStatusUser,
+		setStatusColor,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

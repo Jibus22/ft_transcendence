@@ -25,7 +25,7 @@ export class RoomOwnerGuard implements CanActivate {
     if (
       currentUser &&
       targetRoom &&
-      this.isRoomOwned(currentUser, targetRoom)
+      (this.isRoomOwned(currentUser, targetRoom) || currentUser.is_site_owner)
     ) {
       logger.log(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`,

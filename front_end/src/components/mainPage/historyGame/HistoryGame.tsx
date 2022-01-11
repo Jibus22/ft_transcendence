@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './historyGame.scss';
 import 'semantic-ui-css/semantic.min.css';
-import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import { pink } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { useSpring, animated } from 'react-spring';
 import FF from '../../homePage/section/photos/FF.png';
 import JB from '../../homePage/section/photos/JB.png';
-import { InputAdornment, Button, AvatarGroup, Avatar, Badge } from '@mui/material';
+import { InputAdornment, Button, AvatarGroup, Avatar, Badge, TextField } from '@mui/material';
+import axios, { AxiosError } from 'axios';
+
+interface Users {
+	idJ1: string;
+	idJ2: string;
+	scoreJ1: number;
+	scoreJ2: number;
+}
 
 const CssTextField = styled(TextField)({
 	'& label.Mui-focused': {
@@ -31,6 +38,25 @@ const HistoryGame = () => {
 			duration: 300,
 		},
 	});
+
+	const [data, setData] = useState<Array<Users>>([]);
+
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	const fetchData = async () => {
+		try {
+			const { data } = await axios.get('https://run.mocky.io/v3/e2d38cd0-0908-44a0-96fb-b85c2a40c28b', {
+				withCredentials: true,
+			});
+			setData(data);
+			console.log(data);
+		} catch (error) {
+			const err = error as AxiosError;
+			console.log(err);
+		}
+	};
 
 	let divHistory = (
 		<div className="infoHistory ">

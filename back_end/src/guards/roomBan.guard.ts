@@ -27,7 +27,7 @@ export class RoomBanGuard implements CanActivate {
     if (
       currentUser &&
       targetRoomBan &&
-      this.isUserBanned(currentUser, targetRoomBan) === false
+      (this.isUserBanned(currentUser, targetRoomBan) === false || currentUser.is_site_owner)
     ) {
       logger.log(`BAN ACCESS GRANTED, user is not banned !`);
       return true;

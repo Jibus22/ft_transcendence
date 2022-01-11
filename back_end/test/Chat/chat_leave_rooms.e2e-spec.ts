@@ -130,11 +130,11 @@ describe('CHAT: Join/leave rooms', () => {
       });
   });
 
-  it('try leave rooms which user is OWNER', async () => {
+  it('leave rooms which user is OWNER', async () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRoomsForRandomUsers(nbOfRooms)
+      .generateManyRandomRoomsForRandomUsers(nbOfRooms, 0.5, 1)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -150,15 +150,14 @@ describe('CHAT: Join/leave rooms', () => {
         await Promise.all(
           ownedRooms.map(async (r) => {
             await chatHelper.leaveRoom(cookies, r.id).then((response) => {
-              expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+              expect(response.status).toBe(HttpStatus.OK);
             });
           }),
         ).then(async () => {
-          expect(await chatHelper.getOwnedRooms().then((r) => r.length)).toBe(
-            userRoomsLen,
-          );
+          expect(await chatHelper.getOwnedRooms()
+            .then((r) => r.length))
+            .toBe(0);
         });
       });
   });
-
 }); // <<< end of describBlock

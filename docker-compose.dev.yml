@@ -2,6 +2,9 @@ version: '3.8'
 
 services:
 
+  database_server:
+    command: 'echo "No database server in dev environnement"'
+
   back_end_server:
     env_file:
       - .env
