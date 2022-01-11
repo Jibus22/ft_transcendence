@@ -112,12 +112,12 @@ const MainPage = () => {
 		setTimeout(async () => {
 			await getAuthToken()
 			.then(token => {
-				console.log('DO CONNECT');
+				console.log('DOCONNECT');
 				socket.auth = { key: `${token}` };
 				socket.connect();
 			})
 			.catch(err => {
-				console.log('DO CONNECT ERROR ->', err)
+				console.log('DOCONNECT ERROR ->', err)
 				setWsStatus(undefined);
 				doConnect(socket);
 			});
@@ -125,25 +125,15 @@ const MainPage = () => {
 	}
 
 	const connectWsStatus = async () => {
-		console.log('ConnectWsStatus function');
-		const socket = io('ws://localhost:3000/chat', {
-			autoConnect: false,
-			reconnection: false
-		});
-		setWsCallbacks(socket);
-		setWsStatus(socket);
-		doConnect(socket);
-
-		// try {
-		// } catch (error) {
-		// 	const err = error as AxiosError;
-		// 	setWsStatus(undefined);
-		// 	if (err.response?.status === 401) {
-		// 		// -> TODO : je pense que ds tous les cas il faut faire une redirection:
-		// 		//la ws va servir au jeu et au chat donc sans elle, rien ne marche
-		// 		navigate('/');
-		// 	}
-		// }
+		setTimeout(() => {
+			const socket = io('ws://localhost:3000/chat', {
+				autoConnect: false,
+				reconnection: false
+			});
+			setWsCallbacks(socket);
+			setWsStatus(socket);
+			doConnect(socket);
+		}, 500);
 	};
 
 	useMount(() => {
