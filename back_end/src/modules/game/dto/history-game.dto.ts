@@ -1,40 +1,35 @@
-import { IsUUID } from 'class-validator';
-import { IsInt, Max } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { UserDto } from '../../users/dtos/user.dto';
+import { Transform, plainToClass, Exclude, Expose } from 'class-transformer';
 
 export class RegularPlayerDto {
-  @IsUUID()
-  id: string;
-  login: string;
-  photo_url: string;
-  @IsInt()
-  @Max(10)
-  score: number;
+  @ApiProperty()
+  @Transform((value) => {
+    return plainToClass(UserDto, value.obj.user);
+  })
+  user: UserDto;
 
-  public constructor(
-    id: string,
-    login: string,
-    photo_url: string,
-    score: number,
-  ) {
-    this.id = id;
-    this.login = login;
-    this.photo_url = photo_url;
-    this.score = score;
-  }
+  @ApiProperty()
+  score: number;
 }
 
+@Exclude()
 export class HistoryGameDto {
-  players: RegularPlayerDto[];
-  date: Date;
+  @ApiProperty()
+  @Expose()
+  createdAt: Date;
+
+  @ApiProperty()
+  @Expose()
+  @Transform((value) => {
+    return value.obj.updatedAt - value.obj.createdAt;
+  })
   duration: number;
 
-  public constructor(
-    players?: RegularPlayerDto[],
-    date?: Date,
-    duration?: number,
-  ) {
-    this.players = players;
-    this.date = date;
-    this.duration = duration;
-  }
+  @ApiProperty()
+  @Expose()
+  @Transform((value) => {
+    return plainToClass(RegularPlayerDto, value.obj.players);
+  })
+  players: RegularPlayerDto[];
 }
