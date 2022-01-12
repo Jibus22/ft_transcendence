@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { HistoryGameDto, RegularPlayerDto } from './dto/history-game.dto';
 import { Game } from './entities/game.entity';
 import { Player } from './entities/player.entity';
 import { Repository } from 'typeorm';
@@ -61,5 +62,43 @@ export class GameService {
   async remove(uuid: string) {
     const game = await this.findOne(uuid);
     return await this.game_repo.remove(game);
+  }
+
+  private async getHistoryDto(game: Game) {
+    const usr1 = await this.player_repo.findOne(game.players[0].id, {
+      relations: ['user'],
+    });
+    const usr2 = await this.player_repo.findOne(game.players[1].id, {
+      relations: ['user'],
+    });
+    const regplayer1 = new RegularPlayerDto(
+      usr1.user.id,
+      usr1.user.login,
+      usr1.user.photo_url_42,
+      game.players[0].score,
+    );
+    const regplayer2 = new RegularPlayerDto(
+      usr2.user.id,
+      usr2.user.login,
+      usr2.user.photo_url_42,
+      game.players[1].score,
+    );
+    const current_game = new HistoryGameDto(
+      [regplayer1, regplayer2],
+      game.createdAt,
+      0,
+    );
+    return current_game;
+  }
+
+  async history() {
+    let history: HistoryGameDto[] = [];
+    const games = await this.game_repo.find({ relations: ['players'] });
+
+    for (let i = 0; i < games.length; i++) {
+      history.push(await this.getHistoryDto(games[i]));
+    }
+
+    return history;
   }
 }

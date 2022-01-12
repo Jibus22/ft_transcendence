@@ -30,6 +30,12 @@ export class GameController {
     return await this.gameService.findAll();
   }
 
+  @Get('history')
+  @ApiOperation({ summary: 'get a list of all HistoryGameDto' })
+  async history() {
+    return await this.gameService.history();
+  }
+
   @Get(':uuid')
   @ApiOperation({ summary: 'returns a "uuid" game' })
   async findOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
