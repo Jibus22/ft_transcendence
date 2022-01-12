@@ -20,7 +20,7 @@ import { MeController } from './modules/users/me.controller';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
-
+import { GameModule } from './modules/game/game.module';
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -37,7 +37,8 @@ const cookieSession = require('cookie-session');
     HttpModule,
     ChatModule,
     UsersModule,
-    ChatGatewayModule
+    GameModule,
+    ChatGatewayModule,
   ],
   controllers: [AppController],
   providers: [

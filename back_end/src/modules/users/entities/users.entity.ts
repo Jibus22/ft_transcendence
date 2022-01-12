@@ -14,6 +14,7 @@ import {
 import { Participant } from '../../chat/entities/participant.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
+import { Player } from '../../game/entities/player.entity';
 
 const conf = new ConfigService();
 
@@ -44,11 +45,11 @@ export class User {
   @OneToOne(() => UserPhoto, (photo) => photo.owner)
   local_photo: UserPhoto;
 
-  @ManyToMany((type) => User, (user) => user.friends_list)
+  @ManyToMany(() => User, (user) => user.friends_list)
   @JoinTable()
   friends_list: UserDto[];
 
-  @ManyToMany((type) => User, (user) => user.blocked_list)
+  @ManyToMany(() => User, (user) => user.blocked_list)
   @JoinTable()
   blocked_list: UserDto[];
 
@@ -64,7 +65,13 @@ export class User {
   @Column({ default: false })
   is_in_game: boolean;
 
-  @OneToMany((type) => Participant, (participant) => participant.user)
+  @OneToMany(() => Player, (player) => player.user)
+  players: Player[];
+
+  // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
+  // rooms_ownership: Room[];
+
+  @OneToMany(() => Participant, (participant) => participant.user)
   room_participations: Participant[];
 
   /*
