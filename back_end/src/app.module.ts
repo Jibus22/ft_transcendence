@@ -10,7 +10,6 @@ import { APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatGatewayModule } from './gateways/chatGateway.module';
 import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
 import { TargetedRoomMiddleware } from './modules/chat/middleware/targeted-room.middleware';
@@ -37,7 +36,6 @@ const cookieSession = require('cookie-session');
     HttpModule,
     ChatModule,
     UsersModule,
-    ChatGatewayModule
   ],
   controllers: [AppController],
   providers: [
