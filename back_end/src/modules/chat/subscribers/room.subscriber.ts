@@ -6,7 +6,7 @@ import {
   InsertEvent,
   RemoveEvent,
 } from 'typeorm';
-import { ChatGateway } from '../../../gateways/chat.gateway';
+import { ChatGateway } from '../gateways/chat.gateway';
 import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
 

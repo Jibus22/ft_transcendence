@@ -6,6 +6,8 @@ import { Restriction } from '../chat/entities/restriction.entity';
 import { Room } from '../chat/entities/room.entity';
 import { User } from '../users/entities/users.entity';
 import { UserPhoto } from '../users/entities/users_photo.entity';
+import { Game } from '../game/entities/game.entity';
+import { Player } from '../game/entities/player.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -18,6 +20,8 @@ export class DatabaseModule {
       entities: [
         User,
         UserPhoto,
+        Player,
+        Game,
         Room,
         ChatMessage,
         Participant,
