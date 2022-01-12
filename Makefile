@@ -50,6 +50,9 @@ backbuild:
 frontbuild:
 	docker-compose build front_end_server
 
+frontbash:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run front_end_server bash
+
 ## -----------------------------------------------------------------------------
 ##		BACK
 ## -----------------------------------------------------------------------------
