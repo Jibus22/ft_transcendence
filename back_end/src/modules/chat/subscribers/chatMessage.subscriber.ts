@@ -5,8 +5,8 @@ import {
   EventSubscriber,
   InsertEvent,
 } from 'typeorm';
-import { ChatGateway } from '../../../gateways/chat.gateway';
-import { ChatGatewayService } from '../../../gateways/chatGateway.service';
+import { ChatGateway } from '../gateways/chat.gateway';
+import { ChatGatewayService } from '../gateways/chatGateway.service';
 import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ChatMessage } from '../entities/chatMessage.entity';
 @EventSubscriber()
