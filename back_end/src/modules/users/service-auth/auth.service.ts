@@ -75,7 +75,7 @@ export class AuthService {
   }
 
   async updateDatabase(user: Partial<User>) {
-    const users = await this.usersService.find({ login_42: user.login_42});
+    const users = await this.usersService.find({ login_42: user.login_42 });
     if (users.length) {
       return await this.usersService
         .update(users[0].id, {
