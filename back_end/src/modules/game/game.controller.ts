@@ -11,7 +11,9 @@ import {
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { HistoryGameDto } from './dto/history-game.dto';
+import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { Serialize } from '../../interceptors/serialize.interceptor';
 
 @ApiTags('game')
 @Controller('game')
@@ -30,6 +32,8 @@ export class GameController {
     return await this.gameService.findAll();
   }
 
+  @ApiResponse({ type: HistoryGameDto, isArray: true })
+  @Serialize(HistoryGameDto)
   @Get('history')
   @ApiOperation({ summary: 'get a list of all HistoryGameDto' })
   async history() {

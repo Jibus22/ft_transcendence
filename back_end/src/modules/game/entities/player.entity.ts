@@ -10,9 +10,6 @@ export class Player {
   @Column({ type: 'int', default: 0 })
   score: number;
 
-  @Column({ type: 'boolean', default: false })
-  isWinner: boolean;
-
   @ManyToOne(() => User, (user) => user.players)
   user: User;
 
