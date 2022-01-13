@@ -1,15 +1,12 @@
 .mainPageBody {
-	overflow: hidden;
-	// height: 100vh;
+	height: 100%;
 }
 
-// @media screen and (min-width: 2560px) {
-// 	.mainPageBody {
-// 		width: 100%;
-// 		height: 1300vh;
-// 		border: 1px solid red;
-// 	}
-// }
+@media screen and (max-width: 1440px) {
+	.mainPageBody {
+		width: 100%;
+	}
+}
 
 @keyframes badgeAnim {
 	0% {

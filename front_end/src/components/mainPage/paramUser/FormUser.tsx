@@ -8,7 +8,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../../MainPageContext';
-import { ClassNames } from '@emotion/react';
 
 export interface Props {
 	isPop: boolean;
@@ -87,7 +86,7 @@ export default function FormUser({ isPop, userName }: Props) {
 					helperText={formik && formik.errors.nickname}
 					disabled={disableInputPop()}
 					inputProps={{
-						maxLength: 18,
+						maxLength: 10,
 					}}
 					InputProps={{
 						endAdornment: (

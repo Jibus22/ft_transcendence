@@ -15,7 +15,7 @@ export class CreateRestrictionDto {
   @IsNumber({
     allowNaN: false,
     allowInfinity: false,
-    maxDecimalPlaces: 0
+    maxDecimalPlaces: 0,
   })
   duration: number;
 }

@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
-import { CircularProgress, Button, IconButton, Avatar } from '@mui/material';
-import Backdrop from '@mui/material/Backdrop';
+import { Button, IconButton, Avatar } from '@mui/material';
 import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';
@@ -11,7 +10,11 @@ import DoubleAuth from './doubleAuth/DoubleAuth';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function ParamUser() {
+interface Props {
+	setTime: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function ParamUser({ setTime }: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -29,7 +32,6 @@ export default function ParamUser() {
 	let navigate = useNavigate();
 
 	const [isPop, setIsPop] = useState<boolean>(false);
-	const [time, setTime] = useState(false);
 
 	const [dataFa, setDataFa] = useState(false);
 
@@ -89,9 +91,6 @@ export default function ParamUser() {
 					) : null}
 				</div>
 				<div className={`${isPop ? 'mainStatUserBlur' : 'mainStatUser'} `}>
-					<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
-						<CircularProgress color="inherit" />
-					</Backdrop>
 					<div className="StatUser d-flex flex-column">
 						<div className="infoStatUser d-flex ">
 							<div className="">

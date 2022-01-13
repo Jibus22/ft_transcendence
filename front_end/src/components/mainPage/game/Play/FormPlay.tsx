@@ -61,7 +61,7 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 						/>
 
 						<div className="buttonDiv">
-							{loading && <CircularProgress size="1.4em" sx={{ mt: '40%' }} />}
+							{loading && <CircularProgress />}
 							{!loading && (
 								<IconButton type="submit" className="w-100 h-100">
 									<img src={IconMess} alt="" />
