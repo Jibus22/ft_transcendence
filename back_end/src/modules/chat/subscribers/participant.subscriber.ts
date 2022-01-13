@@ -48,12 +48,23 @@ export class ParticipantSubscriber
   }
 
   afterInsert(event: InsertEvent<Participant>) {
-    this.emitEvents('participantJoined', 'userAdded', event.entity);
-    this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
+    if (event.entity?.room && event.entity?.user) {
+      this.emitEvents('participantJoined', 'userAdded', event.entity);
+      this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
+    } else {
+      console.log('Subscriber missing entity properties!');
+    }
   }
 
-  afterRemove(event: RemoveEvent<Participant>) {
-    this.chatGateway.makeClientLeaveRoom(event.entity.user, event.entity.room);
-    this.emitEvents('participantLeft', 'userRemoved', event.entity);
+  beforeRemove(event: RemoveEvent<Participant>) {
+    if (event.entity?.room && event.entity?.user) {
+      this.chatGateway.makeClientLeaveRoom(
+        event.entity.user,
+        event.entity.room,
+      );
+      this.emitEvents('participantLeft', 'userRemoved', event.entity);
+    } else {
+      console.log('Subscriber missing entity properties!');
+    }
   }
 }

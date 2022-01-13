@@ -129,11 +129,13 @@ export class ChatGatewayService {
 
   sendEventToRoom(
     server: Server,
-    destId: string | string[],
+    destId: string,
     event: string,
     message: messageType,
   ) {
-    server.to(destId).emit(event, message);
+    if (destId && destId.length) {
+      server.to(destId).emit(event, message);
+    }
   }
 
   /*
