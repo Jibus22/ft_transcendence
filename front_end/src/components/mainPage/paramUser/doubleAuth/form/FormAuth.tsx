@@ -69,7 +69,7 @@ export default function FormAuth({ closeQR }: Props) {
 	});
 
 	return (
-		<div className="h-100 w-100  ">
+		<div className="h-100 w-100 ">
 			<form onSubmit={formik.handleSubmit} className={`${Boolean(formik.errors.key) ? 'formDivButtonAnim' : 'none'} w-100 h-100 `}>
 				<TextField
 					className="muiButtonInput"
