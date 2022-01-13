@@ -29,8 +29,8 @@ const MainPage = () => {
 
 	const setWsCallbacks = (socket: Socket) => {
 		/* -----------------------
-		** Connection
-		* -----------------------*/
+		 ** Connection
+		 * -----------------------*/
 
 		socket.on('connect', () => {
 			console.log(`WS CONNECT`);
@@ -51,8 +51,8 @@ const MainPage = () => {
 		});
 
 		/* -----------------------
-		** Events
-		* -----------------------*/
+		 ** Events
+		 * -----------------------*/
 
 		socket.on('publicRoomCreated', (message) => {
 			console.log('✅  publicRoomCreated', message);
@@ -88,7 +88,6 @@ const MainPage = () => {
 		socket.on('userModeration', (message) => {
 			console.log(`💌  Event: userModeration ->`, message);
 		});
-
 	};
 
 	const getAuthToken = async () => {
@@ -106,24 +105,24 @@ const MainPage = () => {
 	const doConnect = async (socket: Socket) => {
 		setTimeout(async () => {
 			await getAuthToken()
-			.then(token => {
-				console.log('DOCONNECT');
-				socket.auth = { key: `${token}` };
-				socket.connect();
-			})
-			.catch(err => {
-				console.log('DOCONNECT ERROR ->', err)
-				setWsStatus(undefined);
-				doConnect(socket);
-			});
+				.then((token) => {
+					console.log('DOCONNECT');
+					socket.auth = { key: `${token}` };
+					socket.connect();
+				})
+				.catch((err) => {
+					console.log('DOCONNECT ERROR ->', err);
+					setWsStatus(undefined);
+					doConnect(socket);
+				});
 		}, 1000);
-	}
+	};
 
 	const connectWsStatus = async () => {
 		setTimeout(() => {
 			const socket = io('ws://localhost:3000/chat', {
 				autoConnect: false,
-				reconnection: false
+				reconnection: false,
 			});
 			setWsCallbacks(socket);
 			setWsStatus(socket);
@@ -160,10 +159,11 @@ const MainPage = () => {
 			) : null}
 
 			<Routes>
-				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />
+				<Route path="/MainPage/*" element={<Game wsStatus={wsStatus} />} />
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser setTime={setTime} />} />
 				<Route path="/Rank" element={<UserRank />} />
+
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 		</div>

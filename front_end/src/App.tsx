@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Homepage, MainPage } from './components';
+import * as React from "react";
+import { Homepage, MainPage, Chat } from './components';
 import { Routes, Route } from 'react-router-dom';
 
 import { MainPageProvider } from './MainPageContext';
@@ -11,7 +11,7 @@ const App = () => {
 			<div className="home App">
 				<Routes>
 					<Route path="/" element={<Homepage />} />
-					<Route path="/*" element={<MainPage />} />
+					<Route path="/*" element={(<><MainPage /><Chat /></>)} />
 				</Routes>
 			</div>
 		</MainPageProvider>

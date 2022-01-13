@@ -1,5 +1,5 @@
 .Section {
-	width: 83%;
+	width: 90%;
 	padding: 30px 0 0 30px;
 	margin: 7% 0 0% 40px;
 
@@ -10,7 +10,9 @@
 
 	.profil img {
 		width: 85px;
+		width: 5vw;
 		height: 85px;
+		height: 5vw;
 	}
 
 	.listProfil-1 {
@@ -26,12 +28,14 @@
 		margin: 10px 0 0px 30px;
 		h3 {
 			font-size: 24px;
+			font-size: 1.1vw;
 			color: white;
 		}
 		p {
 			color: #ca6c88;
 			margin: -13px 0 0 0;
 			font-size: 23px;
+			font-size: 1.1vw;
 			line-height: 30px;
 		}
 	}
@@ -57,6 +61,66 @@
 		margin: 60px 0 0 180px;
 	}
 }
+
+// .Section {
+// 	width: 83%;
+// 	padding: 30px 0 0 30px;
+// 	margin: 7% 0 0% 40px;
+
+// 	h3 {
+// 		font-family: Montserrat, sans-serif;
+// 		font-weight: normal;
+// 	}
+
+// 	.profil img {
+// 		width: 85px;
+// 		height: 85px;
+// 	}
+
+// 	.listProfil-1 {
+// 		height: 100%;
+// 	}
+// 	.listProfil-2 {
+// 		margin: 0 100px 0 0;
+// 		height: 100%;
+// 		margin: 0 100px 0 0;
+// 	}
+
+// 	.info {
+// 		margin: 10px 0 0px 30px;
+// 		h3 {
+// 			font-size: 24px;
+// 			color: white;
+// 		}
+// 		p {
+// 			color: #ca6c88;
+// 			margin: -13px 0 0 0;
+// 			font-size: 23px;
+// 			line-height: 30px;
+// 		}
+// 	}
+// 	.profil {
+// 		display: flex;
+// 		width: 100%;
+// 	}
+// 	.profil1 {
+// 		margin: 5px 0 0 30px;
+// 	}
+// 	.profil2 {
+// 		margin: 65px 0 0 100px;
+// 	}
+// 	.profil3 {
+// 		margin: 66px 0 0 200px;
+// 	}
+
+// 	.profil4 {
+// 		margin: 80px 0 0 90px;
+// 	}
+
+// 	.profil5 {
+// 		margin: 60px 0 0 180px;
+// 	}
+// }
 
 ///////////////////////////////////////////////
 //////// reponsive max-width: 1566px  /////////
