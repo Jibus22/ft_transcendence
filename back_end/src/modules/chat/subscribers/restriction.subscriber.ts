@@ -1,17 +1,17 @@
 import {
   Connection,
   EntitySubscriberInterface,
-  EventSubscriber
+  EventSubscriber,
 } from 'typeorm';
-import { ChatGatewayService } from '../gateways/chatGateway.service';
 import { Restriction } from '../entities/restriction.entity';
+import { ChatGateway } from '../gateways/chat.gateway';
 
 @EventSubscriber()
 export class RestrictionSubscriber
   implements EntitySubscriberInterface<Restriction>
 {
   constructor(
-    private readonly chatGatewayService: ChatGatewayService,
+    private readonly chatGateway: ChatGateway,
     connection: Connection,
   ) {
     connection.subscribers.push(this);
