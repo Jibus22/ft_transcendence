@@ -55,10 +55,10 @@ export default function Section() {
 			</div>
 			<div className="listProfil-2">
 				<div className=" profil profil4  ">
-					<UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'} duration={2400} translate={'translate(0px, 0px)'} />
+					<UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'} duration={1200} translate={'translate(-1000px, 0px)'} />
 				</div>
 				<div className=" profil profil5 ">
-					<UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={2400} translate={'translate(0px, 0px)'} />
+					<UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={1700} translate={'translate(-1000px, 0px)'} />
 				</div>
 			</div>
 		</div>

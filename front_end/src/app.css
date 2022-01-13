@@ -9,10 +9,8 @@
 
 .HomePage {
 	min-height: 100vh;
-	min-width: 100vh;
-
-	padding-top: 30px;
-	overflow-x: scroll;
+	padding-bottom: 50px;
+	overflow: hidden;
 }
 
 @-moz-document url-prefix() {
@@ -21,21 +19,8 @@
 	}
 }
 
-/* @media screen and (min-width: 2560px) {
+@media screen and (max-width: 900px) {
 	.HomePage {
-		min-height: 100vh;
-		min-width: 100vh;
 		padding-top: 0px;
 	}
-} */
-
-/* ///////////////////////////////////////////////
-//////// reponsive max-width: 1100px  /////////
-/////////////////////////////////////////////// */
-/* @media screen and (max-width: 1100px) {
-	.HomePage {
-		min-height: 100vh;
-		min-width: 100vh;
-		padding-top: 0px;
-	}
-} */
+}

@@ -1,6 +1,6 @@
 .MainTitlePage {
-	margin: 5% 0% 0% 10%;
-	width: 65%;
+	margin: 4vw 0% 0% 8vw;
+	width: 40vw;
 	height: 20%;
 
 	h1 {
@@ -21,18 +21,19 @@
 		}
 
 		.TitleText {
+			margin-top: 20px;
 			text-align: center;
 
 			h5 {
 				font-weight: 500;
-				font-size: 30px;
+				font-size: 2vw;
 				line-height: 60px;
 				color: #e69c6a;
 			}
 		}
 		.sepTitle {
 			hr {
-				height: 3px;
+				height: 5px;
 				width: 100%;
 				margin: 20px auto;
 				animation-name: slideHr;
@@ -44,12 +45,38 @@
 	}
 }
 
+@media screen and (max-width: 2000px) {
+	.MainTitlePage {
+		.MainTitle {
+			.TitleText {
+				margin-top: 10px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1800px) {
+	.MainTitlePage {
+		margin: 5vw 0% 0% 10vw;
+		.MainTitle {
+			.TitleText {
+				margin-top: 0px;
+			}
+			.sepTitle {
+				hr {
+					height: 4px !important;
+				}
+			}
+		}
+	}
+}
+
 ///////////////////////////////////////////////
 //////// reponsive max-width: 1566px  /////////
 ///////////////////////////////////////////////
 @media screen and (max-width: 1566px) {
 	.MainTitlePage {
-		margin: 5% 0% 0% 10%;
+		margin: 4% 0% 0% 13%;
 		width: 65%;
 		height: 20%;
 
@@ -60,6 +87,11 @@
 			.TitleText {
 				h5 {
 					font-size: 25px;
+				}
+			}
+			.sepTitle {
+				hr {
+					height: 3px !important;
 				}
 			}
 		}
@@ -106,6 +138,11 @@
 					font-size: 21px;
 				}
 			}
+			.sepTitle {
+				hr {
+					height: 2px !important;
+				}
+			}
 		}
 	}
 }
@@ -129,6 +166,30 @@
 				h5 {
 					font-size: 25px;
 					line-height: 30px;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 900px) {
+	.MainTitlePage {
+		width: 400px;
+		height: 150px !important;
+		margin: 70px auto !important;
+
+		h1 {
+			font-size: 50px !important;
+		}
+
+		.MainTitle {
+			text-align: center;
+
+			.TitleText {
+				text-align: center;
+
+				h5 {
+					font-size: 25px;
 				}
 			}
 		}
