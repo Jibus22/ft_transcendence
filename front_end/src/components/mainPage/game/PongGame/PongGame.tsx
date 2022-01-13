@@ -41,6 +41,8 @@ class PongGame extends React.Component {
 	_P2:boolean = false;
 	scoreP1:number = 0;
 	scoreP2:number = 0;
+	gamerunning = true;
+	powerUp = true;
 
 
 	constructor(props:any){
@@ -72,65 +74,10 @@ class PongGame extends React.Component {
 	}
 
 	private _score(ret :number){
-		let random = getRandomInt(100);
 		if (ret == 2)
-			this.scoreP1++;//J2 score
+			this.scoreP2++;//J2 score
 		if (ret == 1)
-			this.scoreP2++;
-		if (random < 5)
-		{
-			//Power up large paddle
-			if (ret == 1)
-			{
-				this._playerOne._largePaddle();
-				client.send(JSON.stringify({
-					type: "message",
-					object: "PowerUp",
-					powerUp : "largePaddle",
-					J : ret
-				}))
-				this._printText("Player One large Paddle");
-				this.sleep();
-			}
-			if (ret == 2)
-			{
-				client.send(JSON.stringify({
-					type: "message",
-					object: "PowerUp",
-					powerUp : "largePaddle",
-					J : ret
-				}));
-				this._printText("Player Two large Paddle");
-				this.sleep();
-			}
-		}
-		if (random >= 95)
-		{
-			//Power Up controle inverse
-			if (ret == 2)
-			{
-				this._playerOne._invertControlTemporarily();
-				client.send(JSON.stringify({
-					type: "message",
-					object: "PowerUp",
-					powerUp : "invertControl",
-					J : ret
-				}));
-				this._printText("Player One inverted Control");
-				this.sleep();
-			}
-			if (ret == 1)
-			{
-				client.send(JSON.stringify({
-					type: "message",
-					object: "PowerUp",
-					powerUp : "invertControl",
-					J : ret
-				}))
-				this._printText("Player Two inverted Control");
-				this.sleep();
-			}
-		}
+			this.scoreP1++;
 		this._ball.y = this.height/2;
 		this._ball.x = this.width/2;
 		client.send(JSON.stringify({
@@ -139,6 +86,67 @@ class PongGame extends React.Component {
 			P1: this.scoreP1,
 			P2: this.scoreP2
 		}));
+		if (!this.powerUp)
+			return;
+		let random = getRandomInt(100);
+		if (random < 45)//5)
+		{
+			//Power up large paddle
+			if (ret == 1)
+			{
+				this._playerOne._largePaddle();
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "large Paddle",
+					J : ret
+				}))
+				this.gamerunning = false;
+				this._printText("Player One large Paddle");
+				setTimeout(()=>this.gamerunning = true, 1000);
+			}
+			if (ret == 2)
+			{
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "large Paddle",
+					J : ret
+				}));
+				this.gamerunning = false;
+				this._printText("Player Two large Paddle");
+				setTimeout(()=>this.gamerunning = true, 1000);
+			}
+		}
+		if (random >= 55)//95)
+		{
+			//Power Up controle inverse
+			if (ret == 2)
+			{
+				this._playerOne._invertControlTemporarily();
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "inverted Control",
+					J : 1
+				}));
+				this.gamerunning = false;
+				this._printText("Player One inverted Control");
+				setTimeout(()=>this.gamerunning = true, 1000);
+			}
+			if (ret == 1)
+			{
+				client.send(JSON.stringify({
+					type: "message",
+					object: "PowerUp",
+					powerUp : "inverted Control",
+					J : 2
+				}))
+				this.gamerunning = false;
+				this._printText("Player Two inverted Control");
+				setTimeout(()=>this.gamerunning = true, 1000);
+			}
+		}
 	}
 
 	private _update(){
@@ -213,8 +221,10 @@ class PongGame extends React.Component {
 
 		//let _loop = 
 		setInterval(() => {
-			this._update();
-			this._draw();
+			if (this.gamerunning)
+				this._update();
+			if (this.gamerunning)
+				this._draw();
 		}, 10);
 	}
 
@@ -248,10 +258,18 @@ class PongGame extends React.Component {
 			}
 			if(!this._P1 && data.object === "PowerUp")
 			{
-				if (data.powerUp == "invertControl" && data.J == 1)
+				if (data.powerUp == "inverted Control" && data.J == 2)
 					this._playerTwo._invertControlTemporarily();
-				if (data.powerUp == "largePaddle" && data.J == 2)
+				if (data.powerUp == "large Paddle" && data.J == 2)
 					this._playerTwo._largePaddle();
+				this.gamerunning = false;
+				let message = "Player "
+				if (data.J == 1)
+					message += "One ";
+				else
+					message += "Two ";
+				this._printText(message + data.powerUp);
+				setTimeout(()=>this.gamerunning = true, 1000);
 			}
 		};
 		setTimeout(() => this._startGame(), 1000);
