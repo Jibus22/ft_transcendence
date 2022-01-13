@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatGateway } from './gateways/chat.gateway';
+import { ChatGateway, ISocketStorage } from './gateways/chat.gateway';
 import { ChatGatewayService } from './gateways/chatGateway.service';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
@@ -37,6 +37,7 @@ import { TaskerService } from './tasker.service';
     ChatMessageSubscriber,
     ParticipantSubscriber,
     RestrictionSubscriber,
+    ISocketStorage
   ],
   exports: [ChatService, TaskerService],
 })
