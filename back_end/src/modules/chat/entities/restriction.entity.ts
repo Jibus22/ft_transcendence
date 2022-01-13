@@ -1,14 +1,6 @@
-import { ConfigService } from '@nestjs/config';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Room } from './room.entity';
-
-const conf = new ConfigService();
 
 @Entity()
 export class Restriction {
@@ -26,5 +18,4 @@ export class Restriction {
 
   @Column()
   expiration_time: number;
-
 }

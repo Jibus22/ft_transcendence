@@ -1,17 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import {
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../../modules/users/entities/users.entity';
 import { Room } from './room.entity';
-
-const conf = new ConfigService();
 
 @Entity()
 export class Participant {
@@ -29,5 +19,4 @@ export class Participant {
 
   @Column({ default: false })
   is_moderator: boolean;
-
 }
