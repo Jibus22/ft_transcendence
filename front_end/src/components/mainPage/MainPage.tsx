@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
-import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
+import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage, ChatRoom } from '..';
 import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../MainPageContext';
 import { io, Socket } from 'socket.io-client';
@@ -66,9 +66,9 @@ const MainPage = () => {
 			});
 		} catch (error) {
 			const err = error as AxiosError;
-			if (err.response?.status === 401) {
-				navigate('/');
-			}
+			// if (err.response?.status === 401) {
+			// 	navigate('/');
+			// }
 			setWsStatus(undefined);
 		}
 	};
@@ -95,10 +95,11 @@ const MainPage = () => {
 			) : null}
 
 			<Routes>
-				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />
+				<Route path="/MainPage/*" element={<Game wsStatus={wsStatus} />} />
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser setTime={setTime} />} />
 				<Route path="/Rank" element={<UserRank />} />
+
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 		</div>

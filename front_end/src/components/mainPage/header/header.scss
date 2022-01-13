@@ -33,7 +33,7 @@
 
 	height: 5vw;
 	height: 80px;
-	height: 100%;
+	height: 47%;
 	margin: 130px 0 0 0;
 
 	.menuHeader {
@@ -48,11 +48,6 @@
 		-webkit-backdrop-filter: blur(7.5px);
 		border: 2px solid rgba(255, 255, 255, 0.6);
 		border-radius: 1.5vw;
-
-		.selectedNave {
-			height: 100%;
-			border-bottom: 2px #e6da6a solid;
-		}
 	}
 
 	.mainNavMenu {
@@ -194,9 +189,15 @@
 			height: 0.09vw;
 		}
 
+		.selectedNave {
+			height: 100%;
+			border-bottom: 2px #e6da6a solid;
+		}
+
 		height: 70px;
 		.menuHeader {
 			border-radius: 1.5vw;
+			border: 2px solid rgba(255, 255, 255, 0.5);
 
 			.selectedNave {
 				height: 90%;
@@ -294,34 +295,113 @@
 	}
 }
 
+@media screen and (max-width: 1060px) {
+	.mainHeader {
+		nav ul li button,
+		nav ul li button:after,
+		nav ul li button:before {
+			transition: all 0.5s;
+		}
+
+		nav.stroke ul li button,
+		nav.fill ul li button {
+			position: relative;
+		}
+		nav.stroke ul li button:after,
+		nav.fill ul li button:after {
+			position: absolute;
+			top: 24px !important;
+			left: 0;
+			right: 0;
+			margin: auto;
+			width: 0%;
+			content: '.';
+			color: transparent;
+			background: #e6da6a;
+			height: 1px;
+		}
+		nav.stroke ul li button:hover:after {
+			width: 100%;
+		}
+
+		nav.stroke ul li h1:after,
+		nav.fill ul li h1:after {
+			top: 80%;
+			height: 1px;
+		}
+
+		.menuHeader {
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			border-radius: 16px;
+		}
+		.queryNav {
+			.selectedNave {
+				height: 100%;
+				border-bottom: 1px #e6da6a solid;
+			}
+			button {
+				text-transform: none;
+				border: none;
+				background: none;
+				color: white;
+				font-size: 14px;
+				margin-top: 5px;
+				height: 25px !important;
+			}
+			@-moz-document url-prefix() {
+				button {
+					margin-top: 2px;
+				}
+			}
+			button:hover {
+				font-size: 15px;
+			}
+		}
+	}
+	.MuiMenu-root {
+	}
+	.MuiPaper-elevation {
+		// background: #4f3e35 !important;
+		border-radius: 15px !important;
+		border: 1px solid rgba(255, 255, 255, 0.6);
+		margin: -1.9px 10px 0% -10px;
+	}
+	// .MuiMenu-list {
+	// 	background: #4f3e35;
+	// }
+	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
+	.MuiMenuItem-root {
+		color: black !important;
+		font-size: 12px !important;
+		font-family: 'Poppins', sans-serif;
+	}
+	.MuiMenuItem-root:hover {
+		background-color: rgba(213, 115, 129, 0.8) !important;
+		border-radius: 6px;
+		color: white !important;
+	}
+}
+
 @media screen and (max-width: 900px) {
 	.mainHeader {
 		width: 100%;
 		justify-content: center;
-
-		nav.stroke ul li h1:after,
-		nav.fill ul li h1:after {
-			top: 90%;
-
-			height: 0.01vw;
-		}
-
-		.menuHeader {
-			border-radius: 14px;
-		}
 	}
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 590px) {
 	.mainHeader {
-		.logHeader {
-			width: 14%;
+		.headerMenu {
+			margin: 0 auto;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
 
-			.profil {
-				.profilLoggin {
-					h2 {
-					}
-				}
+			li {
+				width: 50px;
+			}
+			.leaderDiv {
+				width: 90px;
 			}
 		}
 	}

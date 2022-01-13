@@ -1,11 +1,13 @@
 import './play.scss';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import IconGame from './img/raquette.png';
 import { useSpring, animated } from 'react-spring';
 import { Button, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import FormPlay from './FormPlay';
 import { useMainPage } from '../../../../MainPageContext';
+import { useBoolean, useUnmount } from 'ahooks';
+
 interface Props {
 	Loadingclick: () => void;
 }
@@ -21,13 +23,21 @@ export default function Play({ Loadingclick }: Props) {
 		},
 	});
 
-	const { isDisable, loading } = useMainPage();
+	const { isDisable, loading, setSelectQuery } = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
 
 	function handleChangeWindow() {
 		setIsForm(!isForm);
 	}
+
+	useEffect(() => {
+		setSelectQuery(true);
+
+		return () => {
+			setSelectQuery(false);
+		};
+	});
 
 	let buttonFriends;
 	if (!isForm) {
@@ -60,9 +70,7 @@ export default function Play({ Loadingclick }: Props) {
 					<h1>Do you want to play now ? </h1>
 				</div>
 
-				<div className="iconePLayGame">
-					<img src={IconGame} alt="" />
-				</div>
+				<div className="iconePLayGame">{<img src={IconGame} alt="" />}</div>
 				<div className="playRandom">
 					<LoadingButton
 						className="buttonMui"

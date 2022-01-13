@@ -27,8 +27,6 @@ const UserInfo = ({ img, name, info, translate, duration }: Props) => {
 		},
 	});
 
-	const query = useMediaQuery('(max-width:1000px)');
-
 	return (
 		<animated.div style={anim} className="w-100">
 			<div className="w-100 h-100 d-flex">
@@ -58,10 +56,10 @@ export default function Section() {
 			</div>
 			<div className="listProfil-2">
 				<div className=" profil profil4  ">
-					<UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'} duration={2400} translate={'translate(0px, 0px)'} />
+					<UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'} duration={1200} translate={'translate(-1000px, 0px)'} />
 				</div>
 				<div className=" profil profil5 ">
-					<UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={2400} translate={'translate(0px, 0px)'} />
+					<UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={1700} translate={'translate(-1000px, 0px)'} />
 				</div>
 			</div>
 		</div>

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './onlineGame.scss';
 import { useSpring, animated } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import FF from '../../../homePage/section/photos/FF.png';
 import JB from '../../../homePage/section/photos/JB.png';
-import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
+import { AvatarGroup, Avatar, Badge, CircularProgress, useMediaQuery } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 }
 
 export default function OnlineGame({ Loadingclick }: Props) {
+	const { setSelectQuery } = useMainPage();
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -20,6 +21,16 @@ export default function OnlineGame({ Loadingclick }: Props) {
 			delay: 300,
 			duration: 300,
 		},
+	});
+
+	const query = useMediaQuery('(max-width:1060px)');
+
+	useEffect(() => {
+		setSelectQuery(true);
+
+		return () => {
+			setSelectQuery(false);
+		};
 	});
 
 	const { loading } = useMainPage();
@@ -43,11 +54,12 @@ export default function OnlineGame({ Loadingclick }: Props) {
 					</Badge>
 				</AvatarGroup>
 			</div>
+
 			<div className="userStat d-flex flex-column ">
 				<div className="player d-flex ">
-					<p className="user">frfrance</p>
+					<p className="user">frfrance12</p>
 					<p className="vs">vs</p>
-					<p className="user">jl-core</p>
+					<p className="user">jl-core122</p>
 				</div>
 				<div className="score d-flex">
 					<p>14</p>
@@ -84,6 +96,9 @@ export default function OnlineGame({ Loadingclick }: Props) {
 				</div>
 				<div className="pageOverflow">
 					<div className="onlineDiv">
+						{divTest}
+						{divTest}
+						{divTest}
 						{divTest}
 						{divTest}
 						{divTest}

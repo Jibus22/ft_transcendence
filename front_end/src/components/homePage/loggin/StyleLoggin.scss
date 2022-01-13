@@ -8,18 +8,19 @@
 	background: linear-gradient(141.98deg, #e69c6a -1.02%, rgba(196, 196, 196, 0) 97.99%);
 	backdrop-filter: blur(5px);
 	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(255, 255, 255, 0.9);
-	border-radius: 20px;
-
+	border: 4px solid rgba(255, 255, 255, 0.9);
+	border-radius: 35px;
+	margin-bottom: 200px;
 	.welcome {
 		width: 50%;
 		margin: 15% auto;
 
 		h1 {
 			text-align: center;
-			line-height: 34px;
+			line-height: 2vw;
 			color: white;
 			font-family: Montserrat, sans-serif;
+
 			font-style: normal;
 			font-weight: 400;
 			font-size: 1.8vw;
@@ -29,13 +30,27 @@
 		margin: -6% 0 0 0;
 		img {
 			margin: 0 auto;
-			width: 17%;
+			width: 20% !important;
 		}
 		h1 {
 			margin: 6% auto;
 			color: white;
 			font-family: Montserrat, sans-serif;
 			font-size: 1.5vw;
+			font-weight: 400;
+		}
+	}
+	.inLockImg {
+		margin: -6% 0 0 0;
+		img {
+			margin: 0 auto;
+			width: 26% !important;
+		}
+		h1 {
+			margin: 6% auto;
+			color: white;
+			font-family: Montserrat, sans-serif;
+			font-size: 1.7vw !important;
 			font-weight: 400;
 		}
 	}
@@ -49,12 +64,14 @@
 			width: 100%;
 			height: 100%;
 			background-color: #ca6c88;
-			border: none;
-			border-radius: 8px;
+			// border: none;
+			border-radius: 30px;
+			border: 2px solid rgba(255, 255, 255, 0.9);
 			color: white;
 			font-family: Montserrat, sans-serif;
 			font-size: 1.6vw;
 			font-weight: 500;
+			margin-top: 10px;
 		}
 		.buttonMui:hover {
 			background-color: rgba(202, 108, 136, 0.9);
@@ -70,25 +87,71 @@
 			font-family: Montserrat, sans-serif;
 			text-transform: none;
 			font-size: 1vw;
-			cursor: pointer;
 			color: rgba(0, 0, 0, 0.5);
+			cursor: pointer;
+			display: flex;
+			flex-direction: column;
+
+			&:after {
+				content: '';
+				height: 2px;
+				width: 30%;
+				left: 0;
+				bottom: 26px;
+				opacity: 0;
+				transform: translateY(3px);
+				background: #35589a;
+				transition: opacity 0.2s ease, transform 0.2s ease;
+				margin-left: 35%;
+			}
+
+			&:hover:after {
+				color: #35589a;
+				opacity: 1;
+				transform: translateY(0);
+			}
 		}
 		p:hover {
 			color: #35589a;
 		}
-		p:active {
-			transform: translateY(1px);
+	}
+}
+
+@media screen and (max-width: 2100px) {
+	.mainLoggin {
+		border: 3px solid rgba(255, 255, 255, 0.9);
+		border-radius: 30px;
+
+		.buttonConnect {
+			.buttonMuiConnect {
+				border-radius: 23px;
+				border: 2px solid rgba(255, 255, 255, 0.9);
+			}
 		}
 	}
 }
 
+@media screen and (max-width: 1900px) {
+	.mainLoggin {
+		.welcome {
+			width: 300px;
+		}
+	}
+}
 ///////////////////////////////////////////////
 //////// reponsive max-width: 1800px  /////////
 ///////////////////////////////////////////////
 @media screen and (max-width: 1800px) {
 	.mainLoggin {
 		height: 48%;
+		border: 2px solid rgba(255, 255, 255, 0.9);
 		margin: 15% 8% 0% 0%;
+		.buttonConnect {
+			.buttonMuiConnect {
+				border-radius: 18px;
+				border: 1px solid rgba(255, 255, 255, 0.9);
+			}
+		}
 	}
 }
 @media screen and (max-width: 1670px) {
@@ -116,12 +179,13 @@
 	.mainLoggin {
 		width: 420px;
 		height: 405px;
+		border: 2px solid rgba(255, 255, 255, 0.7);
 		.welcome {
 			margin: 55px auto;
 
 			h1 {
 				line-height: 30px;
-				font-size: 24px;
+				font-size: 25px;
 			}
 		}
 		.lockImg {
@@ -138,7 +202,7 @@
 			height: 50px;
 			margin: 20px auto;
 			.buttonMuiConnect {
-				border-radius: 8px;
+				border-radius: 12px;
 				font-size: 21px;
 			}
 			.buttonMuiConnect:hover {
@@ -169,6 +233,7 @@
 		}
 		.lockImg {
 			margin: -20px 0 0 0;
+
 			img {
 				width: 50px;
 			}
@@ -194,6 +259,12 @@
 		.disconectMui {
 			margin: 30px 0 0 0 !important;
 			text-align: center;
+
+			p {
+				&:after {
+					height: 1px;
+				}
+			}
 		}
 	}
 }
@@ -206,9 +277,8 @@
 		width: 32%;
 		margin: 15% 10% 0% 0%;
 		height: 440px !important;
-		border: 1px solid rgba(255, 255, 255, 0.7);
+		border: 2px solid rgba(255, 255, 255, 0.7);
 		border-radius: 20px;
-		border: 1px solid green;
 
 		.welcome {
 			width: 50%;
@@ -221,6 +291,7 @@
 		}
 		.lockImg {
 			margin: -20px 0 0 0;
+
 			img {
 				margin: 10px auto !important;
 				width: 40px;
@@ -238,7 +309,8 @@
 			.buttonMuiConnect {
 				width: 100%;
 				height: 100%;
-				border-radius: 8px;
+				border: 1px solid rgba(255, 255, 255, 0.6);
+				border-radius: 12px;
 				font-size: 19px;
 			}
 			.buttonMui:hover {
@@ -264,7 +336,7 @@
 		width: 34%;
 		margin: 20% 10% 0% 0%;
 		height: 56%;
-		border: 1px solid rgba(255, 255, 255, 0.7);
+		border: 2px solid rgba(255, 255, 255, 0.7);
 		border-radius: 20px;
 
 		.welcome {
@@ -285,6 +357,16 @@
 			h1 {
 				margin: 23px auto;
 				font-size: 20px;
+			}
+		}
+		.inLockImg {
+			margin: -6% 0 0 0;
+			img {
+				margin: 5px auto;
+				width: 26% !important;
+			}
+			h1 {
+				margin: 20px auto;
 			}
 		}
 
@@ -316,9 +398,8 @@
 		width: 35%;
 		margin: 20% 5% 0% 0%;
 		height: 56%;
-		border: 1px solid rgba(255, 255, 255, 0.7);
+		border: 2px solid rgba(255, 255, 255, 0.7);
 		border-radius: 20px;
-		border: 1px solid green;
 
 		.welcome {
 			width: 60%;
@@ -338,6 +419,15 @@
 			h1 {
 				margin: 23px auto;
 				font-size: 19px;
+			}
+		}
+		.inLockImg {
+			img {
+				margin: 30px auto;
+			}
+			h1 {
+				margin: 10px auto;
+				font-size: 20px !important;
 			}
 		}
 
@@ -363,82 +453,19 @@
 
 @media screen and (max-width: 900px) {
 	.mainLoggin {
-		// position: absolute;
-		// left: 50%;
-		// top: 300px;
-		// transform: translate(-50%, -50%);
 		width: 380px !important;
 		height: 420px !important;
-		margin: 0 auto;
+		margin: 0px auto;
+
+		.welcome {
+			// width: 60%;
+			// margin: 40px auto;
+
+			h1 {
+				font-size: 26px !important;
+			}
+		}
+		.disconectMui {
+		}
 	}
 }
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 1100px  /////////
-///////////////////////////////////////////////
-// @media screen and (max-width: 1100px) {
-// 	.MuiDrawer-paperAnchorRight {
-// 		background: linear-gradient(141.98deg, #e69c6a -1.02%, rgba(196, 196, 196, 0) 97.99%) !important;
-// 		backdrop-filter: blur(5px);
-// 		-webkit-backdrop-filter: blur(10px);
-// 	}
-
-// 	.mainNavMenuLoggin {
-// 		width: 30%;
-// 		padding-top: -15px;
-// 		justify-content: flex-end;
-// 		align-items: flex-start;
-
-// 		.MuiIconButton-root {
-// 			width: 80px;
-// 		}
-// 		.MuiSvgIcon-root {
-// 			color: white;
-// 			width: 100%;
-// 			height: 100%;
-// 		}
-// 	}
-// 	.navTextMenu {
-// 		h1 {
-// 			font-family: Montserrat, sans-serif;
-// 		}
-// 		.nav42Logo {
-// 			width: 130px;
-// 			height: 130px;
-// 			margin: 50px auto;
-// 			img {
-// 				width: 100%;
-// 				height: 100%;
-// 			}
-// 		}
-// 		.nav42Welcome {
-// 			margin: -10px auto;
-
-// 			width: 300px;
-// 			h1 {
-// 				color: white;
-// 				text-align: center;
-// 				font-weight: 400;
-// 				font-size: 2vw;
-// 			}
-// 		}
-// 		.navLock {
-// 			width: 120px;
-// 			height: 120px;
-// 			margin: 100px auto;
-
-// 			img {
-// 				width: 100%;
-// 				height: 100%;
-// 			}
-// 		}
-// 		.navConnect {
-// 			margin: -70px auto;
-// 			h1 {
-// 				color: white;
-// 				font-size: 2vw;
-// 				text-align: center;
-// 			}
-// 		}
-// 	}
-// }
