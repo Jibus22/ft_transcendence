@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
-import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage, ChatRoom } from '..';
+import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
 import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../MainPageContext';
 import { io, Socket } from 'socket.io-client';
@@ -17,65 +17,129 @@ const MainPage = () => {
 	const [isHeader, setIsHeader] = useState(true);
 
 	let navigate = useNavigate();
-	const fetchDataUserMe = async () => {
-		try {
-			const { data } = await axios.get('http://localhost:3000/me', {
-				withCredentials: true,
-			});
 
-			setData([data]);
-		} catch (error) {
-			const err = error as AxiosError;
-			if (err.response?.status === 401) {
-				navigate('/');
-			}
-		}
+	const fetchDataUserMe = async () => {
+		return await axios.get('http://localhost:3000/me', {
+			withCredentials: true,
+		})
+		.then((response) => {
+			setData([response.data]);
+		});
 	};
 
-	const connectWsStatus = async () => {
-		try {
-			const response = await axios('http://localhost:3000/auth/ws/token', {
-				withCredentials: true,
-			});
+	const setWsCallbacks = (socket: Socket) => {
+		/* -----------------------
+		 ** Connection
+		 * -----------------------*/
+
+		socket.on('connect', () => {
+			console.log(`WS CONNECT`);
+		});
+
+		socket.on('disconnect', () => {
+			console.log(`WS DISCONNECTED`);
+			doConnect(socket);
+		});
+
+		socket.on('connect_error', async (err) => {
+			console.log('connect_error', err);
+			connectWsStatus();
+		});
+
+		socket.io.on('error', (error) => {
+			console.log('⚠️ RECEIVED ERROR', error);
+		});
+
+		/* -----------------------
+		 ** Events
+		 * -----------------------*/
+
+		socket.on('publicRoomCreated', (message) => {
+			console.log('✅  publicRoomCreated', message);
+		});
+		socket.on('publicRoomRemoved', (message) => {
+			console.log('🚮  publicRoomRemoved', message);
+		});
+
+		socket.on('newMessage', (message) => {
+			console.log(`💌  Event: newMessage ->`, message);
+		});
+
+		socket.on('participantJoined', (message) => {
+			console.log(`💌  Event: participantJoined ->`, message);
+		});
+
+		socket.on('participantLeft', (message) => {
+			console.log(`💌  Event: participantLeft ->`, message);
+		});
+
+		socket.on('userAdded', (message) => {
+			console.log(`💌  Event: userAdded ->`, message);
+		});
+
+		socket.on('userBanned', (message) => {
+			console.log(`💌  Event: userBanned ->`, message);
+		});
+
+		socket.on('userMuted', (message) => {
+			console.log(`💌  Event: userMuted ->`, message);
+		});
+
+		socket.on('userModeration', (message) => {
+			console.log(`💌  Event: userModeration ->`, message);
+		});
+	};
+
+	const getAuthToken = async () => {
+		return await axios('http://localhost:3000/auth/ws/token', {
+			withCredentials: true,
+		}).then((response) => {
 			const { token } = response.data;
 			if (!token) {
 				throw new Error('no valid token');
 			}
-			const socket = io('ws://localhost:3000', {
-				auth: {
-					key: token,
-				},
-			});
-			socket.on('connect_error', (err) => {
-				setWsStatus(undefined);
-				console.log(`ws connect_error due to ${err.message}`);
-			});
-
-			socket.on('connect', () => {
-				setWsStatus(socket);
-				console.log(`WS CONNECTED`);
-			});
-
-			socket.on('error', (error) => {
-				console.log(error);
-			});
-
-			socket.on('disconnect', () => {
-				setWsStatus(undefined);
-				console.log(`WS DISCONNECTED`);
-			});
-		} catch (error) {
-			const err = error as AxiosError;
-			// if (err.response?.status === 401) {
-			// 	navigate('/');
-			// }
-			setWsStatus(undefined);
-		}
+			return token;
+		});
 	};
 
-	useMount(() => {
-		fetchDataUserMe();
-		connectWsStatus();
+	const doConnect = async (socket: Socket) => {
+		setTimeout(async () => {
+			await getAuthToken()
+				.then((token) => {
+					console.log('DOCONNECT');
+					socket.auth = { key: `${token}` };
+					socket.connect();
+				})
+				.catch((err) => {
+					console.log('DOCONNECT ERROR ->', err);
+					setWsStatus(undefined);
+					doConnect(socket);
+				});
+		}, 1000);
+	};
+
+	const connectWsStatus = async () => {
+		setTimeout(() => {
+			const socket = io('ws://localhost:3000/chat', {
+				autoConnect: false,
+				reconnection: false,
+			});
+			setWsCallbacks(socket);
+			setWsStatus(socket);
+			doConnect(socket);
+		}, 500);
+	};
+
+	useMount(async () => {
+		await fetchDataUserMe()
+		.then(() => {
+			connectWsStatus();
+		})
+		.catch((err) => {
+			if (err.response?.status === 401) {
+				navigate('/');
+			}
+		});
 	});
 
 	const resetTimeSnack = () => {

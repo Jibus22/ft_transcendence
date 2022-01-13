@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './StyleLoggin.scss';
 import FormLogin from './formLogin/FormLogin';
-import Lock from './other/Vector.png';
 import unLock from './other/unlocked.png';
 import inLock from './other/lock.png';
 import Button from '@mui/material/Button';

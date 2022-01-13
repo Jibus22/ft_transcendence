@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './header.scss';
 import { useMainPage } from '../../../MainPageContext';
 import { NavLink as Link } from 'react-router-dom';
-import { Badge, Avatar, useMediaQuery, Menu, MenuItem, Button } from '@mui/material';
-// import { withStyles } from '@material-ui/core/styles';
-
+import { Badge, Avatar, useMediaQuery, Menu, MenuItem } from '@mui/material';
 export default function Header() {
-	const { data, userName, userImg, setUserName, setUserImg, setSelectQuery, selectQuery } = useMainPage();
+	const { data, userName, userImg, setUserName, setUserImg, selectQuery } = useMainPage();
 
 	const query = useMediaQuery('(max-width:850px)');
 	const queryNav = useMediaQuery('(max-width:1060px)');
@@ -33,7 +31,6 @@ export default function Header() {
 			<nav className="navbar   menuHeader stroke ">
 				<div className="d-flex  mainNavMenu">
 					<ul className="navbar-nav headerMenu  w-100 ">
-						{/* <li className="nav-item  linkLogoNav"> */}
 						{queryNav ? (
 							<li className="nav-item  linkLogoNav queryNav">
 								<button onClick={handleClick} className={`${selectQuery ? 'selectedNave' : ''} `}>

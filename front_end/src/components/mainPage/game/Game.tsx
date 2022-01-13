@@ -1,10 +1,9 @@
 import { useMediaQuery } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Socket } from 'socket.io-client';
 import { Play, OnlineGame } from '../..';
 import { useMainPage } from '../../../MainPageContext';
 import './game.scss';
-import NavGame from './navGame/NavGame';
 import { Routes, Route } from 'react-router-dom';
 
 interface Props {

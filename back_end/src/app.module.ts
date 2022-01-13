@@ -19,8 +19,7 @@ import { MeController } from './modules/users/me.controller';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
-import { StatusGateway } from './status.gateway';
-
+import { GameModule } from './modules/game/game.module';
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -37,10 +36,10 @@ const cookieSession = require('cookie-session');
     HttpModule,
     ChatModule,
     UsersModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [
-    StatusGateway,
     AuthService,
     AppService,
     {

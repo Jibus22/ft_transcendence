@@ -6,7 +6,6 @@ import JB from './photos/JB.png';
 import VG from './photos/VG.png';
 import BG from './photos/BG.png';
 import { useSpring, animated } from 'react-spring';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 interface Props {
 	img: string;

@@ -1,12 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import exp from 'constants';
 import { AppModule } from '../../src/app.module';
-import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
-import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
-import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
-import { Participant } from '../../src/modules/chat/entities/participant.entity';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 import { ChatHelpers, RandomRoom } from './helpers';
@@ -134,7 +128,7 @@ describe('CHAT: Join/leave rooms', () => {
     let createdRooms: RandomRoom[];
 
     await chatHelper
-      .generateManyRandomRoomsForRandomUsers(nbOfRooms, 0.5, 1)
+      .generateManyRandomRoomsForLoggedUser(nbOfRooms, 0.5, 1)
       .then(async (rooms: RandomRoom[]) => {
         createdRooms = rooms;
         expect(createdRooms.length).toEqual(nbOfRooms);
@@ -142,9 +136,6 @@ describe('CHAT: Join/leave rooms', () => {
         expect(loggedUser.id.length).toBeGreaterThan(0);
 
         const ownedRooms = await chatHelper.getOwnedRooms();
-        const userRoomsLen: number = await chatHelper
-          .getOwnedRooms()
-          .then((r) => r.length);
 
         expect(ownedRooms.length).not.toBe(0);
         await Promise.all(
@@ -154,9 +145,9 @@ describe('CHAT: Join/leave rooms', () => {
             });
           }),
         ).then(async () => {
-          expect(await chatHelper.getOwnedRooms()
-            .then((r) => r.length))
-            .toBe(0);
+          expect(await chatHelper.getOwnedRooms().then((r) => r.length)).toBe(
+            0,
+          );
         });
       });
   });

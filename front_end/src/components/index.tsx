@@ -16,3 +16,4 @@ export { default as OnlineGame } from './mainPage/game/onlineGame/OnlineGame';
 export { default as Game } from './mainPage/game/Game';
 export { default as SnackBarre } from './mainPage/snackBar/SnackBarre';
 export { default as ErrorPage } from './mainPage/errorPage/ErrorPage';
+export { default as Chat } from './chat/Chat.component';

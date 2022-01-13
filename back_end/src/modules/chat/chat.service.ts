@@ -332,12 +332,12 @@ export class ChatService {
   async createMessage(
     room: Room,
     user: User,
-    messageDto: Partial<ChatMessage>,
+    newMessage: Partial<ChatMessage>,
   ) {
-    messageDto.room = room;
-    messageDto.sender = user;
-    messageDto.timestamp = this.getNow();
-    const message = this.repoMessage.create(messageDto);
+    newMessage.room = room;
+    newMessage.sender = user;
+    newMessage.timestamp = this.getNow();
+    const message = this.repoMessage.create(newMessage);
     return await this.repoMessage.save(message);
   }
 }

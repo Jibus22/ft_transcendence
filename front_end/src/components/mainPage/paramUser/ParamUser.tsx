@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
-import { CircularProgress, Button, IconButton, Avatar } from '@mui/material';
-import Backdrop from '@mui/material/Backdrop';
+import { Button, IconButton, Avatar } from '@mui/material';
 import FormUser from './FormUser';
 import PencilIcon from './photos/pencil-icon.png';
 import { useMainPage } from '../../../MainPageContext';

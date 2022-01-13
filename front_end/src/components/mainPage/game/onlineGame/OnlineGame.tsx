@@ -4,7 +4,7 @@ import { useSpring, animated } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import FF from '../../../homePage/section/photos/FF.png';
 import JB from '../../../homePage/section/photos/JB.png';
-import { AvatarGroup, Avatar, Badge, CircularProgress, useMediaQuery } from '@mui/material';
+import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 interface Props {
@@ -22,8 +22,6 @@ export default function OnlineGame({ Loadingclick }: Props) {
 			duration: 300,
 		},
 	});
-
-	const query = useMediaQuery('(max-width:1060px)');
 
 	useEffect(() => {
 		setSelectQuery(true);
