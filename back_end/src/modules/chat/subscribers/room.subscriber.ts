@@ -6,9 +6,9 @@ import {
   InsertEvent,
   RemoveEvent,
 } from 'typeorm';
-import { ChatGateway } from '../gateways/chat.gateway';
 import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
+import { ChatGateway } from '../gateways/chat.gateway';
 
 @EventSubscriber()
 export class RoomSubscriber implements EntitySubscriberInterface<Room> {
@@ -25,24 +25,20 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
 
   afterInsert(event: InsertEvent<Room>) {
     if (event.entity.is_private === false) {
-      this.chatGateway.broadcastEventToServer(
+      this.chatGateway.sendEventToServer(
         'publicRoomCreated',
-        JSON.stringify(
-          plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
-        ),
+        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
       );
     }
   }
 
-  beforeRemove(event: RemoveEvent<Room>) {
+  afterRemove(event: RemoveEvent<Room>) {
     if (event.entity.is_private === false) {
       delete event.entity?.participants;
       delete event.entity?.restrictions;
-      this.chatGateway.broadcastEventToServer(
+      this.chatGateway.sendEventToServer(
         'publicRoomRemoved',
-        JSON.stringify(
-          plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
-        ),
+        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
       );
     }
   }
