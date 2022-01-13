@@ -1,40 +1,65 @@
 .mainFormLogin {
 	width: 70%;
-	margin: auto;
+	margin: 3% auto;
 
 	// taille du textfield
 	.MuiOutlinedInput-root {
 		width: 100%;
 		height: 50px;
+		height: 3.5vw;
 	}
 
 	// label materialUi input
 	.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
-		margin-top: -3px;
-		font-size: 1vw;
-	}
-
-	// label material ui haut non focus
-	.css-1kty9di-MuiFormLabel-root-MuiInputLabel-root {
 		font-size: 1.2vw;
-		margin: 0% 0% 0% -0.6%;
+		position: absolute;
+		left: 15%;
+		top: 50%;
+		transform: translate(-50%, -50%);
 	}
 
-	// label materialUI haut focus
-	.css-1kty9di-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
-		margin: 0% 0% 0% 0.2%;
+	.Mui-focused {
+		color: white !important;
+	}
+	.MuiOutlinedInput-input {
+		margin: 0% 0% 0% 8%;
+	}
+
+	.MuiInputLabel-root.MuiInputLabel-shrink {
+		margin: -2% 0% 0% 2%;
+		font-size: 1.5vw;
+	}
+
+	.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+		left: 1.8vw;
+		position: absolute;
+		left: 15%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	& .MuiInputLabel-shrink,
+	& fieldset {
+		font-size: 2vw;
+	}
+
+	.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
+		margin-left: 4px !important;
+		border: 1px solid red !important;
 	}
 
 	.MuiIconButton-root {
-		width: 45px;
+		width: 3vw;
 		height: 45px;
-		margin: 0 -13px 0 0px;
+		height: 3vw;
+		margin: 0 0px 0 0px;
 	}
 
 	.MuiOutlinedInput-notchedOutline {
-		border-color: #ca6c88;
-		border-radius: 15px;
+		border: 3px solid #ca6c88;
+		border-radius: 1.3vw;
 	}
+
 	.Mui-focused {
 		color: black;
 		font-size: 1.3vw;
@@ -45,15 +70,15 @@
 	}
 
 	& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-		border: 1px solid #71dfe7;
+		border: 3px solid #71dfe7;
+		border-radius: 1.3vw;
 	}
 	.MuiFormHelperText-root {
 		color: red !important;
-		font-size: 0.7vw !important;
+		font-size: 0.9vw !important;
 
 		position: absolute;
 		left: 45%;
-		position: absolute;
 		top: 120%;
 		transform: translate(-50%, -50%);
 	}
@@ -69,5 +94,94 @@
 		animation-iteration-count: 1;
 		animation-direction: normal;
 		animation-fill-mode: none;
+	}
+}
+
+@media screen and (max-width: 1950px) {
+	.mainFormLogin {
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+			margin: -1% 0% 0% 2%;
+		}
+	}
+}
+
+@media screen and (max-width: 1700px) {
+	.mainFormLogin {
+		.MuiOutlinedInput-notchedOutline {
+			border: 2px solid #ca6c88;
+			border-radius: 1.3vw;
+		}
+		& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+			border: 2px solid #71dfe7;
+			border-radius: 1.3vw;
+		}
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	.mainFormLogin {
+		.MuiOutlinedInput-root {
+			height: 53px !important;
+		}
+		.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+			font-size: 1.2vw;
+			font-size: 18px !important;
+		}
+
+		.MuiOutlinedInput-notchedOutline {
+			border-radius: 20px !important;
+		}
+		& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+			border-radius: 20px !important;
+		}
+
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+			font-size: 23px !important;
+		}
+
+		.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+			// left: 1.8vw;
+			// position: absolute;
+			// left: 15%;
+			// top: 50%;
+			// transform: translate(-50%, -50%);
+		}
+
+		& .MuiInputLabel-shrink,
+		& fieldset {
+			font-size: 28px !important;
+		}
+		.Mui-focused {
+			color: black;
+			// font-size: 1.3vw;
+			// font-size: 30px !important;
+			// border: 1px solid red !important;
+		}
+
+		.MuiOutlinedInput-input {
+			font-size: 20px !important;
+		}
+	}
+}
+
+@media screen and (max-width: 1220px) {
+	.mainFormLogin {
+		margin-top: 20px !important;
+
+		.MuiIconButton-root {
+			width: 43px !important;
+			height: 43px !important;
+		}
+
+		.MuiFormHelperText-root {
+			color: red !important;
+			font-size: 11px !important;
+
+			position: absolute;
+			left: 45%;
+			position: absolute;
+			top: 120%;
+			transform: translate(-50%, -50%);
+		}
 	}
 }
