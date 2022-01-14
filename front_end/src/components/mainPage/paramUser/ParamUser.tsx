@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import './safari.css';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
 import { Button, IconButton, Avatar } from '@mui/material';
