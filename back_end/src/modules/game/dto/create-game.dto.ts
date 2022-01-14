@@ -1,4 +1,4 @@
-import { IsUUID } from 'class-validator';
+import { IsString } from 'class-validator';
 // import { User } from '../../users/entities/users.entity';
 
 // without class-validator (ex: @IsUUID), data don't pass in 'create' route:
@@ -8,8 +8,8 @@ import { IsUUID } from 'class-validator';
 // any type pass thru and this is an issue.
 
 export class CreateGameDto {
-  @IsUUID()
-  uuidP1: string;
-  @IsUUID()
-  uuidP2: string;
+  @IsString()
+  loginP1: string;
+  @IsString()
+  loginP2: string;
 }

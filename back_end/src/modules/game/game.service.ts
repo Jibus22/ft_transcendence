@@ -18,8 +18,8 @@ export class GameService {
   ) {}
 
   async create(createGameDto: CreateGameDto) {
-    const user1 = await this.userService.findOne(createGameDto.uuidP1);
-    const user2 = await this.userService.findOne(createGameDto.uuidP2);
+    const user1 = await this.userService.findLogin(createGameDto.loginP1);
+    const user2 = await this.userService.findLogin(createGameDto.loginP2);
 
     if (!user1 || !user2) return null;
 
