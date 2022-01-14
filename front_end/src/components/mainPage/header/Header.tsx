@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './header.scss';
 import { useMainPage } from '../../../MainPageContext';
 import { NavLink as Link } from 'react-router-dom';
-import { Badge, Avatar, useMediaQuery, Menu, MenuItem } from '@mui/material';
+import { Badge, Avatar, useMediaQuery, Menu, MenuItem, Button } from '@mui/material';
+
 export default function Header() {
-	const { data, userName, userImg, setUserName, setUserImg, selectQuery } = useMainPage();
+	const { data, userName, userImg, setUserName, setUserImg, setSelectQuery, selectQuery } = useMainPage();
 
 	const query = useMediaQuery('(max-width:850px)');
 	const queryNav = useMediaQuery('(max-width:1060px)');
@@ -31,6 +32,7 @@ export default function Header() {
 			<nav className="navbar   menuHeader stroke ">
 				<div className="d-flex  mainNavMenu">
 					<ul className="navbar-nav headerMenu  w-100 ">
+						{/* <li className="nav-item  linkLogoNav"> */}
 						{queryNav ? (
 							<li className="nav-item  linkLogoNav queryNav">
 								<button onClick={handleClick} className={`${selectQuery ? 'selectedNave' : ''} `}>
@@ -48,8 +50,8 @@ export default function Header() {
 									<Link to="/MainPage/New-game">
 										<MenuItem onClick={handleClose}>New Game</MenuItem>
 									</Link>
-									<Link to="/MainPage/Only-game">
-										<MenuItem onClick={handleClose}>Only Game</MenuItem>
+									<Link to="/MainPage/Onlines-game">
+										<MenuItem onClick={handleClose}>Onlines game</MenuItem>
 									</Link>
 								</Menu>
 							</li>

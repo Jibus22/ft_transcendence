@@ -1,0 +1,126 @@
+.mainFormHistory {
+	display: flex;
+	justify-content: flex-start;
+	height: 100%;
+	width: 17vw;
+	margin-left: 3vw;
+
+	.MuiOutlinedInput-root {
+		height: 100%;
+	}
+	// color border
+	.MuiOutlinedInput-notchedOutline {
+		border: 2px solid #e69c6a;
+		border-radius: 2vw;
+	}
+	.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+		border: 2px solid #71dfe7;
+		border-radius: 2vw;
+	}
+	// label placeHolder
+	.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+		color: rgba(255, 255, 255, 0.7);
+		font-size: 0.9vw;
+		position: absolute;
+		left: 20%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+	// input
+	.MuiOutlinedInput-input {
+		font-size: 0.8vw;
+		padding: 0 0 0 1.5vw;
+		color: white;
+	}
+
+	.MuiInputLabel-root.MuiInputLabel-shrink {
+		font-size: 0.8vw;
+		color: white;
+		position: absolute;
+		left: 2vw;
+		top: 0%;
+		transform: translate(-50%, -50%);
+	}
+
+	// size etiquette
+	.MuiOutlinedInput-root,
+	fieldset {
+		font-size: 1.1vw;
+	}
+
+	.MuiIconButton-root {
+		width: 2.2vw;
+	}
+	.MuiIconButton-root:hover {
+		width: 2.3vw;
+	}
+}
+
+@media screen and (max-width: 1900px) {
+	.mainFormHistory {
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+			left: 2.2vw;
+			top: 0%;
+		}
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	.mainFormHistory {
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+			left: 2.4vw;
+			top: 0%;
+		}
+		.MuiOutlinedInput-notchedOutline {
+			border: 1px solid #e69c6a;
+		}
+		.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+			border: 1px solid #71dfe7;
+		}
+	}
+}
+
+@media screen and (max-width: 1270px) {
+	.mainFormHistory {
+		width: 180px !important;
+		margin-left: 3vw;
+
+		.MuiOutlinedInput-root {
+			height: 100%;
+		}
+		// color border
+		.MuiOutlinedInput-notchedOutline {
+			border-radius: 13px !important;
+		}
+		.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+			border-radius: 13px !important;
+		}
+		// label placeHolder
+		.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
+			font-size: 10px;
+		}
+		// input
+		.MuiOutlinedInput-input {
+			font-size: 11px;
+			padding: 0 0px 0 10px !important;
+		}
+
+		.MuiInputLabel-root.MuiInputLabel-shrink {
+			font-size: 9px;
+			left: 26px;
+		}
+
+		// size etiquette
+		.MuiOutlinedInput-root,
+		fieldset {
+			font-size: 11px;
+		}
+
+		.MuiIconButton-root {
+			width: 30px;
+		}
+		.MuiIconButton-root:hover {
+			width: 32px;
+		}
+	}
+}

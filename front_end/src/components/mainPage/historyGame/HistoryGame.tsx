@@ -7,8 +7,9 @@ import { styled } from '@mui/material/styles';
 import { useSpring, animated } from 'react-spring';
 import FF from '../../homePage/section/photos/FF.png';
 import JB from '../../homePage/section/photos/JB.png';
-import { InputAdornment, Button, AvatarGroup, Avatar, Badge, TextField } from '@mui/material';
+import { InputAdornment, Button, AvatarGroup, Avatar, Badge, TextField, useMediaQuery } from '@mui/material';
 import axios, { AxiosError } from 'axios';
+import FormHistory from './formHistory/FormHistory';
 
 interface Users {
 	idJ1: string;
@@ -16,17 +17,6 @@ interface Users {
 	scoreJ1: number;
 	scoreJ2: number;
 }
-
-const CssTextField = styled(TextField)({
-	'& label.Mui-focused': {
-		color: 'white',
-	},
-	'& .MuiOutlinedInput-root': {
-		'& fieldset': {
-			borderColor: '#E69C6A',
-		},
-	},
-});
 
 const HistoryGame = () => {
 	const props = useSpring({
@@ -40,42 +30,37 @@ const HistoryGame = () => {
 	});
 
 	const [data, setData] = useState<Array<Users>>([]);
+	const query = useMediaQuery('(max-width: 1000px)');
+	const querySearch = useMediaQuery('(max-width: 900px)');
 
-	useEffect(() => {
-		fetchData();
-	}, []);
+	const [isActive, setIsActive] = useState(false);
 
-	const fetchData = async () => {
-		try {
-			const { data } = await axios.get('https://run.mocky.io/v3/e2d38cd0-0908-44a0-96fb-b85c2a40c28b', {
-				withCredentials: true,
-			});
-			setData(data);
-			console.log(data);
-		} catch (error) {
-			const err = error as AxiosError;
-			console.log(err);
-		}
-	};
+	function handleIsActive() {
+		setIsActive(!isActive);
+	}
 
 	let divHistory = (
 		<div className="infoHistory ">
-			<div className="userImg d-flex ">
-				<AvatarGroup max={2}>
-					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-						<Avatar alt="userImg" src={FF} variant="square" className="domUser" />
-					</Badge>
-					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-						<Avatar alt="userImg" src={JB} variant="rounded" className="extUser" />
-					</Badge>
-				</AvatarGroup>
-			</div>
+			<div className="mainPlayer">
+				{!query ? (
+					<div className="userImg d-flex ">
+						<AvatarGroup max={2}>
+							<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
+								<Avatar alt="userImg" src={FF} variant="square" className="domUser" />
+							</Badge>
+							<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
+								<Avatar alt="userImg" src={JB} variant="rounded" className="extUser" />
+							</Badge>
+						</AvatarGroup>
+					</div>
+				) : null}
 
-			<div className="playerName ">
-				<div className="player d-flex ">
-					<p>frfrance</p>
-					<p className="vs">vs</p>
-					<p>jl-core</p>
+				<div className="playerName ">
+					<div className="player d-flex ">
+						<p>frfrance12</p>
+						<p className="vs">vs</p>
+						<p>jl-core123</p>
+					</div>
 				</div>
 			</div>
 			<div className="playerScore d-flex ">
@@ -99,46 +84,25 @@ const HistoryGame = () => {
 		</div>
 	);
 
-	const [isActive, setIsActive] = useState(false);
-
-	function handleIsActive() {
-		setIsActive(!isActive);
-	}
-
 	return (
 		<animated.div style={props} className="w-100">
 			<div className="mainHisUser  d-flex flex-column  ">
 				<div className="searchCase ">
 					<h1>History</h1>
 
-					<div className="d-flex">
+					<div className="d-flex  MainmyGameDIv ">
 						<div className="myGameDIv d-flex">
 							<Button
 								onClick={handleIsActive}
-								className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton`}
+								className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton `}
 								variant="contained"
-								sx={{ width: 2 / 2, textTransform: 'none' }}
+								sx={{ width: 2 / 2, height: 2 / 2, textTransform: 'none' }}
 							>
 								My game
 							</Button>
 						</div>
 						<div>
-							<CssTextField
-								sx={{ textDecoration: 'none', height: 2 / 2 }}
-								autoComplete="off"
-								className="searchBarre "
-								id="outlined-basic"
-								variant="outlined"
-								size="small"
-								label="Search"
-								InputProps={{
-									endAdornment: (
-										<InputAdornment position="end">
-											<SearchIcon sx={{ color: pink[50], fontSize: 20 }} />
-										</InputAdornment>
-									),
-								}}
-							/>
+							<FormHistory />
 						</div>
 					</div>
 				</div>
@@ -153,9 +117,15 @@ const HistoryGame = () => {
 				<div className="pageOverflow ">
 					<div className="histUser ">
 						{divHistory}
+
 						{divHistory}
+
 						{divHistory}
+
 						{divHistory}
+
+						{divHistory}
+
 						{divHistory}
 					</div>
 				</div>
