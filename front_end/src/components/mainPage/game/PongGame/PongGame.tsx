@@ -94,7 +94,7 @@ class PongGame extends React.Component {
 			//Power up large paddle
 			if (ret == 1)
 			{
-				this._playerOne._largePaddle();
+				this._playerOne._largePaddle(this.height);
 				client.send(JSON.stringify({
 					type: "message",
 					object: "PowerUp",
@@ -261,7 +261,7 @@ class PongGame extends React.Component {
 				if (data.powerUp == "inverted Control" && data.J == 2)
 					this._playerTwo._invertControlTemporarily();
 				if (data.powerUp == "large Paddle" && data.J == 2)
-					this._playerTwo._largePaddle();
+					this._playerTwo._largePaddle(this.height);
 				this.gamerunning = false;
 				let message = "Player "
 				if (data.J == 1)

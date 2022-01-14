@@ -80,9 +80,12 @@ export class Player {
 		setTimeout(() => this._invertControl(), 10 * 1000);
 	}
 
-	_largePaddle()
+	_largePaddle(height: number)
 	{
-		this.size += 20;
+		let enlargement = 20;
+		if (this.y + this.size + enlargement > height)
+			this.y += height - (this.y + this.size + enlargement);
+		this.size += enlargement;
 		setTimeout(() => this.size-=20, 10 * 1000);
 
 	}
