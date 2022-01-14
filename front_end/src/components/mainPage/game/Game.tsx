@@ -47,7 +47,7 @@ export default function Game({ wsStatus }: Props) {
 				<Routes>
 					<Route path="/*" element={<Play Loadingclick={handleClick} />} />
 
-					<Route path="/Only-game" element={<OnlineGame Loadingclick={handleClick} />} />
+					<Route path="/Onlines-game" element={<OnlineGame Loadingclick={handleClick} />} />
 				</Routes>
 			)}
 			{/* <Play Loadingclick={handleClick} /> */}
