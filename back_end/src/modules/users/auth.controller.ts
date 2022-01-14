@@ -191,7 +191,9 @@ export class AuthController {
   async producteWsToken(@CurrentUser() user) {
     const token = randomUUID() + '.' + user.id;
     await this.cacheManager.set(token, user.id, { ttl: 4});
-    console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
+    }
     return { token };
   }
 }
