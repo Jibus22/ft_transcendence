@@ -3,8 +3,6 @@ import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
 import { Events, messageType } from '../../../src/modules/chat/gateways/chat.gateway';
 
-var faker = require('faker');
-
 export class WsChatHelpers {
   public static socket: Socket;
   public static app: INestApplication;

@@ -8,8 +8,7 @@ import {
 } from 'typeorm';
 import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
-import { ChatGateway } from '../gateways/chat.gateway';
-import { Events } from '../gateways/chat.gateway';
+import { ChatGateway, Events } from '../gateways/chat.gateway';
 
 @EventSubscriber()
 export class RoomSubscriber implements EntitySubscriberInterface<Room> {
@@ -29,15 +28,15 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
       this.chatGateway.sendEventToServer(
         Events.PUBLIC_ROOM_CREATED,
         plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
-        );
-      }
+      );
     }
+  }
 
-    beforeRemove(event: RemoveEvent<Room>) {
-      if (event.entity.is_private === false) {
-        delete event.entity?.participants;
-        delete event.entity?.restrictions;
-        this.chatGateway.sendEventToServer(
+  beforeRemove(event: RemoveEvent<Room>) {
+    if (event.entity.is_private === false) {
+      delete event.entity?.participants;
+      delete event.entity?.restrictions;
+      this.chatGateway.sendEventToServer(
         Events.PUBLIC_ROOM_REMOVED,
         plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
       );
