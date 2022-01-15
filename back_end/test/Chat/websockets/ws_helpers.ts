@@ -1,34 +1,55 @@
 import { INestApplication } from '@nestjs/common';
-import * as express from 'express';
+import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
-import * as bodyParser from 'body-parser';
-import { SocketService } from './socket.service';
+import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
 
 var faker = require('faker');
 
 export class WsChatHelpers {
-  public static socket: SocketService;
-  private static app: INestApplication;
-  private static server: express.Express;
+  public static socket: Socket;
+  public static app: INestApplication;
+  public static events: { ev: Events; payload: string }[] = [];
 
-  public static async startServer(app: INestApplication) {
+  public static async setupIo(
+    app: INestApplication,
+    url: string = 'ws://localhost:3000/chat',
+    ) {
+    this.events = [];
+    this.socket = io(url, {
+      autoConnect: false,
+      forceNew: true,
+    });
     this.app = app;
-    this.server = express();
-    this.server.use(bodyParser.json());
   }
 
-  public static createSocket(defer: boolean = false, token?: string) {
-    this.socket = new SocketService(defer, token);
-    return this.socket;
+  public static async setupToken(token: string) {
+    this.socket.auth = { key: token };
+  }
+
+  public static connectSocket() {
+    return this.socket.connect();
   }
 
   public static closeSocket() {
-    this.socket.close();
+    this.events = [];
+    return this.socket.close();
   }
 
   public static async getToken(cookies: string[]) {
     return await request(this.app.getHttpServer())
       .get('/auth/ws/token')
       .set('Cookie', cookies);
+  }
+
+  private static setListenner(ev: Events, conn: Socket) {
+    conn.on(ev, (payload) => {
+      this.events.push({ ev, payload });
+    });
+  }
+
+  public static setAllEventsListenners(conn: Socket) {
+    for (let i in Events) {
+      this.setListenner(Events[i], conn);
+    }
   }
 }
