@@ -56,10 +56,12 @@ export class ChatGatewayService {
   }
 
   private handleConnectionFailure(client: Socket, errorMessage: string) {
-    console.log(
-      `handleConnection: client ${client.id} disconnected !🛑  -> `,
-      errorMessage,
-    );
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(
+        `handleConnection: client ${client.id} disconnected !🛑  -> `,
+        errorMessage,
+      );
+    }
     client._error({ message: errorMessage });
     return client.disconnect();
   }
@@ -81,7 +83,9 @@ export class ChatGatewayService {
     if (!userId) {
       return this.handleConnectionFailure(client, 'invalid token');
     }
-    console.log(`handleConnection: ${client.id} | token ${token}`);
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`handleConnection: ${client.id} | token ${token}`);
+    }
 
     await this.usersService
       .update(userId, {
@@ -91,7 +95,9 @@ export class ChatGatewayService {
         this.handleConnectionFailure(client, error.message);
       })
       .then(async (user: User) => {
-        console.log(`handleConnection: Client connected ! ✅`);
+        if (process.env.NODE_ENV === 'dev') {
+          console.log(`handleConnection: Client connected ! ✅`);
+        }
         return await this.joinRoomsAtConnection(client, user);
       })
       .catch((error) => {
@@ -100,7 +106,9 @@ export class ChatGatewayService {
   }
 
   async handleDisconnect(server: Server, client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Client disconnected: ${client.id}`);
+    }
     await this.updateUser(client, {
       ws_id: null,
       is_in_game: false,
