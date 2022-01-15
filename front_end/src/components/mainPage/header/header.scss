@@ -1,5 +1,10 @@
 .mainHeader {
 	// animation hover //
+
+	a {
+		text-decoration: none;
+	}
+
 	nav ul li h1,
 	nav ul li h1:after,
 	nav ul li h1:before {
@@ -33,7 +38,7 @@
 
 	height: 5vw;
 	height: 80px;
-	height: 47%;
+	height: 100%;
 	margin: 130px 0 0 0;
 
 	.menuHeader {
@@ -48,6 +53,11 @@
 		-webkit-backdrop-filter: blur(7.5px);
 		border: 2px solid rgba(255, 255, 255, 0.6);
 		border-radius: 1.5vw;
+
+		.selectedNave {
+			height: 100%;
+			border-bottom: 2px #e6da6a solid;
+		}
 	}
 
 	.mainNavMenu {
@@ -59,9 +69,10 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-around;
-
+		align-self: center;
 		li {
 			width: 90px;
+			height: 37px;
 		}
 		.leaderDiv {
 			width: 155px;
@@ -189,15 +200,9 @@
 			height: 0.09vw;
 		}
 
-		.selectedNave {
-			height: 100%;
-			border-bottom: 2px #e6da6a solid;
-		}
-
 		height: 70px;
 		.menuHeader {
 			border-radius: 1.5vw;
-			border: 2px solid rgba(255, 255, 255, 0.5);
 
 			.selectedNave {
 				height: 90%;
@@ -348,11 +353,11 @@
 				margin-top: 5px;
 				height: 25px !important;
 			}
-			@-moz-document url-prefix() {
-				button {
-					margin-top: 2px;
-				}
-			}
+			// @-moz-document url-prefix() {
+			// 	button {
+			// 		margin-top: 2px;
+			// 	}
+			// }
 			button:hover {
 				font-size: 15px;
 			}
@@ -402,6 +407,37 @@
 			}
 			.leaderDiv {
 				width: 90px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1060px) {
+	@-moz-document url-prefix() {
+		.mainHeader {
+			// animation hover //
+
+			.menuHeader {
+				.selectedNave {
+				}
+			}
+
+			.mainNavMenu {
+			}
+
+			.headerMenu {
+				li {
+				}
+				.leaderDiv {
+				}
+
+				h1 {
+				}
+				h1:hover {
+				}
+			}
+
+			.nav-item {
 			}
 		}
 	}
