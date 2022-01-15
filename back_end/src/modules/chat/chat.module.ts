@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatGateway, ISocketStorage } from './gateways/chat.gateway';
-import { ChatGatewayService } from './gateways/chatGateway.service';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
 import { ChatController } from './chat.controller';
@@ -10,6 +8,8 @@ import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Restriction } from './entities/restriction.entity';
 import { Room } from './entities/room.entity';
+import { ChatGateway } from './gateways/chat.gateway';
+import { ChatGatewayService } from './gateways/chatGateway.service';
 import { ChatMessageSubscriber } from './subscribers/chatMessage.subscriber';
 import { ParticipantSubscriber } from './subscribers/participant.subscriber';
 import { RestrictionSubscriber } from './subscribers/restriction.subscriber';
@@ -28,8 +28,6 @@ import { TaskerService } from './tasker.service';
   ],
   controllers: [ChatController],
   providers: [
-    ChatGateway,
-    ChatGatewayService,
     UsersService,
     ChatService,
     TaskerService,
@@ -37,7 +35,8 @@ import { TaskerService } from './tasker.service';
     ChatMessageSubscriber,
     ParticipantSubscriber,
     RestrictionSubscriber,
-    ISocketStorage
+    ChatGateway,
+    ChatGatewayService,
   ],
   exports: [ChatService, TaskerService],
 })
