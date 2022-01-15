@@ -34,10 +34,7 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     }
 
     beforeRemove(event: RemoveEvent<Room>) {
-      console.log('REMOVE ROOM', event.entity);
-
       if (event.entity.is_private === false) {
-        console.log('REMOVE ROOM + EMIT EVENT');
         delete event.entity?.participants;
         delete event.entity?.restrictions;
         this.chatGateway.sendEventToServer(

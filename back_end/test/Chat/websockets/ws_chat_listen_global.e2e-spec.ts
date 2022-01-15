@@ -1,12 +1,14 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import exp from 'constants';
 import { AppModule } from '../../../src/app.module';
+import { ChatMessageDto } from '../../../src/modules/chat/dto/chatMessade.dto';
+import { RoomDto } from '../../../src/modules/chat/dto/room.dto';
 import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
 import { User } from '../../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../../helpers';
 import { ChatHelpers } from '../helpers';
 import { WsChatHelpers } from './ws_helpers';
-import { io, Socket } from 'socket.io-client';
 
 describe('WebSockets CHAT: listen to GLOBAL events', () => {
   const nbOfRooms = 25;
@@ -90,7 +92,6 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
   */
 
   it(`listen to ${Events.PUBLIC_ROOM_CREATED} event for PUBLIC room`, async () => {
-
     WsChatHelpers.setupToken(token);
     const conn = WsChatHelpers.connectSocket();
     conn.on('connect_error', () => expect(1).toBe(2));
@@ -106,19 +107,27 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           .then((response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
           });
-      }, 100);
+      }, 50);
 
       setTimeout(async () => {
         resolve('ok');
-      }, 200);
+      }, 100);
     });
-    expect(WsChatHelpers.events.length).toBe(2);
-    const event = WsChatHelpers.events.pop();
-    expect(event).toHaveProperty('ev', Events.PUBLIC_ROOM_CREATED);
-    expect(Object.getOwnPropertyNames(event.payload)).toHaveLength(3);
-    expect(event.payload).toHaveProperty('id');
-    expect(event.payload).toHaveProperty('is_private', false);
-    expect(event.payload).toHaveProperty('is_password_protected', false);
+    const events = WsChatHelpers.events;
+    expect(events).toHaveLength(2);
+    expect(events).toMatchObject([
+      { ev: Events.CONNECT },
+      { ev: Events.PUBLIC_ROOM_CREATED },
+    ]);
+    events
+      .filter((item) => item.ev !== Events.CONNECT)
+      .forEach((item) => {
+        expect(Object.getOwnPropertyNames(item.payload)).toEqual([
+          'id',
+          'is_private',
+          'is_password_protected',
+        ]);
+      });
   });
 
   it(`listen to ${Events.PUBLIC_ROOM_CREATED} event for PRIVATE room`, async () => {
@@ -137,11 +146,11 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           .then((response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
           });
-      }, 100);
+      }, 50);
 
       setTimeout(async () => {
         resolve('ok');
-      }, 200);
+      }, 100);
     });
     expect(WsChatHelpers.events.length).toBe(1);
     expect(WsChatHelpers.events.pop().ev).toBe(Events.CONNECT);
@@ -153,7 +162,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     conn.on('connect_error', () => expect(1).toBe(2));
     WsChatHelpers.setAllEventsListenners(conn);
 
-    await new Promise((resolve) => {
+    await new Promise((resolve, rejects) => {
       setTimeout(async () => {
         await chatHelper
           .createSimpleRoom({
@@ -162,21 +171,33 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
-            return await chatHelper.deleteRoom(cookies, response.body?.id);
+            expect(response.body.id).toBeDefined();
+            return await chatHelper.deleteRoom(cookies, response.body.id);
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.OK);
           });
-      }, 100);
+      }, 50);
 
       setTimeout(async () => {
         resolve('ok');
-      }, 400);
-
-      console.log(WsChatHelpers.events.length);
-      WsChatHelpers.events.map(i => console.log(i));
-      const events = WsChatHelpers.events;
-      expect(events).toHaveLength(2);
+      }, 100);
     });
+    const events = WsChatHelpers.events;
+    expect(events).toHaveLength(3);
+    expect(events).toMatchObject([
+      { ev: Events.CONNECT },
+      { ev: Events.PUBLIC_ROOM_CREATED },
+      { ev: Events.PUBLIC_ROOM_REMOVED },
+    ]);
+    events
+      .filter((item) => item.ev !== Events.CONNECT)
+      .forEach((item) => {
+        expect(Object.getOwnPropertyNames(item.payload)).toEqual([
+          'id',
+          'is_private',
+          'is_password_protected',
+        ]);
+      });
   });
 }); // <<< end of describBlock

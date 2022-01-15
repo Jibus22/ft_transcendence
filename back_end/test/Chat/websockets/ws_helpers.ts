@@ -1,14 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
-import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
+import { Events, messageType } from '../../../src/modules/chat/gateways/chat.gateway';
 
 var faker = require('faker');
 
 export class WsChatHelpers {
   public static socket: Socket;
   public static app: INestApplication;
-  public static events: { ev: Events; payload: string }[] = [];
+  public static events: { ev: Events; payload: any }[] = [];
 
   public static async setupIo(
     app: INestApplication,
