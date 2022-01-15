@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './popUp.scss';
 import { IconButton } from '@mui/material';
-
+import '../safari.css';
 import LCL from '../photos/close-icon.png';
 import FormUpload from './formUpload/FormUpload';
 import Form42Upload from './form42Upload/Form42Upload';

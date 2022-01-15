@@ -1,25 +1,26 @@
-import React, { useState }  from 'react'
-import styled from 'styled-components'
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import PeopleIcon from '@mui/icons-material/People';
 import CloseIcon from '@mui/icons-material/Close';
-import ChatContainer from "./ChatContainer.component";
+import ChatContainer from './ChatContainer.component';
 
 const Chat = () => {
-
-	const [open, setOpen] = useState(true);
+	const [open, setOpen] = useState(false);
 
 	const toggle = () => {
 		setOpen(!open);
-	}
+	};
 
-	return (<>
-		<ChatButton onClick={toggle}>
-			<PeopleIcon style={{ color: "#CA6C88", fontSize: "38px" }} className={`icon ${!open ? 'open' : ''}`} />
-			<CloseIcon style={{ color: "#CA6C88", fontSize: "42px" }}  className={`icon ${open ? 'open' : ''}`}/>
-		</ChatButton>
-		<ChatContainer open={open} />
-	</>);
-}
+	return (
+		<>
+			<ChatButton onClick={toggle}>
+				<PeopleIcon style={{ color: '#CA6C88', fontSize: '38px' }} className={`icon ${!open ? 'open' : ''}`} />
+				<CloseIcon style={{ color: '#CA6C88', fontSize: '42px' }} className={`icon ${open ? 'open' : ''}`} />
+			</ChatButton>
+			<ChatContainer open={open} />
+		</>
+	);
+};
 
 const ChatButton = styled.button`
 	border-radius: 100%;
@@ -37,7 +38,7 @@ const ChatButton = styled.button`
 	.icon {
 		transform: scale(0);
 		opacity: 0;
-		transition: all .2s ease;
+		transition: all 0.2s ease;
 		position: absolute;
 	}
 
@@ -47,4 +48,4 @@ const ChatButton = styled.button`
 	}
 `;
 
-export default Chat
+export default Chat;

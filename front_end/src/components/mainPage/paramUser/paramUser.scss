@@ -199,6 +199,7 @@
 					margin: 3% 0 0 -2%;
 					color: white;
 					font-size: 0.9vw;
+					border: none;
 				}
 			}
 		}
@@ -288,6 +289,7 @@
 		}
 	}
 }
+
 @media screen and (max-width: 1600px) {
 	.mainParamUser {
 		margin: 70px auto;
@@ -625,6 +627,16 @@
 			}
 			.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
 				top: 4px !important;
+			}
+		}
+	}
+}
+
+@media not all and (min-resolution: 0.001dpcm) {
+	@supports (-webkit-appearance: none) {
+		.safari_only {
+			.mainParamUser {
+				background-color: red !important;
 			}
 		}
 	}
