@@ -14,5 +14,7 @@ global.beforeEach( async () => {
 
 global.afterEach(async () => {
 	const conn = getConnection();
-	await conn.close();
+	if (conn.isConnected) {
+		await conn.close();
+	}
 })

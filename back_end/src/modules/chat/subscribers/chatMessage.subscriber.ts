@@ -8,6 +8,7 @@ import {
 import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ChatMessage } from '../entities/chatMessage.entity';
 import { ChatGateway } from '../gateways/chat.gateway';
+import { Events } from '../gateways/chat.gateway';
 
 @EventSubscriber()
 export class ChatMessageSubscriber
@@ -27,7 +28,7 @@ export class ChatMessageSubscriber
   afterInsert(event: InsertEvent<ChatMessage>) {
     this.chatGateway.sendEventToRoom(
       event.entity.room,
-      'newMessage',
+      Events.NEW_MESSAGE,
       plainToClass(ChatMessageDto, event.entity, {
         excludeExtraneousValues: true,
       }),

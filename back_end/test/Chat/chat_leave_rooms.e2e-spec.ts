@@ -4,7 +4,6 @@ import { AppModule } from '../../src/app.module';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 import { ChatHelpers, RandomRoom } from './helpers';
-var faker = require('faker');
 
 describe('CHAT: Join/leave rooms', () => {
   const nbOfRooms = 25;

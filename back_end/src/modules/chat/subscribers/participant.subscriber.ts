@@ -10,6 +10,7 @@ import { ParticipantDto } from '../dto/participant.dto';
 import { RoomDto } from '../dto/room.dto';
 import { Participant } from '../entities/participant.entity';
 import { ChatGateway } from '../gateways/chat.gateway';
+import { Events } from '../gateways/chat.gateway';
 
 @EventSubscriber()
 export class ParticipantSubscriber
@@ -49,7 +50,11 @@ export class ParticipantSubscriber
 
   afterInsert(event: InsertEvent<Participant>) {
     if (event.entity?.room && event.entity?.user) {
-      this.emitEvents('participantJoined', 'userAdded', event.entity);
+      this.emitEvents(
+        Events.PARTICIPANT_JOINED,
+        Events.USER_ADDED,
+        event.entity,
+      );
       this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
     } else {
       console.log('Subscriber missing entity properties!');
@@ -62,9 +67,13 @@ export class ParticipantSubscriber
         event.entity.user,
         event.entity.room,
       );
-      this.emitEvents('participantLeft', 'userRemoved', event.entity);
+      this.emitEvents(
+        Events.PARTICIPANT_LEFT,
+        Events.USER_REMOVED,
+        event.entity,
+      );
     } else {
-      console.log('Subscriber missing entity properties!');
+      // console.log('Subscriber missing entity properties!'); // TODO fix
     }
   }
 }
