@@ -14,6 +14,8 @@
     "seed:randomData": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomData",
     "seed:randomUsers": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomUsers",
     "seed:randomGames": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomGames",
+    "seed:randomRooms": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomRooms",
+    "seed:randomChatMessages": "npm run build && ts-node ./node_modules/typeorm-seeding/dist/cli.js seed --seed CreateRandomChatMessages",
     "start:dev": "npm run seed:siteOwners && nest start --watch",
     "start:devNoSeed": "nest start --watch",
     "start:debug": "npm run seed:siteOwners && nest start --debug 0.0.0.0:9229 --watch",
