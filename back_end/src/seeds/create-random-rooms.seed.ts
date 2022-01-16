@@ -3,7 +3,6 @@ import { Connection } from 'typeorm';
 import { Factory, runSeeder, Seeder } from 'typeorm-seeding';
 import { Participant } from '../modules/chat/entities/participant.entity';
 import { Room } from '../modules/chat/entities/room.entity';
-import { Game } from '../modules/game/entities/game.entity';
 import { UserDto } from '../modules/users/dtos/user.dto';
 import { User } from '../modules/users/entities/users.entity';
 import CreateRandomChatMessages from './create-random-chatMessages.seed';
@@ -49,7 +48,11 @@ export default class CreateRandomRooms implements Seeder {
         );
         this.setRoomOwner(participants);
         this.setParticipantsUser(allUsers, participants);
-
+        for (let i = 0; i < participants.length; i++) {
+          participants[i] = await factory(Participant)().create(
+            participants[i],
+          );
+        }
         room.participants = participants;
         console.log(JSON.stringify(room, this.logUserAsDto, 4));
         return room;
