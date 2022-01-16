@@ -1,4 +1,5 @@
 import './paramUser.scss';
+import './safari.css';
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -8,7 +9,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import axios, { AxiosError } from 'axios';
 import { useMainPage } from '../../../MainPageContext';
-import { ClassNames } from '@emotion/react';
 
 export interface Props {
 	isPop: boolean;

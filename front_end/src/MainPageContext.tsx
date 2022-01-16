@@ -23,6 +23,7 @@ interface IMainPageContext {
 	isUpload: boolean;
 	openUpload: boolean;
 	userStatus: boolean;
+	selectQuery: boolean;
 	selectedImage: File;
 	timer: number;
 	userName: string;
@@ -33,6 +34,7 @@ interface IMainPageContext {
 	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
 	setIsDisable: React.Dispatch<React.SetStateAction<boolean>>;
 	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+	setSelectQuery: React.Dispatch<React.SetStateAction<boolean>>;
 	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
 	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
 	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
@@ -69,6 +71,7 @@ const MainPageProvider = (props: any) => {
 	const [userImg, setUserImg] = useState('');
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
+	const [selectQuery, setSelectQuery] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -177,6 +180,9 @@ const MainPageProvider = (props: any) => {
 		isUpload,
 		selectedImage,
 		openUpload,
+		selectQuery,
+
+		setSelectQuery,
 		setCustomPhoto,
 		setTimeSnack,
 		setTimer,

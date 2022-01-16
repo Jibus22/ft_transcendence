@@ -109,8 +109,8 @@
 
 	.circularDialogMui {
 		margin: 3% 0 0 47%;
-		width: 60px !important;
-		height: 60px !important;
+		width: 2vw !important;
+		height: 2vw !important;
 	}
 }
 
@@ -155,8 +155,13 @@
 		}
 
 		.MuiSvgIcon-fontSizeMedium {
-			width: 30px;
-			height: 30px;
+			width: 30px !important;
+			height: 30px !important;
+		}
+
+		.circularDialogMui {
+			width: 22px !important;
+			height: 22px !important;
 		}
 
 		// .circularDialogMui {

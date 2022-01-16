@@ -1,11 +1,12 @@
 .mainGameWindow {
-	margin: 90px 0 0 190px;
+	margin: 90px 0 0 20%;
 	width: 78%;
-	height: 700px;
+	height: 127vh;
+	// height: 80%;
 
-	border-radius: 23px;
-	// background-color: #2E4266;
-	border: 1px solid rgba(255, 255, 255, 0.7);
+	height: 37vw;
+	border-radius: 2.2vw;
+	border: 3px solid rgba(255, 255, 255, 0.7);
 
 	background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
 	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -14,64 +15,75 @@
 
 	.msgPlay {
 		margin: 80px auto;
-		width: 55%;
+		width: 28vw;
+
 		h1 {
-			font-family: Montserrat, sans-serif;
+			font-family: 'Press Start 2P', cursive;
 			color: white;
 			font-style: normal;
 			font-weight: 400;
-			font-size: 55px;
+			font-size: 2.2vw;
 			line-height: 70px;
+			line-height: 3vw;
 			text-align: center;
 		}
 	}
 	.iconePLayGame {
 		margin: -40px auto;
 		img {
-			width: 165px;
+			width: 300px;
+			width: 10vw;
 		}
 	}
 
 	.buttonMui {
 		background-color: #ca6c88;
-		border: 1px solid rgba(255, 255, 255, 0.7);
+		border: 2px solid rgba(255, 255, 255, 0.7);
 		color: white;
 		font-family: Montserrat, sans-serif;
-		font-size: 27px;
+		font-size: 1.3vw;
 		font-weight: 500;
 	}
 	.buttonMui:hover {
-		font-size: 30px;
+		font-size: 37px;
+		font-size: 1.4vw;
 		background-color: rgba(124, 90, 100, 0.9);
 	}
-	.MuiCircularProgress-root {
-		color: #ca6c88;
-	}
+
 	.buttonDiv {
 		.MuiCircularProgress-root {
-			margin-left: 12px;
+			color: #ca6c88;
+			margin: 23% 0% 0% 17%;
+			width: 1.8vw !important;
+			height: 1.8vw !important;
+		}
+		.MuiCircularProgress-svg {
+			width: 1.8vw !important;
+			height: 1.8vw !important;
 		}
 	}
 
 	.playRandom {
-		width: 40%;
-		height: 8%;
+		width: 15vw;
+		height: 3.3vw;
 		margin: 90px auto;
 	}
 
-	.playFriend {
-		width: 40%;
-		height: 8%;
-		margin: -60px auto;
-	}
+	// .playFriend {
+	// 	width: 200px;
+	// 	height: 80px;
+	// 	margin: -60px auto;
+	// }
+
 	.buttonMuiFriend {
 		margin: 30px 0 0 0;
+		height: 3.1vw;
 	}
 
 	.formDivButton {
 		margin-top: 30px;
-
-		height: 60px;
+		// height: 70px;
+		height: 3.2vw;
 	}
 
 	.formDivButtonAnim {
@@ -92,23 +104,24 @@
 		border-radius: 15px 0px 0px 15px;
 		font-family: Montserrat, sans-serif;
 		color: white;
-		font-size: 1.5em;
-		border-top: 1px solid rgba(255, 255, 255, 0.8);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-		border-left: 1px solid rgba(255, 255, 255, 0.8);
+		// font-size: 1.5em;
+		// font-size: 2vw;
+		border-top: 3px solid rgba(255, 255, 255, 0.8);
+		border-bottom: 3px solid rgba(255, 255, 255, 0.8);
+		border-left: 3px solid rgba(255, 255, 255, 0.8);
 		padding-left: 7px;
 
 		.MuiFormHelperText-root {
-			font-size: 20px;
 			font-family: Montserrat, sans-serif;
-			margin: 1% auto;
+			margin: 3% auto;
 			color: red;
+			font-size: 1vw;
 		}
 	}
 
 	.formDivButton .MuiOutlinedInput-input {
-		margin: 0px auto;
-		font-size: 20px;
+		margin: -3px auto;
+		font-size: 1.2vw;
 		color: white;
 	}
 
@@ -118,14 +131,16 @@
 
 	.formDivButton .buttonDiv {
 		width: 60px;
-		border-radius: 0 10px 10px 0px;
+		width: 3.4vw;
+		border-radius: 0 0.8vw 0.8vw 0px;
 		background-color: white;
 
 		img {
 			width: 30px;
+			width: 1.8vw;
 		}
 		img:hover {
-			width: 40px;
+			width: 2vw;
 		}
 	}
 
@@ -136,153 +151,225 @@
 	.formDivButton ::placeholder {
 		color: white;
 		font-size: 22px;
+		font-size: 1.2vw;
 		height: 30px;
-		font-family: Montserrat, sans-serif;
+		position: absolute;
+		left: 50%;
+		top: 47%;
+		transform: translate(-50%, -50%);
 	}
 }
 
-.mainGameWindow {
-	margin: 90px 0 0 190px;
-	width: 78%;
-	height: 700px;
-
-	border-radius: 23px;
-	// background-color: #2E4266;
-	border: 1px solid rgba(255, 255, 255, 0.7);
-
-	background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
-	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
-
-	.msgPlay {
-		margin: 80px auto;
-		width: 55%;
-		h1 {
-			font-family: Montserrat, sans-serif;
-			color: white;
-			font-style: normal;
-			font-weight: 400;
-			font-size: 55px;
-			line-height: 70px;
-			text-align: center;
+@media screen and (max-width: 2100px) {
+	.mainGameWindow {
+		.formDivButton .MuiOutlinedInput-input {
+			margin: -6px auto;
+		}
+		.formDivButton ::placeholder {
+			top: 52%;
 		}
 	}
-	.iconePLayGame {
-		margin: -40px auto;
-		img {
-			width: 165px;
+}
+
+@media screen and (max-width: 1920px) {
+	.mainGameWindow {
+		width: 76%;
+		height: 40vw;
+		border: 2px solid rgba(255, 255, 255, 0.7) !important;
+
+		.formDivButton .muiButtonInput {
+			border-top: 2px solid rgba(255, 255, 255, 0.8);
+			border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+			border-left: 2px solid rgba(255, 255, 255, 0.8);
+
+			.MuiFormHelperText-root {
+			}
 		}
 	}
+}
 
-	.buttonMui {
-		background-color: #ca6c88;
-		border: 1px solid rgba(255, 255, 255, 0.7);
-		color: white;
-		font-family: Montserrat, sans-serif;
-		font-size: 27px;
-		font-weight: 500;
+@media screen and (max-width: 1700px) {
+	.mainGameWindow {
+		.formDivButton .MuiOutlinedInput-input {
+			margin: -6px auto;
+		}
+		.formDivButton ::placeholder {
+			top: 56%;
+		}
 	}
-	.buttonMui:hover {
-		font-size: 30px;
-		background-color: rgba(124, 90, 100, 0.9);
+}
+
+@media screen and (max-width: 1440px) {
+	.mainGameWindow {
+		border: 1px solid rgba(255, 255, 255, 0.7) !important;
+		.msgPlay {
+			margin: 50px auto;
+		}
+		.iconePLayGame {
+			margin: -20px auto;
+		}
+		.playRandom {
+			margin: 70px auto;
+		}
+
+		.buttonMui {
+			border: 1px solid rgba(255, 255, 255, 0.7);
+		}
+
+		.formDivButton .muiButtonInput {
+			border-top: 1px solid rgba(255, 255, 255, 0.8);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+			border-left: 1px solid rgba(255, 255, 255, 0.8);
+			border-radius: 12px 0px 0px 12px;
+
+			.MuiFormHelperText-root {
+				font-family: Montserrat, sans-serif;
+				margin: 3% auto;
+				color: red;
+				font-size: 1vw;
+			}
+		}
+
+		.buttonDiv {
+			.MuiCircularProgress-root {
+				color: #ca6c88;
+				margin: 26% 0% 0% 17%;
+			}
+		}
 	}
-	.MuiCircularProgress-root {
-		color: #ca6c88;
+}
+
+@media screen and (max-width: 1400px) {
+	.mainGameWindow {
+		width: 75%;
 	}
-	.buttonDiv {
+}
+
+@media screen and (max-width: 1200px) {
+	.mainGameWindow {
+		margin-top: 60px;
+		height: 500px;
+	}
+}
+
+@media screen and (max-width: 1060px) {
+	.mainGameWindow {
+		// margin: 55px auto;
+
+		margin: 55px auto;
+		margin-bottom: -70px;
+		padding-bottom: 0px !important;
+		width: 45%;
+		width: 400px;
+		height: 480px;
+		border-radius: 25px;
+		border: 1px solid rgba(255, 255, 255, 0.7) !important;
+
+		.msgPlay {
+			margin: 50px auto;
+			width: 80%;
+
+			h1 {
+				font-size: 20px;
+				line-height: 40px;
+			}
+		}
+		.iconePLayGame {
+			margin: -10px auto;
+			img {
+				width: 120px;
+			}
+		}
+
+		.buttonMui {
+			border: 1px solid rgba(255, 255, 255, 0.7);
+			font-size: 1.3vw;
+			font-size: 15px;
+		}
+		.buttonMui:hover {
+			font-size: 16px;
+		}
 		.MuiCircularProgress-root {
-			margin-left: 12px;
+			color: #ca6c88;
 		}
-	}
-
-	.playRandom {
-		width: 40%;
-		height: 8%;
-		margin: 90px auto;
-	}
-
-	.playFriend {
-		width: 40%;
-		height: 8%;
-		margin: -60px auto;
-	}
-	.buttonMuiFriend {
-		margin: 30px 0 0 0;
-	}
-
-	.formDivButton {
-		margin-top: 30px;
-
-		height: 60px;
-	}
-
-	.formDivButtonAnim {
-		height: 60px;
-		animation-name: shake-horizontal;
-		animation-duration: 0.6s;
-		animation-timing-function: ease;
-		animation-delay: 0s;
-		animation-iteration-count: 1;
-		animation-direction: normal;
-		animation-fill-mode: none;
-	}
-
-	.formDivButton .muiButtonInput {
-		width: 100%;
-		height: 100%;
-		background-color: rgba(202, 108, 136, 0.7);
-		border-radius: 15px 0px 0px 15px;
-		font-family: Montserrat, sans-serif;
-		color: white;
-		font-size: 1.5em;
-		border-top: 1px solid rgba(255, 255, 255, 0.8);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-		border-left: 1px solid rgba(255, 255, 255, 0.8);
-		padding-left: 7px;
-
-		.MuiFormHelperText-root {
-			font-size: 20px;
-			font-family: Montserrat, sans-serif;
-			margin: 1% auto;
-			color: red;
+		.buttonDiv {
+			.MuiCircularProgress-root {
+				margin-left: 12px;
+			}
 		}
-	}
 
-	.formDivButton .MuiOutlinedInput-input {
-		margin: 0px auto;
-		font-size: 20px;
-		color: white;
-	}
-
-	.formDivButton .MuiOutlinedInput-notchedOutline {
-		border: none;
-	}
-
-	.formDivButton .buttonDiv {
-		width: 60px;
-		border-radius: 0 10px 10px 0px;
-		background-color: white;
-
-		img {
-			width: 30px;
+		.playRandom {
+			width: 40%;
+			height: 40px;
+			margin: 55px auto;
 		}
-		img:hover {
-			width: 40px;
-		}
-	}
 
-	.formDivButton:focus-visible {
-		outline: none;
-		text-decoration: none;
-	}
-	.formDivButton ::placeholder {
-		color: white;
-		font-size: 22px;
-		height: 30px;
-		font-family: Montserrat, sans-serif;
+		.buttonMuiFriend {
+			margin: 30px 0 0 0;
+			height: 40px;
+		}
+
+		.formDivButton {
+			margin-top: 30px;
+			height: 35px;
+		}
+
+		.formDivButton .muiButtonInput {
+			border-radius: 9px 0px 0px 9px;
+
+			border-top: 1px solid rgba(255, 255, 255, 0.8);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+			border-left: 1px solid rgba(255, 255, 255, 0.8);
+
+			.MuiFormHelperText-root {
+				font-family: Montserrat, sans-serif;
+				margin: 3% 0 0 21%;
+				color: red;
+				font-size: 10px;
+			}
+		}
+
+		.buttonDiv {
+			.MuiCircularProgress-root {
+				color: #ca6c88;
+				margin: 25% 0% 0% 28%;
+				width: 17px !important;
+				height: 17px !important;
+			}
+			.MuiCircularProgress-svg {
+				width: 17px !important;
+				height: 17px !important;
+			}
+		}
+
+		.formDivButton .MuiOutlinedInput-input {
+			margin: -10px auto;
+			font-size: 14px;
+		}
+
+		.formDivButton .buttonDiv {
+			width: 48px !important;
+			border-radius: 0 8px 8px 0px;
+
+			img {
+				width: 18px;
+			}
+			img:hover {
+				width: 20px;
+			}
+		}
+
+		.formDivButton:focus-visible {
+			outline: none;
+			text-decoration: none;
+		}
+		.formDivButton ::placeholder {
+			font-size: 14px;
+			height: 23px;
+		}
 	}
 }
+
 @keyframes shake-horizontal {
 	0% {
 		-webkit-transform: translateX(0);
@@ -307,313 +394,5 @@
 	50% {
 		-webkit-transform: translateX(-5px);
 		transform: translateX(-5px);
-	}
-}
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 2560px  /////////
-///////////////////////////////////////////////
-@media screen and (min-width: 2560px) {
-	.mainGameWindow {
-		margin: 140px 0 0 255px;
-		width: 70%;
-		height: 800px;
-		border-radius: 30px;
-
-		.msgPlay {
-			margin: 100px auto;
-			width: 55%;
-
-			h1 {
-				font-size: 60px;
-				line-height: 80px;
-			}
-		}
-		.iconePLayGame {
-			margin: -20px auto;
-			img {
-				width: 180px;
-			}
-		}
-
-		.buttonMui {
-			font-size: 27px;
-			font-weight: 500;
-			border-radius: 15px;
-		}
-		.buttonMui:hover {
-			font-size: 29px;
-		}
-
-		.buttonDiv {
-			.MuiCircularProgress-root {
-				margin: 15px 0 0 13px;
-				width: 35px !important;
-				height: 35px !important;
-			}
-		}
-
-		.playRandom {
-			width: 40%;
-			height: 8%;
-			margin: 80px auto;
-		}
-
-		.buttonMuiFriend {
-			margin: 30px 0 0 0;
-			height: 65px;
-		}
-
-		.formDivButton {
-			margin-top: 30px;
-			height: 65px;
-
-			.buttonDiv {
-				width: 20%;
-				border-radius: 0 10px 10px 0px;
-				background-color: white;
-
-				img {
-					width: 35px;
-				}
-				img:hover {
-					width: 38px;
-				}
-			}
-
-			.muiButtonInput {
-				border-radius: 10px 0px 0px 10px;
-				font-size: 2em;
-
-				.MuiFormHelperText-root {
-					font-size: 20px;
-					font-family: Montserrat, sans-serif;
-					margin: 10px auto;
-					color: red;
-				}
-			}
-			.MuiOutlinedInput-input {
-				margin: -6px auto;
-				font-size: 25px;
-				color: white;
-			}
-		}
-		.formDivButton:focus-visible {
-			outline: none;
-			text-decoration: none;
-		}
-		.formDivButton ::placeholder {
-			font-size: 20px;
-			height: 20px;
-		}
-	}
-}
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
-
-@media screen and (max-width: 1440px) {
-	.mainGameWindow {
-		margin: 8% 0 0 138px;
-		width: 78%;
-		height: 560px;
-		border-radius: 23px;
-
-		.msgPlay {
-			margin: 40px auto;
-			width: 63%;
-			h1 {
-				font-size: 28px;
-				line-height: 50px;
-
-				font-family: 'Alfa Slab One', cursive;
-				font-family: 'Press Start 2P', cursive;
-			}
-		}
-		.iconePLayGame {
-			margin: -40px auto;
-			img {
-				width: 180px;
-			}
-		}
-
-		.buttonMui {
-			font-size: 20px;
-			font-weight: 500;
-			border-radius: 9px;
-		}
-		.buttonMui:hover {
-			font-size: 21px;
-		}
-
-		.MuiCircularProgress-root {
-			color: #ca6c88;
-		}
-
-		.buttonDiv {
-			.MuiCircularProgress-root {
-				margin-left: 7px;
-			}
-		}
-
-		.playRandom {
-			width: 40%;
-			height: 8%;
-			margin: 80px auto;
-		}
-
-		.buttonMuiFriend {
-			margin: 30px 0 0 0;
-			height: 45px;
-		}
-
-		.formDivButton {
-			margin-top: 30px;
-			height: 47px;
-			.muiButtonInput {
-				border-radius: 10px 0px 0px 10px;
-				font-size: 1.1em;
-				border-top: 1px solid rgba(255, 255, 255, 0.6);
-				border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-				border-left: 1px solid rgba(255, 255, 255, 0.6);
-
-				.MuiFormHelperText-root {
-					font-size: 15px;
-					font-family: Montserrat, sans-serif;
-					margin: 2px auto;
-					color: red;
-				}
-			}
-			.MuiOutlinedInput-input {
-				margin: -5px auto;
-				font-size: 17px;
-				color: white;
-			}
-
-			.buttonDiv {
-				width: 20%;
-				border-radius: 0 10px 10px 0px;
-				background-color: white;
-
-				img {
-					width: 25px;
-				}
-				img:hover {
-					width: 30px;
-				}
-			}
-		}
-
-		.formDivButton:focus-visible {
-			outline: none;
-			text-decoration: none;
-		}
-		.formDivButton ::placeholder {
-			color: rgba(255, 255, 255, 0.7);
-			font-size: 17px;
-
-			height: 30px;
-			font-family: Montserrat, sans-serif;
-
-			// ANIMATIONHOVER CSSS
-		}
-	}
-}
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 1366px  /////////
-///////////////////////////////////////////////
-
-@media screen and (max-width: 1366px) {
-	.mainGameWindow {
-		margin: -20px 0 0 138px;
-		width: 77%;
-		height: 510px;
-		border-radius: 23px;
-
-		.msgPlay {
-			margin: 50px auto;
-			width: 55%;
-			h1 {
-				font-size: 37px;
-				line-height: 50px;
-			}
-		}
-		.iconePLayGame {
-			margin: -20px auto;
-			img {
-				width: 115px;
-			}
-		}
-
-		.buttonMui {
-			font-size: 20px;
-			font-weight: 500;
-			border-radius: 9px;
-		}
-		.buttonMui:hover {
-			font-size: 21px;
-		}
-
-		.MuiCircularProgress-root {
-			color: #ca6c88;
-		}
-
-		.playRandom {
-			width: 40%;
-			height: 8%;
-			margin: 50px auto;
-		}
-
-		.buttonMuiFriend {
-			margin: 30px 0 0 0;
-			height: 45px;
-		}
-
-		.formDivButton {
-			margin-top: 30px;
-
-			height: 42px;
-
-			.buttonDiv {
-				width: 20%;
-				border-radius: 0 10px 10px 0px;
-				background-color: white;
-
-				img {
-					width: 25px;
-				}
-				img:hover {
-					width: 30px;
-				}
-			}
-
-			.muiButtonInput {
-				border-radius: 10px 0px 0px 10px;
-				font-size: 1.1em;
-
-				.MuiFormHelperText-root {
-					font-size: 13px;
-					font-family: Montserrat, sans-serif;
-					margin: 2px auto;
-					color: red;
-				}
-			}
-			.MuiOutlinedInput-input {
-				margin: -6px auto;
-				font-size: 15px;
-				color: white;
-			}
-		}
-		.formDivButton:focus-visible {
-			outline: none;
-			text-decoration: none;
-		}
-		.formDivButton ::placeholder {
-			font-size: 15px;
-
-			height: 20px;
-		}
 	}
 }

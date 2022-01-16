@@ -10,7 +10,6 @@ import { APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatGatewayModule } from './gateways/chatGateway.module';
 import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
 import { TargetedRoomMiddleware } from './modules/chat/middleware/targeted-room.middleware';
@@ -20,7 +19,7 @@ import { MeController } from './modules/users/me.controller';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
-
+import { GameModule } from './modules/game/game.module';
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -37,7 +36,7 @@ const cookieSession = require('cookie-session');
     HttpModule,
     ChatModule,
     UsersModule,
-    ChatGatewayModule
+    GameModule,
   ],
   controllers: [AppController],
   providers: [
