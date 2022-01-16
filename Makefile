@@ -18,8 +18,14 @@ test:
 db:
 	docker-compose -f docker-compose.yml up database_server ; docker-compose rm -fsv
 
-seed:
-	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:random'
+seed-data:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomData'
+
+seed-users:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomUsers'
+
+seed-games:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomGames'
 
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
