@@ -19,7 +19,7 @@ export class GameService {
   constructor(
     @InjectRepository(Game) private game_repo: Repository<Game>,
     @InjectRepository(Player) private player_repo: Repository<Player>,
-    private userService: UsersService,
+    private usersService: UsersService,
   ) {}
 
   private checkErrorCreation(
@@ -58,8 +58,8 @@ export class GameService {
   }
 
   async create(createGameDto: CreateGameDto) {
-    const user1 = await this.userService.findLogin(createGameDto.loginP1);
-    const user2 = await this.userService.findLogin(createGameDto.loginP2);
+    const user1 = await this.usersService.findLogin(createGameDto.loginP1);
+    const user2 = await this.usersService.findLogin(createGameDto.loginP2);
 
     this.checkErrorCreation(user1, user2, createGameDto);
 
