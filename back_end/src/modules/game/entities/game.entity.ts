@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   OneToMany,
+  Column,
 } from 'typeorm';
 import { Player } from './player.entity';
 
@@ -15,9 +16,11 @@ export class Game {
   @OneToMany(() => Player, (player) => player.game)
   players: Player[];
 
-  @CreateDateColumn({ type: 'date' })
-  createdAt: Date;
+  @Column()
+  // @CreateDateColumn()
+  createdAt: number;
 
-  @UpdateDateColumn({ type: 'date' })
-  updatedAt: Date;
+  @Column()
+  // @UpdateDateColumn()
+  updatedAt: number;
 }
