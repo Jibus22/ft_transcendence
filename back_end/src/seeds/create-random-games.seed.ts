@@ -56,6 +56,6 @@ export default class CreateRandomGames implements Seeder {
         console.log(JSON.stringify(game, this.logUserAsDto, 4));
         return game;
       })
-      .createMany(20);
+      .createMany(50);
   }
 }
