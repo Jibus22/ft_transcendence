@@ -22,23 +22,26 @@ export class RoomDto {
   })
   is_password_protected: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ type: [ParticipantDto], isArray: true })
   @Expose()
   @Transform((value) => {
     return plainToClass(ParticipantDto, value.obj.participants);
   })
   participants: ParticipantDto[];
-
-  @ApiProperty()
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(ChatMessageDto, value.obj.messages);
-  })
-  messages: ChatMessageDto[];
 }
 
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        FOR SITE OWNER ONLY
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+
 @Exclude()
-export class FullRoomDto extends RoomDto {
+export class RoomWithRestrictionsDto extends RoomDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
@@ -64,4 +67,24 @@ export class FullRoomDto extends RoomDto {
     }
   })
   mutes: UserDto[];
+}
+
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        FOR ROOM PARTICIPANTS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+
+@Exclude()
+export class RoomWithMessagesDto extends RoomDto {
+  @ApiProperty({ type: [ChatMessageDto], isArray: true })
+  @Expose()
+  @Transform((value) => {
+    return plainToClass(ChatMessageDto, value.obj.messages);
+  })
+  messages: ChatMessageDto[];
 }

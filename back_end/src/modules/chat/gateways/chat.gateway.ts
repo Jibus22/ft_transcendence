@@ -15,8 +15,19 @@ import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
 import { ChatGatewayService } from './chatGateway.service';
 
-export class ISocketStorage {
-  storage = new Map<string, Socket>();
+export enum Events {
+  CONNECT = 'connect',
+  PUBLIC_ROOM_CREATED = 'publicRoomCreated',
+  PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
+  NEW_MESSAGE = 'newMessage',
+  PARTICIPANT_JOINED = 'participantJoined',
+  PARTICIPANT_LEFT = 'participantLeft',
+  PARTICIPANT_UPDATED = 'participantUpdated',
+  USER_ADDED = 'userAdded',
+  USER_REMOVED = 'userRemoved',
+  USER_MODERATION = 'userModeration',
+  USER_BANNED = 'userBanned',
+  USER_MUTED = 'userMuted',
 }
 
 export type messageType =
@@ -38,10 +49,10 @@ const options: GatewayMetadata = {
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(
-    private clientSockets: ISocketStorage,
-    private readonly chatGatewayService: ChatGatewayService,
-  ) {}
+  storage: Map<string, Socket>;
+  constructor(private readonly chatGatewayService: ChatGatewayService) {
+    this.storage = new Map<string, Socket>();
+  }
 
   @WebSocketServer()
   server: Server;
@@ -54,7 +65,7 @@ export class ChatGateway
     await this.chatGatewayService
       .handleConnection(this.server, client)
       .then(() => {
-        this.clientSockets.storage.set(client.id, client);
+        this.storage.set(client.id, client);
       });
   }
 
@@ -62,7 +73,7 @@ export class ChatGateway
     await this.chatGatewayService
       .handleDisconnect(this.server, client)
       .then(() => {
-        this.clientSockets.storage.delete(client.id);
+        this.storage.delete(client.id);
       });
   }
 
@@ -93,14 +104,14 @@ export class ChatGateway
   }
 
   makeClientJoinRoom(user: User, room: Room) {
-    const clientSocket = this.clientSockets.storage.get(user.ws_id);
+    const clientSocket = this.storage.get(user.ws_id);
     if (clientSocket) {
       this.chatGatewayService.makeClientJoinRoom(clientSocket, room);
     }
   }
 
   makeClientLeaveRoom(user: User, room: Room) {
-    const clientSocket = this.clientSockets.storage.get(user.ws_id);
+    const clientSocket = this.storage.get(user.ws_id);
     if (clientSocket) {
       this.chatGatewayService.makeClientLeaveRoom(clientSocket, room);
     }

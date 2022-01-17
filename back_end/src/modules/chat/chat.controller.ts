@@ -10,13 +10,13 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomBanGuard } from '../../guards/roomBan.guard';
@@ -36,7 +36,7 @@ import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
-import { FullRoomDto, RoomDto } from './dto/room.dto';
+import { RoomDto, RoomWithRestrictionsDto } from './dto/room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Room } from './entities/room.entity';
@@ -93,7 +93,7 @@ export class ChatController {
   @ApiOperation({
     summary: 'Get all existing rooms',
   })
-  @ApiResponse({ type: FullRoomDto, isArray: true })
+  @ApiResponse({ type: RoomWithRestrictionsDto, isArray: true })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Every rooms in the system',
@@ -104,9 +104,11 @@ export class ChatController {
   })
   @Get('/all')
   @UseGuards(SiteOwnerGuard)
-  @Serialize(FullRoomDto)
+  @Serialize(RoomWithRestrictionsDto)
   async findAll() {
-    return await this.chatService.findAll().catch((err) => console.log(err));
+    return await this.chatService
+      .findAllWithRestrictions()
+      .catch((err) => console.log(err));
   }
 
   @ApiOperation({
@@ -123,6 +125,20 @@ export class ChatController {
     return await this.chatService
       .findAllPublic()
       .catch((err) => console.log(err));
+  }
+
+  @ApiOperation({
+    summary: 'Get a single rooms informations',
+  })
+  @ApiResponse({ type: RoomDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Single room informations',
+  })
+  @Get('/:room_id')
+  @Serialize(RoomDto)
+  async getSingleRoom(@TargetedRoom() targetedRoom: Room) {
+    return targetedRoom;
   }
 
   @ApiOperation({

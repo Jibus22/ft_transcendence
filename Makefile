@@ -18,8 +18,27 @@ test:
 db:
 	docker-compose -f docker-compose.yml up database_server ; docker-compose rm -fsv
 
-seed:
-	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:random'
+seed-data:
+	@echo 'This recipe seeds all kind of data available for seeding !'
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomData'
+
+seed-users:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomUsers'
+
+seed-games:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomGames'
+
+seed-rooms:
+	@echo 'This recipe seeds new Rooms + Messages for new and existing rooms'
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomRooms'
+
+seed-chatMessages:
+	@echo 'This recipe seeds new Messages for existing rooms'
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomChatMessages'
+
+seed-getData:
+	@echo 'This recipe get Database content'
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:getData'
 
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
