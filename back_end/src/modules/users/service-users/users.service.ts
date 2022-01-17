@@ -78,4 +78,10 @@ export class UsersService {
       relations: ['local_photo'],
     });
   }
+
+  async getAllPlayersUsers() {
+    return await this.repoUser.find({
+      relations: ['local_photo', 'players'],
+    });
+  }
 }
