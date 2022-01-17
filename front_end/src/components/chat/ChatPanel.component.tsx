@@ -1,31 +1,77 @@
 import styled from "styled-components";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import SendIcon from '@mui/icons-material/Send';
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-const ChatPanel = () => {
+const chatName = (participants: any) => {
+	if (participants.length === 1) {
+		return participants[0].user.login;
+	}
+	let name = "";
+	participants.forEach((p: any) => name += p.user.login[0]);
+	return name;
+}
 
-	const messages = [
-		{ id: 0, author: "vgoldman", message: "Hello!", timestamp: 1639925559701 },
-		{ id: 1, author: "vgoldman", message: "How you doing?", timestamp: 1639925559701 },
-		{ id: 2, author: "bvalette", message: "Doing good, what about you?", timestamp: 1639925559701 },
-		{ id: 3, author: "vgoldman", message: "Good, good...", timestamp: 1639925559701 },
-		{ id: 4, author: "bvalette", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
-		{ id: 5, author: "vgoldman", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
-	];
+const ChatPanel = ({ room }: any) => {
+
+	const [message, setMessage] = useState("");
+	const [messages, setMessages] = useState<any[]>([]);
+
+	// const messages = [
+	// 	{ id: 0, author: "vgoldman", message: "Hello!", timestamp: 1639925559701 },
+	// 	{ id: 1, author: "vgoldman", message: "How you doing?", timestamp: 1639925559701 },
+	// 	{ id: 2, author: "bvalette", message: "Doing good, what about you?", timestamp: 1639925559701 },
+	// 	{ id: 3, author: "vgoldman", message: "Good, good...", timestamp: 1639925559701 },
+	// 	{ id: 4, author: "bvalette", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
+	// 	{ id: 5, author: "vgoldman", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
+	// ];
+
+	const onMessage = (e: any) => {
+		setMessage(e.target.value);
+	};
+
+	const getMessages = async () => {
+		const { data } = await axios.get(`http://localhost:3000/room/${room.id}/message`, { withCredentials: true });
+		setMessages(data)
+	};
+
+	const sendMessage = async () => {
+		await axios.post(`http://localhost:3000/room/${room.id}/message`,
+		{ body: message },
+		{ withCredentials: true });
+		setMessage("");
+	}
+
+	window.addEventListener("newMessage", ({ detail }: any) => {
+		const message: any = JSON.parse(detail);
+		if (message.room_id !== room.id) {
+			return;
+		}
+		const found = messages.filter((m: any) => message.id === m.id);
+		if (found.length > 0) {
+			return;
+		}
+		setMessages([...messages, message]);
+	})
+
+	useEffect(() => {
+		getMessages();
+	}, []);
 
 	return (<MessagesPaneWrapper>
 		<ChatHeader>
-			<img src="https://i.pravatar.cc/200?d" alt=""/>
+			{room.participants.length === 1 && <img src={room.participants[0].user.photo_url} alt={room.participants[0].user.login}/>}
 			<div>
-				<h4>Test person</h4>
+				<h4>{ chatName(room.participants) }</h4>
 				<span>Online</span>
 			</div>
 			<button><NavigateNextIcon style={{color: "#444444"}} /></button>
 		</ChatHeader>
 		<ChatMessages>
-			{messages.map(message => (
-				<Message self={message.author === 'vgoldman'} key={message.id}>
-					<span className="message-content">{message.message}
+			{messages.map((message: any) => (
+				<Message self={message.sender.login === 'vgoldman'} key={message.id}>
+					<span className="message-content">{message.body}
 					<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M6.7895 0C6.02488 3.47758 2.00431 6.12164 0.523383 6.81875C0.135401 6.93318 -0.0590963 7 0.0158405 7C0.0918121 7 0.2706 6.93774 0.523383 6.81875C2.83311 6.13753 12 3.76923 12 3.76923L6.7895 0Z" fill="#F1F1F1"/>
 					</svg></span>
@@ -34,8 +80,8 @@ const ChatPanel = () => {
 			))}
 		</ChatMessages>
 		<ChatField>
-			<input type="text" placeholder="Type here" />
-			<button>
+			<input type="text" placeholder="Type here" value={message} onChange={onMessage}/>
+			<button onClick={sendMessage}>
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>
 		</ChatField>

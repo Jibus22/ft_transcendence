@@ -63,6 +63,7 @@ const MainPage = () => {
 
 		socket.on('newMessage', (message) => {
 			console.log(`💌  Event: newMessage ->`, message);
+			window.dispatchEvent(new CustomEvent("newMessage", { detail: message }));
 		});
 
 		socket.on('participantJoined', (message) => {

@@ -1,13 +1,22 @@
+import { useState } from "react";
 import styled from "styled-components"
 import ChatList from "./ChatList.component";
 import ChatPanel from "./ChatPanel.component";
+import axios from "axios";
 
 const ChatContainer = ({ open }: any) => {
+
+	const [chat, setChat] = useState<any>(null);
+
+	const openChat = (room: any) => {
+		setChat(room);
+	};
+
 	return (<ChatContainerWrapper open={open}>
 		{/* Chat list + Tabs */}
-		<ChatList />
+		<ChatList openChat={openChat} />
 		{/* Messages pane */}
-		<ChatPanel />
+		{chat && <ChatPanel key={chat.id} room={chat} />}
 	</ChatContainerWrapper>);
 };
 

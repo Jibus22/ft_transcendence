@@ -6,33 +6,70 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import { useEffect, useState }  from 'react'
 
-const contacts = [
-	{ id: 0, name: "Marie", lastMessage: "Hey!", profilePicture: "https://i.pravatar.cc/200" },
-	{ id: 1, name: "Georges", lastMessage: "What about last time", profilePicture: "https://i.pravatar.cc/200?a" },
-	{ id: 2, name: "Johnny", lastMessage: "Hey!sfesfe sefse fesif seif", profilePicture: "https://i.pravatar.cc/200?b" },
-	{ id: 3, name: "Tom", lastMessage: "Hey! esef esifesfes", profilePicture: "https://i.pravatar.cc/200?c" },
-	{ id: 4, name: "Micheal", lastMessage: "Hey!", profilePicture: "https://i.pravatar.cc/200?d" },
-	{ id: 5, name: "Jean-Marc", lastMessage: "Hey!", profilePicture: "https://i.pravatar.cc/200?e" },
-];
-
-const publicChatName = (participants: any) => {
+const chatName = (participants: any) => {
+	if (participants.length === 1) {
+		return participants[0].user.login;
+	}
 	let name = "";
 	participants.forEach((p: any) => name += p.user.login[0]);
 	return name;
 }
 
-const ChatList = () => {
+const ChatList = ({ openChat }: any) => {
 
 	const [tab, setTab] = useState(0);
 	const [publicChats, setPublicChats] = useState([]);
+	const [chats, setChats] = useState([]);
+	const [searchResults, setSearchResults] = useState<any[]>([]);
+	const [search, setSearch] = useState("");
+	const [users, setUsers] = useState<any[]>([]);
 
 	const getChats = async () => {
-		const { data } = await axios.get("http://localhost:3000/room/publics", {
+		const { data } = await axios.get("http://localhost:3000/room/all", {
 			withCredentials: true
 		});
-		console.log(data);
-		setPublicChats(data);
+		setChats(data);
 	};
+
+	const getUsers = async () => {
+		const result = await axios.get("http://localhost:3000/users", { withCredentials: true }).catch(console.error);
+		setUsers(result?.data || []);
+	};
+
+	const onSearch = (e: any) => {
+		const term = e.target.value;
+		setSearch(term);
+		if (!term.length)
+			return setSearchResults([]);
+
+		const result: any[] = users.filter(
+			(user: any) => user.login.indexOf(term) > -1
+		).sort((a: any, b: any) => a.login.indexOf(term) - b.login.indexOf(term));
+		setSearchResults(result);
+	};
+
+	const openChatHandler = async (login: any) => {
+		const existingChats = chats.filter(
+			(chat: any) => chat.participants.length === 1 &&
+				chat.participants.filter((participant: any) => participant.user.login === login).length > 0
+		);
+		if (existingChats.length > 0) {
+			setSearchResults([]);
+			setSearch("");
+			return openChat(existingChats[0]);
+		}
+		const { data }: any = await axios.post("http://localhost:3000/room", {
+			participants: [ login ],
+			is_private: true
+		}, { withCredentials: true });
+		setSearchResults([]);
+		setSearch("");
+		openChat(data);
+	}
+
+	useEffect(() => {
+		getUsers();
+	}, []);
 
 	useEffect(() => {
 		getChats();
@@ -41,23 +78,31 @@ const ChatList = () => {
 	return (
 	<ChatListWrapper>
 		<SearchField>
-			<input type="text" placeholder="Search" />
+			<input type="text" placeholder="Search" value={search} onChange={onSearch} />
 			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
-		{ tab === 0 && (<List>
-			{contacts.map(contact => (<Preview key={contact.name}>
-				<img src={contact.profilePicture} alt={contact.name} />
+		{ tab === 0 && !searchResults.length && (<List>
+			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
+				{chat.participants.length === 1 && (<img src={chat.participants[0].user.photo_url} alt={chat.participants[0].user.login} />)}
 				<div>
-					<h4>{contact.name}</h4>
-					<p>{contact.lastMessage}</p>
+					<h4>{chatName(chat.participants)}</h4>
+					<p>{chat.id}</p>
 				</div>
 			</Preview>))}
 		</List>)}
-		{ tab === 2 && (<List>
+		{ tab === 2 && !searchResults.length && (<List>
 			{publicChats.map((chat: any) => (<Preview key={chat.id}>
 				<div>
-					<h4>{publicChatName(chat.participants)}</h4>
+					<h4>{chatName(chat.participants)}</h4>
 					<p>{chat.id}</p>
+				</div>
+			</Preview>))}
+		</List>)}
+		{ searchResults.length > 0 && (<List>
+			{searchResults.map((user: any) => (<Preview key={user.id} onClick={() => openChatHandler(user.login)}>
+				<img src={user.photo_url} alt={user.login} />
+				<div>
+					<h4>{user.login}</h4>
 				</div>
 			</Preview>))}
 		</List>)}
