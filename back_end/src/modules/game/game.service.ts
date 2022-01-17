@@ -48,11 +48,11 @@ export class GameService {
 
     if (usr1dto.status !== 'online') {
       throw new ForbiddenException(
-        `${createGameDto.loginP1} is offline or is already playing`,
+        `${createGameDto.loginP1} is either offline or playing`,
       );
     } else if (usr2dto.status !== 'online') {
       throw new ForbiddenException(
-        `${createGameDto.loginP1} is offline or is already playing`,
+        `${createGameDto.loginP2} is either offline or playing`,
       );
     }
   }
@@ -109,5 +109,11 @@ export class GameService {
       relations: ['players', 'players.user'],
     });
     return games;
+  }
+
+  async leaderboard() {
+    const allUsers = await this.usersService.getAllPlayersUsers();
+    if (!allUsers) throw new NotFoundException(`No users found in database`);
+    return allUsers;
   }
 }
