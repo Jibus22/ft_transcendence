@@ -31,7 +31,10 @@ export default class getAllData implements Seeder {
           r.participants.length
         }  participants and  ${r.messages.length
           .toString()
-          .padEnd(4, ' ')}  messages - is ${r.is_private ? 'private' : 'PUBLIC'} ${r.password ? 'protected with "password"' : ''}`);
+          .padEnd(4, ' ')}  messages - is ${
+          r.is_private ? 'private' : 'PUBLIC'
+        } ${r.password ? 'protected with "password"' : ''}`,
+      );
     });
 
     const gamesInDb = await connection

@@ -43,9 +43,7 @@ export default class CreateRandomGames implements Seeder {
 
     await factory(Game)()
       .map(async (game: Game) => {
-
-        let players = await factory(Player)()
-          .makeMany(2);
+        let players = await factory(Player)().makeMany(2);
 
         this.setPlayersUser(allUsers, game, players);
         this.setScores(game);
