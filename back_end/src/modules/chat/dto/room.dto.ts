@@ -29,12 +29,6 @@ export class RoomDto {
   })
   participants: ParticipantDto[];
 
-  @ApiProperty()
-  @Expose()
-  @Transform((value) => {
-    return plainToClass(ChatMessageDto, value.obj.messages);
-  })
-  messages: ChatMessageDto[];
 }
 
 @Exclude()
