@@ -31,7 +31,7 @@ export class ChatService {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        ROOMS METHODS
+        CREATE A ROOM
   -------------------------------------------------------------------
   ===================================================================
   */
@@ -110,6 +110,15 @@ export class ChatService {
     return room;
   }
 
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        FINDS FUNCTIONS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+
   async findAllWithRestrictions() {
     return await this.repoRoom.find({
       relations: [
@@ -146,8 +155,13 @@ export class ChatService {
     return rooms;
   }
 
-  async findOne(id: string) {
-    return this.repoRoom.findOne(id);
+  async findOneWithParticipants(id: string) {
+    return await this.repoRoom.findOne(id, {
+      relations: [
+        'participants',
+        'participants.user',
+      ],
+    });
   }
 
   async findOneWithParticipantsAndRestrictions(id: string) {

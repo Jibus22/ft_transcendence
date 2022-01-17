@@ -128,6 +128,20 @@ export class ChatController {
   }
 
   @ApiOperation({
+    summary: 'Get a single rooms informations',
+  })
+  @ApiResponse({ type: RoomDto, isArray: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Single room informations',
+  })
+  @Get('/:room_id')
+  @Serialize(RoomDto)
+  async getSingleRoom(@TargetedRoom() targetedRoom: Room) {
+    return targetedRoom;
+  }
+
+  @ApiOperation({
     summary: 'Delete one room if user is the owner or site owner',
   })
   @ApiResponse({ type: RoomDto })
