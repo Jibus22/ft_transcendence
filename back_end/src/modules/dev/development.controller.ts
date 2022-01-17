@@ -65,4 +65,9 @@ export class DevelopmentController {
   async deleteAllUsers() {
     await this.developmentService.dev_deleteAllUser();
   }
+
+  @Post('createRandomGames')
+  async createRandomGames() {
+    await this.developmentService.createRandomGames();
+  }
 }
