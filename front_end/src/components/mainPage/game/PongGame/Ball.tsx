@@ -48,21 +48,21 @@ export class Ball {
 			this.y_dir *= -1;
 
 		//collision avec le player two
-		if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x + this.size + this.x_dir, this.y + this.size + this.y_dir,
+		if (this._intersect_segment(this.x - this.x_dir, this.y - this.y_dir, this.x + this.size + this.x_dir, this.y + this.size + this.y_dir,
 				playerTwo.x, playerTwo.y, playerTwo.x, playerTwo.y + playerTwo.size)
 		)
 			this.x_dir *= -1;
-		else if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x + this.x_dir, this.y + this.size + this.y_dir,
+		else if (this._intersect_segment(this.x - this.x_dir, this.y - this.y_dir, this.x + this.x_dir, this.y + this.size + this.y_dir,
 			playerTwo.x, playerTwo.y, playerTwo.x +playerTwo.width, playerTwo.y)
 		)
 			this.y_dir *= -1;
-		else if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x + this.x_dir, this.y - this.size + this.y_dir,
+		else if (this._intersect_segment(this.x - this.x_dir, this.y - this.y_dir, this.x + this.x_dir, this.y - this.size + this.y_dir,
 			playerTwo.x, playerTwo.y + playerTwo.size, playerTwo.x +playerTwo.width, playerTwo.y + playerTwo.size)
 		)
 			this.y_dir *= -1;
 
 		//collision avec le player One
-		if (this._intersect_segment(this.x - 3 * this.x_dir, this.y - 3 * this.y_dir, this.x - this.size + this.x_dir, this.y - this.size + this.y_dir,
+		if (this._intersect_segment(this.x - this.x_dir, this.y - this.y_dir, this.x - this.size + this.x_dir, this.y - this.size + this.y_dir,
 			playerOne.x + playerOne.width , playerOne.y, playerOne.x + playerOne.width, playerOne.y + playerOne.size)
 	
 		)
@@ -79,6 +79,10 @@ export class Ball {
 		//collision avec le droite et le gauche 
 		//if (this.x + this.x_dir - this.size < 0 || this.x + this.x_dir + this.size > this.windowWidth)
 		//	this.x_dir *= -1;
+
+		//acceleration de la balle
+		this.x_dir *= 1.001;
+		this.y_dir *= 1.001;
 
 		//Maj de la pos de la balle
 		this.x += this.x_dir;

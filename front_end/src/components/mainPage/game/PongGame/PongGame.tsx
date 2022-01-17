@@ -41,7 +41,7 @@ class PongGame extends React.Component {
 	_P2:boolean = false;
 	scoreP1:number = 0;
 	scoreP2:number = 0;
-	gamerunning = true;
+	gamerunning = false;
 	powerUp = true;
 
 
@@ -80,6 +80,12 @@ class PongGame extends React.Component {
 			this.scoreP1++;
 		this._ball.y = this.height/2;
 		this._ball.x = this.width/2;
+		this._ball.x_dir = Math.random() * 2 - 1;
+		if (this._ball.x_dir <= 0 && this._ball.x > -0.7)
+			this._ball.x_dir -= 0.5;
+		if (this._ball.x_dir > 0 && this._ball.x < 0.7)
+			this._ball.x_dir += 0.5;
+		this._ball.y_dir = Math.random() * 2 - 1;
 		client.send(JSON.stringify({
 			type: "message",
 			object: "Score",
@@ -218,7 +224,10 @@ class PongGame extends React.Component {
 		});
 		document.addEventListener('ontouchstart', function (e) { e.preventDefault() }, false);
 		document.addEventListener('ontouchmove', function (e) { e.preventDefault() }, false);
-
+		client.send(JSON.stringify({
+			type: "message",
+			object: "Ready",
+		}));
 		//let _loop = 
 		setInterval(() => {
 			if (this.gamerunning)
@@ -270,6 +279,13 @@ class PongGame extends React.Component {
 					message += "Two ";
 				this._printText(message + data.powerUp);
 				setTimeout(()=>this.gamerunning = true, 1000);
+			}
+			if (data.object === "Ready")
+				this.gamerunning = true;
+			if (data.object === "Pause")
+			{
+				this.gamerunning = false;
+				this._printText("Jeu en pause");
 			}
 		};
 		setTimeout(() => this._startGame(), 1000);
