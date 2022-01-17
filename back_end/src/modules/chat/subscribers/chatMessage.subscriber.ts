@@ -5,16 +5,15 @@ import {
   EventSubscriber,
   InsertEvent,
 } from 'typeorm';
-import { ChatGateway } from '../gateways/chat.gateway';
-import { ChatGatewayService } from '../gateways/chatGateway.service';
 import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ChatMessage } from '../entities/chatMessage.entity';
+import { ChatGateway } from '../gateways/chat.gateway';
+
 @EventSubscriber()
 export class ChatMessageSubscriber
   implements EntitySubscriberInterface<ChatMessage>
 {
   constructor(
-    private readonly chatGatewayService: ChatGatewayService,
     private readonly chatGateway: ChatGateway,
     connection: Connection,
   ) {
@@ -26,14 +25,12 @@ export class ChatMessageSubscriber
   }
 
   afterInsert(event: InsertEvent<ChatMessage>) {
-    this.chatGateway.broadcastEventToRoom(
+    this.chatGateway.sendEventToRoom(
       event.entity.room,
       'newMessage',
-      JSON.stringify(
-        plainToClass(ChatMessageDto, event.entity, {
-          excludeExtraneousValues: true,
-        }),
-      ),
+      plainToClass(ChatMessageDto, event.entity, {
+        excludeExtraneousValues: true,
+      }),
     );
   }
 }

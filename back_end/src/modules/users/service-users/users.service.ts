@@ -28,6 +28,13 @@ export class UsersService {
     return await this.repoUser.findOne(id);
   }
 
+  async findLogin(login: string) {
+    if (!login) {
+      return null;
+    }
+    return await this.repoUser.findOne({ login: login });
+  }
+
   async findOneWithRelations(id: string) {
     if (!id) {
       return null;

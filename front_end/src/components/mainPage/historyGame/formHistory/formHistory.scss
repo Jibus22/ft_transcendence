@@ -42,17 +42,20 @@
 		transform: translate(-50%, -50%);
 	}
 
+	.MuiInputLabel-root.MuiInputLabel-shrink.Mui-disabled,
+	.MuiInputLabel-root:not(.MuiInputLabel-shrink).Mui-disabled {
+		color: rgba(0, 0, 0, 0.38);
+	}
+
 	// size etiquette
 	.MuiOutlinedInput-root,
 	fieldset {
 		font-size: 1.1vw;
 	}
 
-	.MuiIconButton-root {
-		width: 2.2vw;
-	}
-	.MuiIconButton-root:hover {
-		width: 2.3vw;
+	.MuiSvgIcon-root {
+		width: 1.5vw;
+		height: 1.5vw;
 	}
 }
 
@@ -116,11 +119,9 @@
 			font-size: 11px;
 		}
 
-		.MuiIconButton-root {
-			width: 30px;
-		}
-		.MuiIconButton-root:hover {
-			width: 32px;
+		.MuiSvgIcon-root {
+			width: 18px;
+			height: 18px;
 		}
 	}
 }

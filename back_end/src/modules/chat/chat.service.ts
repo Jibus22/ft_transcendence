@@ -180,6 +180,7 @@ export class ChatService {
   }
 
   async removeRoom(targetedRoom: Room) {
+    await this.repoParticipants.remove(targetedRoom.participants);
     return await this.repoRoom.remove(targetedRoom);
   }
 
@@ -224,9 +225,12 @@ export class ChatService {
   }
 
   async leaveRoom(user: User, room: Room) {
-    const participant = room.participants.find((p) => p.user.id === user.id);
-    if (participant) {
-      await this.repoParticipants.remove(participant);
+    const participant = await this.repoParticipants.find({
+      where: { user: user, room: room },
+      relations: ['user', 'room'],
+    });
+    if (participant[0]) {
+      await this.repoParticipants.remove(participant[0]);
     }
   }
 
