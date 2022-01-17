@@ -34,8 +34,8 @@ export default class CreateRandomRooms implements Seeder {
 
   public async run(factory: Factory, connection: Connection): Promise<any> {
     let allUsers = await connection.getRepository(User).find();
-    const participantsRange = 12;
-    while (allUsers.length < participantsRange) {
+    const participantsRange = 8;
+    while (allUsers.length < participantsRange * 2) {
       console.log(' [ 🍃 More random users needed: seeding them now.]');
       await runSeeder(CreateRandomUsers);
       allUsers = await connection.getRepository(User).find();
@@ -44,7 +44,7 @@ export default class CreateRandomRooms implements Seeder {
     await factory(Room)()
       .map(async (room: Room) => {
         let participants = await factory(Participant)().makeMany(
-          Math.ceil(Math.random() * participantsRange - 2) + 2,
+          Math.floor(Math.random() * (participantsRange - 2) + 2),
         );
         this.setRoomOwner(participants);
         this.setParticipantsUser(allUsers, participants);
@@ -60,5 +60,11 @@ export default class CreateRandomRooms implements Seeder {
       .createMany(20);
 
     await runSeeder(CreateRandomChatMessages);
+
+    const roomsInDb =await connection.getRepository(Room).find({relations: ['participants', 'messages']});
+    console.log(' 🍄  Rooms in database now: ', roomsInDb.length);
+    roomsInDb.forEach(r => {
+      console.log(`[${r.id}] - with  ${r.participants.length}  participants and  ${r.messages.length.toString().padEnd(4, ' ')}  messages`);
+    });
   }
 }

@@ -36,6 +36,10 @@ seed-chatMessages:
 	@echo 'This recipe seeds new Messages for existing rooms'
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomChatMessages'
 
+seed-getData:
+	@echo 'This recipe get Database content'
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:getData'
+
 back:
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up back_end_server ; docker-compose rm -fsv
 
