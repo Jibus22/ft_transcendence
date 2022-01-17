@@ -4,7 +4,7 @@ import {
   OnGatewayDisconnect,
   OnGatewayInit,
   WebSocketGateway,
-  WebSocketServer
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { User } from '../../users/entities/users.entity';
@@ -30,10 +30,11 @@ export enum Events {
   USER_MUTED = 'userMuted',
 }
 
-export type messageType = ChatMessageDto
-| RoomDto
-| ParticipantDto
-| RestrictionDto;
+export type messageType =
+  | ChatMessageDto
+  | RoomDto
+  | ParticipantDto
+  | RestrictionDto;
 
 const options: GatewayMetadata = {
   namespace: 'chat',
@@ -46,14 +47,12 @@ const options: GatewayMetadata = {
 
 @WebSocketGateway(options)
 export class ChatGateway
-implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   storage: Map<string, Socket>;
-  constructor(
-    private readonly chatGatewayService: ChatGatewayService,
-    ) {
-      this.storage = new Map<string, Socket>();
-    }
+  constructor(private readonly chatGatewayService: ChatGatewayService) {
+    this.storage = new Map<string, Socket>();
+  }
 
   @WebSocketServer()
   server: Server;

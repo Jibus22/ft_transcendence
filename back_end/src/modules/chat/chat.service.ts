@@ -31,7 +31,7 @@ export class ChatService {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        ROOMS METHODS
+        CREATE A ROOM
   -------------------------------------------------------------------
   ===================================================================
   */
@@ -56,7 +56,7 @@ export class ChatService {
       const isOwner = roomOwner.id === userId;
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
-      await this.repoParticipants.save(newParticipant).catch((error) => {
+      return await this.repoParticipants.save(newParticipant).catch((error) => {
         console.log(error);
       });
     }
@@ -95,18 +95,31 @@ export class ChatService {
       createRoomDto.password = null;
     }
 
-    const room = await this.addRoom(createRoomDto);
+    let room = await this.addRoom(createRoomDto);
+    room.participants = [];
     const participants = this.cleanParticipants(
       createRoomDto.participants,
       currentUser,
     );
     for (const p of participants) {
-      await this.createParticipant(p, room, currentUser);
+      const newParticipant = await this.createParticipant(p, room, currentUser);
+      if (newParticipant) {
+        room.participants.push(newParticipant);
+      }
     }
     return room;
   }
 
-  async findAll() {
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        FINDS FUNCTIONS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+
+  async findAllWithRestrictions() {
     return await this.repoRoom.find({
       relations: [
         'participants',
@@ -124,24 +137,34 @@ export class ChatService {
     });
   }
 
-  async findUserRoomList(user: User) {
+  async findUserRoomListWithMessages(user: User) {
     const roomIds: { id: string }[] =
       await this.usersService.findRoomParticipations(user.id);
 
     const rooms = await this.repoRoom.findByIds(
       roomIds.map((item) => item.id),
       {
-        relations: ['participants', 'participants.user'],
+        relations: [
+          'participants',
+          'participants.user',
+          'messages',
+          'messages.sender',
+        ],
       },
     );
     return rooms;
   }
 
-  async findOne(id: string) {
-    return this.repoRoom.findOne(id);
+  async findOneWithParticipants(id: string) {
+    return await this.repoRoom.findOne(id, {
+      relations: [
+        'participants',
+        'participants.user',
+      ],
+    });
   }
 
-  async findOneWithParticipants(id: string) {
+  async findOneWithParticipantsAndRestrictions(id: string) {
     return await this.repoRoom.findOne(id, {
       relations: [
         'participants',
@@ -164,9 +187,10 @@ export class ChatService {
   async findAllMessages(id: string) {
     return await this.repoMessage
       .createQueryBuilder('message')
-      .innerJoin('message.room', 'room')
+      .innerJoinAndSelect('message.room', 'room')
       .innerJoinAndSelect('message.sender', 'sender')
       .where('room.id = :id', { id })
+      .orderBy('message.timestamp', 'DESC')
       .getMany();
   }
 
