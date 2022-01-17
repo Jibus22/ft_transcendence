@@ -58,7 +58,6 @@
 	}
 	.buttonQR {
 		width: 25%;
-		height: 100%;
 
 		.buttonMui {
 			background-color: #ca6c88;
@@ -69,8 +68,7 @@
 			font-weight: 500;
 			border-radius: 15px;
 			border-radius: 0.5vw;
-			height: 50px;
-			height: 60% !important;
+			height: 100% !important;
 			width: 100%;
 		}
 		.buttonMui:hover {
@@ -198,7 +196,7 @@
 	}
 	.buttonQR {
 		width: 250px;
-		height: 100%;
+		// height: 100%;
 		.buttonMui {
 			font-size: 12px !important;
 			border-radius: 8px !important;
@@ -261,7 +259,7 @@
 			// margin: 0 0 0 50px !important;
 		}
 		.MuiIconButton-root:hover {
-			width: 2.1vw !important;
+			width: 32px !important;
 		}
 	}
 }

@@ -1,15 +1,11 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
-import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
-import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
 import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
-import { Participant } from '../../src/modules/chat/entities/participant.entity';
+import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
-import { ChatHelpers, RandomRoom } from './helpers';
-var faker = require('faker');
+import { ChatHelpers } from './helpers';
 
 describe('CHAT: Moderators', () => {
   const nbOfRooms = 25;
@@ -246,5 +242,4 @@ describe('CHAT: Moderators', () => {
         expect(targetParticipant.is_moderator).toBe(false);
       });
   });
-
 }); // <<< end of describBlock
