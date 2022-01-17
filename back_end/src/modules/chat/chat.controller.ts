@@ -1,12 +1,11 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
   HttpStatus,
-  NotFoundException,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -82,11 +81,9 @@ export class ChatController {
     return await this.chatService
       .createRoom(user, createRoomDto)
       .catch((error) => {
-        if (error.status) {
-          throw new HttpException(error, error.status);
-        } else {
-          throw new BadRequestException(error);
-        }
+        if (process.env.NODE_ENV === 'dev') console.log(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new InternalServerErrorException(error.message);
       });
   }
 
@@ -106,9 +103,11 @@ export class ChatController {
   @UseGuards(SiteOwnerGuard)
   @Serialize(RoomWithRestrictionsDto)
   async findAll() {
-    return await this.chatService
-      .findAllWithRestrictions()
-      .catch((err) => console.log(err));
+    return await this.chatService.findAllWithRestrictions().catch((error) => {
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status)throw new HttpException(error, error.status)
+      throw new InternalServerErrorException(error.message);
+    });
   }
 
   @ApiOperation({
@@ -122,9 +121,11 @@ export class ChatController {
   @Get('/publics')
   @Serialize(RoomDto)
   async findAllPublic() {
-    return await this.chatService
-      .findAllPublic()
-      .catch((err) => console.log(err));
+    return await this.chatService.findAllPublic().catch((error) => {
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status)throw new HttpException(error, error.status)
+      throw new InternalServerErrorException(error.message);
+    });
   }
 
   @ApiOperation({
@@ -158,7 +159,9 @@ export class ChatController {
   @UseGuards(RoomOwnerGuard)
   async remove(@TargetedRoom() targetedRoom: Room) {
     return await this.chatService.removeRoom(targetedRoom).catch((error) => {
-      throw new NotFoundException(error);
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status)throw new HttpException(error, error.status)
+      throw new InternalServerErrorException(error.message);
     });
   }
 
@@ -194,7 +197,11 @@ export class ChatController {
   ) {
     return await this.chatService
       .createMessage(room, user, body)
-      .catch((err) => console.log(err));
+      .catch((error) => {
+        if (process.env.NODE_ENV === 'dev') console.log(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new InternalServerErrorException(error.message);
+      });
   }
 
   @ApiOperation({
@@ -213,9 +220,11 @@ export class ChatController {
   @Serialize(ChatMessageDto)
   @UseGuards(RoomParticipantGuard)
   async getMessages(@Param('room_id') room_id: string) {
-    return await this.chatService
-      .findAllMessages(room_id)
-      .catch((err) => console.log(err));
+    return await this.chatService.findAllMessages(room_id).catch((error) => {
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status)throw new HttpException(error, error.status)
+      throw new InternalServerErrorException(error.message);
+    });
   }
 
   /*
@@ -246,11 +255,9 @@ export class ChatController {
     return await this.chatService
       .addParticipant(room, createPaticipant)
       .catch((error) => {
-        if (error.status) {
-          throw new HttpException(error, error.status);
-        } else {
-          throw new BadRequestException(error);
-        }
+        if (process.env.NODE_ENV === 'dev') console.log(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new InternalServerErrorException(error.message);
       });
   }
 
@@ -273,11 +280,9 @@ export class ChatController {
     return await this.chatService
       .updateParticipant(updateDto)
       .catch((error) => {
-        if (error.status) {
-          throw new HttpException(error, error.status);
-        } else {
-          throw new BadRequestException(error);
-        }
+        if (process.env.NODE_ENV === 'dev') console.log(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new InternalServerErrorException(error.message);
       });
   }
 
@@ -301,11 +306,9 @@ export class ChatController {
     return await this.chatService
       .createRestriction(room, createRestrictionDto)
       .catch((error) => {
-        if (error.status) {
-          throw new HttpException(error, error.status);
-        } else {
-          throw new BadRequestException(error);
-        }
+        if (process.env.NODE_ENV === 'dev') console.log(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new InternalServerErrorException(error.message);
       });
   }
 
@@ -337,11 +340,9 @@ export class ChatController {
     return await this.chatService
       .updatePassword(room, updatePasswordDto)
       .catch((error) => {
-        if (error.status) {
-          throw new HttpException(error, error.status);
-        } else {
-          throw new BadRequestException(error);
-        }
+        if (process.env.NODE_ENV === 'dev') console.log(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new InternalServerErrorException(error.message);
       });
   }
 }
