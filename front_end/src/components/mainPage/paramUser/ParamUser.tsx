@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Dispatch } from 'react';
 import './safari.css';
 import PopUpUser from './PopUp/PopUpUser';
 import { useSpring, animated } from 'react-spring';
@@ -12,7 +12,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
-	setTime: React.Dispatch<React.SetStateAction<boolean>>;
+	setTime: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ParamUser({ setTime }: Props) {
