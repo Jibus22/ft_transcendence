@@ -61,10 +61,18 @@ export default class CreateRandomRooms implements Seeder {
 
     await runSeeder(CreateRandomChatMessages);
 
-    const roomsInDb =await connection.getRepository(Room).find({relations: ['participants', 'messages']});
+    const roomsInDb = await connection
+      .getRepository(Room)
+      .find({ relations: ['participants', 'messages'] });
     console.log(' 🍄  Rooms in database now: ', roomsInDb.length);
-    roomsInDb.forEach(r => {
-      console.log(`[${r.id}] - with  ${r.participants.length}  participants and  ${r.messages.length.toString().padEnd(4, ' ')}  messages`);
+    roomsInDb.forEach((r) => {
+      console.log(
+        `[${r.id}] - with  ${
+          r.participants.length
+        }  participants and  ${r.messages.length
+          .toString()
+          .padEnd(4, ' ')}  messages`,
+      );
     });
   }
 }

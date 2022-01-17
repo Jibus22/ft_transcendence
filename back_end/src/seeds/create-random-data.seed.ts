@@ -8,7 +8,7 @@ export default class CreateRandomData implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
     console.log('🌳 Seeding all random data...');
     await runSeeder(CreateRandomUsers);
-    await runSeeder(CreateRandomGames);
     await runSeeder(CreateRandomRooms);
+    await runSeeder(CreateRandomGames);
   }
 }
