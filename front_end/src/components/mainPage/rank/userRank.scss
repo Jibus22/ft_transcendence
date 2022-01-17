@@ -1,15 +1,23 @@
 .mainUserRank {
 	width: 80%;
-	height: 700px;
-	margin: -15px 0 0 190px;
+	height: 38vw;
+	margin: 90px auto;
+	margin-bottom: 100px;
+	border-radius: 2.2vw;
+
 	padding: 0 20px 0 0;
 
-	border-radius: 23px;
-	border: 1px solid rgba(255, 255, 255, 0.7);
+	border: 3px solid rgba(255, 255, 255, 0.7);
 	background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
 	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
+
+	h1,
+	h3 {
+		font-family: Montserrat, sans-serif;
+		color: white;
+	}
 
 	.mainTitleRank {
 		margin: 50px 0 0 0;
@@ -18,376 +26,213 @@
 		justify-content: space-between;
 
 		h1 {
-			font-family: Montserrat, sans-serif;
-			font-size: 38px;
+			font-size: 2.2vw;
 			font-weight: 500;
-			color: white;
 		}
 	}
 
-	.toogleButton {
-		ul {
-			list-style: none;
-		}
-		p {
-			color: #ca6c88;
-			margin: 0 auto;
-			font-size: 17px;
-		}
-
-		margin: 30px 50px 0 0;
-		width: 17%;
-		height: 40px;
-		border: #fcddec 2px solid;
-		border-radius: 30px;
-		background-color: #fcddec;
-	}
-
-	.switch-button {
-		background: #fcddec;
-		border-radius: 30px;
-		overflow: hidden;
-		width: 150px;
-		height: 25px;
-		text-align: center;
-		font-size: 18px;
-		letter-spacing: 1px;
-		color: #155fff;
-		position: relative;
-		padding-right: 120px;
-		position: relative;
-
-		&:before {
-			content: '';
-			position: absolute;
-			top: 0;
-			bottom: 0;
-
-			width: 120px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 3;
-			pointer-events: none;
-		}
-
-		.divSwitchButton {
-			margin: -40% 0% 0% 19px;
-			font-size: 12px;
-			font-family: Montserrat, sans-serif;
-		}
-		.divSwitchButton2 {
-			margin: -40% 0% 0% 35px;
-			font-size: 12px;
-			font-family: Montserrat, sans-serif;
-		}
-		.divSwitchOn {
-			color: #ca6c88;
-		}
-		.divSwitchOff {
-			color: white;
-		}
-
-		&-checkbox {
-			cursor: pointer;
-			position: absolute;
-			top: 0;
-			left: 0;
-			bottom: 0;
+	.mainSwitch {
+		width: 10vw;
+		height: 1.7vw;
+		.switch-button {
+			background: #fcddec;
+			border-radius: 30px;
+			overflow: hidden;
+			width: 150px;
+			width: 250px;
+			height: 40px;
 			width: 100%;
 			height: 100%;
-			opacity: 0;
-			z-index: 2;
 
-			&:checked + .switch-button-label:before {
-				transform: translateX(71px);
-				transition: transform 300ms linear;
-			}
+			text-align: center;
+			font-size: 18px;
+			letter-spacing: 1px;
+			color: #155fff;
+			position: relative;
 
-			& + .switch-button-label {
-				position: relative;
-				padding: 15px 0;
-				display: block;
-				user-select: none;
+			position: relative;
+
+			&:before {
+				content: '';
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				width: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 3;
 				pointer-events: none;
+			}
 
-				&:before {
-					content: '';
-					background: #ca6c88;
-					height: 62%;
-					width: 79px;
-					position: absolute;
-					border: 1px solid #fcddec;
-					top: 0.8px;
-					border-radius: 30px;
-					transform: translateX(0);
-					transition: transform 300ms;
+			.divSwitchButton {
+				font-size: 15px;
+				font-size: 0.9vw;
+				font-family: Montserrat, sans-serif;
+
+				width: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.divSwitchButton2 {
+				font-size: 0.9vw;
+				font-family: Montserrat, sans-serif;
+				width: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.divSwitchOn {
+				color: #ca6c88;
+			}
+			.divSwitchOff {
+				color: white;
+			}
+
+			&-checkbox {
+				cursor: pointer;
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				z-index: 2;
+
+				&:checked + .switch-button-label:before {
+					transform: translateX(5vw);
+					transition: transform 300ms linear;
 				}
 
-				.switch-button-label-span {
+				& + .switch-button-label {
 					position: relative;
+
+					display: block;
+					user-select: none;
+					pointer-events: none;
+
+					height: 100%;
+					width: 100%;
+
+					&:before {
+						// middle boule
+						content: '';
+						background: #ca6c88;
+						position: absolute;
+
+						height: 100%;
+						width: 50%;
+						position: absolute;
+						border: 3px solid #fcddec;
+
+						border-radius: 30px;
+						transform: translateX(0);
+						transition: transform 300ms;
+					}
+
+					.switch-button-label-span {
+						position: relative;
+					}
 				}
 			}
 		}
 	}
 
-	.selectedNave {
-		background: #ca6c88;
-		height: 120%;
-
-		border-radius: 30px;
-
-		p {
-			color: white;
-		}
-	}
 	.rankInfo {
-		width: 90%;
-		margin: 30px auto;
+		width: 100%;
+		margin-top: 2%;
+		display: flex;
+
+		height: 6%;
+		align-self: flex-end;
+		align-items: center;
+
 		h3 {
 			color: #e69c6a;
+			text-align: center;
+			font-size: 1.1vw;
 		}
+		h3:first-child {
+			margin-top: 27px !important;
+		}
+		h3:last-child {
+			margin-bottom: 15px;
+		}
+
+		h3 {
+			height: 100%;
+		}
+
 		.nbRank {
-			margin: 0 0 0 10px;
+			width: 10%;
+			margin-top: 14px !important;
 		}
 		.nbUser {
-			margin: 0 0 0 120px;
+			width: 31%;
 		}
 		.nbGame {
-			margin: 0 0 0 364px;
+			width: 15%;
 		}
 		.nbWin {
-			margin: 0 0 0 130px;
+			width: 15%;
 		}
 		.nbLoose {
-			margin: 0 0 0 130px;
+			width: 15%;
 		}
 	}
 
 	::-webkit-scrollbar {
-		width: 10px;
+		width: 20px;
 	}
 	::-webkit-scrollbar-track {
 		margin-top: 30px;
 		margin-bottom: 30px;
 		border-radius: 40px;
 	}
-}
-
-.userPrintDIv {
-	width: 95%;
-	height: 500px;
-	margin: 0 0 0 80px;
-	overflow: auto;
-
-	h1,
-	h3 {
-		font-family: Montserrat, sans-serif;
-		color: white;
-		font-weight: normal;
-		font-size: 25px;
-	}
-	.MainUserRankdiv {
-		margin: 0 0 30px 0;
-		.nbRank {
-			width: 50px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		.imgUser {
-			margin: 0 0 0 100px;
-
-			.MuiAvatar-root {
-				width: 85px;
-				height: 83px;
-				border: none;
-			}
-			.MuiBadge-badge {
-				width: 17%;
-				height: 16%;
-
-				border-radius: 100%;
-
-				z-index: 3;
-			}
-			.MuiBadge-badge::after {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				border-radius: 50%;
-				animation: badgeAnim 1.2s infinite ease-in-out;
-				border: 1px solid;
-				content: '';
-			}
-		}
-		.logginUser {
-			width: 200px;
-			margin: 0 0 0 50px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			h1 {
-				text-align: center;
-			}
-		}
-		.nbStatGame {
-			margin: 0 0 0 100px;
-			justify-content: center;
-			align-items: center;
-		}
-		.nbStatWin {
-			margin: 0 0 0 150px;
-			justify-content: center;
-			align-items: center;
-		}
-		.nbStatLoose {
-			margin: 0 0 0 150px;
-			justify-content: center;
-			align-items: center;
-		}
-
-		.buttonDIv {
-			margin: 0 0 0 150px;
-			justify-content: center;
-			align-items: center;
-
-			.muiButton {
-				height: 40px;
-				width: 150px;
-				border: white 1px solid;
-				background-color: #e69c6a;
-				font-family: Montserrat, sans-serif;
-				font-weight: 500;
-				font-size: 19px;
-				border-radius: 15px;
-			}
-			.muiButton:hover {
-				background-color: rgba(230, 156, 106, 0.5);
-				font-size: 21px;
-			}
-		}
-	}
-}
-
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
-@media screen and (max-width: 1440px) {
-	.mainUserRank {
-		width: 80.8%;
-		height: 560px;
-		margin: 4% 0 0 140px;
-		padding: 0 20px 0 0;
-
-		.mainTitleRank {
-			margin: 35px 0 0 0;
-			width: 100%;
-			padding: 0 80px 0 80px;
-
-			h1 {
-				font-size: 28px;
-			}
-		}
-
-		.toogleButton {
-			p {
-				margin: 0 auto;
-				font-size: 13px;
-			}
-			margin: 30px 30px 0 0;
-			width: 20%;
-			height: 30px;
-			border: #fcddec 1px solid;
-			border-radius: 30px;
-		}
-
-		.selectedNav {
-			height: 120%;
-			border-radius: 30px;
-
-			p {
-			}
-		}
-		.rankInfo {
-			width: 90%;
-			margin: 30px auto;
-			h3 {
-				color: #e69c6a;
-				font-size: 14px;
-			}
-			.nbRank {
-				margin: 0 0 0 -5px;
-			}
-			.nbUser {
-				margin: 0 0 0 105px;
-			}
-			.nbGame {
-				margin: 0 0 0 314px;
-			}
-			.nbWin {
-				margin: 0 0 0 82px;
-			}
-			.nbLoose {
-				margin: 0 0 0 81px;
-			}
-		}
-
-		::-webkit-scrollbar {
-			width: 8px;
-		}
-		::-webkit-scrollbar-track {
-			margin-top: 30px;
-			margin-bottom: 30px;
-			border-radius: 40px;
-		}
-	}
 
 	.userPrintDIv {
-		width: 97%;
-		height: 350px;
-		margin: 0 0 0 40px;
+		width: 100%;
+		height: 70%;
+		margin-top: 2px;
+
 		overflow: auto;
-		padding: 0 0 0 0;
 
 		h1,
 		h3 {
-			font-family: Montserrat, sans-serif;
-			color: white;
 			font-weight: normal;
-			font-size: 18px;
+			font-size: 1.3vw;
 		}
 		.MainUserRankdiv {
-			margin: 0 0 20px 0;
+			display: flex;
+
+			align-self: flex-start;
+			margin: 1.4% 0% 0% 0%;
+			width: 100%;
+
 			.nbRank {
-				width: 50px;
+				width: 10%;
 				display: flex;
 				justify-content: center;
 				align-items: center;
+
+				h1 {
+					font-size: 1.8vw;
+				}
 			}
 
 			.imgUser {
-				margin: 0 0 0 81px;
-				border-radius: 46%;
-
-				img {
-					width: 100%;
-					border-radius: 44%;
-				}
-
 				.MuiAvatar-root {
-					width: 70px;
-					height: 70px;
+					width: 5vw;
+					height: 5vw;
 					border: none;
+					border-radius: 2.3vw;
 				}
 				.MuiBadge-badge {
 					width: 17%;
 					height: 16%;
 					border-radius: 100%;
-					box-shadow: 0 0 0 0.5px;
 					z-index: 3;
 				}
 				.MuiBadge-badge::after {
@@ -403,53 +248,299 @@
 				}
 			}
 
-			.logginUser {
-				width: 200px;
-				margin: 0 0 0 50px;
+			.logginUser,
+			.nbStatGame,
+			.nbStatWin,
+			.nbStatLoose,
+			.buttonDIv {
 				justify-content: center;
 				align-items: center;
+			}
+
+			.logginUser {
+				display: flex;
+				width: 25%;
+
 				h1 {
 					text-align: center;
 				}
 			}
 			.nbStatGame {
-				margin: 0 0 0 40px;
-				justify-content: center;
-				align-items: center;
-				width: 40px;
+				width: 15%;
 			}
 			.nbStatWin {
-				margin: 0 0 0 73px;
-				justify-content: center;
-				align-items: center;
-				width: 40px;
+				width: 15%;
 			}
 			.nbStatLoose {
-				margin: 0 0 0 73px;
-				justify-content: center;
-				align-items: center;
-				width: 40px;
+				width: 15%;
 			}
 
 			.buttonDIv {
-				margin: 0 0 0 120px;
-				justify-content: center;
-				align-items: center;
+				width: 13%;
 
 				.muiButton {
-					height: 35px;
-					width: 120px;
-					border: white 1px solid;
+					width: 70%;
+					height: 40%;
+					border: white 2px solid;
 					background-color: #e69c6a;
-					font-family: Montserrat, sans-serif;
 					font-weight: 500;
-					font-size: 14px;
-					border-radius: 14px;
+					font-size: 0.9vw;
+					border-radius: 0.8vw;
 				}
 				.muiButton:hover {
 					background-color: rgba(230, 156, 106, 0.5);
-					font-size: 16px;
+					font-size: 1vw;
 				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 2100px) {
+	.mainUserRank {
+		.userPrintDIv {
+			height: 67% !important;
+		}
+	}
+}
+
+@media screen and (max-width: 1920px) {
+	.mainUserRank {
+		border: 2px solid rgba(255, 255, 255, 0.7);
+
+		::-webkit-scrollbar {
+			width: 10px;
+		}
+
+		.mainSwitch {
+			.switch-button {
+				.divSwitchButton {
+					// font-size: 0.9vw;
+				}
+				.divSwitchButton2 {
+					// font-size: 0.9vw;
+				}
+
+				&-checkbox {
+					&:checked + .switch-button-label:before {
+						transform: translateX(5vw);
+						transition: transform 300ms linear;
+					}
+
+					& + .switch-button-label {
+						&:before {
+							// middle boule
+
+							border: 2px solid #fcddec;
+
+							border-radius: 30px;
+							transform: translateX(0);
+							transition: transform 300ms;
+						}
+
+						.switch-button-label-span {
+							position: relative;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	.mainUserRank {
+		border: 1px solid rgba(255, 255, 255, 0.7);
+
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		.userPrintDIv {
+			.MainUserRankdiv {
+				.muiButton {
+					border: white 1px solid !important;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1270px) {
+	.mainUserRank {
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		height: 500px;
+		margin-top: 70px;
+		.mainSwitch {
+			width: 110px;
+			height: 20px;
+			margin-left: 130px;
+			.switch-button {
+				.divSwitchButton {
+					font-size: 10px;
+				}
+				.divSwitchButton2 {
+					font-size: 10px;
+				}
+
+				&-checkbox {
+					&:checked + .switch-button-label:before {
+						transform: translateX(55px);
+						transition: transform 300ms linear;
+					}
+
+					& + .switch-button-label {
+						&:before {
+							// middle boule
+
+							border: 1px solid #fcddec;
+
+							border-radius: 30px;
+							transform: translateX(0);
+							transition: transform 300ms;
+						}
+
+						.switch-button-label-span {
+							position: relative;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1000px) {
+	.mainUserRank {
+		border-radius: 24px;
+
+		.mainTitleRank {
+			margin: 35px 0 0 -30px;
+
+			h1 {
+				font-size: 25px;
+			}
+		}
+
+		.mainSwitch {
+			margin-right: -50px !important;
+		}
+
+		.rankInfo {
+			margin-top: 30px;
+			h3 {
+				color: #e69c6a;
+				text-align: center;
+				font-size: 1.1vw;
+				font-size: 11px;
+			}
+
+			.nbRank {
+				width: 18%;
+				margin-top: 14px !important;
+			}
+			.nbUser {
+				width: 20%;
+			}
+			.nbGame {
+				width: 22%;
+			}
+			.nbWin {
+				width: 9%;
+			}
+			.nbLoose {
+				width: 23%;
+			}
+		}
+
+		.userPrintDIv {
+			height: 370px !important;
+
+			width: 106%;
+
+			h1,
+			h3 {
+				font-size: 13px;
+			}
+			.MainUserRankdiv {
+				width: 100%;
+				justify-content: center;
+				margin-top: 20px !important;
+
+				.nbRank {
+					width: 10%;
+
+					h1 {
+						font-size: 16px;
+					}
+				}
+
+				.logginUser {
+					// width: 15%;
+				}
+				.nbStatGame {
+					width: 15%;
+				}
+				.nbStatWin {
+					width: 15%;
+				}
+				.nbStatLoose {
+					width: 15%;
+				}
+
+				.buttonDIv {
+					width: 13%;
+
+					.muiButton {
+						width: 45px;
+
+						height: 20px;
+
+						font-size: 8px !important;
+
+						border-radius: 8px;
+					}
+					.muiButton:hover {
+						font-size: 9px !important;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 707px) {
+	.mainUserRank {
+		.mainTitleRank {
+			display: flex;
+			padding: 0 0 0 0;
+			margin: 7% 0% 0% 6%;
+			justify-content: flex-start !important;
+			align-items: flex-start !important;
+			h1 {
+			}
+		}
+		.mainSwitch {
+			margin: 1.5% 0% 0% 26%;
+		}
+		.rankInfo {
+			h3:first-child {
+			}
+			h3:last-child {
+				margin-bottom: 14px !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 626px) {
+	.mainUserRank {
+		width: 425px;
+		.rankInfo {
+			h3:first-child {
+				margin-top: 28px !important;
+			}
+			h3:last-child {
 			}
 		}
 	}

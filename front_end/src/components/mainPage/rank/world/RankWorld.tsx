@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
-import { Avatar, Badge } from '@mui/material';
+import { Avatar, Badge, useMediaQuery } from '@mui/material';
 import axios, { AxiosError } from 'axios';
 
 import Button from '@mui/material/Button';
@@ -30,6 +30,7 @@ const RankWorld = () => {
 
 	const [data, setData] = useState<Array<Users>>([]);
 	const { setStatusColor } = useMainPage();
+	const query = useMediaQuery('(max-width: 1000px)');
 
 	useEffect(() => {
 		fetchData();
@@ -57,11 +58,12 @@ const RankWorld = () => {
 
 	const userList = data.sort(userSortRank).map((data, rank: number) => {
 		return (
-			<div className="MainUserRankdiv d-flex " key={data.id}>
-				<div className="d-flex rankdiv rankdiv1">
-					<div className="nbRank ">
-						<h1>{rank + 1}</h1>
-					</div>
+			<div className="MainUserRankdiv " key={data.id}>
+				<div className="nbRank ">
+					<h1>{rank + 1}</h1>
+				</div>
+
+				{!query ? (
 					<div className="imgUser ">
 						<Badge
 							overlap="circular"
@@ -82,21 +84,22 @@ const RankWorld = () => {
 							<Avatar alt="userImg" src={data.photo_url} variant="square" className="domUser" />
 						</Badge>
 					</div>
-					<div className="logginUser d-flex ">
-						<h1>{data.login}</h1>
-					</div>
+				) : null}
+
+				<div className="logginUser d-flex ">
+					<h1>{data.login}</h1>
 				</div>
-				<div className="d-flex rankdiv rankdiv2">
-					<div className="d-flex nbStatGame">
-						<h3>{data.game}</h3>
-					</div>
-					<div className="d-flex nbStatWin">
-						<h3>{data.win}</h3>
-					</div>
-					<div className="d-flex nbStatLoose">
-						<h3>{data.looses}</h3>
-					</div>
+
+				<div className="d-flex nbStatGame">
+					<h3>{data.game}</h3>
 				</div>
+				<div className="d-flex nbStatWin">
+					<h3>{data.win}</h3>
+				</div>
+				<div className="d-flex nbStatLoose">
+					<h3>{data.looses}</h3>
+				</div>
+
 				<div className="buttonDIv d-flex">
 					<Button className="muiButton" variant="contained" sx={{ width: 2 / 2, textTransform: 'none' }}>
 						Challenge

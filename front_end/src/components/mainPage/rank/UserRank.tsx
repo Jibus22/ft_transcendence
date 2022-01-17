@@ -27,19 +27,18 @@ const UserRank = () => {
 					<div>
 						<h1>Leaderboard</h1>
 					</div>
-
-					<div className="switch-button">
-						<input onClick={handleClick} className="switch-button-checkbox" type="checkbox"></input>
-						<label className="switch-button-label d-flex " htmlFor="">
-							<div className={`${isWorld ? 'divSwitchOff' : 'divSwitchOn'} d-flex divSwitchButton`}>
-								<span className="switch-button-label-span">World</span>
-							</div>
-							<div
-								className={`${!isWorld ? 'divSwitchOff' : 'divSwitchOn'} d-flex divSwitchButton2`}
-							>
-								<span className="switch-button-label-span">Friends</span>
-							</div>
-						</label>
+					<div className="mainSwitch">
+						<div className="switch-button">
+							<input onClick={handleClick} className="switch-button-checkbox" type="checkbox"></input>
+							<label className="switch-button-label d-flex " htmlFor="">
+								<div className={`${isWorld ? 'divSwitchOff' : 'divSwitchOn'} d-flex divSwitchButton`}>
+									<span className="switch-button-label-span">World</span>
+								</div>
+								<div className={`${!isWorld ? 'divSwitchOff' : 'divSwitchOn'} d-flex divSwitchButton2`}>
+									<span className="switch-button-label-span">Friends</span>
+								</div>
+							</label>
+						</div>
 					</div>
 				</div>
 				<div className="rankInfo d-flex ">
