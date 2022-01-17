@@ -130,10 +130,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
       }, 100);
     });
 
-    console.log('ws->', wsLoggedUser.id);
-    console.log('http->', httpLoggedUser.id);
     const events = WsChatHelpers.events;
-    events.forEach(e => console.log(e));
     expect(events).toHaveLength(4);
     expect(events).toMatchObject([
       { ev: Events.CONNECT },

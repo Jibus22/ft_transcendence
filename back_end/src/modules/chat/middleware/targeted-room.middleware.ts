@@ -26,7 +26,7 @@ export class TargetedRoomMiddleware implements NestMiddleware {
 
     if (currentUser && targetedRoomId) {
       await this.chatService
-        .findOneWithParticipants(targetedRoomId)
+        .findOneWithParticipantsAndRestrictions(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
           req.targetedRoomActiveBan = this.chatService.extractValidRestrictions(

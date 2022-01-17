@@ -1,14 +1,14 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
-import { ChatMessageDto } from '../../src/modules/chat/dto/chatMessade.dto';
-import { createMessageDto } from '../../src/modules/chat/dto/create-message.dto';
 import { ParticipantDto } from '../../src/modules/chat/dto/participant.dto';
-import { FullRoomDto, RoomDto } from '../../src/modules/chat/dto/room.dto';
-import { Participant } from '../../src/modules/chat/entities/participant.entity';
+import {
+  RoomDto,
+  RoomWithRestrictionsDto,
+} from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
-import { ChatHelpers, RandomRoom } from './helpers';
+import { ChatHelpers } from './helpers';
 
 describe('CHAT: Restrictions', () => {
   const nbOfRooms = 25;
@@ -95,7 +95,7 @@ describe('CHAT: Restrictions', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
-        const room: FullRoomDto = response.body[0];
+        const room: RoomWithRestrictionsDto = response.body[0];
         expect(room.bans).toBeDefined();
         expect(room.mutes).toBeDefined();
         expect(room.mutes.length).toBe(0);
@@ -144,7 +144,7 @@ describe('CHAT: Restrictions', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
-        const room: FullRoomDto = response.body[0];
+        const room: RoomWithRestrictionsDto = response.body[0];
         expect(room.bans).toBeDefined();
         expect(room.bans.length).toBe(0);
         expect(room.mutes).toBeDefined();
@@ -184,7 +184,7 @@ describe('CHAT: Restrictions', () => {
       })
       .then(async (response) => {
         expect(response.status).toBe(HttpStatus.OK);
-        const room: FullRoomDto = response.body[0];
+        const room: RoomWithRestrictionsDto = response.body[0];
         expect(room.bans).toBeDefined();
         expect(room.bans.length).toBe(0);
         expect(room.mutes).toBeDefined();
