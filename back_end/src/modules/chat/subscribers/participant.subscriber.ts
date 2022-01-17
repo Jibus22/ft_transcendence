@@ -3,7 +3,7 @@ import {
   EntitySubscriberInterface,
   EventSubscriber
 } from 'typeorm';
-import { ChatGatewayService } from '../../../gateways/chatGateway.service';
+import { ChatGatewayService } from '../gateways/chatGateway.service';
 import { Participant } from '../entities/participant.entity';
 
 @EventSubscriber()

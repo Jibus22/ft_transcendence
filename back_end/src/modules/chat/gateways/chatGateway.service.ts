@@ -2,9 +2,9 @@ import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Server } from 'http';
 import { Socket } from 'socket.io';
-import { Room } from '../modules/chat/entities/room.entity';
-import { User } from '../modules/users/entities/users.entity';
-import { UsersService } from '../modules/users/service-users/users.service';
+import { Room } from '../entities/room.entity';
+import { User } from '../../users/entities/users.entity';
+import { UsersService } from '../../users/service-users/users.service';
 
 @Injectable()
 export class ChatGatewayService {

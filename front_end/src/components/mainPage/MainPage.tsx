@@ -17,19 +17,14 @@ const MainPage = () => {
 	const [isHeader, setIsHeader] = useState(true);
 
 	let navigate = useNavigate();
-	const fetchDataUserMe = async () => {
-		try {
-			const { data } = await axios.get('http://localhost:3000/me', {
-				withCredentials: true,
-			});
 
-			setData([data]);
-		} catch (error) {
-			const err = error as AxiosError;
-			if (err.response?.status === 401) {
-				navigate('/');
-			}
-		}
+	const fetchDataUserMe = async () => {
+		return await axios.get('http://localhost:3000/me', {
+			withCredentials: true,
+		})
+		.then((response) => {
+			setData([response.data]);
+		});
 	};
 
 	const setWsCallbacks = (socket: Socket) => {
@@ -135,9 +130,16 @@ const MainPage = () => {
 		}, 500);
 	};
 
-	useMount(() => {
-		fetchDataUserMe();
-		connectWsStatus();
+	useMount(async () => {
+		await fetchDataUserMe()
+		.then(() => {
+			connectWsStatus();
+		})
+		.catch((err) => {
+			if (err.response?.status === 401) {
+				navigate('/');
+			}
+		});
 	});
 
 	const resetTimeSnack = () => {
