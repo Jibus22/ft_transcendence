@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { Connection } from 'typeorm';
-import { Factory, Seeder } from 'typeorm-seeding';
+import { Factory, runSeeder, Seeder } from 'typeorm-seeding';
 import { ChatMessage } from '../modules/chat/entities/chatMessage.entity';
 import { Participant } from '../modules/chat/entities/participant.entity';
 import { Room } from '../modules/chat/entities/room.entity';
@@ -38,7 +38,8 @@ export default class CreateRandomChatMessages implements Seeder {
       .find({ relations: ['room', 'user'] });
     const allRooms = await connection.getRepository(Room).find();
 
-    return await factory(ChatMessage)()
+    if (allRooms.length >= 10 && Participant.length >= 10) {
+      return await factory(ChatMessage)()
       .map(async (message: ChatMessage) => {
         this.setRoom(message, allRooms);
         this.setSender(message, allParticipants);
@@ -46,5 +47,10 @@ export default class CreateRandomChatMessages implements Seeder {
         return message;
       })
       .createMany(200);
+    } else {
+      console.log(`Not enough rooms or participants: rooms (${
+        allRooms.length}), partitipants(${
+        Participant.length}), seed some before seeding messages`);
+    }
   }
 }

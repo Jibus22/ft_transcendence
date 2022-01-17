@@ -1,22 +1,17 @@
 import { plainToClass } from 'class-transformer';
 import { Connection } from 'typeorm';
-import { Factory, Seeder } from 'typeorm-seeding';
+import { Factory, runSeeder, Seeder } from 'typeorm-seeding';
 import { Game } from '../modules/game/entities/game.entity';
 import { Player } from '../modules/game/entities/player.entity';
 import { UserDto } from '../modules/users/dtos/user.dto';
 import { User } from '../modules/users/entities/users.entity';
+import CreateRandomUsers from './create-random-users.seed';
 
 export default class CreateRandomGames implements Seeder {
   private setScores(game: Game) {
-    game.players[0].score = Math.ceil(Math.random() * (10 - 1) + 1);
-    game.players[1].score = Math.ceil(Math.random() * (10 - 1) + 1);
-    if (game.players[0].score === game.players[1].score) {
-      let offset = -1;
-      if (game.players[0].score === 0) {
-        offset = +1;
-      }
-      game.players[Math.random() > 0.5 ? 0 : 1].score += offset;
-    }
+    const winner =(Math.random() < 0.5) ? 0 : 1;
+    game.players[winner].score = 10
+    game.players[1 - winner].score = Math.floor(Math.random() * 10)
   }
 
   private setPlayersUser(allUsers: User[], game: Game, players: Player[]) {
@@ -39,7 +34,12 @@ export default class CreateRandomGames implements Seeder {
   }
 
   public async run(factory: Factory, connection: Connection): Promise<any> {
-    const allUsers = await connection.getRepository(User).find();
+    let allUsers = await connection.getRepository(User).find();
+    while (allUsers.length < 20) {
+      console.log(' [ 🍃 More random users needed: seeding them now.]');
+      await runSeeder(CreateRandomUsers);
+      allUsers = await connection.getRepository(User).find();
+    }
 
     await factory(Game)()
       .map(async (game: Game) => {

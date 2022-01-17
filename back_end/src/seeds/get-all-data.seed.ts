@@ -29,14 +29,13 @@ export default class getAllData implements Seeder {
       console.log(
         `[${r.is_private ? 'private' : 'PUBLIC '}].[${r.id}] - with  ${
           r.participants.length
-        }  participants and  ${
-          r.messages.length.toString().padEnd(4, ' ')
-        }  messages , owner is ${
-          (r.participants.find(p => p.is_owner)).user.login
-        } -- ${
-          r.password ? 'protected with "password"' : ''
-        }`);
-        });
+        }  participants and  ${r.messages.length
+          .toString()
+          .padEnd(4, ' ')}  messages , owner is ${
+          r.participants.find((p) => p.is_owner).user.login
+        } -- ${r.password ? 'protected with "password"' : ''}`,
+      );
+    });
 
     const gamesInDb = await connection
       .getRepository(Game)
@@ -44,7 +43,12 @@ export default class getAllData implements Seeder {
     console.log(' ⛳️  Games in database now: ', gamesInDb.length);
     gamesInDb.forEach((g) => {
       console.log(
-        `[${g.id}] - ${g.players[0].user.login} (${g.players[0].score}) // ${g.players[1].user.login} (${g.players[1].score})`,
+        `[${g.id}] - ${new Date(g.createdAt).toUTCString()} - [ ${
+          g.players[0].score
+        } / ${g.players[1].score} ] ${g.players[0].user.login.padEnd(
+          10,
+          ' ',
+        )} |Vs.| ${g.players[1].user.login.padEnd(10, ' ')} `,
       );
     });
   }
