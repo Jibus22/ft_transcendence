@@ -18,6 +18,18 @@ test:
 db:
 	docker-compose -f docker-compose.yml up database_server ; docker-compose rm -fsv
 
+## -----------------------------------------------------------------------------
+##		SEED
+## -----------------------------------------------------------------------------
+
+seed-prod-data:
+	@echo 'This recipe seeds all kind of data available for seeding !'
+	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:randomData'
+
+seed-prod-getdata:
+	@echo 'This recipe seeds all kind of data available for seeding !'
+	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:getData'
+
 seed-data:
 	@echo 'This recipe seeds all kind of data available for seeding !'
 	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run back_end_server bash -c 'npm run seed:randomData'
@@ -112,6 +124,7 @@ dockerfclean:
 dbclean:
 	${RM} -rf database
 	${RM} back_end/dbDev.sqlite back_end/dbDev.sqlite-shm back_end/dbDev.sqlite-wal
+	docker volume rm repo_database_storage
 
 photoclean:
 	${RM} data/users_photos_*/*
