@@ -5,6 +5,7 @@ import {
   EventSubscriber,
   InsertEvent,
   RemoveEvent,
+  UpdateEvent,
 } from 'typeorm';
 import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
@@ -27,6 +28,15 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     if (event.entity.is_private === false) {
       this.chatGateway.sendEventToServer(
         Events.PUBLIC_ROOM_CREATED,
+        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
+      );
+    }
+  }
+
+  beforeUpdate(event: UpdateEvent<Room>) {
+    if (event.databaseEntity.is_private === false) {
+      this.chatGateway.sendEventToServer(
+        Events.PUBLIC_ROOM_UPDATED,
         plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
       );
     }

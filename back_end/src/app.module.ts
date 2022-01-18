@@ -10,13 +10,11 @@ import { APP_PIPE } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
 import { TargetedRoomMiddleware } from './modules/chat/middleware/targeted-room.middleware';
 import { DatabaseModule } from './modules/database/database.module';
 import { DevelopmentModule } from './modules/dev/development.module';
 import { GameModule } from './modules/game/game.module';
-import { MeController } from './modules/users/me.controller';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
@@ -69,6 +67,6 @@ export class AppModule {
     consumer.apply(CurrentUserMiddleware).exclude('/dev/(.*)').forRoutes('*');
     consumer
       .apply(TargetedRoomMiddleware)
-      .forRoutes('/room/:room_id/*', '/me/rooms/:room_id');
+      .forRoutes('/room/:room_id', '/room/:room_id/*', '/me/rooms/:room_id');
   }
 }
