@@ -136,7 +136,8 @@ export class ChatController {
     status: HttpStatus.OK,
     description: 'Single room informations',
   })
-  @Get('/:room_id')
+  @UseGuards(RoomParticipantGuard)
+  @Get(':room_id')
   @Serialize(RoomDto)
   async getSingleRoom(@TargetedRoom() targetedRoom: Room) {
     return targetedRoom;
