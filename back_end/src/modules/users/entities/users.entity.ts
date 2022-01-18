@@ -68,9 +68,6 @@ export class User {
   @OneToMany(() => Player, (player) => player.user)
   players: Player[];
 
-  // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
-  // rooms_ownership: Room[];
-
   @OneToMany(() => Participant, (participant) => participant.user)
   room_participations: Participant[];
 

@@ -16,6 +16,6 @@ export class Restriction {
   @Column()
   restriction_type: 'ban' | 'mute';
 
-  @Column()
+  @Column({type: 'bigint'})
   expiration_time: number;
 }

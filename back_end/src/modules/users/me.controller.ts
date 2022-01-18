@@ -6,6 +6,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
   Patch,
   Res,
   Session,
@@ -157,11 +158,9 @@ export class MeController {
     @Body() body: { password?: string },
   ) {
     return await this.chatService.joinRoom(user, room, body).catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      } else {
-        throw new BadRequestException(error);
-      }
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status) throw new HttpException(error, error.status);
+      throw new InternalServerErrorException(error.message);
     });
   }
 
@@ -179,11 +178,9 @@ export class MeController {
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
     return await this.chatService.leaveRoom(user, room).catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      } else {
-        throw new BadRequestException(error);
-      }
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status) throw new HttpException(error, error.status);
+      throw new InternalServerErrorException(error.message);
     });
   }
 }
