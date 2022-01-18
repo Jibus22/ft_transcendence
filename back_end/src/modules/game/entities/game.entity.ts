@@ -16,11 +16,9 @@ export class Game {
   @OneToMany(() => Player, (player) => player.game)
   players: Player[];
 
-  @Column()
-  // @CreateDateColumn()
+  @Column({type: 'bigint'})
   createdAt: number;
 
-  @Column()
-  // @UpdateDateColumn()
+  @Column({type: 'bigint'})
   updatedAt: number;
 }
