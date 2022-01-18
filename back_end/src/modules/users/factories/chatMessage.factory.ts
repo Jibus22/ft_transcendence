@@ -1,4 +1,3 @@
-import { timestamp } from 'rxjs';
 import { define } from 'typeorm-seeding';
 import { ChatMessage } from '../../chat/entities/chatMessage.entity';
 
@@ -7,8 +6,8 @@ faker.locale = 'en_US';
 
 define(ChatMessage, () => {
   const chatMessage = new ChatMessage();
-  chatMessage.timestamp =
-    faker.time.recent() - Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 365);
+  const randomOffset = Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 365);
+  chatMessage.timestamp = (faker.time.recent() as number) - randomOffset;
   const randomVal = Math.floor(Math.random() * 100);
   chatMessage.body =
     randomVal % 34 === 0

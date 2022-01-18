@@ -21,7 +21,10 @@ export class HistoryGameDto {
 
   @ApiProperty()
   @Expose()
-  createdAt: Date;
+  @Transform((value) => {
+    return parseInt(value.obj.createdAt);
+  })
+  createdAt: number;
 
   @ApiProperty()
   @Expose()

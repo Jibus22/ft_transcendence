@@ -18,6 +18,7 @@ import { ChatGatewayService } from './chatGateway.service';
 export enum Events {
   CONNECT = 'connect',
   PUBLIC_ROOM_CREATED = 'publicRoomCreated',
+  PUBLIC_ROOM_UPDATED = 'publicRoomUpdated',
   PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
   NEW_MESSAGE = 'newMessage',
   PARTICIPANT_JOINED = 'participantJoined',

@@ -7,11 +7,13 @@ import { UserDto } from '../modules/users/dtos/user.dto';
 import { User } from '../modules/users/entities/users.entity';
 import CreateRandomUsers from './create-random-users.seed';
 
+var faker = require('faker');
+
 export default class CreateRandomGames implements Seeder {
   private setScores(game: Game) {
-    const winner =(Math.random() < 0.5) ? 0 : 1;
-    game.players[winner].score = 10
-    game.players[1 - winner].score = Math.floor(Math.random() * 10)
+    const winner = Math.random() < 0.5 ? 0 : 1;
+    game.players[winner].score = 10;
+    game.players[1 - winner].score = Math.floor(Math.random() * 10);
   }
 
   private setPlayersUser(allUsers: User[], game: Game, players: Player[]) {
@@ -41,7 +43,7 @@ export default class CreateRandomGames implements Seeder {
       allUsers = await connection.getRepository(User).find();
     }
 
-    await factory(Game)()
+    let games = await factory(Game)()
       .map(async (game: Game) => {
         let players = await factory(Player)().makeMany(2);
 
@@ -55,5 +57,15 @@ export default class CreateRandomGames implements Seeder {
         return game;
       })
       .createMany(50);
+
+    games.forEach((game) => {
+      let randomOffset = Math.floor(Math.random() * 1000 * 60 * 60 * 24 * 365);
+      game.createdAt = faker.time.recent() - randomOffset;
+
+      randomOffset = Math.floor(Math.random() * 1000 * 60 * 10 + 4);
+      game.updatedAt = game.createdAt + randomOffset;
+    });
+
+    await connection.getRepository(Game).save(games);
   }
 }

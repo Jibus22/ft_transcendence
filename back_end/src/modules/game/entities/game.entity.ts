@@ -15,10 +15,10 @@ export class Game {
   @OneToMany(() => Player, (player) => player.game)
   players: Player[];
 
-  @Column()
+  @Column({type: 'bigint'})
   createdAt: number;
 
-  @Column()
+  @Column({type: 'bigint'})
   updatedAt: number;
 
   @BeforeInsert()
