@@ -21,18 +21,14 @@ export class HistoryGameDto {
 
   @ApiProperty()
   @Expose()
-  /*
-  // TODO change to int for front ?
   @Transform((value) => {
-    return parseInt(value.obj.createdAt as unknown as string);
+    return parseInt(value.obj.createdAt);
   })
-  */
-  createdAt: Date;
+  createdAt: number;
 
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    // TODO change to int for computation and return number
     return value.obj.updatedAt - value.obj.createdAt;
   })
   duration: number;
