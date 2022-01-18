@@ -88,10 +88,12 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
   ===================================================================
   */
 
-  it(`listen to ${Events.PUBLIC_ROOM_CREATED} / ${Events.PUBLIC_ROOM_REMOVED} event for PUBLIC room`, async () => {
+  async function createRoomAndDeleteIt(is_private: boolean) {
     WsChatHelpers.setupToken(token);
     const conn = WsChatHelpers.connectSocket();
-    conn.on('connect_error', () => expect(1).toBe(2));
+    conn.on('connect_error', (err) => {
+      throw new Error(`There was a connection error: ${err}`);
+    });
     WsChatHelpers.setAllEventsListenners(conn);
 
     await new Promise((resolve, rejects) => {
@@ -99,7 +101,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
         await chatHelper
           .createSimpleRoom({
             participants: [],
-            is_private: false,
+            is_private,
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
@@ -115,28 +117,36 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
         resolve('ok');
       }, 100);
     });
+
     const events = WsChatHelpers.events;
-    expect(events).toHaveLength(3);
-    expect(events).toMatchObject([
-      { ev: Events.CONNECT },
-      { ev: Events.PUBLIC_ROOM_CREATED },
-      { ev: Events.PUBLIC_ROOM_REMOVED },
-    ]);
-    events
-      .filter((item) => item.ev !== Events.CONNECT)
-      .forEach((item) => {
-        expect(Object.getOwnPropertyNames(item.payload)).toEqual([
-          'id',
-          'is_private',
-          'is_password_protected',
-        ]);
-      });
+    if (is_private) {
+      expect(events).toHaveLength(1);
+      expect(events).toMatchObject([{ ev: Events.CONNECT }]);
+    } else {
+      expect(events).toHaveLength(3);
+      expect(events).toMatchObject([
+        { ev: Events.CONNECT },
+        { ev: Events.PUBLIC_ROOM_CREATED },
+        { ev: Events.PUBLIC_ROOM_REMOVED },
+      ]);
+    }
+    WsChatHelpers.testEventsPayload();
+  }
+
+  it(`creats then delete a PUBLIC room`, async () => {
+    await createRoomAndDeleteIt(false);
   });
 
-  it(`listen to ${Events.PUBLIC_ROOM_CREATED} / ${Events.PUBLIC_ROOM_REMOVED} event for PRIVATE room`, async () => {
+  it(`creates the deletes a PRIVATE room`, async () => {
+    await createRoomAndDeleteIt(true);
+  });
+
+  async function createRoomAndChangePassword(is_private: boolean) {
     WsChatHelpers.setupToken(token);
     const conn = WsChatHelpers.connectSocket();
-    conn.on('connect_error', () => expect(1).toBe(2));
+    conn.on('connect_error', (err) => {
+      throw new Error(`There was a connection error: ${err}`);
+    });
     WsChatHelpers.setAllEventsListenners(conn);
 
     await new Promise((resolve, rejects) => {
@@ -144,26 +154,52 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
         await chatHelper
           .createSimpleRoom({
             participants: [],
-            is_private: true,
+            is_private,
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
             expect(response.body.id).toBeDefined();
-            return await chatHelper.deleteRoom(cookies, response.body.id);
+            return await chatHelper.updateRoomPassword(
+              cookies,
+              response.body.id,
+              {
+                password: 'new_password',
+              },
+            );
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.OK);
           });
-      }, 50);
+      }, 150);
 
       setTimeout(async () => {
         resolve('ok');
-      }, 100);
+      }, 250);
     });
     const events = WsChatHelpers.events;
-    expect(events).toHaveLength(1);
-    expect(events).toMatchObject([{ ev: Events.CONNECT }]);
+    if (is_private) {
+      expect(events).toHaveLength(1);
+      expect(events).toMatchObject([{ ev: Events.CONNECT }]);
+    } else {
+      expect(events).toHaveLength(3);
+      expect(events).toMatchObject([
+        { ev: Events.CONNECT },
+        { ev: Events.PUBLIC_ROOM_CREATED },
+        { ev: Events.PUBLIC_ROOM_UPDATED },
+      ]);
+      const updateEvent = events.find(
+        (e) => e.ev === Events.PUBLIC_ROOM_UPDATED,
+      );
+      expect(updateEvent.payload.is_password_protected).toBeTruthy();
+    }
+    WsChatHelpers.testEventsPayload();
+  }
+
+  it(`creats then updates a PUBLIC room`, async () => {
+    await createRoomAndChangePassword(false);
   });
 
-
+  it(`creats then updates a PRIVATE room`, async () => {
+    await createRoomAndChangePassword(true);
+  });
 }); // <<< end of describBlock
