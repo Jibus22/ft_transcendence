@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './mainPage.scss';
 import { Routes, Route } from 'react-router-dom';
 import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { useMainPage } from '../../MainPageContext';
 import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
@@ -19,12 +19,13 @@ const MainPage = () => {
 	let navigate = useNavigate();
 
 	const fetchDataUserMe = async () => {
-		return await axios.get('http://localhost:3000/me', {
-			withCredentials: true,
-		})
-		.then((response) => {
-			setData([response.data]);
-		});
+		return await axios
+			.get('http://localhost:3000/me', {
+				withCredentials: true,
+			})
+			.then((response) => {
+				setData([response.data]);
+			});
 	};
 
 	const setWsCallbacks = (socket: Socket) => {
@@ -132,12 +133,12 @@ const MainPage = () => {
 
 	useMount(async () => {
 		await fetchDataUserMe()
-		.then(() => {
-			connectWsStatus();
-		})
-		.catch((err) => {
+			.then(() => {
+				connectWsStatus();
+			})
+			.catch((err) => {
 				navigate('/');
-		});
+			});
 	});
 
 	const resetTimeSnack = () => {

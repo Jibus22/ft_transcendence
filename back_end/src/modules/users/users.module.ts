@@ -48,6 +48,6 @@ import { UsersPhotoController } from './usersphoto.controller';
     AuthController,
     MeController,
   ],
-  exports: [UsersService],
+  exports: [TypeOrmModule, UsersService],
 })
 export class UsersModule {}
