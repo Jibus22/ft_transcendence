@@ -13,7 +13,7 @@ export class ChatMessage {
   @ManyToOne((type) => Room, { onDelete: 'CASCADE' })
   room: Room;
 
-  @Column()
+  @Column({type: 'bigint'})
   timestamp: number;
 
   @Column()
