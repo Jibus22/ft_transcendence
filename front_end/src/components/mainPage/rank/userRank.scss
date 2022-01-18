@@ -278,11 +278,18 @@
 			.buttonDIv {
 				width: 13%;
 
+				.spanTooltip {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					height: 2.1vw !important;
+					width: 8vw;
+				}
+
 				.muiButton {
-					width: 70%;
-					height: 40%;
+					width: 100%;
+					height: 100%;
 					border: white 2px solid;
-					background-color: #e69c6a;
 					font-weight: 500;
 					font-size: 0.9vw;
 					border-radius: 0.8vw;
@@ -488,13 +495,45 @@
 					width: 15%;
 				}
 
+				// .buttonDIv {
+				// 	width: 13%;
+
+				// 	.spanTooltip {
+				// 		display: flex;
+				// 		justify-content: center;
+				// 		align-items: center;
+				// 		border: 1px solid red;
+				// 		height: 2.1vw !important;
+				// 		width: 8vw;
+
+				// 	}
+
+				// 	.muiButton {
+				// 		width: 100%;
+				// 		height: 100%;
+				// 		border: white 2px solid;
+				// 		font-weight: 500;
+				// 		font-size: 0.9vw;
+				// 		border-radius: 0.8vw;
+				// 	}
+				// 	.muiButton:hover {
+				// 		background-color: rgba(230, 156, 106, 0.5);
+				// 		font-size: 1vw;
+				// 	}
+				// }
+
 				.buttonDIv {
 					width: 13%;
 
-					.muiButton {
-						width: 45px;
+					.spanTooltip {
+						height: 22px !important;
+						width: 63px;
+					}
 
-						height: 20px;
+					.muiButton {
+						width: 100%;
+
+						height: 100%;
 
 						font-size: 8px !important;
 

@@ -1,7 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './userRank.scss';
-import { RankFriends, RankWorld } from '../..';
+import { RankWorld } from '../..';
 import { useSpring, animated } from 'react-spring';
+import axios, { AxiosError } from 'axios';
+
+interface User {
+	id: string;
+	login: string;
+	photo_url: string;
+	status: string;
+}
+
+interface Rank {
+	games_count: number;
+	games_won: number;
+	games_lost: number;
+	user: User;
+}
 
 const UserRank = () => {
 	const props = useSpring({
@@ -15,10 +30,40 @@ const UserRank = () => {
 	});
 
 	const [isWorld, setIsWorld] = useState(true);
+	const [data, setData] = useState<Rank[]>([]);
+	const [dataFriends, setDataFriends] = useState<Array<User>>([]);
 
 	function handleClick() {
 		setIsWorld(!isWorld);
 	}
+
+	useEffect(() => {
+		fetchData();
+		fetchDataFriends();
+	}, []);
+
+	const fetchData = async () => {
+		try {
+			const { data } = await axios.get('http://localhost:3000/game/leaderboard', {
+				withCredentials: true,
+			});
+			setData(data);
+		} catch (error) {
+			const err = error as AxiosError;
+			console.log(err);
+		}
+	};
+	const fetchDataFriends = async () => {
+		try {
+			const { data } = await axios.get('http://localhost:3000/users/friend', {
+				withCredentials: true,
+			});
+			setDataFriends(data);
+		} catch (error) {
+			const err = error as AxiosError;
+			console.log(err);
+		}
+	};
 
 	return (
 		<animated.div style={props} className="w-100">
@@ -49,7 +94,9 @@ const UserRank = () => {
 					<h3 className="nbLoose">Looses</h3>
 				</div>
 
-				<div className="userPrintDIv">{isWorld ? <RankWorld /> : <RankFriends />}</div>
+				<div className="userPrintDIv">
+					<RankWorld data={data} dataFriends={dataFriends} isWorld={isWorld} />
+				</div>
 			</div>
 		</animated.div>
 	);
