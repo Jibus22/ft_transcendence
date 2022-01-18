@@ -1,64 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
-import { Avatar, Badge, useMediaQuery } from '@mui/material';
-import axios, { AxiosError } from 'axios';
-
-import Button from '@mui/material/Button';
+import { Avatar, Badge, useMediaQuery, CircularProgress, Tooltip, Fade, Typography } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 
-interface Users {
+interface User {
 	id: string;
 	login: string;
 	photo_url: string;
-	game: number;
-	win: number;
-	looses: number;
 	status: string;
 }
 
-const RankWorld = () => {
+interface Rank {
+	games_count: number;
+	games_won: number;
+	games_lost: number;
+	user: User;
+}
+interface Props {
+	data: Array<Rank>;
+	dataFriends: User[];
+	isWorld: boolean;
+}
+
+const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
 		from: { opacity: 0, transform: 'translate(0px, 0px)' },
 		config: {
-			delay: 1000,
-			duration: 1100,
+			delay: 3000,
+			duration: 3100,
 		},
 	});
 
-	const [data, setData] = useState<Array<Users>>([]);
+	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
 	const { setStatusColor } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 
-	useEffect(() => {
-		fetchData();
-	}, []);
+	const [time, setTime] = useState(false);
+	function handleClick() {
+		setTime(true);
+		setTimeout(function () {
+			setTime(false);
+		}, 2000);
+	}
 
-	const fetchData = async () => {
-		try {
-			const { data } = await axios.get('https://run.mocky.io/v3/0fc0d0b5-3e27-439f-b6ed-e0f79845b2e9', {
-				withCredentials: true,
-			});
-			setData(data);
-		} catch (error) {
-			const err = error as AxiosError;
-			console.log(err);
-		}
-	};
-
-	const userSortRank = (a: Users, b: Users) => {
-		if (b.win === a.win) {
-			return a.game - b.game;
+	const userSortRank = (a: Rank, b: Rank) => {
+		if (b.games_won === a.games_won) {
+			return a.games_count - b.games_count;
 		} else {
-			return b.win - a.win;
+			return b.games_won - a.games_won;
 		}
 	};
 
-	const userList = data.sort(userSortRank).map((data, rank: number) => {
+	const userList = (data: any, rank: number) => {
+		let disableStatus = false;
+
+		if (data.user.status !== 'online') {
+			disableStatus = true;
+		}
+
 		return (
-			<div className="MainUserRankdiv " key={data.id}>
+			<div className="MainUserRankdiv " key={data.user.id}>
 				<div className="nbRank ">
 					<h1>{rank + 1}</h1>
 				</div>
@@ -71,47 +76,75 @@ const RankWorld = () => {
 							variant="dot"
 							sx={{
 								'.MuiBadge-badge': {
-									backgroundColor: setStatusColor(data.status),
-									color: setStatusColor(data.status),
-									borderColor: setStatusColor(data.status),
-									boxShadow: setStatusColor(data.status),
+									backgroundColor: setStatusColor(data.user.status),
+									color: setStatusColor(data.user.status),
+									borderColor: setStatusColor(data.user.status),
+									boxShadow: setStatusColor(data.user.status),
 								},
 								'.MuiBadge-badge::after': {
-									borderColor: setStatusColor(data.status),
+									borderColor: setStatusColor(data.user.status),
 								},
 							}}
 						>
-							<Avatar alt="userImg" src={data.photo_url} variant="square" className="domUser" />
+							<Avatar alt="userImg" src={data.user.photo_url} variant="square" className="domUser" />
 						</Badge>
 					</div>
 				) : null}
 
 				<div className="logginUser d-flex ">
-					<h1>{data.login}</h1>
+					<h1>{data.user.login}</h1>
 				</div>
 
 				<div className="d-flex nbStatGame">
-					<h3>{data.game}</h3>
+					<h3>{data.games_count}</h3>
 				</div>
 				<div className="d-flex nbStatWin">
-					<h3>{data.win}</h3>
+					<h3>{data.games_won}</h3>
 				</div>
 				<div className="d-flex nbStatLoose">
-					<h3>{data.looses}</h3>
+					<h3>{data.games_lost}</h3>
 				</div>
 
 				<div className="buttonDIv d-flex">
-					<Button className="muiButton" variant="contained" sx={{ width: 2 / 2, textTransform: 'none' }}>
-						Challenge
-					</Button>
+					<Tooltip
+						className="lalala"
+						title={<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>You can't challenge someone offline or in games </Typography>}
+						followCursor={true}
+						TransitionComponent={Fade}
+						TransitionProps={{ timeout: 600 }}
+						disableHoverListener={!disableStatus}
+					>
+						<span className="spanTooltip">
+							<LoadingButton
+								className="muiButton"
+								disabled={time || disableStatus}
+								variant="contained"
+								onClick={handleClick}
+								sx={{ width: 2 / 2, textTransform: 'none', backgroundColor: '#E69C6A' }}
+							>
+								{time && !disableStatus && <CircularProgress size="1.2em" />}
+								{!time && 'Challenge'}
+							</LoadingButton>
+						</span>
+					</Tooltip>
 				</div>
 			</div>
 		);
-	});
+	};
+
+	const sortByUser = () => {
+		if (!isWorld) {
+			const sortById = data.filter((e) => dataFriends.findIndex((x) => x.id === e.user.id) !== -1);
+
+			return sortById.sort(userSortRank).map((data, rank) => userList(data, rank));
+		} else {
+			return data.sort(userSortRank).map((data, rank) => userList(data, rank));
+		}
+	};
 
 	return (
 		<animated.div style={props} className="w-100">
-			<div className="mainRankFriends d-flex flex-column ">{userList}</div>
+			<div className="mainRankFriends d-flex flex-column ">{sortByUser()}</div>
 		</animated.div>
 	);
 };
