@@ -30,7 +30,7 @@ export class ChatMessageDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
-    return parseInt(value.obj.timestamp as unknown as string);
+    return parseInt(value.obj.timestamp);
   })
   timestamp: number;
 }
