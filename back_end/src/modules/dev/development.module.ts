@@ -1,12 +1,11 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../users/entities/users.entity';
 import { UsersModule } from '../users/users.module';
+import { GameModule } from '../game/game.module';
 import { DevelopmentController } from './development.controller';
 import { DevelopmentService } from './development.service';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forFeature([User])],
+  imports: [UsersModule, GameModule],
 })
 export class DevelopmentModule {
   static forRoot(): DynamicModule {

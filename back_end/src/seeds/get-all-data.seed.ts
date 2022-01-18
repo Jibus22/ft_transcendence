@@ -17,7 +17,9 @@ export default class getAllData implements Seeder {
     usersInDb.forEach((u) => {
       let user = plainToClass(UserDto, u);
       console.log(
-        `[${u.id}] - ${user.login} - is ${user.status} - has played ${u.players.length}`,
+        `[${u.id}] - ${user.login.padEnd(11, ' ')} - is ${
+          user.status
+        } - has played ${u.players.length}`,
       );
     });
 
@@ -42,10 +44,16 @@ export default class getAllData implements Seeder {
       .find({ relations: ['players', 'players.user'] });
     console.log(' ⛳️  Games in database now: ', gamesInDb.length);
     gamesInDb.forEach((g) => {
+      const len = new Date(g.updatedAt - g.createdAt);
       console.log(
-        `[${g.id}] - ${new Date(g.createdAt).toUTCString()} - [ ${
-          g.players[0].score
-        } / ${g.players[1].score} ] ${g.players[0].user.login.padEnd(
+        `[${g.id}] - ${new Date(
+          parseInt(g.createdAt as unknown as string),
+        ).toUTCString()} - Duration: ${len.getMinutes().toString().padStart(2, '0')}:${len
+          .getSeconds()
+          .toString()
+          .padStart(2, '0')} - [ ${g.players[0].score} / ${
+          g.players[1].score
+        } ] ${g.players[0].user.login.padEnd(
           10,
           ' ',
         )} |Vs.| ${g.players[1].user.login.padEnd(10, ' ')} `,
