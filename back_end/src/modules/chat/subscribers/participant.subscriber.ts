@@ -5,12 +5,13 @@ import {
   EventSubscriber,
   InsertEvent,
   RemoveEvent,
+  TransactionCommitEvent,
+  UpdateEvent,
 } from 'typeorm';
-import { ParticipantDto } from '../dto/participant.dto';
 import { RoomDto } from '../dto/room.dto';
 import { Participant } from '../entities/participant.entity';
-import { ChatGateway } from '../gateways/chat.gateway';
-import { Events } from '../gateways/chat.gateway';
+import { Room } from '../entities/room.entity';
+import { ChatGateway, Events } from '../gateways/chat.gateway';
 
 @EventSubscriber()
 export class ParticipantSubscriber
@@ -18,7 +19,7 @@ export class ParticipantSubscriber
 {
   constructor(
     private readonly chatGateway: ChatGateway,
-    connection: Connection,
+    private connection: Connection,
   ) {
     connection.subscribers.push(this);
   }
@@ -35,7 +36,7 @@ export class ParticipantSubscriber
     this.chatGateway.sendEventToRoom(
       entity.room,
       eventToRoom,
-      plainToClass(ParticipantDto, entity.user, {
+      plainToClass(RoomDto, entity.room, {
         excludeExtraneousValues: true,
       }),
     );
@@ -48,14 +49,17 @@ export class ParticipantSubscriber
     );
   }
 
-  afterInsert(event: InsertEvent<Participant>) {
+  async afterInsert(event: InsertEvent<Participant>) {
+    const room = await this.connection.getRepository(Room).findOne(event.entity.room.id, {relations: ['participants']});
+    console.log('Room in after indert', room);
+    event.entity.room = room;
     if (event.entity?.room && event.entity?.user) {
+      this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
       this.emitEvents(
-        Events.PARTICIPANT_JOINED,
+        Events.PARTICIPANT_UPDATED,
         Events.USER_ADDED,
         event.entity,
       );
-      this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
     } else {
       console.log('Subscriber missing entity properties!');
     }
@@ -68,12 +72,12 @@ export class ParticipantSubscriber
         event.entity.room,
       );
       this.emitEvents(
-        Events.PARTICIPANT_LEFT,
+        Events.PARTICIPANT_UPDATED,
         Events.USER_REMOVED,
         event.entity,
       );
     } else {
-      // console.log('Subscriber missing entity properties!'); // TODO fix
+      console.log('Subscriber missing entity properties!'); // TODO fix
     }
   }
 }

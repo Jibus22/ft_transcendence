@@ -96,14 +96,12 @@ export class WsChatHelpers {
           expect(event.payload).toBeUndefined();
           break;
 
-        case Events.PARTICIPANT_LEFT:
         case Events.PARTICIPANT_UPDATED:
         case Events.USER_ADDED:
         case Events.USER_REMOVED:
         case Events.USER_MODERATION:
         case Events.USER_BANNED:
         case Events.USER_MUTED:
-        case Events.PARTICIPANT_JOINED:
           //TO dO
           break;
 

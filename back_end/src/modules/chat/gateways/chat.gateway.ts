@@ -21,8 +21,6 @@ export enum Events {
   PUBLIC_ROOM_UPDATED = 'publicRoomUpdated',
   PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
   NEW_MESSAGE = 'newMessage',
-  PARTICIPANT_JOINED = 'participantJoined',
-  PARTICIPANT_LEFT = 'participantLeft',
   PARTICIPANT_UPDATED = 'participantUpdated',
   USER_ADDED = 'userAdded',
   USER_REMOVED = 'userRemoved',
@@ -79,6 +77,9 @@ export class ChatGateway
   }
 
   sendEventToServer(event: string, message: messageType) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Emit event to SERVER: ', event);
+    }
     return this.chatGatewayService.sendEventToServer(
       this.server,
       event,
@@ -87,6 +88,9 @@ export class ChatGateway
   }
 
   sendEventToRoom(room: Room, event: string, message: messageType) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Emit event to ROOM: ', event);
+    }
     return this.chatGatewayService.sendEventToRoom(
       this.server,
       room.id,
@@ -96,6 +100,9 @@ export class ChatGateway
   }
 
   sendEventToClient(user: User, event: string, message: messageType) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Emit event to CLIENT: ', event);
+    }
     return this.chatGatewayService.sendEventToRoom(
       this.server,
       user.ws_id,
@@ -104,17 +111,23 @@ export class ChatGateway
     );
   }
 
-  makeClientJoinRoom(user: User, room: Room) {
+  async makeClientJoinRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Add client ${user.login} to room ${room.id}`);
+    }
     const clientSocket = this.storage.get(user.ws_id);
     if (clientSocket) {
-      this.chatGatewayService.makeClientJoinRoom(clientSocket, room);
+      await this.chatGatewayService.makeClientJoinRoom(clientSocket, room);
     }
   }
 
-  makeClientLeaveRoom(user: User, room: Room) {
+  async makeClientLeaveRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Remove client ${user.login} to room ${room.id}`);
+    }
     const clientSocket = this.storage.get(user.ws_id);
     if (clientSocket) {
-      this.chatGatewayService.makeClientLeaveRoom(clientSocket, room);
+      await this.chatGatewayService.makeClientLeaveRoom(clientSocket, room);
     }
   }
 
