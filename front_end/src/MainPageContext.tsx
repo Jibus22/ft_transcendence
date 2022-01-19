@@ -55,6 +55,8 @@ interface IMainPageContext {
 
 	selectNav: Boolean;
 	setSelectNav: React.Dispatch<React.SetStateAction<boolean>>;
+	startGame: Boolean;
+	setStartGame: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -77,6 +79,7 @@ const MainPageProvider = (props: any) => {
 	const [selectQuery, setSelectQuery] = useState(false);
 
 	const [selectNav, setSelectNav] = useState(false);
+	const [startGame, setStartGame] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -210,6 +213,8 @@ const MainPageProvider = (props: any) => {
 
 		selectNav,
 		setSelectNav,
+		startGame,
+		setStartGame,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

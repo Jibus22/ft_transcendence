@@ -69,12 +69,6 @@
 		margin: 90px auto;
 	}
 
-	// .playFriend {
-	// 	width: 200px;
-	// 	height: 80px;
-	// 	margin: -60px auto;
-	// }
-
 	.buttonMuiFriend {
 		margin: 30px 0 0 0;
 		height: 3.1vw;
@@ -242,6 +236,14 @@
 @media screen and (max-width: 1400px) {
 	.mainGameWindow {
 		width: 75%;
+
+		.formDivButton .MuiOutlinedInput-input {
+			margin: -8px auto !important;
+		}
+
+		.formDivButton ::placeholder {
+			margin-top: 3px;
+		}
 	}
 }
 
@@ -249,6 +251,10 @@
 	.mainGameWindow {
 		margin-top: 60px;
 		height: 500px;
+
+		.formDivButton .MuiOutlinedInput-input {
+			margin: -8px auto !important;
+		}
 	}
 }
 
@@ -343,7 +349,7 @@
 		}
 
 		.formDivButton .MuiOutlinedInput-input {
-			margin: -10px auto;
+			margin: -10px auto !important;
 			font-size: 14px;
 		}
 
@@ -366,6 +372,7 @@
 		.formDivButton ::placeholder {
 			font-size: 14px;
 			height: 23px;
+			margin-top: 0px;
 		}
 	}
 }

@@ -1,0 +1,53 @@
+.divMainPongGame {
+	width: 82vw;
+	height: 50vw;
+	margin: 5% auto;
+	margin-bottom: 0px;
+	display: flex;
+	flex-direction: column;
+
+	.mainPongGame {
+		width: 100%;
+		height: 90%;
+		border-radius: 2.2vw;
+		border: 2px solid rgba(255, 255, 255, 0.7);
+		background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
+		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.titlePongGame {
+		border: 1px solid red;
+
+		display: flex;
+		justify-content: center;
+	}
+	.readyButton {
+		border: 1px solid red;
+		width: 20vw;
+		display: flex;
+		justify-content: flex-end;
+		align-items: flex-end;
+
+		.buttonMui {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	.closeButton {
+		margin-top: 20px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+.pongGame {
+	width: 100%;
+	height: 100%;
+}

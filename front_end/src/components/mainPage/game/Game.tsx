@@ -4,6 +4,7 @@ import { Socket } from 'socket.io-client';
 import { Play, OnlineGame } from '../..';
 import { useMainPage } from '../../../MainPageContext';
 import './game.scss';
+import MainPong from './pong/MainPong';
 import { Routes, Route } from 'react-router-dom';
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 }
 
 export default function Game({ wsStatus }: Props) {
-	const { setTimeSnack, timer, setIsDisable, setLoading, setIsFriends, selectNav } = useMainPage();
+	const { setTimeSnack, timer, loading, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
 
 	function handleClick() {
 		/*
@@ -21,16 +22,42 @@ export default function Game({ wsStatus }: Props) {
         */
 		wsStatus && wsStatus.emit('ingame', 'in');
 
-		setLoading(true);
-		setIsDisable(false);
-		setTimeSnack(false);
-		setIsFriends(false);
-		setTimeout(function () {
-			setLoading(false);
-			setIsDisable(true);
-			setTimeSnack(true);
-		}, timer);
+		setStartGame(true);
+
+		// setLoading(true);
+		// setIsDisable(false);
+		// setTimeSnack(false);
+		// setIsFriends(false);
+		// setTimeout(function () {
+		// 	setLoading(false);
+		// 	setIsDisable(true);
+		// 	setTimeSnack(true);
+		// }, timer);
 	}
+
+	const test = () => {
+		if (!query) {
+			if (!startGame) {
+				return (
+					<div className="h-100 w-100 d-flex">
+						<Play Loadingclick={handleClick} />
+						<OnlineGame Loadingclick={handleClick} />
+					</div>
+				);
+			} else {
+				return <MainPong />;
+			}
+		} else {
+			if (selectNav) {
+				return <OnlineGame Loadingclick={handleClick} />;
+			}
+			if (startGame) {
+				return <MainPong />;
+			} else {
+				return <Play Loadingclick={handleClick} />;
+			}
+		}
+	};
 
 	const isNavSelected = () => {
 		if (selectNav) {
@@ -42,24 +69,26 @@ export default function Game({ wsStatus }: Props) {
 
 	const query = useMediaQuery('(max-width:1060px)');
 
+	// const OngletGame = () => {
+	// 	return (
+	// 		<Routes>
+	// 			<Route path="/*" element={<Play Loadingclick={handleClick} />} />
+	// 			<Route path="/Onlines-game" element={<OnlineGame Loadingclick={handleClick} />} />
+	// 		</Routes>
+	// 	);
+	// };
+
 	return (
 		<div className="d-flex MainGame">
-			{/* <Play Loadingclick={handleClick} />
-			<OnlineGame Loadingclick={handleClick} /> */}
-			{!query ? (
+			{/* {!query ? (
 				<div className="h-100 w-100 d-flex">
 					<Play Loadingclick={handleClick} />
 					<OnlineGame Loadingclick={handleClick} />
 				</div>
 			) : (
-				// <Routes>
-				// 	<Route path="/*" element={<Play Loadingclick={handleClick} />} />
 				<div className="h-100 w-100">{isNavSelected()}</div>
-				// 	<Route path="/Onlines-game" element={<OnlineGame Loadingclick={handleClick} />} />
-				// </Routes>
-				// <Play Loadingclick={handleClick} />
-			)}
-			{/* <Play Loadingclick={handleClick} /> */}
+			)} */}
+			<div className="h-100 w-100">{test()}</div>
 		</div>
 	);
 }
