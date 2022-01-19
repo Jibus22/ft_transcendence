@@ -57,6 +57,8 @@ export class ChatService {
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       return await this.repoParticipants.save(newParticipant);
+    } else if (process.env.NODE_ENV !== 'production') {
+      console.log('failed to add missing user', userId);
     }
   }
 
