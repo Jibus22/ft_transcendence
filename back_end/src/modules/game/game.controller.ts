@@ -12,6 +12,7 @@ import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
+import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 
@@ -38,6 +39,14 @@ export class GameController {
   @ApiOperation({ summary: 'get a list of all HistoryGameDto' })
   async history() {
     return await this.gameService.history();
+  }
+
+  @ApiResponse({ type: LeaderBoardDto, isArray: true })
+  @Serialize(LeaderBoardDto)
+  @Get('leaderboard')
+  @ApiOperation({ summary: 'get a list of LeaderBoardDto' })
+  async leaderboard() {
+    return await this.gameService.leaderboard();
   }
 
   @Get(':uuid')

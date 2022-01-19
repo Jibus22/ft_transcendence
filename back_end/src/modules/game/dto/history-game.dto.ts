@@ -1,23 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserDto } from '../../users/dtos/user.dto';
-import { Transform, plainToClass, Exclude, Expose } from 'class-transformer';
+import { Transform, Type, Exclude, Expose } from 'class-transformer';
 
 export class RegularPlayerDto {
   @ApiProperty()
-  @Transform((value) => {
-    return plainToClass(UserDto, value.obj.user);
-  })
-  user: UserDto;
+  @Expose()
+  score: number;
 
   @ApiProperty()
-  score: number;
+  @Expose()
+  @Type(() => UserDto)
+  user: UserDto;
 }
 
 @Exclude()
 export class HistoryGameDto {
   @ApiProperty()
   @Expose()
-  createdAt: Date;
+  id: string;
+
+  @ApiProperty()
+  @Expose()
+  @Transform((value) => {
+    return parseInt(value.obj.createdAt);
+  })
+  createdAt: number;
 
   @ApiProperty()
   @Expose()
@@ -28,8 +35,6 @@ export class HistoryGameDto {
 
   @ApiProperty()
   @Expose()
-  @Transform((value) => {
-    return plainToClass(RegularPlayerDto, value.obj.players);
-  })
+  @Type(() => RegularPlayerDto)
   players: RegularPlayerDto[];
 }

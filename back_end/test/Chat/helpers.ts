@@ -124,6 +124,14 @@ export class ChatHelpers {
       .send(bodyRequest);
   }
 
+  async deleteRoom(
+    tmpCookies: string[],
+    room_id: string) {
+    return await request(this.app.getHttpServer())
+      .delete(`/room/${room_id}`)
+      .set('Cookie', tmpCookies);
+  }
+
   async getAllRoomsAsSiteOwner() {
     const SiteOwnerCookies = await this.commons
       .logUser('siteOwner')

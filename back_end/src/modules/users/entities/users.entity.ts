@@ -9,12 +9,12 @@ import {
   ManyToMany,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Participant } from '../../chat/entities/participant.entity';
+import { Player } from '../../game/entities/player.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
-import { Player } from '../../game/entities/player.entity';
 
 const conf = new ConfigService();
 
@@ -67,9 +67,6 @@ export class User {
 
   @OneToMany(() => Player, (player) => player.user)
   players: Player[];
-
-  // @OneToMany(type => Room, (rooms_ownership) => rooms_ownership.id)
-  // rooms_ownership: Room[];
 
   @OneToMany(() => Participant, (participant) => participant.user)
   room_participations: Participant[];

@@ -28,6 +28,13 @@ export class UsersService {
     return await this.repoUser.findOne(id);
   }
 
+  async findLogin(login: string) {
+    if (!login) {
+      return null;
+    }
+    return await this.repoUser.findOne({ login: login });
+  }
+
   async findOneWithRelations(id: string) {
     if (!id) {
       return null;
@@ -69,6 +76,12 @@ export class UsersService {
   async getAllUsers() {
     return await this.repoUser.find({
       relations: ['local_photo'],
+    });
+  }
+
+  async getAllPlayersUsers() {
+    return await this.repoUser.find({
+      relations: ['local_photo', 'players'],
     });
   }
 }

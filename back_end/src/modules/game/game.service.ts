@@ -1,27 +1,67 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { HistoryGameDto, RegularPlayerDto } from './dto/history-game.dto';
 import { Game } from './entities/game.entity';
 import { Player } from './entities/player.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../users/service-users/users.service';
 import { User } from '../users/entities/users.entity';
+import { UserDto } from '../users/dtos/user.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(Game) private game_repo: Repository<Game>,
     @InjectRepository(Player) private player_repo: Repository<Player>,
-    private userService: UsersService,
+    private usersService: UsersService,
   ) {}
 
-  async create(createGameDto: CreateGameDto) {
-    const user1 = await this.userService.findOne(createGameDto.uuidP1);
-    const user2 = await this.userService.findOne(createGameDto.uuidP2);
+  private checkErrorCreation(
+    user1: User,
+    user2: User,
+    createGameDto: CreateGameDto,
+  ) {
+    if (!user1) {
+      throw new NotFoundException(
+        `${createGameDto.loginP1} not found in database`,
+      );
+    } else if (!user2) {
+      throw new NotFoundException(
+        `${createGameDto.loginP2} not found in database`,
+      );
+    }
 
-    if (!user1 || !user2) return null;
+    const usr1dto = plainToClass(UserDto, user1);
+    const usr2dto = plainToClass(UserDto, user2);
+
+    if (usr1dto.id === usr2dto.id) {
+      throw new ForbiddenException(
+        `${createGameDto.loginP1} can't play against himself`,
+      );
+    }
+
+    if (usr1dto.status !== 'online') {
+      throw new ForbiddenException(
+        `${createGameDto.loginP1} is either offline or playing`,
+      );
+    } else if (usr2dto.status !== 'online') {
+      throw new ForbiddenException(
+        `${createGameDto.loginP2} is either offline or playing`,
+      );
+    }
+  }
+
+  async create(createGameDto: CreateGameDto) {
+    const user1 = await this.usersService.findLogin(createGameDto.loginP1);
+    const user2 = await this.usersService.findLogin(createGameDto.loginP2);
+
+    this.checkErrorCreation(user1, user2, createGameDto);
 
     const game = this.game_repo.create();
     await this.game_repo.save(game);
@@ -30,7 +70,7 @@ export class GameService {
     await this.player_repo.save([player1, player2]);
     game.players = [player1, player2];
     await this.game_repo.save(game);
-    return game;
+    return `game ${game.id} successfully created`;
   }
 
   async findAll() {
@@ -69,5 +109,11 @@ export class GameService {
       relations: ['players', 'players.user'],
     });
     return games;
+  }
+
+  async leaderboard() {
+    const allUsers = await this.usersService.getAllPlayersUsers();
+    if (!allUsers) throw new NotFoundException(`No users found in database`);
+    return allUsers;
   }
 }

@@ -20,13 +20,13 @@ export class TargetedRoomMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: Function) {
     const currentUser = req.currentUser;
-    const targetedRoomId = req.params.room_id;
+    const targetedRoomId = req.params?.room_id;
 
     const logger = new Logger(' 🛠 💬  Chat Middlewear');
 
     if (currentUser && targetedRoomId) {
       await this.chatService
-        .findOneWithParticipants(targetedRoomId)
+        .findOneWithParticipantsAndRestrictions(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
           req.targetedRoomActiveBan = this.chatService.extractValidRestrictions(

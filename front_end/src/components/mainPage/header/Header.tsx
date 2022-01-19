@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './header.scss';
 import { useMainPage } from '../../../MainPageContext';
 import { NavLink as Link } from 'react-router-dom';
-import { Badge, Avatar, useMediaQuery, Menu, MenuItem, Button } from '@mui/material';
+import { Badge, Avatar, useMediaQuery, Menu, MenuItem } from '@mui/material';
 
 export default function Header() {
-	const { data, userName, userImg, setUserName, setUserImg, setSelectQuery, selectQuery } = useMainPage();
+	const { data, userName, userImg, setUserName, setUserImg, selectQuery } = useMainPage();
 
 	const query = useMediaQuery('(max-width:850px)');
 	const queryNav = useMediaQuery('(max-width:1060px)');
@@ -14,7 +14,6 @@ export default function Header() {
 		if (data.length > 0) {
 			setUserName(data[0].login);
 			setUserImg(data[0].photo_url);
-			// setlol(data[0].status);
 		}
 	});
 
