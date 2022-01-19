@@ -52,6 +52,9 @@ interface IMainPageContext {
 	onSubmitUpload: (file: File) => void;
 	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 	setStatusColor: (status: string) => string;
+
+	selectNav: Boolean;
+	setSelectNav: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -72,6 +75,8 @@ const MainPageProvider = (props: any) => {
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
 	const [selectQuery, setSelectQuery] = useState(false);
+
+	const [selectNav, setSelectNav] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -202,6 +207,9 @@ const MainPageProvider = (props: any) => {
 		setOpenUpload,
 		dialogMui,
 		setStatusColor,
+
+		selectNav,
+		setSelectNav,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

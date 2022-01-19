@@ -1,11 +1,14 @@
 import './play.scss';
 import React, { useState, useEffect } from 'react';
 import IconGame from './img/raquette.png';
-import { useSpring, animated } from 'react-spring';
+import { useSpring, animated, useTransition } from 'react-spring';
 import { Button, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import FormPlay from './FormPlay';
 import { useMainPage } from '../../../../MainPageContext';
+
+import { keyframes } from '@emotion/react';
+import Reveal from 'react-awesome-reveal';
 
 interface Props {
 	Loadingclick: () => void;

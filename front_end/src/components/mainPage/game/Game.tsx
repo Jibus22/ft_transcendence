@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function Game({ wsStatus }: Props) {
-	const { setTimeSnack, timer, setIsDisable, setLoading, setIsFriends } = useMainPage();
+	const { setTimeSnack, timer, setIsDisable, setLoading, setIsFriends, selectNav } = useMainPage();
 
 	function handleClick() {
 		/*
@@ -32,6 +32,14 @@ export default function Game({ wsStatus }: Props) {
 		}, timer);
 	}
 
+	const isNavSelected = () => {
+		if (selectNav) {
+			return <OnlineGame Loadingclick={handleClick} />;
+		} else {
+			return <Play Loadingclick={handleClick} />;
+		}
+	};
+
 	const query = useMediaQuery('(max-width:1060px)');
 
 	return (
@@ -44,11 +52,12 @@ export default function Game({ wsStatus }: Props) {
 					<OnlineGame Loadingclick={handleClick} />
 				</div>
 			) : (
-				<Routes>
-					<Route path="/*" element={<Play Loadingclick={handleClick} />} />
-
-					<Route path="/Onlines-game" element={<OnlineGame Loadingclick={handleClick} />} />
-				</Routes>
+				// <Routes>
+				// 	<Route path="/*" element={<Play Loadingclick={handleClick} />} />
+				<div className="h-100 w-100">{isNavSelected()}</div>
+				// 	<Route path="/Onlines-game" element={<OnlineGame Loadingclick={handleClick} />} />
+				// </Routes>
+				// <Play Loadingclick={handleClick} />
 			)}
 			{/* <Play Loadingclick={handleClick} /> */}
 		</div>

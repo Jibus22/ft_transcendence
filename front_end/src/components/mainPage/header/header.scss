@@ -394,6 +394,12 @@
 	}
 }
 
+@media screen and (max-width: 600px) {
+	.mainHeader {
+		margin-top: 35px;
+	}
+}
+
 @media screen and (max-width: 590px) {
 	.mainHeader {
 		.headerMenu {

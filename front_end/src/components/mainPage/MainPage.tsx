@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './mainPage.scss';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useRoutes } from 'react-router-dom';
 import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
 import axios from 'axios';
 import { useMainPage } from '../../MainPageContext';
@@ -8,7 +8,7 @@ import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useMount } from 'ahooks';
 import { useSafeState } from 'ahooks';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
 
 const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack } = useMainPage();
@@ -158,11 +158,10 @@ const MainPage = () => {
 			) : null}
 
 			<Routes>
-				<Route path="/MainPage/*" element={<Game wsStatus={wsStatus} />} />
+				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser setTime={setTime} />} />
 				<Route path="/Rank" element={<UserRank />} />
-
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 		</div>
