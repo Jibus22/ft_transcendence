@@ -20,7 +20,7 @@ const MainPage = () => {
 
 	const fetchDataUserMe = async () => {
 		return await axios
-			.get('http://localhost:3000/me', {
+			.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
 				withCredentials: true,
 			})
 			.then((response) => {
@@ -92,7 +92,7 @@ const MainPage = () => {
 	};
 
 	const getAuthToken = async () => {
-		return await axios('http://localhost:3000/auth/ws/token', {
+		return await axios(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/ws/token`, {
 			withCredentials: true,
 		}).then((response) => {
 			const { token } = response.data;
@@ -121,7 +121,7 @@ const MainPage = () => {
 
 	const connectWsStatus = async () => {
 		setTimeout(() => {
-			const socket = io('ws://localhost:3000/chat', {
+			const socket = io(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, {
 				autoConnect: false,
 				reconnection: false,
 			});

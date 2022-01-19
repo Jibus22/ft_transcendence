@@ -16,7 +16,7 @@ export default function Loggin() {
 	let navigate = useNavigate();
 	const isLogged = async () => {
 		try {
-			const response = await axios.get('http://localhost:3000/me/is-logged', {
+			const response = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/is-logged`, {
 				withCredentials: true,
 			});
 
@@ -43,7 +43,7 @@ export default function Loggin() {
 
 	const changeUser = async () => {
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			isLogged();
@@ -58,6 +58,8 @@ export default function Loggin() {
 		<div className="w-100 h-100">
 			<div className="welcome ">
 				<h1>Welcome to ft_transcendence</h1>
+				<h1>%NODE_ENV%</h1>
+				<h1>%REACT_APP_BASE_URL%</h1>
 			</div>
 			<div className="inLockImg d-flex flex-column">
 				<img src={unLock} alt="" />

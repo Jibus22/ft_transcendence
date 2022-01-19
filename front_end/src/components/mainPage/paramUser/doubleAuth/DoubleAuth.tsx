@@ -51,7 +51,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 
 	const activeAuth = async () => {
 		await axios({
-			url: 'http://localhost:3000/auth/2fa/generate',
+			url: `http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/2fa/generate`,
 			method: 'POST',
 			withCredentials: true,
 			responseType: 'blob',
@@ -63,7 +63,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 
 	const deleteKey = async () => {
 		await axios({
-			url: 'http://localhost:3000/auth/2fa/turn-off',
+			url: `http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/2fa/turn-off`,
 			method: 'POST',
 			withCredentials: true,
 		}).catch((error) => {

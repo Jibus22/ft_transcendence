@@ -25,7 +25,7 @@ export default function FormLogin() {
 			};
 
 			try {
-				const response = await axios.post('http://localhost:3000/auth/2fa/authenticate', token, {
+				const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/2fa/authenticate`, token, {
 					withCredentials: true,
 				});
 

@@ -54,7 +54,7 @@ export default function ParamUser({ setTime }: Props) {
 	const agree = async () => {
 		setOpen(false);
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			setTime(true);
