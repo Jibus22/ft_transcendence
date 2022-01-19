@@ -123,11 +123,11 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
           });
-      }, 50);
+      }, 100);
 
       setTimeout(async () => {
         resolve('ok');
-      }, 100);
+      }, 250);
     });
 
     const events = WsChatHelpers.events;
@@ -177,7 +177,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
           });
-      }, 150);
+      }, 100);
 
       setTimeout(async () => {
         resolve('ok');
@@ -231,7 +231,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
           });
-      }, 150);
+      }, 100);
 
       setTimeout(async () => {
         resolve('ok');
