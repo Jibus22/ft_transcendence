@@ -44,7 +44,7 @@ const UserRank = () => {
 
 	const fetchData = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/game/leaderboard', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/leaderboard`, {
 				withCredentials: true,
 			});
 			setData(data);
@@ -55,7 +55,7 @@ const UserRank = () => {
 	};
 	const fetchDataFriends = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/users/friend', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 				withCredentials: true,
 			});
 			setDataFriends(data);

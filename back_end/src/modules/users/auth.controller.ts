@@ -62,6 +62,7 @@ export class AuthController {
     session.useTwoFA = user.useTwoFA;
     session.isTwoFAutanticated = false;
     return { url: this.configService.get('AUTH_REDIRECT_URL') };
+    // return { url: this.configService.get('/') };
   }
 
   @Delete('/signout')

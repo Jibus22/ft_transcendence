@@ -41,7 +41,7 @@ services:
   front_end_server:
     build: ./front_end
     env_file:
-      - .env_front.env
+      - .env
     volumes:
       ### Important to make sure node_module is not imported from local
       - node_modules_guest_front:/usr/src/app/node_modules
