@@ -128,7 +128,7 @@ export class ChatHelpers {
     tmpCookies: string[],
     room_id: string) {
     return await request(this.app.getHttpServer())
-      .delete(`/room/${room_id}`)
+      .delete(`/room/${room_id}/remove`)
       .set('Cookie', tmpCookies);
   }
 

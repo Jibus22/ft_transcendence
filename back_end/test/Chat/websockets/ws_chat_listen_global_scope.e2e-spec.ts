@@ -119,17 +119,18 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     });
 
     const events = WsChatHelpers.events;
-    if (is_private) {
-      expect(events).toHaveLength(1);
-      expect(events).toMatchObject([{ ev: Events.CONNECT }]);
-    } else {
-      expect(events).toHaveLength(3);
-      expect(events).toMatchObject([
-        { ev: Events.CONNECT },
-        { ev: Events.PUBLIC_ROOM_CREATED },
-        { ev: Events.PUBLIC_ROOM_REMOVED },
-      ]);
-    }
+
+    const expectedEvents = is_private
+      ? [ { ev: Events.CONNECT } ]
+      : [
+          { ev: Events.CONNECT },
+          { ev: Events.PUBLIC_ROOM_CREATED },
+          { ev: Events.PUBLIC_ROOM_REMOVED },
+        ];
+
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+
     WsChatHelpers.testEventsPayload();
   }
 
@@ -176,22 +177,23 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
         resolve('ok');
       }, 250);
     });
+
     const events = WsChatHelpers.events;
-    if (is_private) {
-      expect(events).toHaveLength(1);
-      expect(events).toMatchObject([{ ev: Events.CONNECT }]);
-    } else {
-      expect(events).toHaveLength(3);
-      expect(events).toMatchObject([
-        { ev: Events.CONNECT },
-        { ev: Events.PUBLIC_ROOM_CREATED },
-        { ev: Events.PUBLIC_ROOM_UPDATED },
-      ]);
-      const updateEvent = events.find(
-        (e) => e.ev === Events.PUBLIC_ROOM_UPDATED,
-      );
+    const expectedEvents = is_private
+      ? [ { ev: Events.CONNECT } ]
+      : [
+          { ev: Events.CONNECT },
+          { ev: Events.PUBLIC_ROOM_CREATED },
+          { ev: Events.PUBLIC_ROOM_UPDATED },
+        ];
+
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    if (!is_private) {
+      const updateEvent = events.find((e) => e.ev === Events.PUBLIC_ROOM_UPDATED);
       expect(updateEvent.payload.is_password_protected).toBeTruthy();
     }
+
     WsChatHelpers.testEventsPayload();
   }
 
