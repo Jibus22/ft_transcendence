@@ -67,6 +67,6 @@ export class AppModule {
     consumer.apply(CurrentUserMiddleware).exclude('/dev/(.*)').forRoutes('*');
     consumer
       .apply(TargetedRoomMiddleware)
-      .forRoutes('/room/:room_id', '/room/:room_id/*', '/me/rooms/:room_id');
+      .forRoutes('/room/:room_id/*', '/me/rooms/:room_id*');
   }
 }

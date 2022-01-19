@@ -6,7 +6,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  InternalServerErrorException,
+  BadGatewayException,
   Patch,
   Res,
   Session,
@@ -160,7 +160,7 @@ export class MeController {
     return await this.chatService.joinRoom(user, room, body).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status) throw new HttpException(error, error.status);
-      throw new InternalServerErrorException(error.message);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 
@@ -180,7 +180,7 @@ export class MeController {
     return await this.chatService.leaveRoom(user, room).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status) throw new HttpException(error, error.status);
-      throw new InternalServerErrorException(error.message);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 }

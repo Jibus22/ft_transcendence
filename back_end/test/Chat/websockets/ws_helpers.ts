@@ -59,7 +59,6 @@ export class WsChatHelpers {
   }
 
   public static testEventsPayload(events = this.events) {
-
     events.forEach((event) => {
       switch (event.ev) {
         case Events.PUBLIC_ROOM_CREATED:
@@ -71,6 +70,19 @@ export class WsChatHelpers {
           ]);
           break;
 
+        case Events.NEW_MESSAGE:
+          this.testForProperties(event.payload, [
+            'id',
+            'sender',
+            'room_id',
+            'body',
+            'timestamp',
+          ]);
+          expect(typeof event.payload.timestamp).toBe('number');
+          expect(new Date(event.payload.timestamp).toString()).toHaveLength(
+            new Date(Date.now()).toString().length,
+          );
+          break;
         case Events.PUBLIC_ROOM_UPDATED:
           this.testForProperties(event.payload, [
             'id',
@@ -84,8 +96,25 @@ export class WsChatHelpers {
           expect(event.payload).toBeUndefined();
           break;
 
+        case Events.PARTICIPANT_LEFT:
+        case Events.PARTICIPANT_UPDATED:
+        case Events.USER_ADDED:
+        case Events.USER_REMOVED:
+        case Events.USER_MODERATION:
+        case Events.USER_BANNED:
+        case Events.USER_MUTED:
+        case Events.PARTICIPANT_JOINED:
+          //TO dO
+          break;
+
         default:
-          throw new Error(`Event [${event.ev}] should be one of these : ${JSON.stringify(Events, null, 4)}`);
+          throw new Error(
+            `Event [${event.ev}] should be one of these : ${JSON.stringify(
+              Events,
+              null,
+              4,
+            )}`,
+          );
       }
     });
   }

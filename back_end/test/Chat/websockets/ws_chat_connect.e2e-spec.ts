@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../../src/app.module';
+import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
 import { User } from '../../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../../helpers';
 import { WsChatHelpers } from './ws_helpers';
@@ -104,14 +105,14 @@ describe('WebSockets CHAT: connection', () => {
       isLogged = false;
     });
     await new Promise((resolve) =>
-    setTimeout(() => {
-      resolve(isLogged);
-    }, 100),
+      setTimeout(() => {
+        resolve(isLogged);
+      }, 100),
     )
-    .then(async (isLoggedValue) => {
-      expect(isLoggedValue).toBeTruthy();
-      return await commons.getMe(cookies);
-    })
+      .then(async (isLoggedValue) => {
+        expect(isLoggedValue).toBeTruthy();
+        return await commons.getMe(cookies);
+      })
       .then(async (response) => {
         expect(response.body).toHaveProperty('status', 'online');
         WsChatHelpers.closeSocket();
