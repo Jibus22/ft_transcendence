@@ -5,7 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  InternalServerErrorException,
+  BadGatewayException,
   Param,
   Patch,
   Post,
@@ -83,7 +83,7 @@ export class ChatController {
       .catch((error) => {
         if (process.env.NODE_ENV === 'dev') console.log(error);
         if (error.status) throw new HttpException(error, error.status);
-        throw new InternalServerErrorException(error.message);
+        throw new BadGatewayException('Database could not perform request');
       });
   }
 
@@ -106,7 +106,7 @@ export class ChatController {
     return await this.chatService.findAllWithRestrictions().catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status)throw new HttpException(error, error.status)
-      throw new InternalServerErrorException(error.message);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 
@@ -124,7 +124,7 @@ export class ChatController {
     return await this.chatService.findAllPublic().catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status)throw new HttpException(error, error.status)
-      throw new InternalServerErrorException(error.message);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 
@@ -137,7 +137,7 @@ export class ChatController {
     description: 'Single room informations',
   })
   @UseGuards(RoomParticipantGuard)
-  @Get(':room_id')
+  @Get(':room_id/infos')
   @Serialize(RoomDto)
   async getSingleRoom(@TargetedRoom() targetedRoom: Room) {
     return targetedRoom;
@@ -155,14 +155,14 @@ export class ChatController {
     status: HttpStatus.FORBIDDEN,
     description: 'not enough rights',
   })
-  @Delete(':room_id')
+  @Delete(':room_id/remove')
   @Serialize(RoomDto)
   @UseGuards(RoomOwnerGuard)
   async remove(@TargetedRoom() targetedRoom: Room) {
     return await this.chatService.removeRoom(targetedRoom).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status)throw new HttpException(error, error.status)
-      throw new InternalServerErrorException(error.message);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 
@@ -201,7 +201,7 @@ export class ChatController {
       .catch((error) => {
         if (process.env.NODE_ENV === 'dev') console.log(error);
         if (error.status) throw new HttpException(error, error.status);
-        throw new InternalServerErrorException(error.message);
+        throw new BadGatewayException('Database could not perform request');
       });
   }
 
@@ -224,7 +224,7 @@ export class ChatController {
     return await this.chatService.findAllMessages(room_id).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status)throw new HttpException(error, error.status)
-      throw new InternalServerErrorException(error.message);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 
@@ -258,7 +258,7 @@ export class ChatController {
       .catch((error) => {
         if (process.env.NODE_ENV === 'dev') console.log(error);
         if (error.status) throw new HttpException(error, error.status);
-        throw new InternalServerErrorException(error.message);
+        throw new BadGatewayException('Database could not perform request');
       });
   }
 
@@ -283,7 +283,7 @@ export class ChatController {
       .catch((error) => {
         if (process.env.NODE_ENV === 'dev') console.log(error);
         if (error.status) throw new HttpException(error, error.status);
-        throw new InternalServerErrorException(error.message);
+        throw new BadGatewayException('Database could not perform request');
       });
   }
 
@@ -309,7 +309,7 @@ export class ChatController {
       .catch((error) => {
         if (process.env.NODE_ENV === 'dev') console.log(error);
         if (error.status) throw new HttpException(error, error.status);
-        throw new InternalServerErrorException(error.message);
+        throw new BadGatewayException('Database could not perform request');
       });
   }
 
@@ -343,7 +343,7 @@ export class ChatController {
       .catch((error) => {
         if (process.env.NODE_ENV === 'dev') console.log(error);
         if (error.status) throw new HttpException(error, error.status);
-        throw new InternalServerErrorException(error.message);
+        throw new BadGatewayException('Database could not perform request');
       });
   }
 }
