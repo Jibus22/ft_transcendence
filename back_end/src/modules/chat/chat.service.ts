@@ -124,7 +124,7 @@ export class ChatService {
   async findAllPublic() {
     return await this.repoRoom.find({
       relations: ['participants', 'participants.user'],
-      where: 'room.is_private = false',
+      where: 'is_private = false',
     });
   }
 
