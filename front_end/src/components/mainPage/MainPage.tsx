@@ -67,8 +67,8 @@ const MainPage = () => {
   	socket.on ('newMessage', (message)=> {
 			console.log(`💌  Event: newMessage ->`, message);
 		});
-  	socket.on ('participantUpdated', (message)=> {
-			console.log(`💌  Event: participantUpdated ->`, message);
+  	socket.on ('roomParticipantUpdated', (message)=> {
+			console.log(`💌  Event: roomParticipantUpdated ->`, message);
 		});
   	socket.on ('userAdded', (message)=> {
 			console.log(`💌  Event: userAdded ->`, message);

@@ -1,3 +1,5 @@
+import { plainToClass } from 'class-transformer';
+import { eventNames } from 'process';
 import {
   Connection,
   EntitySubscriberInterface,
@@ -5,6 +7,7 @@ import {
   InsertEvent,
   RemoveEvent,
 } from 'typeorm';
+import { RoomDto } from '../dto/room.dto';
 import { Participant } from '../entities/participant.entity';
 import { ChatGateway, Events } from '../gateways/chat.gateway';
 
@@ -27,16 +30,24 @@ export class ParticipantSubscriber
     event: InsertEvent<Participant> | RemoveEvent<Participant>,
   ) {
     let neededRelations: string[] = [];
-    if (!event.entity?.room) neededRelations.push('room');
+    if (!event.entity?.room || !event.entity?.room?.participants)
+      neededRelations.push('room');
     if (!event.entity?.user) neededRelations.push('user');
+    console.log(neededRelations, 'are needed');
 
     if (neededRelations.length) {
+      if (neededRelations.some((r) => r === 'room'))
+        neededRelations.push('room.participants');
       await event.connection
         .getRepository(Participant)
         .findOne(event.entity.id, { relations: neededRelations })
         .then((participant) => {
           neededRelations.forEach((relation) => {
-            event.entity[relation] = participant[relation];
+            if (relation === 'room.participants') {
+              event.entity.room.participants = participant.room.participants;
+            } else {
+              event.entity[relation] = participant[relation];
+            }
           });
         });
     }
@@ -45,32 +56,45 @@ export class ParticipantSubscriber
   async afterInsert(event: InsertEvent<Participant>) {
     await this.fetchPossiblyMissingData(event);
 
-    this.chatGateway.sendEventToClient(event.entity.user, Events.USER_ADDED, {
-      id: event.entity.room.id,
-    });
+    this.chatGateway.sendEventToClient(
+      event.entity.user,
+      Events.USER_ADDED,
+      plainToClass(RoomDto, event.entity.room, {
+        excludeExtraneousValues: true,
+      }),
+    );
 
     this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
 
     this.chatGateway.sendEventToRoom(
       event.entity.room,
       Events.ROOM_PARTICIPANTS_UPDATED,
-      { id: event.entity.room.id },
+      plainToClass(RoomDto, event.entity.room, {
+        excludeExtraneousValues: true,
+      }),
     );
   }
 
   async beforeRemove(event: RemoveEvent<Participant>) {
     await this.fetchPossiblyMissingData(event);
+    console.log(event.entity);
 
-    this.chatGateway.sendEventToClient(event.entity.user, Events.USER_REMOVED, {
-      id: event.entity.room.id,
-    });
+    this.chatGateway.sendEventToClient(
+      event.entity.user,
+      Events.USER_REMOVED,
+      plainToClass(RoomDto, event.entity.room, {
+        excludeExtraneousValues: true,
+      }),
+    );
 
     this.chatGateway.makeClientLeaveRoom(event.entity.user, event.entity.room);
 
     this.chatGateway.sendEventToRoom(
       event.entity.room,
       Events.ROOM_PARTICIPANTS_UPDATED,
-      { id: event.entity.room.id },
+      plainToClass(RoomDto, event.entity.room, {
+        excludeExtraneousValues: true,
+      }),
     );
   }
 }

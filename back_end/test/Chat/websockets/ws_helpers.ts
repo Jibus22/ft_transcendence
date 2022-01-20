@@ -84,10 +84,15 @@ export class WsChatHelpers {
 
           break;
 
-        case Events.USER_ADDED:
-        case Events.ROOM_PARTICIPANTS_UPDATED:
-        case Events.PUBLIC_ROOM_UPDATED:
-          this.testForProperties(event.payload, ['id']);
+          case Events.USER_ADDED:
+          case Events.ROOM_PARTICIPANTS_UPDATED:
+          case Events.PUBLIC_ROOM_UPDATED:
+          this.testForProperties(event.payload, [
+            'id',
+            'is_private',
+            'is_password_protected',
+            'participants'
+          ]);
           break;
 
         case Events.CONNECT:

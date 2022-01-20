@@ -21,7 +21,7 @@ export enum Events {
   PUBLIC_ROOM_UPDATED = 'publicRoomUpdated',
   PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
   NEW_MESSAGE = 'newMessage',
-  ROOM_PARTICIPANTS_UPDATED = 'participantUpdated',
+  ROOM_PARTICIPANTS_UPDATED = 'roomParticipantUpdated',
   USER_ADDED = 'userAdded',
   USER_REMOVED = 'userRemoved',
   USER_MODERATION = 'userModeration',
