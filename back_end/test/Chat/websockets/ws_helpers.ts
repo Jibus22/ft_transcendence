@@ -1,10 +1,8 @@
 import { INestApplication } from '@nestjs/common';
+import { eventNames } from 'process';
 import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
-import {
-  Events,
-  messageType,
-} from '../../../src/modules/chat/gateways/chat.gateway';
+import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
 
 export class WsChatHelpers {
   public static socket: Socket;
@@ -65,8 +63,8 @@ export class WsChatHelpers {
         case Events.PUBLIC_ROOM_REMOVED:
           this.testForProperties(event.payload, [
             'id',
-            'is_private',
-            'is_password_protected',
+            // 'is_private',
+            // 'is_password_protected',
           ]);
           break;
 
@@ -83,26 +81,24 @@ export class WsChatHelpers {
             new Date(Date.now()).toString().length,
           );
           break;
+
+          break;
+
+        case Events.USER_ADDED:
+        case Events.ROOM_PARTICIPANTS_UPDATED:
         case Events.PUBLIC_ROOM_UPDATED:
-          this.testForProperties(event.payload, [
-            'id',
-            'is_private',
-            'is_password_protected',
-            'participants',
-          ]);
+          this.testForProperties(event.payload, ['id']);
           break;
 
         case Events.CONNECT:
           expect(event.payload).toBeUndefined();
           break;
 
-        case Events.PARTICIPANT_UPDATED:
-        case Events.USER_ADDED:
         case Events.USER_REMOVED:
         case Events.USER_MODERATION:
         case Events.USER_BANNED:
         case Events.USER_MUTED:
-          //TO dO
+          throw new Error(`TEST EXPECTATION UNSET for ${event.ev}`);
           break;
 
         default:
