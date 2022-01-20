@@ -77,7 +77,7 @@ export class ChatGateway
   }
 
   sendEventToServer(event: string, message: messageType) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'dev') {
       console.log('Emit event to SERVER: ', event);
     }
     return this.chatGatewayService.sendEventToServer(
@@ -88,7 +88,7 @@ export class ChatGateway
   }
 
   sendEventToRoom(room: Room, event: string, message: messageType) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'dev') {
       console.log('Emit event to ROOM: ', event);
     }
     return this.chatGatewayService.sendEventToRoom(
@@ -100,7 +100,7 @@ export class ChatGateway
   }
 
   sendEventToClient(user: User, event: string, message: messageType) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'dev') {
       console.log('Emit event to CLIENT: ', event);
     }
     return this.chatGatewayService.sendEventToRoom(
@@ -112,7 +112,7 @@ export class ChatGateway
   }
 
   async makeClientJoinRoom(user: User, room: Room) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'dev') {
       console.log(`Add client ${user.login} to room ${room.id}`);
     }
     const clientSocket = this.storage.get(user.ws_id);
@@ -122,7 +122,7 @@ export class ChatGateway
   }
 
   async makeClientLeaveRoom(user: User, room: Room) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'dev') {
       console.log(`Remove client ${user.login} to room ${room.id}`);
     }
     const clientSocket = this.storage.get(user.ws_id);

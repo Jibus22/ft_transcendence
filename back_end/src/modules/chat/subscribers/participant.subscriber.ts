@@ -50,8 +50,9 @@ export class ParticipantSubscriber
   }
 
   async afterInsert(event: InsertEvent<Participant>) {
-    const room = await this.connection.getRepository(Room).findOne(event.entity.room.id, {relations: ['participants']});
-    console.log('Room in after indert', room);
+    const room = await this.connection
+      .getRepository(Room)
+      .findOne(event.entity.room.id, { relations: ['participants'] });
     event.entity.room = room;
     if (event.entity?.room && event.entity?.user) {
       this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
@@ -61,11 +62,11 @@ export class ParticipantSubscriber
         event.entity,
       );
     } else {
-      console.log('Subscriber missing entity properties!');
+      console.debug('Subscriber missing entity properties!');
     }
   }
 
-  beforeRemove(event: RemoveEvent<Participant>) {
+  async beforeRemove(event: RemoveEvent<Participant>) {
     if (event.entity?.room && event.entity?.user) {
       this.chatGateway.makeClientLeaveRoom(
         event.entity.user,
@@ -77,7 +78,7 @@ export class ParticipantSubscriber
         event.entity,
       );
     } else {
-      console.log('Subscriber missing entity properties!'); // TODO fix
+      console.debug('Subscriber missing entity properties!', event.entity); // TODO fix
     }
   }
 }

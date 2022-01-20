@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { UserDto } from '../../users/dtos/user.dto';
-import { Participant } from '../entities/participant.entity';
 import { Restriction } from '../entities/restriction.entity';
 import { ChatMessageDto } from './chatMessade.dto';
 import { ParticipantDto } from './participant.dto';
@@ -26,9 +25,6 @@ export class RoomDto {
   @ApiProperty({ type: [ParticipantDto], isArray: true })
   @Expose()
   @Transform((value) => {
-    (value.obj.participants as Participant[]).forEach((p) => {
-      if (p?.room) delete p?.room;
-    });
     return plainToClass(ParticipantDto, value.obj.participants);
   })
   participants: ParticipantDto[];

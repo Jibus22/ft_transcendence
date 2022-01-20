@@ -10,7 +10,13 @@ all:  ##
 
 
 test:  ## Run tests. Usage: run all tests: `make test`, run chat specific tests : `make test TARGET=chat`
-	docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'jest --config ./test/jest-e2e.json --maxWorkers=1 --watch --verbose --testLocationInResults $(TEST_ARG)' ; docker-compose rm -fsv
+	docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'jest --runInBand --config ./test/jest-e2e.json --watch --verbose --testLocationInResults $(TEST_ARG)' ; docker-compose rm -fsv
+
+dbtest:  ## Run tests. Usage: run all tests: `make test`, run chat specific tests : `make test TARGET=chat`
+	docker-compose -f docker-compose.yml -f docker-compose.test.yml run back_end_server bash -c 'node --inspect-brk jest --runInBand --config ./test/jest-e2e.json --watch --verbose --testLocationInResults $(TEST_ARG)' ; docker-compose rm -fsv
+
+debug:
+	docker-compose -f docker-compose.yml -f docker-compose.debug.yml up ; docker-compose rm -fsv
 
 db:  ## Run database server in production mode
 	docker-compose -f docker-compose.yml up database_server ; docker-compose rm -fsv
