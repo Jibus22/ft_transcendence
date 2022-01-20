@@ -131,13 +131,13 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  sendEventToServer(server: Server, event: string, message: messageType) {
+  sendEventToServer(server: Server, event: string, message: messageType | string) {
     server.emit(event, message);
   }
 
   sendEventToRoom(
     server: Server,
-    destId: string,
+    destId: string | string[],
     event: string,
     message: messageType,
   ) {

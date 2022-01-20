@@ -21,7 +21,7 @@ export enum Events {
   PUBLIC_ROOM_UPDATED = 'publicRoomUpdated',
   PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
   NEW_MESSAGE = 'newMessage',
-  PARTICIPANT_UPDATED = 'participantUpdated',
+  ROOM_PARTICIPANTS_UPDATED = 'participantUpdated',
   USER_ADDED = 'userAdded',
   USER_REMOVED = 'userRemoved',
   USER_MODERATION = 'userModeration',
@@ -30,6 +30,7 @@ export enum Events {
 }
 
 export type messageType =
+  | { id: string }
   | ChatMessageDto
   | RoomDto
   | ParticipantDto
@@ -87,13 +88,14 @@ export class ChatGateway
     );
   }
 
-  sendEventToRoom(room: Room, event: string, message: messageType) {
+  sendEventToRoom(room: Room | Room[], event: string, message: messageType) {
     if (process.env.NODE_ENV === 'dev') {
       console.log('Emit event to ROOM: ', event);
     }
+    const dest = (Array.isArray(room)) ? room.map(r => r.id) : room.id;
     return this.chatGatewayService.sendEventToRoom(
       this.server,
-      room.id,
+      dest,
       event,
       message,
     );
@@ -113,7 +115,7 @@ export class ChatGateway
 
   async makeClientJoinRoom(user: User, room: Room) {
     if (process.env.NODE_ENV === 'dev') {
-      console.log(`Add client ${user.login} to room ${room.id}`);
+      console.log(`Add client ${user?.login} to room ${room.id}`);
     }
     const clientSocket = this.storage.get(user.ws_id);
     if (clientSocket) {
@@ -123,7 +125,7 @@ export class ChatGateway
 
   async makeClientLeaveRoom(user: User, room: Room) {
     if (process.env.NODE_ENV === 'dev') {
-      console.log(`Remove client ${user.login} to room ${room.id}`);
+      console.log(`Remove client ${user?.login} to room ${room.id}`);
     }
     const clientSocket = this.storage.get(user.ws_id);
     if (clientSocket) {
