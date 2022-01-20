@@ -157,7 +157,7 @@ export class MeController {
     @TargetedRoom() room: Room,
     @Body() body: { password?: string },
   ) {
-    return await this.chatService.joinRoom(user, room, body).catch((error) => {
+    await this.chatService.joinRoom(user, room, body).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
@@ -167,7 +167,6 @@ export class MeController {
   @Delete('/rooms/:room_id')
   @UseGuards(AuthGuard)
   @UseGuards(RoomParticipantGuard)
-  @Serialize(RoomDto)
   @ApiOperation({
     summary: 'Leave a joined room',
   })
@@ -177,7 +176,7 @@ export class MeController {
     description: 'room was left',
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
-    return await this.chatService.leaveRoom(user, room).catch((error) => {
+    await this.chatService.leaveRoom(user, room).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');

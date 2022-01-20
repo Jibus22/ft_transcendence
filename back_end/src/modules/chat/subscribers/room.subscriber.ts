@@ -1,4 +1,3 @@
-import { plainToClass } from 'class-transformer';
 import {
   Connection,
   EntitySubscriberInterface,
@@ -7,7 +6,6 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
-import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
 import { ChatGateway, Events } from '../gateways/chat.gateway';
 
@@ -24,32 +22,48 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     return Room;
   }
 
-  afterInsert(event: InsertEvent<Room>) {
-    if (event.entity.is_private === false) {
-      this.chatGateway.sendEventToServer(
-        Events.PUBLIC_ROOM_CREATED,
-        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
-      );
+  private async fetchPossiblyMissingData(
+    event: InsertEvent<Room> | UpdateEvent<Room> | RemoveEvent<Room>,
+  ) {
+    let neededRelations: string[] = [];
+    if (!event.entity?.participants) neededRelations.push('participants');
+
+    if (neededRelations.length) {
+      await event.connection
+        .getRepository(Room)
+        .findOne(event.entity.id, { relations: neededRelations })
+        .then((participant) => {
+          neededRelations.forEach((relation) => {
+            event.entity[relation] = participant[relation];
+          });
+        });
     }
   }
 
-  beforeUpdate(event: UpdateEvent<Room>) {
+  async afterInsert(event: InsertEvent<Room>) {
+    await this.fetchPossiblyMissingData(event);
+    if (event.entity.is_private === false) {
+      this.chatGateway.sendEventToServer(Events.PUBLIC_ROOM_CREATED, {
+        id: event.entity.id,
+      });
+    }
+  }
+
+  async afterUpdate(event: UpdateEvent<Room>) {
+    await this.fetchPossiblyMissingData(event);
     if (event.databaseEntity.is_private === false) {
-      this.chatGateway.sendEventToServer(
-        Events.PUBLIC_ROOM_UPDATED,
-        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
-      );
+      this.chatGateway.sendEventToServer(Events.PUBLIC_ROOM_UPDATED, {
+        id: event.entity.id,
+      });
     }
   }
 
-  beforeRemove(event: RemoveEvent<Room>) {
+  async beforeRemove(event: RemoveEvent<Room>) {
+    await this.fetchPossiblyMissingData(event);
     if (event.entity.is_private === false) {
-      delete event.entity?.participants;
-      delete event.entity?.restrictions;
-      this.chatGateway.sendEventToServer(
-        Events.PUBLIC_ROOM_REMOVED,
-        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
-      );
+      this.chatGateway.sendEventToServer(Events.PUBLIC_ROOM_REMOVED, {
+        id: event.entity.id,
+      });
     }
   }
 }
