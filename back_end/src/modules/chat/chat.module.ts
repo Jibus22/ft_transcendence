@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppUtilsService } from '../../utils/app-utils.service';
 import { User } from '../users/entities/users.entity';
 import { UsersService } from '../users/service-users/users.service';
 import { ChatController } from './chat.controller';
@@ -28,6 +29,7 @@ import { TaskerService } from './tasker.service';
   ],
   controllers: [ChatController],
   providers: [
+    AppUtilsService,
     UsersService,
     ChatService,
     TaskerService,

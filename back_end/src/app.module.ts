@@ -1,3 +1,4 @@
+import { AppUtilsModule } from './utils/app-utils.module';
 import { HttpModule } from '@nestjs/axios';
 import {
   CacheModule,
@@ -22,6 +23,7 @@ const cookieSession = require('cookie-session');
 
 @Module({
   imports: [
+    AppUtilsModule,
     ScheduleModule.forRoot(),
     CacheModule.register({
       isGlobal: true,

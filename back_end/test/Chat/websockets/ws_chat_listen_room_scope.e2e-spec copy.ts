@@ -366,7 +366,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     });
 
     const events = WsChatHelpers.events;
-    console.log(JSON.stringify(events, null, 4));
+    // console.log(JSON.stringify(events, null, 4));
     const expectedEvents = [
       { ev: Events.CONNECT },
       { ev: Events.USER_ADDED },

@@ -7,6 +7,7 @@ import {
   InsertEvent,
   RemoveEvent,
 } from 'typeorm';
+import { AppUtilsService } from '../../../utils/app-utils.service';
 import { RoomDto } from '../dto/room.dto';
 import { Participant } from '../entities/participant.entity';
 import { ChatGateway, Events } from '../gateways/chat.gateway';
@@ -16,6 +17,7 @@ export class ParticipantSubscriber
   implements EntitySubscriberInterface<Participant>
 {
   constructor(
+    private readonly utils: AppUtilsService,
     private readonly chatGateway: ChatGateway,
     private connection: Connection,
   ) {
@@ -26,35 +28,12 @@ export class ParticipantSubscriber
     return Participant;
   }
 
-  private async fetchPossiblyMissingData(
-    event: InsertEvent<Participant> | RemoveEvent<Participant>,
-  ) {
-    let neededRelations: string[] = [];
-    if (!event.entity?.room || !event.entity?.room?.participants)
-      neededRelations.push('room');
-    if (!event.entity?.user) neededRelations.push('user');
-    console.log(neededRelations, 'are needed');
-
-    if (neededRelations.length) {
-      if (neededRelations.some((r) => r === 'room'))
-        neededRelations.push('room.participants');
-      await event.connection
-        .getRepository(Participant)
-        .findOne(event.entity.id, { relations: neededRelations })
-        .then((participant) => {
-          neededRelations.forEach((relation) => {
-            if (relation === 'room.participants') {
-              event.entity.room.participants = participant.room.participants;
-            } else {
-              event.entity[relation] = participant[relation];
-            }
-          });
-        });
-    }
-  }
-
   async afterInsert(event: InsertEvent<Participant>) {
-    await this.fetchPossiblyMissingData(event);
+    await this.utils.fetchPossiblyMissingData(
+      event.connection.getRepository(Participant),
+      event.entity,
+      ['room', 'room.participants', 'user'],
+    );
 
     this.chatGateway.sendEventToClient(
       event.entity.user,
@@ -76,8 +55,11 @@ export class ParticipantSubscriber
   }
 
   async beforeRemove(event: RemoveEvent<Participant>) {
-    await this.fetchPossiblyMissingData(event);
-    console.log(event.entity);
+    await this.utils.fetchPossiblyMissingData(
+      event.connection.getRepository(Participant),
+      event.entity,
+      ['room', 'room.participants', 'user'],
+    );
 
     this.chatGateway.sendEventToClient(
       event.entity.user,
