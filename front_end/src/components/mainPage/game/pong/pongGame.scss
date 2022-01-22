@@ -1,0 +1,366 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap');
+.divMainPongGame {
+	width: 82vw;
+	min-width: 430px;
+	height: 50vw;
+	min-height: 320px;
+
+	margin: 5% auto;
+	margin-bottom: 0px;
+
+	align-self: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.gameQueue {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		align-self: center;
+	}
+
+	.mainPongGame {
+		width: 100%;
+		height: 90%;
+		border-radius: 2.2vw;
+		border: 2px solid rgba(255, 255, 255, 0.7);
+		background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
+		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+
+		h1,
+		h3 {
+			font-family: Montserrat, sans-serif;
+			color: white;
+		}
+
+		.titlePongGame {
+			display: flex;
+			justify-content: center;
+			h1 {
+				font-size: 2.3vw;
+				font-weight: 600;
+				font-family: 'Roboto Mono', monospace;
+			}
+
+			@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&display=swap');
+			.counterOutput {
+				color: white;
+				font-size: 4.4vw;
+				position: absolute;
+				left: 50%;
+				top: 13%;
+				transform: translate(-50%, -50%);
+				font-family: 'Mochiy Pop P One', sans-serif;
+			}
+		}
+
+		.infoUser {
+			display: flex;
+			justify-content: space-around;
+
+			.photoUser {
+				width: 30%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 5%;
+				.MuiAvatar-root {
+					width: 7vw;
+					height: 7vw;
+					border: none;
+					border-radius: 3.5vw;
+					// border: 1px solid red;
+				}
+
+				h1 {
+					font-size: 1.8vw;
+					font-weight: 500;
+				}
+			}
+
+			.loadingVersus {
+				align-self: center;
+
+				.MuiCircularProgress-root {
+					color: #ca6c88;
+					// margin: 25% 0% 0% 28%;
+					width: 4vw !important;
+					height: 4vw !important;
+				}
+
+				h1 {
+					font-size: 2.7vw;
+					color: #ca6c88;
+					font-family: 'Mochiy Pop P One', sans-serif;
+				}
+			}
+		}
+
+		.titleMap {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 16%;
+			.countMap {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				color: white;
+				font-size: 2vw;
+			}
+			h1 {
+				font-size: 2vw;
+				font-family: 'Roboto Mono', monospace;
+			}
+
+			.selectMap {
+				display: flex;
+				justify-content: space-around;
+				width: 100%;
+
+				.map {
+					width: 7vw;
+					height: 7vw;
+
+					box-shadow: 0 1vw 1.5vw black;
+
+					border-radius: 1.9vw;
+					transition: ease-out 0.125s;
+					border: 2px solid rgba(255, 255, 255, 0.5);
+				}
+
+				.map img,
+				.mapDisable img {
+					width: 100%;
+					height: 100%;
+					border-radius: 1.7vw;
+				}
+				.map button,
+				.mapDisable button {
+					background: none;
+					color: inherit;
+					border: none;
+					width: 100%;
+					height: 100%;
+					padding: 0;
+					font: inherit;
+					// cursor: pointer;
+					outline: inherit;
+				}
+
+				.mapBig {
+					width: 10vw;
+					height: 10vw;
+
+					box-shadow: 0 1vw 1.5vw black;
+
+					border-radius: 1.9vw;
+					transition: ease-out 0.125s;
+				}
+
+				button {
+					transition: ease-out 0.125s;
+				}
+
+				.buttonTransform:hover {
+					transform: scale(1.1);
+				}
+
+				.mapDisable {
+					width: 7vw;
+					height: 7vw;
+				}
+
+				.active {
+					filter: none;
+					// width: 100%;
+					// height: 100%;
+				}
+				.active:hover {
+					// transform: scale(1.1);
+				}
+
+				.inactive {
+					filter: blur(2px);
+					cursor: not-allowed;
+				}
+				.inactive:hover {
+					transform: none;
+				}
+			}
+		}
+	}
+	.closeButton {
+		margin-top: 20px;
+		display: flex;
+		width: 30%;
+		height: 7%;
+
+		.buttonMui {
+			width: 100%;
+			height: 100%;
+			text-transform: none;
+			border-radius: 0.8vw;
+
+			font-size: 1.5vw;
+			font-family: 'Montserrat', sans-serif;
+			transition: ease-out 0.125s;
+			background-color: #ca6c88;
+			border: 2px solid rgba(255, 255, 255, 0.6);
+
+			margin-right: 30px;
+		}
+		.buttonMui:hover {
+			transform: scale(1.1);
+		}
+	}
+}
+
+.pongGame {
+	width: 80vw;
+	height: 45vw;
+
+	margin: 0 auto;
+}
+
+@media screen and (max-width: 1440px) {
+	.divMainPongGame {
+		margin: 8% auto;
+		margin-bottom: 40px;
+		.mainPongGame {
+			border: 1px solid rgba(255, 255, 255, 0.7);
+
+			.titleMap {
+				.selectMap {
+					.map {
+						border: 1px solid rgba(255, 255, 255, 0.5) !important;
+					}
+				}
+			}
+		}
+		.closeButton {
+			.buttonMui {
+				border: 1px solid rgba(255, 255, 255, 0.6) !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1400px) {
+	.divMainPongGame {
+		margin: 12% auto;
+		margin-bottom: 40px;
+	}
+}
+
+@media screen and (max-width: 1150px) {
+	.divMainPongGame {
+		margin: 17vw auto;
+		margin-bottom: 20px;
+	}
+}
+
+@media screen and (max-width: 900px) {
+	.divMainPongGame {
+		margin: 12vw auto;
+		margin-bottom: -15px;
+	}
+}
+
+@media screen and (max-width: 750px) {
+	.divMainPongGame {
+		// margin: 19% auto;
+		margin-bottom: -15px;
+		.mainPongGame {
+			border-radius: 24px;
+			.titlePongGame {
+				h1 {
+					font-size: 17px;
+				}
+				.counterOutput {
+					font-size: 25px;
+					top: 13%;
+				}
+			}
+			.infoUser {
+				.photoUser {
+					.MuiAvatar-root {
+						width: 44px;
+						height: 44px;
+						border-radius: 22px;
+					}
+
+					h1 {
+						font-size: 14px;
+					}
+				}
+				.loadingVersus {
+					h1 {
+						font-size: 18px;
+					}
+				}
+			}
+			.titleMap {
+				.countMap {
+					font-size: 12px;
+					top: 55%;
+				}
+
+				h1 {
+					font-size: 13px;
+				}
+				.selectMap {
+					.map {
+						width: 45px;
+						height: 45px;
+						border-radius: 15px;
+						box-shadow: 0 10px 15px black;
+					}
+					.map img,
+					.mapDisable img {
+						width: 100%;
+						height: 100%;
+						border-radius: 14px;
+					}
+
+					.mapBig {
+						width: 60px;
+						height: 60px;
+					}
+				}
+			}
+		}
+		.closeButton {
+			width: 180px;
+			height: 25px;
+
+			.buttonMui {
+				font-size: 12px;
+				border-radius: 5px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 750px) {
+	.divMainPongGame {
+		margin: 23% auto;
+	}
+}
+
+@media screen and (max-width: 670px) {
+	.divMainPongGame {
+		.titleMap {
+			.countMap {
+				top: 50% !important;
+			}
+		}
+	}
+}
