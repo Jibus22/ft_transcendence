@@ -106,7 +106,7 @@ export class GameService {
 
   async history() {
     const games = await this.game_repo.find({
-      relations: ['players', 'players.user'],
+      relations: ['players', 'players.user', 'players.user.local_photo'],
     });
     return games;
   }
