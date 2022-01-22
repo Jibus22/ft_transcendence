@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
-import './mainPage.scss';
-import { Routes, Route, useRoutes } from 'react-router-dom';
-import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage } from '..';
+import { Backdrop, CircularProgress } from '@mui/material';
+import { useMount, useSafeState } from 'ahooks';
 import axios from 'axios';
-import { useMainPage } from '../../MainPageContext';
+import React, { useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
-import { useNavigate } from 'react-router-dom';
-import { useMount } from 'ahooks';
-import { useSafeState } from 'ahooks';
-import { Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
+import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
+import { useMainPage } from '../../MainPageContext';
+import './mainPage.scss';
 
 const MainPage = () => {
-	const { timeSnack, setData, setTimeSnack } = useMainPage();
+	const { timeSnack, setData, setTimeSnack, leaveGame } = useMainPage();
 	const [wsStatus, setWsStatus] = useSafeState<Socket | undefined>(undefined);
 	const [time, setTime] = useState(false);
 	const [isHeader, setIsHeader] = useState(true);
@@ -145,17 +143,23 @@ const MainPage = () => {
 		setTimeSnack(false);
 	};
 
+	const headerLeave = () => {
+		if (!leaveGame && isHeader) {
+			return (
+				<div>
+					<Header />
+				</div>
+			);
+		}
+	};
+
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
-			{isHeader ? (
-				<div>
-					<Header />
-				</div>
-			) : null}
+			{headerLeave()}
 
 			<Routes>
 				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />

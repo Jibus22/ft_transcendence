@@ -1,19 +1,11 @@
-import React, { useState, useContext } from 'react';
-import axios, { AxiosError } from 'axios';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-
-interface Type {
-	id: number;
-	login: string;
-	photo_url: string;
-	status: string;
-	storeCustomPhoto: boolean;
-	hasTwoFASecret: boolean;
-}
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import axios, { AxiosError } from 'axios';
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { UserMe } from './components/type';
 
 interface IMainPageContext {
-	data: Array<Type>;
+	data: Array<UserMe>;
 	timeSnack: boolean;
 	isDisable: boolean;
 	isFriends: boolean;
@@ -22,6 +14,9 @@ interface IMainPageContext {
 	openSure: boolean;
 	isUpload: boolean;
 	openUpload: boolean;
+	selectNav: Boolean;
+	startGame: Boolean;
+	leaveGame: boolean;
 	userStatus: boolean;
 	selectQuery: boolean;
 	selectedImage: File;
@@ -30,21 +25,24 @@ interface IMainPageContext {
 	userImg: string;
 	pathPop: string;
 
-	setData: React.Dispatch<React.SetStateAction<never[]>>;
-	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsDisable: React.Dispatch<React.SetStateAction<boolean>>;
-	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-	setSelectQuery: React.Dispatch<React.SetStateAction<boolean>>;
-	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
-	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsUpload: React.Dispatch<React.SetStateAction<boolean>>;
-	setOpenUpload: React.Dispatch<React.SetStateAction<boolean>>;
-	setSelectedImage: React.Dispatch<React.SetStateAction<File>>;
-	setTimer: React.Dispatch<React.SetStateAction<number>>;
-	setUserName: React.Dispatch<React.SetStateAction<string>>;
-	setUserImg: React.Dispatch<React.SetStateAction<string>>;
-	setPathPop: React.Dispatch<React.SetStateAction<string>>;
+	setData: Dispatch<SetStateAction<never[]>>;
+	setTimeSnack: Dispatch<SetStateAction<boolean>>;
+	setIsDisable: Dispatch<SetStateAction<boolean>>;
+	setLoading: Dispatch<SetStateAction<boolean>>;
+	setSelectQuery: Dispatch<SetStateAction<boolean>>;
+	setCustomPhoto: Dispatch<SetStateAction<boolean>>;
+	setIsFriends: Dispatch<SetStateAction<boolean>>;
+	setOpenSure: Dispatch<SetStateAction<boolean>>;
+	setIsUpload: Dispatch<SetStateAction<boolean>>;
+	setOpenUpload: Dispatch<SetStateAction<boolean>>;
+	setStartGame: Dispatch<SetStateAction<boolean>>;
+	setSelectNav: Dispatch<SetStateAction<boolean>>;
+	setLeaveGame: Dispatch<SetStateAction<boolean>>;
+	setSelectedImage: Dispatch<SetStateAction<File>>;
+	setTimer: Dispatch<SetStateAction<number>>;
+	setUserName: Dispatch<SetStateAction<string>>;
+	setUserImg: Dispatch<SetStateAction<string>>;
+	setPathPop: Dispatch<SetStateAction<string>>;
 
 	printSnackBar: () => void;
 	fetchDataUserMe: () => void;
@@ -52,23 +50,22 @@ interface IMainPageContext {
 	onSubmitUpload: (file: File) => void;
 	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 	setStatusColor: (status: string) => string;
-
-	selectNav: Boolean;
-	setSelectNav: React.Dispatch<React.SetStateAction<boolean>>;
-	startGame: Boolean;
-	setStartGame: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
 
 const MainPageProvider = (props: any) => {
 	const [data, setData] = useState([]);
+
 	const [timeSnack, setTimeSnack] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [isFriends, setIsFriends] = useState(false);
 	const [openSure, setOpenSure] = useState(false);
 	const [isUpload, setIsUpload] = useState(false);
+	const [selectNav, setSelectNav] = useState(false);
+	const [startGame, setStartGame] = useState(false);
 	const [openUpload, setOpenUpload] = useState(false);
+	const [leaveGame, setLeaveGame] = useState(false);
 	const [isDisable, setIsDisable] = useState(true);
 	const [customPhoto, setCustomPhoto] = useState(true);
 	const [timer, setTimer] = useState(5000);
@@ -78,8 +75,7 @@ const MainPageProvider = (props: any) => {
 	const [selectedImage, setSelectedImage] = useState();
 	const [selectQuery, setSelectQuery] = useState(false);
 
-	const [selectNav, setSelectNav] = useState(false);
-	const [startGame, setStartGame] = useState(false);
+	// const [dataHistory, setDataHistory] = useState([]);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -91,6 +87,18 @@ const MainPageProvider = (props: any) => {
 			console.log(err);
 		}
 	};
+
+	// const fetchDataHistory = async () => {
+	// 	try {
+	// 		const { data } = await axios.get('http://localhost:3000/game/history', {
+	// 			withCredentials: true,
+	// 		});
+	// 		setDataHistory(data);
+	// 	} catch (error) {
+	// 		const err = error as AxiosError;
+	// 		console.log(err);
+	// 	}
+	// };
 
 	const onSubmit = async (file: File, path: string) => {
 		let data = new FormData();
@@ -189,6 +197,9 @@ const MainPageProvider = (props: any) => {
 		selectedImage,
 		openUpload,
 		selectQuery,
+		selectNav,
+		startGame,
+		leaveGame,
 
 		setSelectQuery,
 		setCustomPhoto,
@@ -210,11 +221,14 @@ const MainPageProvider = (props: any) => {
 		setOpenUpload,
 		dialogMui,
 		setStatusColor,
-
-		selectNav,
-		setSelectNav,
-		startGame,
 		setStartGame,
+		setSelectNav,
+		setLeaveGame,
+
+		// dataHistory,
+		// setDataHistory,
+
+		// fetchDataHistory,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

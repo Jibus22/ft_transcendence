@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Ball } from './Ball';
 import { Player } from './Player';
-import './PongGame.css';
+import './PongGame.scss';
 import '../pongGame.scss';
 
 //Client
@@ -21,11 +21,11 @@ function sleep(milliseconds: number) {
 	} while (currentDate - date < milliseconds);
 }
 
-type MyProps = {
-	startGame: React.Dispatch<React.SetStateAction<boolean>>;
-};
+// type MyProps = {
+// 	startGame: React.Dispatch<React.SetStateAction<boolean>>;
+// };
 
-class PongGame extends React.Component<MyProps> {
+class PongGame extends React.Component {
 	///////////////////////////////////////////
 
 	//////////////////////////////////////
@@ -258,9 +258,9 @@ class PongGame extends React.Component<MyProps> {
 	}
 
 	componentDidMount() {
-		let rep = prompt('J1 J2 ou W');
-		if (rep === 'J1') this._P1 = true;
-		else if (rep === 'J2') this._P2 = true;
+		// let rep = prompt('J1 J2 ou W');
+		// if (rep === 'J1') this._P1 = true;
+		// else if (rep === 'J2') this._P2 = true;
 		this._initPongGame();
 		client.onmessage = (message: any) => {
 			const data = JSON.parse(message.data);
@@ -312,8 +312,7 @@ class PongGame extends React.Component<MyProps> {
 		return (
 			<div className="pongGame">
 				<canvas
-					className="h-100 w-100"
-					id="canvasGame"
+					className="canvasGame"
 					onTouchStart={(e) => this._touch(e)}
 					onTouchMove={(e) => this._touch(e)}
 					style={this._canvasStyle}

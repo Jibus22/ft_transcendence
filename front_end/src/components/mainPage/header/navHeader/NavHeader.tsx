@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import './navHeader.scss';
-import { IconButton } from '@mui/material';
 import DehazeIcon from '@mui/icons-material/Dehaze';
+import { IconButton } from '@mui/material';
+import React from 'react';
+import './navHeader.scss';
 
 export default function NavHeader() {
 	return (

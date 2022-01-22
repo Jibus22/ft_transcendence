@@ -43,6 +43,7 @@
 		font-family: Montserrat, sans-serif;
 		font-size: 1.3vw;
 		font-weight: 500;
+		transition: ease-out 0.125s;
 	}
 	.buttonMui:hover {
 		font-size: 37px;
@@ -263,8 +264,8 @@
 		// margin: 55px auto;
 
 		margin: 55px auto;
-		margin-bottom: -70px;
-		padding-bottom: 0px !important;
+		margin-bottom: 40px;
+		// padding-bottom: 0px !important;
 		width: 45%;
 		width: 400px;
 		height: 480px;
