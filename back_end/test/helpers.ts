@@ -13,9 +13,9 @@ export class CommonTest {
       use_local_photo: false,
     },
     {
-      login: 'fake-frfrancd-custome',
-      login_42: 'fake-frfrancd',
-      photo_url_42: 'https://cdn.intra.42.fr/users/frfrancd.jpg',
+      login: 'fake-frfrance-custome',
+      login_42: 'fake-frfrance',
+      photo_url_42: 'https://cdn.intra.42.fr/users/frfrance.jpg',
       use_local_photo: false,
     },
     {

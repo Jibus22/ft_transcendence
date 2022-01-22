@@ -1,44 +1,37 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import './historyGame.scss';
-import 'semantic-ui-css/semantic.min.css';
-import { useSpring, animated } from 'react-spring';
-import { Button, AvatarGroup, Avatar, Badge, useMediaQuery } from '@mui/material';
+import { Avatar, AvatarGroup, Badge, Button, useMediaQuery } from '@mui/material';
 import axios, { AxiosError } from 'axios';
-import FormHistory from './formHistory/FormHistory';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { animated, useSpring } from 'react-spring';
+import 'semantic-ui-css/semantic.min.css';
 import { useMainPage } from '../../../MainPageContext';
-
-interface User {
-	id: string;
-	login: string;
-	photo_url: string;
-	status: string;
-}
-
-interface Players {
-	score: number;
-	user: User;
-}
-
-interface Game {
-	id: string;
-	createdAt: string;
-	duration: string;
-	players: Array<Players>;
-}
+import { Game } from '../../type';
+import FormHistory from './formHistory/FormHistory';
+import './historyGame.scss';
 
 const HistoryGame = () => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		from: { opacity: 0, transform: 'translate(0px, 170px)' },
 		config: {
 			delay: 300,
 			duration: 300,
 		},
 	});
-	const { userName } = useMainPage();
+
+	const fade = useSpring({
+		opacity: 1,
+		transform: 'translate(0px, 0px)',
+		from: { opacity: 0, transform: 'translate(0px, 0px)' },
+		config: {
+			delay: 2000,
+			duration: 2000,
+		},
+	});
+
+	const { userName, setStatusColor } = useMainPage();
 	const [dataGame, setDataGame] = useState<Array<Game>>([]);
-	const query = useMediaQuery('(max-width: 1000px)');
+	const query = useMediaQuery('(max-width: 700px)');
 
 	const [isActive, setIsActive] = useState(false);
 
@@ -65,56 +58,99 @@ const HistoryGame = () => {
 		setIsActive(!isActive);
 	};
 
+	const convertTime = (int: number, option: number) => {
+		const date = new Date(int);
+		let time;
+		if (option === 1) {
+			time = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		}
+		if (option === 2) {
+			time = date.getMinutes() + ':' + date.getSeconds();
+		}
+
+		return time;
+	};
+
 	const userList = (data: any) => {
 		return (
-			<div className="infoHistory " key={data.id}>
-				<div className="mainPlayer">
-					{!query ? (
-						<div className="userImg d-flex ">
-							<AvatarGroup max={2}>
-								<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-									<Avatar alt="userImg" src={data.players[0].user.photo_url} variant="square" className="domUser" />
-								</Badge>
-								<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-									<Avatar alt="userImg" src={data.players[1].user.photo_url} variant="rounded" className="extUser" />
-								</Badge>
-							</AvatarGroup>
+			<animated.div style={fade} className="animatedDiv" key={data.id}>
+				<div className="infoHistory ">
+					<div className="mainPlayer">
+						{!query ? (
+							<div className="userImg d-flex ">
+								<AvatarGroup max={2}>
+									<Badge
+										overlap="circular"
+										anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+										variant="dot"
+										sx={{
+											'.MuiBadge-badge': {
+												backgroundColor: setStatusColor(data.players[0].user.status),
+												color: setStatusColor(data.players[0].user.status),
+												borderColor: setStatusColor(data.players[0].user.status),
+												boxShadow: setStatusColor(data.players[0].user.status),
+											},
+											'.MuiBadge-badge::after': {
+												borderColor: setStatusColor(data.players[0].user.status),
+											},
+										}}
+									>
+										<Avatar alt="userImg" src={data.players[0].user.photo_url} variant="square" className="domUser" />
+									</Badge>
+									<Badge
+										overlap="circular"
+										anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+										variant="dot"
+										sx={{
+											'.MuiBadge-badge': {
+												backgroundColor: setStatusColor(data.players[1].user.status),
+												color: setStatusColor(data.players[1].user.status),
+												borderColor: setStatusColor(data.players[1].user.status),
+												boxShadow: setStatusColor(data.players[1].user.status),
+											},
+											'.MuiBadge-badge::after': {
+												borderColor: setStatusColor(data.players[1].user.status),
+											},
+										}}
+									>
+										<Avatar alt="userImg" src={data.players[1].user.photo_url} variant="rounded" className="extUser" />
+									</Badge>
+								</AvatarGroup>
+							</div>
+						) : null}
+						<div className="playerName ">
+							<div className="player d-flex ">
+								<div className="playerDiv justify-content-end">
+									<p>{data.players[0].user.login}</p>
+								</div>
+								<div className="vs">
+									<p>vs</p>
+								</div>
+								<div className="playerDiv justify-content-start">
+									<p>{data.players[1].user.login}</p>
+								</div>
+							</div>
 						</div>
-					) : null}
-					<div className="playerName ">
-						<div className="player d-flex ">
-							<div className="playerDiv justify-content-end">
-								<p>{data.players[0].user.login}</p>
-							</div>
-							<div className="vs">
-								<p>vs</p>
-							</div>
-							<div className="playerDiv justify-content-start">
-								<p>{data.players[1].user.login}</p>
-							</div>
+					</div>
+					<div className="playerScore d-flex ">
+						<div>
+							<p>{data.players[0].score}</p>
+						</div>
+						<div className="semilicon">
+							<p>:</p>
+						</div>
+						<div>
+							<p>{data.players[1].score}</p>
 						</div>
 					</div>
-				</div>
-				<div className="playerScore d-flex ">
-					<div>
-						<p>{data.players[0].score}</p>
+					<div className="date d-flex flex-column ">
+						<p>{convertTime(data.createdAt, 1)}</p>
 					</div>
-					<div className="semilicon">
-						<p>:</p>
-					</div>
-					<div>
-						<p>{data.players[1].score}</p>
+					<div className="duration d-flex ">
+						<p>{convertTime(data.duration, 2)}</p>
 					</div>
 				</div>
-				<div className="date d-flex flex-column ">
-					<p>{data.createdAt}</p>
-					{/* <p className="timeHours">23 : 44</p> */}
-				</div>
-				<div className="duration d-flex ">
-					<p>{data.duration}</p>
-					<p>00:00:15</p>
-				</div>
-			</div>
+			</animated.div>
 		);
 	};
 
@@ -141,18 +177,22 @@ const HistoryGame = () => {
 		setName(keyword);
 	};
 
+	const userSortDate = (a: Game, b: Game) => {
+		return b.createdAt - a.createdAt;
+	};
+
 	const sortByUser = () => {
 		if (isMyGame) {
 			const sortByName = dataGame.filter(
 				(dataGame) => dataGame.players[0].user.login === userName || dataGame.players[1].user.login === userName,
 			);
-			return sortByName.map((data) => userList(data));
+			return sortByName.sort(userSortDate).map((data) => userList(data));
 		}
 		if (foundUsers && foundUsers.length > 0) {
-			return foundUsers.map((data) => userList(data));
+			return foundUsers.sort(userSortDate).map((data) => userList(data));
 		}
 		if (inKeyword === false) {
-			return dataGame.map((data) => userList(data));
+			return dataGame.sort(userSortDate).map((data) => userList(data));
 		}
 	};
 
@@ -175,7 +215,6 @@ const HistoryGame = () => {
 						</div>
 						<div>
 							<FormHistory name={name} filter={filter} isActive={isActive} />
-							{/* <input type="search" value={name} onChange={filter} className="input" placeholder="Filter" /> */}
 						</div>
 					</div>
 				</div>
