@@ -1,8 +1,10 @@
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   GatewayMetadata,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -44,6 +46,34 @@ const options: GatewayMetadata = {
     credentials: true,
   },
 };
+
+const options_game: GatewayMetadata = {
+  namespace: 'game',
+  cors: {
+    origin: ['http://localhost:3001'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+};
+
+@WebSocketGateway(options_game)
+export class GameGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
+
+  afterInit(server: Server) {
+    this.server = server;
+  }
+  async handleConnection(client: Socket) {
+    console.log(' NEW SOCKET ----------  connect GAME WS -> ', client.id);
+  }
+
+  async handleDisconnect(client: Socket) {
+    console.log(' NEW SOCKET ----------  disconnect GAME WS -> ', client.id);
+  }
+}
 
 @WebSocketGateway(options)
 export class ChatGateway
@@ -92,7 +122,7 @@ export class ChatGateway
     if (process.env.NODE_ENV === 'dev') {
       console.log('Emit event to ROOM: ', event);
     }
-    const dest = (Array.isArray(room)) ? room.map(r => r.id) : room.id;
+    const dest = Array.isArray(room) ? room.map((r) => r.id) : room.id;
     return this.chatGatewayService.sendEventToRoom(
       this.server,
       dest,
@@ -133,11 +163,13 @@ export class ChatGateway
     }
   }
 
-  // @UsePipes(new ValidationPipe({
-  //   whitelist: true
-  // }))
-  // @SubscribeMessage('ingame')
-  // async updateIngane(client: Socket, data: { value: 'in' | 'out' }) {
-  //   return await this.chatGatewayService.setUserIngame(client, data);
-  // }
+  // @UsePipes(
+  //   new ValidationPipe({
+  //     whitelist: true,
+  //   }),
+  // )
+  @SubscribeMessage('ingame')
+  async updateIngane(client: Socket, data: { value: 'in' | 'out' }) {
+    return await this.chatGatewayService.setUserIngame(client, data);
+  }
 }
