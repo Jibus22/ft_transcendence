@@ -77,17 +77,27 @@ export class CommonTest {
     return await request(this.app.getHttpServer())
       .get(`/me`)
       .set('Cookie', cookies);
-  }
+    }
 
-  async createFakeUsers() {
-    return await request(this.app.getHttpServer())
+    async createFakeUsers() {
+      return await request(this.app.getHttpServer())
       .post('/dev/createUserBatch')
       .send(this.testUserBatch);
-  }
+    }
 
-  async deleteFakeUsers(users: { login: string }[]) {
-    return await request(this.app.getHttpServer())
+    async deleteFakeUsers(users: { login: string }[]) {
+      return await request(this.app.getHttpServer())
       .delete('/dev/deleteUserBatch')
       .send(users);
+    }
+
+    async updateUsername(tmpCookies: string[], newUsername: string) {
+      return await request(this.app.getHttpServer())
+        .patch(`/me`)
+        .set('Cookie', tmpCookies)
+        .send({
+          login: newUsername
+        });
   }
+
 }

@@ -1,5 +1,4 @@
 import { plainToClass } from 'class-transformer';
-import { eventNames } from 'process';
 import {
   Connection,
   EntitySubscriberInterface,
@@ -10,7 +9,8 @@ import {
 import { AppUtilsService } from '../../../utils/app-utils.service';
 import { RoomDto } from '../dto/room.dto';
 import { Participant } from '../entities/participant.entity';
-import { ChatGateway, Events } from '../gateways/chat.gateway';
+import { Events } from '../gateways/chat.gateway';
+import { ChatGatewayService } from '../gateways/chatGateway.service';
 
 @EventSubscriber()
 export class ParticipantSubscriber
@@ -18,7 +18,7 @@ export class ParticipantSubscriber
 {
   constructor(
     private readonly utils: AppUtilsService,
-    private readonly chatGateway: ChatGateway,
+    private readonly chatGateway: ChatGatewayService,
     private connection: Connection,
   ) {
     connection.subscribers.push(this);

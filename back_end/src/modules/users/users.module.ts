@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppUtilsService } from '../../utils/app-utils.service';
 import { ChatService } from '../chat/chat.service';
 import { ChatMessage } from '../chat/entities/chatMessage.entity';
 import { Participant } from '../chat/entities/participant.entity';
@@ -33,6 +34,7 @@ import { UsersPhotoController } from './usersphoto.controller';
     HttpModule,
   ],
   providers: [
+    AppUtilsService,
     UsersPhotoService,
     MeService,
     RelationsService,

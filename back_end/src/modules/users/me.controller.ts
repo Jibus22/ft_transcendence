@@ -87,8 +87,8 @@ export class MeController {
       if (message?.includes('UNIQUE')) {
         throw new BadRequestException('already used');
       } else {
-        throw new BadRequestException(error);
-      }
+        if (error.status) throw new HttpException(error, error.status);
+        throw new BadGatewayException('Database could not perform request');      }
     });
   }
 

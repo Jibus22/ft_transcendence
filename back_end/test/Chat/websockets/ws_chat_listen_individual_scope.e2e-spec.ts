@@ -156,11 +156,6 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
     ];
 
-    // console.log('http', httpLoggedUser.login, httpLoggedUser.id);
-    // console.log('ws', wsLoggedUser.login, wsLoggedUser.id);
-    // console.log('added', createdUsers[2].login, createdUsers[2].id);
-    // console.log(JSON.stringify(events, null, 4));
-
     expect(events).toHaveLength(expectedEvents.length);
     expect(events).toMatchObject(expectedEvents);
 

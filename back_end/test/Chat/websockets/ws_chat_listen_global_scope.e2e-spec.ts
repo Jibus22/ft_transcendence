@@ -134,7 +134,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     WsChatHelpers.testEventsPayload();
   }
 
-  it(`creats then delete a PUBLIC room`, async () => {
+  it.only(`creates then delete a PUBLIC room`, async () => {
     await createRoomAndDeleteIt(false);
   });
 
@@ -191,17 +191,17 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     expect(events).toMatchObject(expectedEvents);
     if (!is_private) {
       const updateEvent = events.find((e) => e.ev === Events.PUBLIC_ROOM_UPDATED);
-      // expect(updateEvent.payload.is_password_protected).toBeTruthy();
+      expect(updateEvent.payload.is_password_protected).toBeTruthy();
     }
 
     WsChatHelpers.testEventsPayload();
   }
 
-  it(`creats then updates a PUBLIC room`, async () => {
+  it(`creates then updates a PUBLIC room`, async () => {
     await createRoomAndChangePassword(false);
   });
 
-  it(`creats then updates a PRIVATE room`, async () => {
+  it(`creates then updates a PRIVATE room`, async () => {
     await createRoomAndChangePassword(true);
   });
 }); // <<< end of describBlock

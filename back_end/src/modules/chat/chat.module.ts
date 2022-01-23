@@ -9,8 +9,6 @@ import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Restriction } from './entities/restriction.entity';
 import { Room } from './entities/room.entity';
-import { ChatGateway } from './gateways/chat.gateway';
-import { ChatGatewayService } from './gateways/chatGateway.service';
 import { ChatMessageSubscriber } from './subscribers/chatMessage.subscriber';
 import { ParticipantSubscriber } from './subscribers/participant.subscriber';
 import { RestrictionSubscriber } from './subscribers/restriction.subscriber';
@@ -37,8 +35,6 @@ import { TaskerService } from './tasker.service';
     ChatMessageSubscriber,
     ParticipantSubscriber,
     RestrictionSubscriber,
-    ChatGateway,
-    ChatGatewayService,
   ],
   exports: [ChatService, TaskerService],
 })

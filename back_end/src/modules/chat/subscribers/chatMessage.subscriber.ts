@@ -8,7 +8,8 @@ import {
 import { AppUtilsService } from '../../../utils/app-utils.service';
 import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ChatMessage } from '../entities/chatMessage.entity';
-import { ChatGateway, Events } from '../gateways/chat.gateway';
+import { Events } from '../gateways/chat.gateway';
+import { ChatGatewayService } from '../gateways/chatGateway.service';
 
 @EventSubscriber()
 export class ChatMessageSubscriber
@@ -16,7 +17,7 @@ export class ChatMessageSubscriber
 {
   constructor(
     private readonly utils: AppUtilsService,
-    private readonly chatGateway: ChatGateway,
+    private readonly chatGateway: ChatGatewayService,
     connection: Connection,
   ) {
     connection.subscribers.push(this);

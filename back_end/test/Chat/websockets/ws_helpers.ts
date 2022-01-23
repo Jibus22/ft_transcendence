@@ -59,15 +59,6 @@ export class WsChatHelpers {
   public static testEventsPayload(events = this.events) {
     events.forEach((event) => {
       switch (event.ev) {
-        case Events.PUBLIC_ROOM_CREATED:
-        case Events.PUBLIC_ROOM_REMOVED:
-          this.testForProperties(event.payload, [
-            'id',
-            // 'is_private',
-            // 'is_password_protected',
-          ]);
-          break;
-
         case Events.NEW_MESSAGE:
           this.testForProperties(event.payload, [
             'id',
@@ -82,16 +73,16 @@ export class WsChatHelpers {
           );
           break;
 
-          break;
-
-          case Events.USER_ADDED:
-          case Events.ROOM_PARTICIPANTS_UPDATED:
-          case Events.PUBLIC_ROOM_UPDATED:
+        case Events.USER_ADDED:
+        case Events.ROOM_PARTICIPANTS_UPDATED:
+        case Events.PUBLIC_ROOM_UPDATED:
+        case Events.PUBLIC_ROOM_CREATED:
+        case Events.PUBLIC_ROOM_REMOVED:
           this.testForProperties(event.payload, [
             'id',
             'is_private',
             'is_password_protected',
-            'participants'
+            'participants',
           ]);
           break;
 
