@@ -18,15 +18,6 @@ const ChatPanel = ({ room }: any) => {
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState<any[]>([]);
 
-	// const messages = [
-	// 	{ id: 0, author: "vgoldman", message: "Hello!", timestamp: 1639925559701 },
-	// 	{ id: 1, author: "vgoldman", message: "How you doing?", timestamp: 1639925559701 },
-	// 	{ id: 2, author: "bvalette", message: "Doing good, what about you?", timestamp: 1639925559701 },
-	// 	{ id: 3, author: "vgoldman", message: "Good, good...", timestamp: 1639925559701 },
-	// 	{ id: 4, author: "bvalette", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
-	// 	{ id: 5, author: "vgoldman", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
-	// ];
-
 	const onMessage = (e: any) => {
 		setMessage(e.target.value);
 	};
