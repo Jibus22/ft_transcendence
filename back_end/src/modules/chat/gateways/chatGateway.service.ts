@@ -4,12 +4,13 @@ import { Server, Socket } from 'socket.io';
 import { User } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/service-users/users.service';
 import { Room } from '../entities/room.entity';
-import { messageType } from './chat.gateway';
+import { ChatGateway, messageType } from './chat.gateway';
 
 @Injectable()
 export class ChatGatewayService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private chatGateway: ChatGateway,
     private usersService: UsersService,
   ) {}
 
@@ -30,23 +31,18 @@ export class ChatGatewayService {
   }
 
   private async updateUser(client: Socket, userData: Partial<User>) {
-    const user = await this.usersService
+    await this.usersService
       .find({ ws_id: client.id })
+      .then(async (users) => {
+        if (users[0]) {
+          await this.usersService.update(users[0].id, userData);
+        }
+      })
       .catch((error) => {
         console.log(error.message);
         client._error({ message: error.message });
         return client.disconnect();
       });
-
-    if (user[0]) {
-      return await this.usersService
-        .update(user[0].id, userData)
-        .catch((error) => {
-          console.log(error.message);
-          client._error({ message: error.message });
-          return client.disconnect();
-        });
-    }
   }
 
   private async getUserIdFromToken(token: string) {
@@ -74,7 +70,7 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  async handleConnection(server: Server, client: Socket) {
+  async handleConnection(client: Socket) {
     const { key: token } = client.handshake.auth;
     const userId = await this.getUserIdFromToken(token).catch((error) => {
       this.handleConnectionFailure(client, error.message);
@@ -98,6 +94,8 @@ export class ChatGatewayService {
         if (process.env.NODE_ENV === 'dev') {
           console.log(`handleConnection: Client connected ! ✅`);
         }
+
+        this.chatGateway.storage.set(client.id, client);
         return await this.joinRoomsAtConnection(client, user);
       })
       .catch((error) => {
@@ -105,22 +103,35 @@ export class ChatGatewayService {
       });
   }
 
-  async handleDisconnect(server: Server, client: Socket) {
+  async handleDisconnect(client: Socket) {
     if (process.env.NODE_ENV === 'dev') {
       console.log(`Client disconnected: ${client.id}`);
     }
+    this.chatGateway.storage.delete(client.id);
     await this.updateUser(client, {
       ws_id: null,
       is_in_game: false,
     });
   }
 
-  makeClientJoinRoom(clientSocket: Socket, room: Room) {
-    return clientSocket.join(room.id);
+  async makeClientJoinRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Add client ${user?.login} to room ${room.id}`);
+    }
+    const clientSocket = this.chatGateway.storage.get(user.ws_id);
+    if (clientSocket) {
+      await clientSocket.join(room.id);
+    }
   }
 
-  makeClientLeaveRoom(clientSocket: Socket, room: Room) {
-    return clientSocket.leave(room.id);
+  async makeClientLeaveRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Remove client ${user?.login} to room ${room.id}`);
+    }
+    const clientSocket = this.chatGateway.storage.get(user.ws_id);
+    if (clientSocket) {
+      await clientSocket.leave(room.id);
+    }
   }
 
   /*
@@ -131,11 +142,47 @@ export class ChatGatewayService {
 	===================================================================
 	*/
 
-  sendEventToServer(server: Server, event: string, message: messageType | string) {
+  sendEventToServer(event: string, message: messageType) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log('Emit event to SERVER: ', event);
+    }
+    return this.doSendEventToServer(this.chatGateway.server, event, message);
+  }
+
+  sendEventToRoom(room: Room | Room[], event: string, message: messageType) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log('Emit event to ROOM: ', event);
+    }
+    const dest = Array.isArray(room) ? room.map((r) => r.id) : room.id;
+    return this.doSendEventToRoom(
+      this.chatGateway.server,
+      dest,
+      event,
+      message,
+    );
+  }
+
+  sendEventToClient(user: User, event: string, message: messageType) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log('Emit event to CLIENT: ', event);
+    }
+    return this.doSendEventToRoom(
+      this.chatGateway.server,
+      user.ws_id,
+      event,
+      message,
+    );
+  }
+
+  doSendEventToServer(
+    server: Server,
+    event: string,
+    message: messageType | string,
+  ) {
     server.emit(event, message);
   }
 
-  sendEventToRoom(
+  doSendEventToRoom(
     server: Server,
     destId: string | string[],
     event: string,
