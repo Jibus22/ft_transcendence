@@ -6,16 +6,29 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import { useEffect, useState }  from 'react'
 
-const chatName = (participants: any) => {
-	if (participants.length === 1) {
-		return participants[0].user.login;
+const chatName = (participants: any, currentUser: any) => {
+	const user = getUser(participants, currentUser);
+	if (user) {
+		return user.user.login;
 	}
 	let name = "";
 	participants.forEach((p: any) => name += p.user.login[0]);
 	return name;
 }
 
-const ChatList = ({ openChat }: any) => {
+const getUser = (participants: any, currentUser: any) => {
+	if (!currentUser)
+		return null;
+	if (participants.length === 1) {
+		return participants[0];
+	}
+	if (participants.length === 2) {
+		return participants.filter((user: any) => user.user.id !== currentUser.id)[0];
+	}
+	return null;
+}
+
+const ChatList = ({ openChat, currentUser }: any) => {
 
 	const [tab, setTab] = useState(0);
 	const [publicChats, setPublicChats] = useState([]);
@@ -48,10 +61,10 @@ const ChatList = ({ openChat }: any) => {
 		setSearchResults(result);
 	};
 
-	const openChatHandler = async (login: any) => {
+	const openChatHandler = async (userId: any) => {
 		const existingChats = chats.filter(
-			(chat: any) => chat.participants.length === 1 &&
-				chat.participants.filter((participant: any) => participant.user.login === login).length > 0
+			(chat: any) => chat.participants.length === 2 &&
+				chat.participants.filter((participant: any) => participant.user.id === userId).length > 0
 		);
 		if (existingChats.length > 0) {
 			setSearchResults([]);
@@ -59,9 +72,11 @@ const ChatList = ({ openChat }: any) => {
 			return openChat(existingChats[0]);
 		}
 		const { data }: any = await axios.post("http://localhost:3000/room", {
-			participants: [ login ],
+			participants: [ ],
 			is_private: true
 		}, { withCredentials: true });
+		const { id } = data;
+		await axios.post(`http://localhost:3000/room/${id}/participant`, { id: userId }, { withCredentials: true });
 		setSearchResults([]);
 		setSearch("");
 		openChat(data);
@@ -83,9 +98,11 @@ const ChatList = ({ openChat }: any) => {
 		</SearchField>
 		{ tab === 0 && !searchResults.length && (<List>
 			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
-				{chat.participants.length === 1 && (<img src={chat.participants[0].user.photo_url} alt={chat.participants[0].user.login} />)}
+				{/* {chat.participants.length === 1 && (<img src={chat.participants[0].user.photo_url} alt={chat.participants[0].user.login} />)} */}
+				{/* {chat.participants.length === 2 && (<img src={chat.participants[1].user.photo_url} alt={chat.participants[1].user.login} />)} */}
+				{getUser(chat.participants, currentUser) !== null && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
 				<div>
-					<h4>{chatName(chat.participants)}</h4>
+					<h4>{chatName(chat.participants, currentUser)}</h4>
 					<p>{chat.id}</p>
 				</div>
 			</Preview>))}
@@ -93,13 +110,13 @@ const ChatList = ({ openChat }: any) => {
 		{ tab === 2 && !searchResults.length && (<List>
 			{publicChats.map((chat: any) => (<Preview key={chat.id}>
 				<div>
-					<h4>{chatName(chat.participants)}</h4>
+					<h4>{chatName(chat.participants, currentUser)}</h4>
 					<p>{chat.id}</p>
 				</div>
 			</Preview>))}
 		</List>)}
 		{ searchResults.length > 0 && (<List>
-			{searchResults.map((user: any) => (<Preview key={user.id} onClick={() => openChatHandler(user.login)}>
+			{searchResults.map((user: any) => (<Preview key={user.id} onClick={() => openChatHandler(user.id)}>
 				<img src={user.photo_url} alt={user.login} />
 				<div>
 					<h4>{user.login}</h4>
