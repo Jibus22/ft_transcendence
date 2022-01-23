@@ -6,16 +6,17 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  BadGatewayException,
   Patch,
   Res,
   Session,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -25,7 +26,7 @@ import { RoomPublicGuard } from '../../guards/roomPublic.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { ChatService } from '../chat/chat.service';
 import { TargetedRoom } from '../chat/decorators/targeted-room.decorator';
-import { RoomDto } from '../chat/dto/room.dto';
+import { RoomDto, RoomWithMessagesDto } from '../chat/dto/room.dto';
 import { Room } from '../chat/entities/room.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
@@ -125,7 +126,7 @@ export class MeController {
 
   @Get('/rooms')
   @UseGuards(AuthGuard)
-  @Serialize(RoomDto)
+  @Serialize(RoomWithMessagesDto)
   @ApiOperation({
     summary:
       'Get rooms in which the currently logged user is owner/moderator/participant',
@@ -137,7 +138,7 @@ export class MeController {
       'rooms in which the currently logged user is owner/moderator/participant',
   })
   async getMyRooms(@CurrentUser() user: User) {
-    return await this.chatService.findUserRoomList(user);
+    return await this.chatService.findUserRoomListWithMessages(user);
   }
 
   @Patch('/rooms/:room_id')
@@ -157,11 +158,9 @@ export class MeController {
     @Body() body: { password?: string },
   ) {
     return await this.chatService.joinRoom(user, room, body).catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      } else {
-        throw new BadRequestException(error);
-      }
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status) throw new HttpException(error, error.status);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 
@@ -179,11 +178,9 @@ export class MeController {
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
     return await this.chatService.leaveRoom(user, room).catch((error) => {
-      if (error.status) {
-        throw new HttpException(error, error.status);
-      } else {
-        throw new BadRequestException(error);
-      }
+      if (process.env.NODE_ENV === 'dev') console.log(error);
+      if (error.status) throw new HttpException(error, error.status);
+      throw new BadGatewayException('Database could not perform request');
     });
   }
 }

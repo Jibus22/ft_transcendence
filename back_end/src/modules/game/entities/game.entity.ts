@@ -1,9 +1,9 @@
 import {
-  CreateDateColumn,
-  UpdateDateColumn,
   PrimaryGeneratedColumn,
   Entity,
   OneToMany,
+  Column,
+  BeforeInsert,
 } from 'typeorm';
 import { Player } from './player.entity';
 
@@ -15,9 +15,15 @@ export class Game {
   @OneToMany(() => Player, (player) => player.game)
   players: Player[];
 
-  @CreateDateColumn({ type: 'date' })
-  createdAt: Date;
+  @Column({type: 'bigint'})
+  createdAt: number;
 
-  @UpdateDateColumn({ type: 'date' })
-  updatedAt: Date;
+  @Column({type: 'bigint'})
+  updatedAt: number;
+
+  @BeforeInsert()
+  updateDate() {
+    this.createdAt = Date.now();
+    this.updatedAt = Date.now();
+  }
 }

@@ -29,5 +29,8 @@ export class ChatMessageDto {
 
   @ApiProperty()
   @Expose()
+  @Transform((value) => {
+    return parseInt(value.obj.timestamp);
+  })
   timestamp: number;
 }

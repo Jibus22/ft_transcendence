@@ -31,7 +31,7 @@ export class ChatService {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        ROOMS METHODS
+        CREATE A ROOM
   -------------------------------------------------------------------
   ===================================================================
   */
@@ -56,9 +56,7 @@ export class ChatService {
       const isOwner = roomOwner.id === userId;
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
-      await this.repoParticipants.save(newParticipant).catch((error) => {
-        console.log(error);
-      });
+      return await this.repoParticipants.save(newParticipant);
     }
   }
 
@@ -68,13 +66,7 @@ export class ChatService {
       password: createRoomDto.password,
     });
 
-    return await this.repoRoom.save(newRoom).catch((error) => {
-      console.log(error);
-      throw {
-        status: HttpStatus.BAD_REQUEST,
-        error: 'could not save to database',
-      };
-    });
+    return await this.repoRoom.save(newRoom);
   }
 
   private cleanParticipants(
@@ -95,18 +87,30 @@ export class ChatService {
       createRoomDto.password = null;
     }
 
-    const room = await this.addRoom(createRoomDto);
+    let room = await this.addRoom(createRoomDto);
+    room.participants = [];
     const participants = this.cleanParticipants(
       createRoomDto.participants,
       currentUser,
     );
     for (const p of participants) {
-      await this.createParticipant(p, room, currentUser);
+      const newParticipant = await this.createParticipant(p, room, currentUser);
+      if (newParticipant) {
+        room.participants.push(newParticipant);
+      }
     }
     return room;
   }
 
-  async findAll() {
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        FINDS FUNCTIONS
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async findAllWithRestrictions() {
     return await this.repoRoom.find({
       relations: [
         'participants',
@@ -120,28 +124,35 @@ export class ChatService {
   async findAllPublic() {
     return await this.repoRoom.find({
       relations: ['participants', 'participants.user'],
-      where: 'room.is_private = false',
+      where: 'is_private = false',
     });
   }
 
-  async findUserRoomList(user: User) {
+  async findUserRoomListWithMessages(user: User) {
     const roomIds: { id: string }[] =
       await this.usersService.findRoomParticipations(user.id);
 
     const rooms = await this.repoRoom.findByIds(
       roomIds.map((item) => item.id),
       {
-        relations: ['participants', 'participants.user'],
+        relations: [
+          'participants',
+          'participants.user',
+          'messages',
+          'messages.sender',
+        ],
       },
     );
     return rooms;
   }
 
-  async findOne(id: string) {
-    return this.repoRoom.findOne(id);
+  async findOneWithParticipants(id: string) {
+    return await this.repoRoom.findOne(id, {
+      relations: ['participants', 'participants.user'],
+    });
   }
 
-  async findOneWithParticipants(id: string) {
+  async findOneWithParticipantsAndRestrictions(id: string) {
     return await this.repoRoom.findOne(id, {
       relations: [
         'participants',
@@ -164,9 +175,10 @@ export class ChatService {
   async findAllMessages(id: string) {
     return await this.repoMessage
       .createQueryBuilder('message')
-      .innerJoin('message.room', 'room')
+      .innerJoinAndSelect('message.room', 'room')
       .innerJoinAndSelect('message.sender', 'sender')
       .where('room.id = :id', { id })
+      .orderBy('message.timestamp', 'DESC')
       .getMany();
   }
 
@@ -176,10 +188,11 @@ export class ChatService {
     } else {
       room.password = await this.encodePassword(updatePasswordDto.password);
     }
-    return this.repoRoom.save(room);
+    return await this.repoRoom.save(room);
   }
 
   async removeRoom(targetedRoom: Room) {
+    await this.repoParticipants.remove(targetedRoom.participants);
     return await this.repoRoom.remove(targetedRoom);
   }
 
@@ -213,20 +226,16 @@ export class ChatService {
       };
     }
     const roomOwner = room.participants.find((p) => p.is_owner);
-    return await this.createParticipant(user.id, room, roomOwner.user).catch(
-      (error) => {
-        throw {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'could not save to database',
-        };
-      },
-    );
+    return await this.createParticipant(user.id, room, roomOwner.user);
   }
 
   async leaveRoom(user: User, room: Room) {
-    const participant = room.participants.find((p) => p.user.id === user.id);
-    if (participant) {
-      await this.repoParticipants.remove(participant);
+    const participant = await this.repoParticipants.find({
+      where: { user: user, room: room },
+      relations: ['user', 'room'],
+    });
+    if (participant[0]) {
+      await this.repoParticipants.remove(participant[0]);
     }
   }
 
@@ -286,9 +295,7 @@ export class ChatService {
       restriction_type: restrictionDto.restriction_type,
       expiration_time: this.getNow() + restrictionDto.duration * 1000 * 60,
     });
-    await this.repoRestriction
-      .save(restriction)
-      .catch((err) => console.log(err));
+    await this.repoRestriction.save(restriction);
 
     if (restrictionDto.restriction_type === 'ban') {
       await this.repoParticipants.remove(targetedParticipant);

@@ -5,7 +5,6 @@ import { RoomDto } from '../../src/modules/chat/dto/room.dto';
 import { User } from '../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../helpers';
 import { ChatHelpers } from './helpers';
-var faker = require('faker');
 
 describe('CHAT: Participations manipulations', () => {
   const nbOfRooms = 25;
@@ -52,7 +51,7 @@ describe('CHAT: Participations manipulations', () => {
   ===================================================================
   */
 
-  it('creates a private roon and add participant AFTER as owner', async () => {
+  it('creates a private room and add participant AFTER as owner', async () => {
     let createdRoom: RoomDto;
 
     await chatHelper
@@ -81,7 +80,7 @@ describe('CHAT: Participations manipulations', () => {
       });
   });
 
-  it('creates a private roon and add participant AFTER as a moderator', async () => {
+  it('creates a private room and add participant AFTER as a moderator', async () => {
     let tmpCookies: string[];
     let createdRoom: RoomDto;
 
@@ -132,7 +131,7 @@ describe('CHAT: Participations manipulations', () => {
       });
   });
 
-  it('creates a private roon and try to add participant AFTER as simple participant', async () => {
+  it('creates a private room and try to add participant AFTER as simple participant', async () => {
     let tmpCookies: string[];
     let createdRoom: RoomDto;
 
