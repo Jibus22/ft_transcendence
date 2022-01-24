@@ -1,22 +1,20 @@
 import {
-  BadRequestException,
+  BadGatewayException, BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
-  HttpStatus,
-  BadGatewayException,
-  Patch,
+  HttpStatus, Patch,
   Res,
   Session,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -24,6 +22,7 @@ import { RoomBanGuard } from '../../guards/roomBan.guard';
 import { RoomParticipantGuard } from '../../guards/roomParticipant.guard';
 import { RoomPublicGuard } from '../../guards/roomPublic.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { AppUtilsService } from '../../utils/app-utils.service';
 import { ChatService } from '../chat/chat.service';
 import { TargetedRoom } from '../chat/decorators/targeted-room.decorator';
 import { RoomDto, RoomWithMessagesDto } from '../chat/dto/room.dto';
@@ -67,6 +66,7 @@ export class MeController {
     description: 'User private informations',
   })
   async whoAmI(@CurrentUser() user: User) {
+    await this.usersService.whoAmI(user);
     return user;
   }
 
