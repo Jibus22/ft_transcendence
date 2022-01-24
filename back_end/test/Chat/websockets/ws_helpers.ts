@@ -1,10 +1,8 @@
 import { INestApplication } from '@nestjs/common';
+import { eventNames } from 'process';
 import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
-import {
-  Events,
-  messageType,
-} from '../../../src/modules/chat/gateways/chat.gateway';
+import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
 
 export class WsChatHelpers {
   public static socket: Socket;
@@ -61,15 +59,6 @@ export class WsChatHelpers {
   public static testEventsPayload(events = this.events) {
     events.forEach((event) => {
       switch (event.ev) {
-        case Events.PUBLIC_ROOM_CREATED:
-        case Events.PUBLIC_ROOM_REMOVED:
-          this.testForProperties(event.payload, [
-            'id',
-            'is_private',
-            'is_password_protected',
-          ]);
-          break;
-
         case Events.NEW_MESSAGE:
           this.testForProperties(event.payload, [
             'id',
@@ -83,7 +72,12 @@ export class WsChatHelpers {
             new Date(Date.now()).toString().length,
           );
           break;
+
+        case Events.USER_ADDED:
+        case Events.ROOM_PARTICIPANTS_UPDATED:
         case Events.PUBLIC_ROOM_UPDATED:
+        case Events.PUBLIC_ROOM_CREATED:
+        case Events.PUBLIC_ROOM_REMOVED:
           this.testForProperties(event.payload, [
             'id',
             'is_private',
@@ -96,15 +90,20 @@ export class WsChatHelpers {
           expect(event.payload).toBeUndefined();
           break;
 
-        case Events.PARTICIPANT_LEFT:
-        case Events.PARTICIPANT_UPDATED:
-        case Events.USER_ADDED:
+        case Events.PUBLIC_USER_INFOS_UPDATED:
+          this.testForProperties(event.payload, [
+            'id',
+            'login',
+            'photo_url',
+            'status',
+          ]);
+          break;
+
         case Events.USER_REMOVED:
         case Events.USER_MODERATION:
         case Events.USER_BANNED:
         case Events.USER_MUTED:
-        case Events.PARTICIPANT_JOINED:
-          //TO dO
+          throw new Error(`TEST EXPECTATION UNSET for ${event.ev}`);
           break;
 
         default:
