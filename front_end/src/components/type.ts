@@ -32,3 +32,10 @@ export interface UserMe {
 	storeCustomPhoto: boolean;
 	hasTwoFASecret: boolean;
 }
+
+export interface LoginGame {
+	loginP1: string;
+	loginP2: string;
+	login: string;
+	photo_url: string;
+}

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
 import { Avatar, Badge, useMediaQuery, CircularProgress, Tooltip, Fade, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
+import { useNavigate } from 'react-router-dom';
+import MainPong from '../../game/pong/MainPong';
 
 interface Props {
 	data: Array<Rank>;
@@ -24,16 +26,20 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
-
+	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
-	function handleClick() {
+
+	const getGame = (data: User) => () => {
+		setIsGameRandom(true);
 		setTime(true);
-		setTimeout(function () {
+		setTimeout(() => {
 			setTime(false);
+			// setStartGame(true);
+			// navigate('/Mainpage');
 		}, 2000);
-	}
+	};
 
 	const userSortRank = (a: Rank, b: Rank) => {
 		if (b.games_won === a.games_won) {
@@ -107,7 +113,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 								className="muiButton"
 								disabled={time || disableStatus}
 								variant="contained"
-								onClick={handleClick}
+								onClick={getGame(data.user)}
 								sx={{ width: 2 / 2, textTransform: 'none', backgroundColor: '#E69C6A' }}
 							>
 								{time && !disableStatus && <CircularProgress size="1.2em" />}

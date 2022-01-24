@@ -2,7 +2,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
-import { UserMe } from './components/type';
+import { UserMe, LoginGame } from './components/type';
 
 interface IMainPageContext {
 	data: Array<UserMe>;
@@ -20,7 +20,6 @@ interface IMainPageContext {
 	userStatus: boolean;
 	selectQuery: boolean;
 	selectedImage: File;
-	timer: number;
 	userName: string;
 	userImg: string;
 	pathPop: string;
@@ -39,7 +38,6 @@ interface IMainPageContext {
 	setSelectNav: Dispatch<SetStateAction<boolean>>;
 	setLeaveGame: Dispatch<SetStateAction<boolean>>;
 	setSelectedImage: Dispatch<SetStateAction<File>>;
-	setTimer: Dispatch<SetStateAction<number>>;
 	setUserName: Dispatch<SetStateAction<string>>;
 	setUserImg: Dispatch<SetStateAction<string>>;
 	setPathPop: Dispatch<SetStateAction<string>>;
@@ -50,6 +48,12 @@ interface IMainPageContext {
 	onSubmitUpload: (file: File) => void;
 	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 	setStatusColor: (status: string) => string;
+
+	dataUserGame: Array<LoginGame>;
+	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
+
+	isGameRandom: boolean;
+	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -68,12 +72,14 @@ const MainPageProvider = (props: any) => {
 	const [leaveGame, setLeaveGame] = useState(false);
 	const [isDisable, setIsDisable] = useState(true);
 	const [customPhoto, setCustomPhoto] = useState(true);
-	const [timer, setTimer] = useState(5000);
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
 	const [selectQuery, setSelectQuery] = useState(false);
+
+	const [dataUserGame, setDataUserGame] = useState<LoginGame[]>([]);
+	const [isGameRandom, setIsGameRandom] = useState(false);
 
 	// const [dataHistory, setDataHistory] = useState([]);
 
@@ -183,7 +189,6 @@ const MainPageProvider = (props: any) => {
 
 	const ProviderValue = {
 		timeSnack,
-		timer,
 		isDisable,
 		loading,
 		data,
@@ -204,7 +209,6 @@ const MainPageProvider = (props: any) => {
 		setSelectQuery,
 		setCustomPhoto,
 		setTimeSnack,
-		setTimer,
 		setIsDisable,
 		setLoading,
 		setData,
@@ -229,6 +233,12 @@ const MainPageProvider = (props: any) => {
 		// setDataHistory,
 
 		// fetchDataHistory,
+
+		dataUserGame,
+		setDataUserGame,
+
+		isGameRandom,
+		setIsGameRandom,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

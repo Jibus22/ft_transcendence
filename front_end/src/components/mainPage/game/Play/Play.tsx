@@ -23,7 +23,7 @@ export default function Play({ Loadingclick }: Props) {
 		},
 	});
 
-	const { isDisable, loading, setSelectQuery } = useMainPage();
+	const { isDisable, loading, setSelectQuery, setIsGameRandom, setStartGame } = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
 
@@ -38,6 +38,12 @@ export default function Play({ Loadingclick }: Props) {
 			setSelectQuery(false);
 		};
 	});
+
+	const getGame = () => {
+		setIsGameRandom(true);
+		// setStartGame(true);
+		Loadingclick();
+	};
 
 	let buttonFriends;
 	if (!isForm) {
@@ -74,7 +80,7 @@ export default function Play({ Loadingclick }: Props) {
 				<div className="playRandom">
 					<LoadingButton
 						className="buttonMui"
-						onClick={Loadingclick}
+						onClick={getGame}
 						disabled={loading}
 						variant="contained"
 						sx={{

@@ -63,6 +63,10 @@
 			display: flex;
 			justify-content: space-around;
 
+			.photoOp {
+				filter: brightness(0.5);
+			}
+
 			.photoUser {
 				width: 30%;
 				display: flex;

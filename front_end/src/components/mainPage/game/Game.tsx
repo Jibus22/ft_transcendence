@@ -12,9 +12,9 @@ interface Props {
 }
 
 export default function Game({ wsStatus }: Props) {
-	// const { setTimeSnack, timer, loading, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
+	const { setTimeSnack, loading, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
 
-	const { selectNav, setStartGame, startGame } = useMainPage();
+	// const { selectNav, setStartGame, startGame } = useMainPage();
 
 	const query = useMediaQuery('(max-width:1060px)');
 	function handleClick() {
@@ -27,15 +27,17 @@ export default function Game({ wsStatus }: Props) {
 
 		// setStartGame(true);
 
-		// setLoading(true);
-		// setIsDisable(false);
-		// setTimeSnack(false);
+		setLoading(true);
+		setIsDisable(false);
 		// setIsFriends(false);
-		// setTimeout(function () {
-		// 	setLoading(false);
-		// 	setIsDisable(true);
-		// 	setTimeSnack(true);
-		// }, timer);
+		// setTimeSnack(false);
+
+		setTimeout(function () {
+			setLoading(false);
+			setIsDisable(true);
+			setStartGame(true);
+			// setTimeSnack(true);
+		}, 2000);
 	}
 
 	const selectGame = () => {

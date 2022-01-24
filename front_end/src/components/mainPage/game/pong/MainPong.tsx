@@ -1,5 +1,6 @@
 import { Avatar, Button, CircularProgress } from '@mui/material';
 import { useInterval } from 'ahooks';
+import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
@@ -18,7 +19,7 @@ export default function MainPong() {
 		},
 	});
 
-	const { setStartGame, userName, userImg, dialogMui, setLeaveGame } = useMainPage();
+	const { setStartGame, userName, userImg, dialogMui, setLeaveGame, isGameRandom, dataUserGame } = useMainPage();
 	const [open, setOpen] = useState(false);
 
 	const closeGame = () => {
@@ -35,7 +36,7 @@ export default function MainPong() {
 	};
 
 	const [count, setCount] = useState(5);
-	const [countMap, setCountMap] = useState(7);
+	const [countMap, setCountMap] = useState(2000);
 	const [isCount, setIsCount] = useState(false);
 	const [interval, setInterval] = useState<number | undefined>(undefined);
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
@@ -67,6 +68,35 @@ export default function MainPong() {
 		};
 	}, [countMap]);
 
+	const titlePrint = () => {
+		if (!isGameRandom) {
+			return <h1>Waiting for {dataUserGame[0].login}...</h1>;
+		} else {
+			return <h1>Waiting for an opponent...</h1>;
+		}
+	};
+	const infoOpponent = () => {
+		if (!isGameRandom) {
+			return (
+				<>
+					<Avatar alt="userImg" src={dataUserGame[0].photo_url} />
+					<div>
+						<h1>{dataUserGame[0].login}</h1>
+					</div>
+				</>
+			);
+		} else {
+			return (
+				<>
+					<Avatar alt="userImg" />
+					<div>
+						<h1>Unknow</h1>
+					</div>
+				</>
+			);
+		}
+	};
+
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
@@ -75,9 +105,7 @@ export default function MainPong() {
 						<PongGame />
 					) : (
 						<div className="mainPongGame">
-							<div className="titlePongGame">
-								{isCount ? <span className="counterOutput">{count}</span> : <h1>Waiting for an opponent...</h1>}
-							</div>
+							<div className="titlePongGame">{isCount ? <span className="counterOutput">{count}</span> : titlePrint()}</div>
 
 							<div className="infoUser">
 								<div className="photoUser">
@@ -88,12 +116,7 @@ export default function MainPong() {
 								</div>
 
 								<div className="loadingVersus">{isCount ? <h1>VS</h1> : <CircularProgress />}</div>
-								<div className="photoUser">
-									<Avatar alt="userImg" />
-									<div>
-										<h1>unknown</h1>
-									</div>
-								</div>
+								<div className={`${isCount ? '' : 'photoOp'} photoUser `}>{infoOpponent()}</div>
 							</div>
 							<div className="titleMap">
 								<div className="countMap"> {countMap === 0 || isChoiceMap ? null : countMap}</div>
