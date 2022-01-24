@@ -50,7 +50,7 @@ export class UsersService {
       return null;
     }
     return await this.repoUser.findOne(id, {
-      relations: ['local_photo'],
+      relations: ['local_photo', 'players'],
     });
   }
 

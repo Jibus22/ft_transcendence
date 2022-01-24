@@ -1,11 +1,12 @@
-import './play.scss';
-import React, { useState, useEffect } from 'react';
-import IconGame from './img/raquette.png';
-import { useSpring, animated } from 'react-spring';
-import { Button, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import FormPlay from './FormPlay';
+import { Button, CircularProgress } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
+import FormPlay from './FormPlay';
+import IconGame from './img/raquette.png';
+import './play.scss';
+import './safari.css';
 
 interface Props {
 	Loadingclick: () => void;
@@ -15,7 +16,7 @@ export default function Play({ Loadingclick }: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		from: { opacity: 0, transform: 'translate(0px, 170px)' },
 		config: {
 			delay: 300,
 			duration: 300,
@@ -63,7 +64,7 @@ export default function Play({ Loadingclick }: Props) {
 	}
 
 	return (
-		<animated.div style={props} className="w-100">
+		<animated.div style={props} className="w-100 test">
 			<div className="mainGameWindow d-flex flex-column ">
 				<div className="msgPlay  ">
 					<h1>Do you want to play now ? </h1>

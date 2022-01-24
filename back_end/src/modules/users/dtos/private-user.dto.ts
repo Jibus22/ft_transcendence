@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { RoomDto } from '../../chat/dto/room.dto';
-import { Game } from '../../game/entities/game.entity';
 import { Player } from '../../game/entities/player.entity';
 import { UserDto } from './user.dto';
 
@@ -30,7 +29,7 @@ export class privateUserDto extends UserDto {
 
   @ApiProperty()
   @Expose()
-  games: Game[];
+  players: Player[];
 
   @ApiProperty()
   @Expose()
