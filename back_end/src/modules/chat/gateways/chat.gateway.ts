@@ -1,18 +1,21 @@
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
   GatewayMetadata,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
+import { User } from '../../users/entities/users.entity';
+import { UsersService } from '../../users/service-users/users.service';
 import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ParticipantDto } from '../dto/participant.dto';
 import { RestrictionDto } from '../dto/restriction.dto';
 import { RoomDto } from '../dto/room.dto';
-import { ChatGatewayService } from './chatGateway.service';
+import { Room } from '../entities/room.entity';
 
 export enum Events {
   CONNECT = 'connect',
@@ -48,10 +51,14 @@ const options: GatewayMetadata = {
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly chatGatewayService: ChatGatewayService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly usersService: UsersService,
+  ) {
+    console.debug('CTO - chatgateway');
+  }
 
   @WebSocketServer() server: Server;
-  storage: Map<string, Socket>;
 
   afterInit(server: Server) {
     console.log('INIT HERE -----------------------------');
@@ -59,11 +66,11 @@ export class ChatGateway
   }
 
   async handleConnection(client: Socket) {
-    await this.chatGatewayService.handleConnection(client);
+    await this.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
-    await this.chatGatewayService.handleDisconnect(client);
+    await this.doHandleDisconnect(client);
   }
 
   // @UsePipes(new ValidationPipe({
@@ -74,4 +81,144 @@ export class ChatGateway
   //   console.log('get ingame');
   //   return await this.chatGatewayService.setUserIngame(client, data);
   // }
+
+  /*
+	===================================================================
+	-------------------------------------------------------------------
+				UTILS FUNCTIONS
+	-------------------------------------------------------------------
+	===================================================================
+	*/
+
+  private async joinRoomsAtConnection(client: Socket, user: User) {
+    await this.usersService.findRoomParticipations(user.id).then((rooms) => {
+      if (rooms.length) {
+        client.join(rooms.map((r) => r.id));
+      }
+    });
+  }
+
+  private async updateUser(client: Socket, userData: Partial<User>) {
+    await this.usersService
+      .find({ ws_id: client.id })
+      .then(async (users) => {
+        if (users[0]) {
+          await this.usersService.update(users[0].id, userData);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+        client._error({ message: error.message });
+        return client.disconnect();
+      });
+  }
+
+  private async getUserIdFromToken(token: string) {
+    if (token) {
+      return await this.cacheManager.get<string>(token);
+    }
+  }
+
+  private doHandleConnectionFailure(client: Socket, errorMessage: string) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(
+        `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
+        errorMessage,
+      );
+    }
+    client._error({ message: errorMessage });
+    return client.disconnect();
+  }
+
+  /*
+	===================================================================
+	-------------------------------------------------------------------
+				SOCKET MANAGEMENT
+	-------------------------------------------------------------------
+	===================================================================
+	*/
+
+  async doHandleConnection(client: Socket) {
+    const { key: token } = client.handshake.auth;
+    const userId = await this.getUserIdFromToken(token).catch((error) => {
+      this.doHandleConnectionFailure(client, error.message);
+    });
+
+    if (!userId) {
+      return this.doHandleConnectionFailure(client, 'invalid token');
+    }
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`handleConnection: ${client.id} | token ${token}`);
+    }
+
+    await this.usersService
+      .update(userId, {
+        ws_id: client.id,
+      })
+      .catch((error) => {
+        this.doHandleConnectionFailure(client, error.message);
+      })
+      .then(async (user: User) => {
+        if (process.env.NODE_ENV === 'dev') {
+          console.log(`handleConnection: Client connected ! ✅`);
+        }
+
+        return await this.joinRoomsAtConnection(client, user);
+      })
+      .catch((error) => {
+        this.doHandleConnectionFailure(client, error.message);
+      });
+  }
+
+  async doHandleDisconnect(client: Socket) {
+    console.log(JSON.stringify(this.server.sockets, null, 4));
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Client disconnected: ${client.id}`);
+    }
+    await this.updateUser(client, {
+      ws_id: null,
+      is_in_game: false,
+    });
+  }
+
+  private getClientSocket(ws_id: string) {
+    const socketsMap = this.server.of('/chat').sockets;
+    if (socketsMap.size) {
+      return socketsMap.get(ws_id);
+    }
+  }
+
+  async makeClientJoinRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Add client ${user?.login} to room ${room.id}`);
+    }
+    const clientSocket = this.getClientSocket(user.ws_id);
+    if (clientSocket) {
+      await clientSocket.join(room.id);
+    }
+  }
+
+  async makeClientLeaveRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Remove client ${user?.login} to room ${room.id}`);
+    }
+    const clientSocket = this.getClientSocket(user.ws_id);
+    if (clientSocket) {
+      await clientSocket.leave(room.id);
+    }
+  }
+
+  doSendEventToServer(event: string, message: messageType | string) {
+    this.server.emit(event, message);
+  }
+
+  doSendEventToRoom(
+    destId: string | string[],
+    event: string,
+    message: messageType,
+  ) {
+    if (destId && destId.length) {
+      this.server.to(destId).emit(event, message);
+    }
+  }
 }
