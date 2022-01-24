@@ -1,17 +1,20 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../../src/app.module';
+import { Participant } from '../../../src/modules/chat/entities/participant.entity';
 import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
 import { User } from '../../../src/modules/users/entities/users.entity';
 import { CommonTest } from '../../helpers';
 import { ChatHelpers } from '../helpers';
 import { WsChatHelpers } from './ws_helpers';
+var faker = require('faker');
 
 describe('WebSockets CHAT: listen to GLOBAL events', () => {
   const nbOfRooms = 25;
   let commons: CommonTest;
   let createdUsers: User[];
-  let cookies: string[];
+  let httpUserCookie: string[];
+  let wsUserCookie: string[];
   let httpLoggedUser: Partial<User>;
   let wsLoggedUser: Partial<User>;
   let app: INestApplication;
@@ -41,13 +44,19 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
      */
 
     httpLoggedUser = commons.testUserBatch[0];
-    cookies = await commons.logUser(httpLoggedUser.login).then((response) => {
-      httpLoggedUser.id = response.body.id;
-      return commons.getCookies(response);
-    });
+    httpUserCookie = await commons
+      .logUser(httpLoggedUser.login)
+      .then((response) => {
+        httpLoggedUser.id = response.body.id;
+        return commons.getCookies(response);
+      });
+    await commons
+      .getMe(httpUserCookie)
+      .then((r) => (httpLoggedUser.id = r.body?.id));
+    expect(httpLoggedUser.id).not.toHaveLength(0);
 
     chatHelper = new ChatHelpers(
-      cookies,
+      httpUserCookie,
       httpLoggedUser,
       app,
       createdUsers,
@@ -61,11 +70,15 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     WsChatHelpers.setupIo(app);
     wsLoggedUser = commons.testUserBatch[1];
 
-    const tmpCookies: string[] = await commons
+    wsUserCookie = await commons
       .logUser(wsLoggedUser.login)
       .then((resp) => commons.getCookies(resp));
+    await commons
+      .getMe(wsUserCookie)
+      .then((r) => (wsLoggedUser.id = r.body?.id));
+    expect(wsLoggedUser.id).not.toHaveLength(0);
 
-    await WsChatHelpers.getToken(tmpCookies).then((resp) => {
+    await WsChatHelpers.getToken(wsUserCookie).then((resp) => {
       token = resp.body?.token;
       expect(token).toBeDefined();
       expect(token.length).toBeGreaterThan(1);
@@ -83,16 +96,18 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
   /*
   ===================================================================
   -------------------------------------------------------------------
-        PUBLIC ROOM EVENT
+        PARTICIPATION EVENT
   -------------------------------------------------------------------
   ===================================================================
   */
 
-  async function createRoomAndDeleteIt(is_private: boolean) {
+
+ it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone leave the room`, async () => {
+    let roomId: string;
     WsChatHelpers.setupToken(token);
     const conn = WsChatHelpers.connectSocket();
-    conn.on('connect_error', (err) => {
-      throw new Error(`There was a connection error: ${err}`);
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
     });
     WsChatHelpers.setAllEventsListenners(conn);
 
@@ -100,18 +115,31 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
       setTimeout(async () => {
         await chatHelper
           .createSimpleRoom({
-            participants: [],
-            is_private,
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.CREATED);
-            expect(response.body.id).toBeDefined();
-            return await chatHelper.deleteRoom(cookies, response.body.id);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addParticipant(httpUserCookie, roomId, {
+              id: createdUsers[2].id, // <--------- new user added to generate event
+            });
+          })
+          .then(async (response) => {
+            const cookiesForUser2 = await commons
+              .logUser(createdUsers[2].login)
+              .then((resp) => commons.getCookies(resp))
+              .catch((err) => {
+                throw new Error(`Signin should have worked: ${err}`);
+              });
+            return await chatHelper.leaveRoom(cookiesForUser2, roomId);
           })
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.OK);
           });
-      }, 150);
+      }, 100);
 
       setTimeout(async () => {
         resolve('ok');
@@ -119,89 +147,18 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     });
 
     const events = WsChatHelpers.events;
-
-    const expectedEvents = is_private
-      ? [ { ev: Events.CONNECT } ]
-      : [
-          { ev: Events.CONNECT },
-          { ev: Events.PUBLIC_ROOM_CREATED },
-          { ev: Events.PUBLIC_ROOM_REMOVED },
-        ];
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+    ];
 
     expect(events).toHaveLength(expectedEvents.length);
     expect(events).toMatchObject(expectedEvents);
 
     WsChatHelpers.testEventsPayload();
-  }
-
-  it(`creates then delete a PUBLIC room`, async () => {
-    await createRoomAndDeleteIt(false);
-  });
-
-  it(`creates the deletes a PRIVATE room`, async () => {
-    await createRoomAndDeleteIt(true);
-  });
-
-  async function createRoomAndChangePassword(is_private: boolean) {
-    WsChatHelpers.setupToken(token);
-    const conn = WsChatHelpers.connectSocket();
-    conn.on('connect_error', (err) => {
-      throw new Error(`There was a connection error: ${err}`);
-    });
-    WsChatHelpers.setAllEventsListenners(conn);
-
-    await new Promise((resolve, rejects) => {
-      setTimeout(async () => {
-        await chatHelper
-          .createSimpleRoom({
-            participants: [],
-            is_private,
-          })
-          .then(async (response) => {
-            expect(response.status).toBe(HttpStatus.CREATED);
-            expect(response.body.id).toBeDefined();
-            return await chatHelper.updateRoomPassword(
-              cookies,
-              response.body.id,
-              {
-                password: 'new_password',
-              },
-            );
-          })
-          .then(async (response) => {
-            expect(response.status).toBe(HttpStatus.OK);
-          });
-      }, 150);
-
-      setTimeout(async () => {
-        resolve('ok');
-      }, 250);
-    });
-
-    const events = WsChatHelpers.events;
-    const expectedEvents = is_private
-      ? [ { ev: Events.CONNECT } ]
-      : [
-          { ev: Events.CONNECT },
-          { ev: Events.PUBLIC_ROOM_CREATED },
-          { ev: Events.PUBLIC_ROOM_UPDATED },
-        ];
-
-    expect(events).toHaveLength(expectedEvents.length);
-    expect(events).toMatchObject(expectedEvents);
-    if (!is_private) {
-      const updateEvent = events.find((e) => e.ev === Events.PUBLIC_ROOM_UPDATED);
-      expect(updateEvent.payload.is_password_protected).toBeTruthy();
-    }
-
-    WsChatHelpers.testEventsPayload();
-  }
-
-  it(`creates then updates a PUBLIC room`, async () => {
-    await createRoomAndChangePassword(false);
-  });
-
-  it(`creates then updates a PRIVATE room`, async () => {
-    await createRoomAndChangePassword(true);
   });
 }); // <<< end of describBlock

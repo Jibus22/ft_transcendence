@@ -7,14 +7,17 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
+import { AppUtilsService } from '../../../utils/app-utils.service';
 import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
-import { ChatGateway, Events } from '../gateways/chat.gateway';
+import { Events } from '../gateways/chat.gateway';
+import { ChatGatewayService } from '../gateways/chatGateway.service';
 
 @EventSubscriber()
 export class RoomSubscriber implements EntitySubscriberInterface<Room> {
   constructor(
-    private readonly chatGateway: ChatGateway,
+    private readonly utils: AppUtilsService,
+    private readonly chatGateway: ChatGatewayService,
     connection: Connection,
   ) {
     connection.subscribers.push(this);
@@ -24,7 +27,13 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     return Room;
   }
 
-  afterInsert(event: InsertEvent<Room>) {
+  async afterInsert(event: InsertEvent<Room>) {
+    await this.utils.fetchPossiblyMissingData(
+      event.connection.getRepository(Room),
+      event.entity,
+      ['participants'],
+    );
+
     if (event.entity.is_private === false) {
       this.chatGateway.sendEventToServer(
         Events.PUBLIC_ROOM_CREATED,
@@ -33,7 +42,13 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     }
   }
 
-  beforeUpdate(event: UpdateEvent<Room>) {
+  async afterUpdate(event: UpdateEvent<Room>) {
+    await this.utils.fetchPossiblyMissingData(
+      event.connection.getRepository(Room),
+      event.entity,
+      ['participants'],
+    );
+
     if (event.databaseEntity.is_private === false) {
       this.chatGateway.sendEventToServer(
         Events.PUBLIC_ROOM_UPDATED,
@@ -42,10 +57,14 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     }
   }
 
-  beforeRemove(event: RemoveEvent<Room>) {
+  async beforeRemove(event: RemoveEvent<Room>) {
+    await this.utils.fetchPossiblyMissingData(
+      event.connection.getRepository(Room),
+      event.entity,
+      ['participants'],
+    );
+
     if (event.entity.is_private === false) {
-      delete event.entity?.participants;
-      delete event.entity?.restrictions;
       this.chatGateway.sendEventToServer(
         Events.PUBLIC_ROOM_REMOVED,
         plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
