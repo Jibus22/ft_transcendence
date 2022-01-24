@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../../users/entities/users.entity';
 import { Room } from '../entities/room.entity';
-import { ChatGateway, messageType } from './chat.gateway';
+import { ChatGateway, Events, messageType } from './chat.gateway';
 
 @Injectable()
 export class ChatGatewayService {
   constructor(private chatGateway: ChatGateway) {
-    console.debug('CTO - chatgateway Service');
   }
 
   /*
@@ -40,13 +39,15 @@ export class ChatGatewayService {
   }
 
   async makeClientJoinRoom(user: User, room: Room) {
-    return await this.chatGateway.makeClientLeaveRoom(user, room);
-  }
-  async makeClientLeaveRoom(user: User, room: Room) {
     return await this.chatGateway.makeClientJoinRoom(user, room);
   }
 
+  async makeClientLeaveRoom(user: User, room: Room) {
+    return await this.chatGateway.makeClientLeaveRoom(user, room);
+  }
+
   async allSockets() {
+    (await this.chatGateway.server.fetchSockets()).forEach(s => s.emit(Events.NEW_MESSAGE, 'coucou' ));
     return this.chatGateway.server.sockets;
   }
 

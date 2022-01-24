@@ -43,7 +43,10 @@ export class ParticipantSubscriber
       }),
     );
 
-    this.chatGateway.makeClientJoinRoom(event.entity.user, event.entity.room);
+    await this.chatGateway.makeClientJoinRoom(
+      event.entity.user,
+      event.entity.room,
+    );
 
     this.chatGateway.sendEventToRoom(
       event.entity.room,
@@ -69,7 +72,10 @@ export class ParticipantSubscriber
       }),
     );
 
-    this.chatGateway.makeClientLeaveRoom(event.entity.user, event.entity.room);
+    await this.chatGateway.makeClientLeaveRoom(
+      event.entity.user,
+      event.entity.room,
+    );
 
     this.chatGateway.sendEventToRoom(
       event.entity.room,

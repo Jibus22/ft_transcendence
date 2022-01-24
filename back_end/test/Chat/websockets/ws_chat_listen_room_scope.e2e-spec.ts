@@ -380,7 +380,7 @@ describe('WebSockets CHAT: listen to ROOM SCOPE events', () => {
     WsChatHelpers.testEventsPayload();
   });
 
-  it.only(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone updates their nickname`, async () => {
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone updates their nickname`, async () => {
     const newUsername = 'bob';
     let roomId: string;
     WsChatHelpers.setupToken(token);

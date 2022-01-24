@@ -13,7 +13,6 @@ export class AppController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'return if online' })
   async getOnline() {
-    console.debug('SOCKET LIST ', await this.gateway.allSockets());
     return 'online';
   }
 }

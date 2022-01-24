@@ -8,6 +8,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
+import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { User } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/service-users/users.service';
@@ -32,7 +33,6 @@ export enum Events {
 }
 
 export type messageType =
-  | { id: string }
   | ChatMessageDto
   | RoomDto
   | ParticipantDto
@@ -54,14 +54,11 @@ export class ChatGateway
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly usersService: UsersService,
-  ) {
-    console.debug('CTO - chatgateway');
-  }
+  ) {}
 
   @WebSocketServer() server: Server;
 
   afterInit(server: Server) {
-    console.log('INIT HERE -----------------------------');
     this.server = server;
   }
 
@@ -171,7 +168,6 @@ export class ChatGateway
   }
 
   async doHandleDisconnect(client: Socket) {
-    console.log(JSON.stringify(this.server.sockets, null, 4));
     if (process.env.NODE_ENV === 'dev') {
       console.log(`Client disconnected: ${client.id}`);
     }
@@ -181,18 +177,22 @@ export class ChatGateway
     });
   }
 
-  private getClientSocket(ws_id: string) {
-    const socketsMap = this.server.of('/chat').sockets;
-    if (socketsMap.size) {
-      return socketsMap.get(ws_id);
+  private async getClientSocket(ws_id: string) {
+    if (ws_id === null) return undefined;
+
+    const sockets = await this.server.fetchSockets();
+    const clientSocket = sockets.filter(s => s.id === ws_id);
+    if (clientSocket.length) {
+      return clientSocket[0];
     }
+    return undefined;
   }
 
   async makeClientJoinRoom(user: User, room: Room) {
     if (process.env.NODE_ENV === 'dev') {
       console.log(`Add client ${user?.login} to room ${room.id}`);
     }
-    const clientSocket = this.getClientSocket(user.ws_id);
+    const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
       await clientSocket.join(room.id);
     }
@@ -200,9 +200,9 @@ export class ChatGateway
 
   async makeClientLeaveRoom(user: User, room: Room) {
     if (process.env.NODE_ENV === 'dev') {
-      console.log(`Remove client ${user?.login} to room ${room.id}`);
+      console.log(`Remove client ${user?.login} from room ${room.id}`);
     }
-    const clientSocket = this.getClientSocket(user.ws_id);
+    const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
       await clientSocket.leave(room.id);
     }

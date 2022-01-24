@@ -134,7 +134,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     WsChatHelpers.testEventsPayload();
   }
 
-  it.only(`creates then delete a PUBLIC room`, async () => {
+  it(`creates then delete a PUBLIC room`, async () => {
     await createRoomAndDeleteIt(false);
   });
 
