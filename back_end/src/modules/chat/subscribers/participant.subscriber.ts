@@ -32,7 +32,7 @@ export class ParticipantSubscriber
     await this.utils.fetchPossiblyMissingData(
       event.connection.getRepository(Participant),
       event.entity,
-      ['room', 'room.participants', 'user'],
+      ['room', 'room.participants', 'room.participants.user', 'user'],
     );
 
     this.chatGateway.sendEventToClient(
@@ -61,7 +61,7 @@ export class ParticipantSubscriber
     await this.utils.fetchPossiblyMissingData(
       event.connection.getRepository(Participant),
       event.entity,
-      ['room', 'room.participants', 'user'],
+      ['room', 'room.participants', 'room.participants.user', 'user'],
     );
 
     this.chatGateway.sendEventToClient(

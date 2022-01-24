@@ -405,19 +405,19 @@ describe('WebSockets CHAT: listen to ROOM SCOPE events', () => {
             return await chatHelper.addParticipant(httpUserCookie, roomId, {
               id: createdUsers[2].id, // <--------- new user added to generate event
             });
-          // })
-          // .then(async (response) => {
-          //   const cookiesForUser2 = await commons
-          //     .logUser(createdUsers[2].login)
-          //     .then((resp) => commons.getCookies(resp))
-          //     .catch((err) => {
-          //       throw new Error(`Signin should have worked: ${err}`);
-          //     });
-          //   return await commons.updateUsername(cookiesForUser2, newUsername);
-          // })
-          // .then(async (response) => {
-          //   expect(response.status).toBe(HttpStatus.OK);
-          //   expect(response.body.login).toBe(newUsername);
+          })
+          .then(async (response) => {
+            const cookiesForUser2 = await commons
+              .logUser(createdUsers[2].login)
+              .then((resp) => commons.getCookies(resp))
+              .catch((err) => {
+                throw new Error(`Signin should have worked: ${err}`);
+              });
+            return await commons.updateUsername(cookiesForUser2, newUsername);
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.OK);
+            expect(response.body.login).toBe(newUsername);
           });
       }, 100);
 
@@ -427,20 +427,99 @@ describe('WebSockets CHAT: listen to ROOM SCOPE events', () => {
     });
 
 
-    // const events = WsChatHelpers.events;
-    // const expectedEvents = [
-    //   { ev: Events.CONNECT },
-    //   { ev: Events.USER_ADDED },
-    //   { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-    //   { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-    //   { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-    //   { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-    //   { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-    // ];
-    // console.log(JSON.stringify(events, null, 4));
-    // expect(events).toHaveLength(expectedEvents.length);
-    // expect(events).toMatchObject(expectedEvents);
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+    ];
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    expect(events[5].payload.login).toBe(newUsername);
 
-    // WsChatHelpers.testEventsPayload();
+    WsChatHelpers.testEventsPayload();
+  });
+
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone updates their profile picture`, async () => {
+    let roomId: string;
+    let cookiesForUser2: string[];
+    let photo_url: string[] = [];
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addParticipant(httpUserCookie, roomId, {
+              id: createdUsers[2].id, // <--------- new user added to generate event
+            });
+          })
+          .then(async (response) => {
+            cookiesForUser2 = await commons
+              .logUser(createdUsers[2].login)
+              .then((resp) => commons.getCookies(resp))
+              .catch((err) => {
+                throw new Error(`Signin should have worked: ${err}`);
+              });
+            const filePath = `/assets/00_test_img_do_not_remove.jpg`;
+            return await commons.updateProfilPicture(cookiesForUser2, filePath);
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            return await commons.getMe(cookiesForUser2);
+          })
+          .then(async (response) => {
+            expect(response.body.photo_url).toMatch(/users\/photos/);
+            photo_url.push(response.body.photo_url);
+            const filePath = `/assets/01_test_img_do_not_remove.jpg`;
+            return await commons.updateProfilPicture(cookiesForUser2, filePath);
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            return await commons.getMe(cookiesForUser2);
+          })
+          .then(async (response) => {
+            expect(response.body.photo_url).toMatch(/users\/photos/);
+            photo_url.push(response.body.photo_url);
+          });
+      }, 200);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 350);
+    });
+
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+    ];
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    WsChatHelpers.testEventsPayload();
+    expect(events[5].payload.photo_url).toBe(photo_url[0]);
+    expect(events[6].payload.photo_url).toBe(photo_url[1]);
   });
 }); // <<< end of describBlock

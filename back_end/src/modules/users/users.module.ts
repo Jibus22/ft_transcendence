@@ -18,6 +18,8 @@ import { UsersPhotoService } from './service-file/userPhoto.service';
 import { MeService } from './service-me/me.service';
 import { RelationsService } from './service-relations/relations.service';
 import { UsersService } from './service-users/users.service';
+import { UserSubscriber } from './subscribers/user.subscriber';
+import { UserPhotoSubscriber } from './subscribers/user_photo.subscriber';
 import { UsersController } from './users.controller';
 import { UsersPhotoController } from './usersphoto.controller';
 
@@ -43,6 +45,8 @@ import { UsersPhotoController } from './usersphoto.controller';
     AuthService,
     ChatService,
     TaskerService,
+    UserSubscriber,
+    UserPhotoSubscriber
   ],
   controllers: [
     UsersController,

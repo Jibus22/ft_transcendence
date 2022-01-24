@@ -27,8 +27,10 @@ export class ChatGatewayService {
     if (process.env.NODE_ENV === 'dev') {
       console.log('Emit event to ROOM: ', event);
     }
-    const dest = Array.isArray(room) ? room.map((r) => r.id) : room.id;
-    return this.chatGateway.doSendEventToRoom(dest, event, message);
+    if (room) {
+      const dest = Array.isArray(room) ? room.map((r) => r.id) : room.id;
+      return this.chatGateway.doSendEventToRoom(dest, event, message);
+    }
   }
 
   sendEventToClient(user: User, event: string, message: messageType) {

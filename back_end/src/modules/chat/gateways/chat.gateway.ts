@@ -8,8 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
-import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
+import { UserDto } from '../../users/dtos/user.dto';
 import { User } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/service-users/users.service';
 import { ChatMessageDto } from '../dto/chatMessade.dto';
@@ -25,6 +25,7 @@ export enum Events {
   PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
   NEW_MESSAGE = 'newMessage',
   ROOM_PARTICIPANTS_UPDATED = 'roomParticipantUpdated',
+  PUBLIC_USER_INFOS_UPDATED = 'publicUserInfosUpdated',
   USER_ADDED = 'userAdded',
   USER_REMOVED = 'userRemoved',
   USER_MODERATION = 'userModeration',
@@ -33,6 +34,7 @@ export enum Events {
 }
 
 export type messageType =
+  | UserDto
   | ChatMessageDto
   | RoomDto
   | ParticipantDto
@@ -181,7 +183,7 @@ export class ChatGateway
     if (ws_id === null) return undefined;
 
     const sockets = await this.server.fetchSockets();
-    const clientSocket = sockets.filter(s => s.id === ws_id);
+    const clientSocket = sockets.filter((s) => s.id === ws_id);
     if (clientSocket.length) {
       return clientSocket[0];
     }

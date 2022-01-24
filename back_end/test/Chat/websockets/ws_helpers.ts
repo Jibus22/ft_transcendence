@@ -90,6 +90,15 @@ export class WsChatHelpers {
           expect(event.payload).toBeUndefined();
           break;
 
+        case Events.PUBLIC_USER_INFOS_UPDATED:
+          this.testForProperties(event.payload, [
+            'id',
+            'login',
+            'photo_url',
+            'status',
+          ]);
+          break;
+
         case Events.USER_REMOVED:
         case Events.USER_MODERATION:
         case Events.USER_BANNED:

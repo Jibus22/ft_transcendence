@@ -3,6 +3,7 @@ import {
   Connection,
   EntitySubscriberInterface,
   EventSubscriber,
+  InsertEvent,
   UpdateEvent,
 } from 'typeorm';
 import { AppUtilsService } from '../../../utils/app-utils.service';
@@ -10,10 +11,12 @@ import { Participant } from '../../chat/entities/participant.entity';
 import { Events } from '../../chat/gateways/chat.gateway';
 import { ChatGatewayService } from '../../chat/gateways/chatGateway.service';
 import { UserDto } from '../dtos/user.dto';
-import { User } from '../entities/users.entity';
+import { UserPhoto } from '../entities/users_photo.entity';
 
 @EventSubscriber()
-export class UserSubscriber implements EntitySubscriberInterface<User> {
+export class UserPhotoSubscriber
+  implements EntitySubscriberInterface<UserPhoto>
+{
   constructor(
     private readonly utils: AppUtilsService,
     private readonly chatGateway: ChatGatewayService,
@@ -23,42 +26,33 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
   }
 
   listenTo() {
-    return User;
+    return UserPhoto;
   }
 
-  private isValidForEventEmit(event: UpdateEvent<User>) {
-    const afterUpdate: User = event.entity as User;
-    return (
-      afterUpdate.room_participations.length &&
-      event.updatedColumns.some(
-        (update) =>
-          update.propertyName === 'login' ||
-          update.propertyName === 'use_local_photo',
-      )
-    );
-  }
-
-  async afterUpdate(event: UpdateEvent<User>) {
+  async manageWsEvent(event: InsertEvent<UserPhoto> | UpdateEvent<UserPhoto>) {
     await this.utils
-      .fetchPossiblyMissingData(
-        event.connection.getRepository(User),
-        event.entity,
-        ['room_participations', 'room_participations.room', 'local_photo'],
+    .fetchPossiblyMissingData(
+      event.connection.getRepository(UserPhoto),
+      event.entity,
+      ['owner', 'owner.local_photo', 'owner.room_participations', 'owner.room_participations.room'],
       )
       .then(() => {
-        if (this.isValidForEventEmit(event)) {
-          const roomParticipations = event.entity
-            .room_participations as Participant[];
+        const roomParticipations = event.entity.owner
+          .room_participations as Participant[];
+        if (roomParticipations.length) {
           const dest = roomParticipations.map((part) => part.room);
           this.chatGateway.sendEventToRoom(
             dest,
             Events.PUBLIC_USER_INFOS_UPDATED,
-            plainToClass(UserDto, event.entity, {
+            plainToClass(UserDto, event.entity.owner, {
               excludeExtraneousValues: true,
             }),
           );
         }
-      })
-      .catch((e) => console.log(e));
+      });
+  }
+
+  async afterUpdate(event: UpdateEvent<UserPhoto>) {
+    await this.manageWsEvent(event).catch((e) => console.log(e));
   }
 }
