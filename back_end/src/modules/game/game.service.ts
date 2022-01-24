@@ -10,6 +10,10 @@ import { Player } from './entities/player.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../users/service-users/users.service';
+import {
+  RelationType,
+  RelationsService,
+} from '../users/service-relations/relations.service';
 import { User } from '../users/entities/users.entity';
 import { UserDto } from '../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
@@ -20,21 +24,34 @@ export class GameService {
     @InjectRepository(Game) private game_repo: Repository<Game>,
     @InjectRepository(Player) private player_repo: Repository<Player>,
     private usersService: UsersService,
+    private relationsService: RelationsService,
   ) {}
 
-  private checkErrorCreation(
-    user1: User,
-    user2: User,
-    createGameDto: CreateGameDto,
-  ) {
-    if (!user1) {
-      throw new NotFoundException(`${createGameDto.loginP1} not found`);
-    } else if (!user2) {
-      throw new NotFoundException(`${createGameDto.loginP2} not found`);
-    }
+  isFriend(friends_list: UserDto[], opponent_id: string) {
+    return friends_list.filter((elem) => elem.id === opponent_id).length === 1;
+  }
 
-    const usr1dto = plainToClass(UserDto, user1);
-    const usr2dto = plainToClass(UserDto, user2);
+  private errorUserNotFound(user: User, login: string) {
+    if (!user) {
+      throw new NotFoundException(`${login} not found`);
+    }
+  }
+
+  private errorPlayerNotOnline(usr: UserDto, login: string) {
+    if (usr.status !== 'online') {
+      throw new ForbiddenException(`${login} is either offline or playing`);
+    }
+  }
+
+  private async checkErrors(
+    [user1, user2]: User[],
+    createGameDto: CreateGameDto,
+    callback: Function,
+  ) {
+    this.errorUserNotFound(user1, createGameDto.loginP1);
+    this.errorUserNotFound(user2, createGameDto.loginP2);
+
+    const [usr1dto, usr2dto] = plainToClass(UserDto, [user1, user2]);
 
     if (usr1dto.id === usr2dto.id) {
       throw new ForbiddenException(
@@ -42,23 +59,23 @@ export class GameService {
       );
     }
 
-    if (usr1dto.status !== 'online') {
-      throw new ForbiddenException(
-        `${createGameDto.loginP1} is either offline or playing`,
+    this.errorPlayerNotOnline(usr1dto, createGameDto.loginP1);
+    this.errorPlayerNotOnline(usr2dto, createGameDto.loginP2);
+
+    if (callback) {
+      const friend_list = await this.relationsService.readAllRelations(
+        user1.id,
+        RelationType.Friend,
       );
-    } else if (usr2dto.status !== 'online') {
-      throw new ForbiddenException(
-        `${createGameDto.loginP2} is either offline or playing`,
-      );
+      if (!callback(friend_list, user2.id)) {
+        throw new ForbiddenException(
+          `${createGameDto.loginP2} isn't your friend. Go to make some friends`,
+        );
+      }
     }
   }
 
-  async create(createGameDto: CreateGameDto) {
-    const user1 = await this.usersService.findLogin(createGameDto.loginP1);
-    const user2 = await this.usersService.findLogin(createGameDto.loginP2);
-
-    this.checkErrorCreation(user1, user2, createGameDto);
-
+  private async createGameTable(user1: User, user2: User) {
     const game = this.game_repo.create();
     await this.game_repo.save(game);
     const player1 = this.player_repo.create({ user: user1, game: game });
@@ -66,7 +83,21 @@ export class GameService {
     await this.player_repo.save([player1, player2]);
     game.players = [player1, player2];
     await this.game_repo.save(game);
-    return user2;
+    return game.id;
+  }
+
+  private async getOpponents(createGameDto: CreateGameDto) {
+    const user1 = await this.usersService.findLogin(createGameDto.loginP1);
+    const user2 = await this.usersService.findLogin(createGameDto.loginP2);
+    return [user1, user2];
+  }
+
+  async newGame(createGameDto: CreateGameDto, callback: Function) {
+    const [user1, opponent] = await this.getOpponents(createGameDto);
+
+    await this.checkErrors([user1, opponent], createGameDto, callback);
+    const game_id = await this.createGameTable(user1, opponent);
+    return { game_id, ...plainToClass(UserDto, opponent) };
   }
 
   async findAll() {

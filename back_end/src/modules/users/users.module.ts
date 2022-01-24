@@ -46,7 +46,7 @@ import { UsersPhotoController } from './usersphoto.controller';
     ChatService,
     TaskerService,
     UserSubscriber,
-    UserPhotoSubscriber
+    UserPhotoSubscriber,
   ],
   controllers: [
     UsersController,
@@ -54,6 +54,6 @@ import { UsersPhotoController } from './usersphoto.controller';
     AuthController,
     MeController,
   ],
-  exports: [TypeOrmModule, UsersService],
+  exports: [TypeOrmModule, UsersService, RelationsService],
 })
 export class UsersModule {}
