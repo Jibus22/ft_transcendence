@@ -28,13 +28,9 @@ export class GameService {
     createGameDto: CreateGameDto,
   ) {
     if (!user1) {
-      throw new NotFoundException(
-        `${createGameDto.loginP1} not found in database`,
-      );
+      throw new NotFoundException(`${createGameDto.loginP1} not found`);
     } else if (!user2) {
-      throw new NotFoundException(
-        `${createGameDto.loginP2} not found in database`,
-      );
+      throw new NotFoundException(`${createGameDto.loginP2} not found`);
     }
 
     const usr1dto = plainToClass(UserDto, user1);
@@ -70,7 +66,7 @@ export class GameService {
     await this.player_repo.save([player1, player2]);
     game.players = [player1, player2];
     await this.game_repo.save(game);
-    return `game ${game.id} successfully created`;
+    return user2;
   }
 
   async findAll() {

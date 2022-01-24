@@ -15,6 +15,7 @@ import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { UserDto } from '../users/dtos/user.dto';
 
 @ApiTags('game')
 @Controller('game')
@@ -22,10 +23,17 @@ export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Post()
+  @Serialize(UserDto)
   @ApiOperation({ summary: 'adds a new game' })
   async create(@Body() createGameDto: CreateGameDto) {
     return await this.gameService.create(createGameDto);
   }
+
+  // @Post('playnow')
+  // @ApiOperation({ summary: 'adds a new game' })
+  // async playnow(@Body() createGameDto: CreateGameDto) {
+  //   return await this.gameService.create(createGameDto);
+  // }
 
   @Get()
   @ApiOperation({ summary: 'returns all games' })
