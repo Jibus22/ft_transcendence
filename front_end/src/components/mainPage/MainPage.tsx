@@ -53,42 +53,38 @@ const MainPage = () => {
 		 ** Events
 		 * -----------------------*/
 
-		socket.on('publicRoomCreated', (message) => {
-			console.log('✅  publicRoomCreated', message);
+		socket.on ('publicRoomCreated', (message)=> {
+			console.log(`💌  Event: publicRoomCreated ->`, message);
 		});
-		socket.on('publicRoomRemoved', (message) => {
-			console.log('🚮  publicRoomRemoved', message);
+  	socket.on ('publicRoomUpdated', (message)=> {
+			console.log(`💌  Event: publicRoomUpdated ->`, message);
 		});
-
-		socket.on('newMessage', (message) => {
+  	socket.on ('publicRoomRemoved', (message)=> {
+			console.log(`💌  Event: publicRoomRemoved ->`, message);
+		});
+  	socket.on ('newMessage', (message)=> {
 			console.log(`💌  Event: newMessage ->`, message);
 		});
-
-		socket.on('participantJoined', (message) => {
-			console.log(`💌  Event: participantJoined ->`, message);
+  	socket.on ('roomParticipantUpdated', (message)=> {
+			console.log(`💌  Event: roomParticipantUpdated ->`, message);
 		});
-
-		socket.on('participantLeft', (message) => {
-			console.log(`💌  Event: participantLeft ->`, message);
-		});
-
-		socket.on('userAdded', (message) => {
+  	socket.on ('userAdded', (message)=> {
 			console.log(`💌  Event: userAdded ->`, message);
 		});
-
-		socket.on('userBanned', (message) => {
+  	socket.on ('userRemoved', (message)=> {
+			console.log(`💌  Event: userRemoved ->`, message);
+		});
+  	socket.on ('userModeration', (message)=> {
+			console.log(`💌  Event: userModeration ->`, message);
+		});
+  	socket.on ('userBanned', (message)=> {
 			console.log(`💌  Event: userBanned ->`, message);
 		});
-
-		socket.on('userMuted', (message) => {
+  	socket.on ('userMuted', (message)=> {
 			console.log(`💌  Event: userMuted ->`, message);
 		});
 
-		socket.on('userModeration', (message) => {
-			console.log(`💌  Event: userModeration ->`, message);
-		});
 	};
-
 	const getAuthToken = async () => {
 		return await axios('http://localhost:3000/auth/ws/token', {
 			withCredentials: true,

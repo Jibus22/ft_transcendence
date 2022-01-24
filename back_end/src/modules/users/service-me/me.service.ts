@@ -50,6 +50,20 @@ export class MeService {
     if (userPhoto) {
       this.usersPhotoService.delete(userPhoto.fileName);
       userPhoto.fileName = newFileName;
+      await this.repoUserPhoto.update(userPhoto.id, userPhoto);
+    } else {
+      userPhoto = this.repoUserPhoto.create({
+        owner: user,
+        fileName: newFileName,
+      });
+      await this.repoUserPhoto.save(userPhoto);
+    }
+    await this.updateUseLocalPhoto(user, true);
+  }
+  /*
+  if (userPhoto) {
+      this.usersPhotoService.delete(userPhoto.fileName);
+      userPhoto.fileName = newFileName;
     } else {
       userPhoto = this.repoUserPhoto.create({
         owner: user,
@@ -59,7 +73,7 @@ export class MeService {
     await this.updateUseLocalPhoto(user, true);
     await this.repoUserPhoto.save(userPhoto);
   }
-
+*/
   async deletePhoto(user: User) {
     if (user) {
       const photo = await this.repoUserPhoto.findOne({ owner: user });
