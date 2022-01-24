@@ -1,4 +1,5 @@
 import { CircularProgress, IconButton, TextField } from '@mui/material';
+import axios, { AxiosError } from 'axios';
 import { useFormik } from 'formik';
 import React from 'react';
 import { animated, useSpring } from 'react-spring';
@@ -23,7 +24,7 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 	});
 
-	const { setIsFriends } = useMainPage();
+	const { setIsFriends, userName } = useMainPage();
 
 	const validationSchema = yup.object({
 		loggin: yup.string().required('Enter a Nickname'),
@@ -34,9 +35,30 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 			loggin: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: (values) => {
-			Loadingclick();
-			setIsFriends(true);
+		onSubmit: async (values, { setErrors }) => {
+			const game = {
+				loginP1: userName,
+				loginP2: values.loggin,
+			};
+
+			try {
+				await axios.post('http://localhost:3000/game', game, {
+					withCredentials: true,
+				});
+
+				Loadingclick();
+				setIsFriends(true);
+			} catch (error) {
+				const err = error as AxiosError;
+
+				if (err.response?.status === 404) {
+					setErrors({ loggin: 'User not found' });
+				}
+				if (err.response?.status === 403) {
+					const dataError = err.response?.data;
+					setErrors({ loggin: dataError['message'] });
+				}
+			}
 		},
 	});
 

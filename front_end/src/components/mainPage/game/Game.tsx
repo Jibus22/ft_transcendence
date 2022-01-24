@@ -25,7 +25,7 @@ export default function Game({ wsStatus }: Props) {
         */
 		wsStatus && wsStatus.emit('ingame', 'in');
 
-		setStartGame(true);
+		// setStartGame(true);
 
 		// setLoading(true);
 		// setIsDisable(false);
