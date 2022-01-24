@@ -1,10 +1,10 @@
-import React from 'react';
+import { CircularProgress, IconButton, TextField } from '@mui/material';
 import { useFormik } from 'formik';
-import { IconButton, CircularProgress, TextField } from '@mui/material';
-import { useSpring, animated } from 'react-spring';
-import IconMess from './img/carbon_send-alt-filled.png';
+import React from 'react';
+import { animated, useSpring } from 'react-spring';
 import * as yup from 'yup';
 import { useMainPage } from '../../../../MainPageContext';
+import IconMess from './img/carbon_send-alt-filled.png';
 
 interface Props {
 	Loadingclick: () => void;

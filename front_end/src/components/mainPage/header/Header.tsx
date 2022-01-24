@@ -8,7 +8,7 @@ import NavHeader from './navHeader/NavHeader';
 export default function Header() {
 	const { data, userName, userImg, setUserName, setUserImg, selectQuery, setSelectNav } = useMainPage();
 
-	const query = useMediaQuery('(max-width:850px)');
+	const query = useMediaQuery('(max-width: 1000px)');
 	const queryNav = useMediaQuery('(max-width:1060px)');
 	const queryNavMobile = useMediaQuery('(max-width:600px)');
 
@@ -121,7 +121,7 @@ export default function Header() {
 					</div>
 				</nav>
 			) : (
-				<NavHeader />
+				<NavHeader userImg={userImg} userName={userName} />
 			)}
 		</div>
 	);
