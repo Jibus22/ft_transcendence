@@ -31,7 +31,7 @@ class PongGame extends React.Component {
 	//////////////////////////////////////
 
 	width = 700;
-	height = 600;
+	height = 350;
 	sleepduration = 5000;
 	_canvasStyle = {
 		margin: 'auto',
