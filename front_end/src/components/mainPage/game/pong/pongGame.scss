@@ -233,6 +233,7 @@
 
 @media screen and (max-width: 1440px) {
 	.divMainPongGame {
+		height: 55vw;
 		margin: 8% auto;
 		margin-bottom: 40px;
 		.mainPongGame {
@@ -272,6 +273,12 @@
 	.divMainPongGame {
 		margin: 12vw auto;
 		margin-bottom: -15px;
+
+		.titleMap {
+			.selectMap {
+				margin-top: -20px;
+			}
+		}
 	}
 }
 
@@ -358,6 +365,7 @@
 
 @media screen and (max-width: 670px) {
 	.divMainPongGame {
+		height: 440px;
 		.titleMap {
 			.countMap {
 				top: 50% !important;

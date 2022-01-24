@@ -108,6 +108,7 @@
 				justify-content: center;
 				align-items: center;
 				width: 10vw;
+				min-width: 3vw;
 
 				h2 {
 					font-family: Montserrat, sans-serif;
@@ -125,7 +126,7 @@
 				justify-content: center;
 				align-items: center;
 				width: 50%;
-				margin-left: 1px;
+				margin-left: 20px;
 
 				.MuiBadge-badge {
 					width: 19%;
@@ -154,7 +155,7 @@
 
 		.profil:hover {
 			h2 {
-				font-size: 1.5vw;
+				font-size: 1.45vw;
 			}
 		}
 	}
@@ -342,10 +343,10 @@
 			border-radius: 16px;
 		}
 		.queryNav {
-			.selectedNave {
-				height: 100%;
-				border-bottom: 1px #e6da6a solid;
-			}
+			// .selectedNave {
+			// 	height: 100%;
+			// 	border-bottom: 1px #e6da6a solid;
+			// }
 			button {
 				text-transform: none;
 				border: none;
