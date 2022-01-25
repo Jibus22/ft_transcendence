@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+//import { useRef, useState, useEffect } from 'react';
+//import ReactDOM from 'react-dom';
+import React from 'react';
 import { Ball } from './Ball';
 import { Player } from './Player';
 import './PongGame.scss';
@@ -60,10 +61,6 @@ class PongGame extends React.Component {
 	);
 	map =1;
 
-	constructor(props: any) {
-		super(props);
-	}
-
 	sleep() {
 		sleep(this.sleepduration);
 	}
@@ -102,8 +99,8 @@ class PongGame extends React.Component {
 	}
 
 	private _score(ret: number) {
-		if (ret == 2) this.scoreP2++; //J2 score
-		if (ret == 1) this.scoreP1++;
+		if (ret === 2) this.scoreP2++; //J2 score
+		if (ret === 1) this.scoreP1++;
 		this._ball.y = this.height / 2;
 		this._ball.x = this.width / 2;
 		this._ball.x_dir = Math.random() * 2 - 1;
@@ -123,7 +120,7 @@ class PongGame extends React.Component {
 		if (random < 45) {
 			//5)
 			//Power up large paddle
-			if (ret == 1) {
+			if (ret === 1) {
 				this._playerOne._largePaddle(this.height);
 				client.send(
 					JSON.stringify({
@@ -137,7 +134,7 @@ class PongGame extends React.Component {
 				this._printText('Player One large Paddle');
 				setTimeout(() => (this.gamerunning = true), 1000);
 			}
-			if (ret == 2) {
+			if (ret === 2) {
 				client.send(
 					JSON.stringify({
 						type: 'message',
@@ -154,7 +151,7 @@ class PongGame extends React.Component {
 		if (random >= 55) {
 			//95)
 			//Power Up controle inverse
-			if (ret == 2) {
+			if (ret === 2) {
 				this._playerOne._invertControlTemporarily();
 				client.send(
 					JSON.stringify({
@@ -168,7 +165,7 @@ class PongGame extends React.Component {
 				this._printText('Player One inverted Control');
 				setTimeout(() => (this.gamerunning = true), 1000);
 			}
-			if (ret == 1) {
+			if (ret === 1) {
 				client.send(
 					JSON.stringify({
 						type: 'message',
@@ -321,11 +318,11 @@ class PongGame extends React.Component {
 				this.scoreP2 = data.P2;
 			}
 			if (!this._P1 && data.object === 'PowerUp') {
-				if (data.powerUp == 'inverted Control' && data.J == 2) this._playerTwo._invertControlTemporarily();
-				if (data.powerUp == 'large Paddle' && data.J == 2) this._playerTwo._largePaddle(this.height);
+				if (data.powerUp === 'inverted Control' && data.J === 2) this._playerTwo._invertControlTemporarily();
+				if (data.powerUp === 'large Paddle' && data.J === 2) this._playerTwo._largePaddle(this.height);
 				this.gamerunning = false;
 				let message = 'Player ';
-				if (data.J == 1) message += 'One ';
+				if (data.J === 1) message += 'One ';
 				else message += 'Two ';
 				this._printText(message + data.powerUp);
 				setTimeout(() => (this.gamerunning = true), 1000);
