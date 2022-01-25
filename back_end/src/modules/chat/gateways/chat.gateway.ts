@@ -30,7 +30,6 @@ export enum Events {
   USER_REMOVED = 'userRemoved',
   USER_MODERATION = 'userModeration',
   USER_BANNED = 'userBanned',
-  USER_MUTED = 'userMuted',
 }
 
 export type messageType =
