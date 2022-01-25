@@ -1,5 +1,4 @@
 import { INestApplication } from '@nestjs/common';
-import { eventNames } from 'process';
 import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
 import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
@@ -59,15 +58,6 @@ export class WsChatHelpers {
   public static testEventsPayload(events = this.events) {
     events.forEach((event) => {
       switch (event.ev) {
-        case Events.PUBLIC_ROOM_CREATED:
-        case Events.PUBLIC_ROOM_REMOVED:
-          this.testForProperties(event.payload, [
-            'id',
-            // 'is_private',
-            // 'is_password_protected',
-          ]);
-          break;
-
         case Events.NEW_MESSAGE:
           this.testForProperties(event.payload, [
             'id',
@@ -82,16 +72,19 @@ export class WsChatHelpers {
           );
           break;
 
-          break;
-
-          case Events.USER_ADDED:
-          case Events.ROOM_PARTICIPANTS_UPDATED:
-          case Events.PUBLIC_ROOM_UPDATED:
+        case Events.USER_ADDED:
+        case Events.USER_REMOVED:
+        case Events.USER_BANNED:
+        case Events.USER_MODERATION:
+        case Events.ROOM_PARTICIPANTS_UPDATED:
+        case Events.PUBLIC_ROOM_UPDATED:
+        case Events.PUBLIC_ROOM_CREATED:
+        case Events.PUBLIC_ROOM_REMOVED:
           this.testForProperties(event.payload, [
             'id',
             'is_private',
             'is_password_protected',
-            'participants'
+            'participants',
           ]);
           break;
 
@@ -99,11 +92,13 @@ export class WsChatHelpers {
           expect(event.payload).toBeUndefined();
           break;
 
-        case Events.USER_REMOVED:
-        case Events.USER_MODERATION:
-        case Events.USER_BANNED:
-        case Events.USER_MUTED:
-          throw new Error(`TEST EXPECTATION UNSET for ${event.ev}`);
+        case Events.PUBLIC_USER_INFOS_UPDATED:
+          this.testForProperties(event.payload, [
+            'id',
+            'login',
+            'photo_url',
+            'status',
+          ]);
           break;
 
         default:

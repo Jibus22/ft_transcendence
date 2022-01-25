@@ -70,6 +70,7 @@
 		flex-direction: row;
 		justify-content: space-around;
 		align-self: center;
+
 		li {
 			width: 90px;
 			height: 37px;
@@ -107,6 +108,7 @@
 				justify-content: center;
 				align-items: center;
 				width: 10vw;
+				min-width: 3vw;
 
 				h2 {
 					font-family: Montserrat, sans-serif;
@@ -115,6 +117,7 @@
 					font-size: 37px;
 					font-size: 1.4vw;
 					text-align: center;
+					transition: ease-out 0.185s;
 				}
 			}
 
@@ -123,7 +126,7 @@
 				justify-content: center;
 				align-items: center;
 				width: 50%;
-				margin-left: 1px;
+				margin-left: 20px;
 
 				.MuiBadge-badge {
 					width: 19%;
@@ -152,7 +155,7 @@
 
 		.profil:hover {
 			h2 {
-				font-size: 1.5vw;
+				font-size: 1.45vw;
 			}
 		}
 	}
@@ -340,10 +343,10 @@
 			border-radius: 16px;
 		}
 		.queryNav {
-			.selectedNave {
-				height: 100%;
-				border-bottom: 1px #e6da6a solid;
-			}
+			// .selectedNave {
+			// 	height: 100%;
+			// 	border-bottom: 1px #e6da6a solid;
+			// }
 			button {
 				text-transform: none;
 				border: none;
@@ -362,19 +365,27 @@
 				font-size: 15px;
 			}
 		}
+		.MuiMenu-root {
+		}
+		.MuiPaper-elevation {
+			// background: #4f3e35 !important;
+			border-radius: 15px !important;
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			margin: -1.9px 10px 0% -10px;
+		}
+		// .MuiMenu-list {
+		// 	background: #4f3e35;
+		// }
+		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 	}
-	.MuiMenu-root {
-	}
+
 	.MuiPaper-elevation {
 		// background: #4f3e35 !important;
 		border-radius: 15px !important;
-		border: 1px solid rgba(255, 255, 255, 0.6);
+		// border: 1px solid rgba(255, 255, 255, 0.6);
 		margin: -1.9px 10px 0% -10px;
 	}
-	// .MuiMenu-list {
-	// 	background: #4f3e35;
-	// }
-	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
+
 	.MuiMenuItem-root {
 		color: black !important;
 		font-size: 12px !important;
@@ -391,6 +402,12 @@
 	.mainHeader {
 		width: 100%;
 		justify-content: center;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.mainHeader {
+		margin-top: 35px;
 	}
 }
 

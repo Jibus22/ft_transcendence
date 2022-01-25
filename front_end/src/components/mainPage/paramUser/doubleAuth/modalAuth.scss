@@ -78,7 +78,7 @@
 	}
 
 	.inputQR {
-		width: 30%;
+		width: 31%;
 		height: 100%;
 
 		.MuiOutlinedInput-input {
@@ -142,11 +142,17 @@
 		}
 
 		.MuiIconButton-root {
-			width: 1.6vw;
+			width: 1.4vw;
 			margin: 0 0 0 12px;
+			padding-right: -20px;
 		}
 		.MuiIconButton-root:hover {
-			width: 1.7vw;
+			width: 1.45vw;
+		}
+
+		.MuiSvgIcon-root {
+			width: 100%;
+			height: 100%;
 		}
 
 		@media screen and (max-width: 1900px) {
@@ -255,11 +261,16 @@
 		}
 
 		.MuiIconButton-root {
-			width: 31px !important;
+			width: 27px !important;
 			// margin: 0 0 0 50px !important;
 		}
 		.MuiIconButton-root:hover {
-			width: 32px !important;
+			width: 28px !important;
+		}
+
+		.MuiSvgIcon-root {
+			width: 105%;
+			height: 105%;
 		}
 	}
 }

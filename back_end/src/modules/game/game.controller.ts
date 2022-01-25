@@ -23,9 +23,24 @@ export class GameController {
 
   @Post()
   @ApiOperation({ summary: 'adds a new game' })
-  async create(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.create(createGameDto);
+  async createGame(@Body() createGameDto: CreateGameDto) {
+    return await this.gameService.newGame(createGameDto, null);
   }
+
+  @Post('friend')
+  @ApiOperation({ summary: 'adds a new game with a friend' })
+  async createFriendGame(@Body() createGameDto: CreateGameDto) {
+    return await this.gameService.newGame(
+      createGameDto,
+      this.gameService.isFriend,
+    );
+  }
+
+  // @Post('playnow')
+  // @ApiOperation({ summary: 'adds a new game' })
+  // async playnow(@Body() createGameDto: CreateGameDto) {
+  //   return await this.gameService.create(createGameDto);
+  // }
 
   @Get()
   @ApiOperation({ summary: 'returns all games' })

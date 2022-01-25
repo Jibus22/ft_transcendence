@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { io, Socket } from 'socket.io-client';
 import { AppModule } from '../../../src/app.module';
 import { Participant } from '../../../src/modules/chat/entities/participant.entity';
 import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
@@ -9,7 +10,7 @@ import { ChatHelpers } from '../helpers';
 import { WsChatHelpers } from './ws_helpers';
 var faker = require('faker');
 
-describe('WebSockets CHAT: listen to GLOBAL events', () => {
+describe('WebSockets CHAT: listen to ROOM SCOPE events', () => {
   const nbOfRooms = 25;
   let commons: CommonTest;
   let createdUsers: User[];
@@ -34,9 +35,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     createdUsers = await commons
       .createFakeUsers()
       .then((response) => response.body)
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
     expect(createdUsers.length).toEqual(commons.testUserBatch.length);
 
     /*
@@ -142,7 +141,6 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
       { ev: Events.CONNECT },
       { ev: Events.USER_ADDED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
       { ev: Events.NEW_MESSAGE },
     ];
 
@@ -198,7 +196,6 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     const expectedEvents = [
       { ev: Events.CONNECT },
       { ev: Events.USER_ADDED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
       { ev: Events.NEW_MESSAGE },
     ];
@@ -310,18 +307,16 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
       { ev: Events.USER_ADDED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
     ];
 
     expect(events).toHaveLength(expectedEvents.length);
     expect(events).toMatchObject(expectedEvents);
-    //  console.log(JSON.stringify(events, null, 4));
 
     WsChatHelpers.testEventsPayload();
-    // expect(events.at(events.length - 1).payload?.participants).toHaveLength(3);
+    expect(events.at(events.length - 1).payload?.participants).toHaveLength(3);
   });
 
-  it.only(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone leave the room`, async () => {
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone leave the room`, async () => {
     let roomId: string;
     WsChatHelpers.setupToken(token);
     const conn = WsChatHelpers.connectSocket();
@@ -366,22 +361,321 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     });
 
     const events = WsChatHelpers.events;
-    // console.log(JSON.stringify(events, null, 4));
     const expectedEvents = [
       { ev: Events.CONNECT },
       { ev: Events.USER_ADDED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
     ];
-
-    // console.log('http', httpLoggedUser.login, httpLoggedUser.id);
-    // console.log('ws', wsLoggedUser.login, wsLoggedUser.id);
-    // console.log('added', createdUsers[2].login, createdUsers[2].id);
 
     expect(events).toHaveLength(expectedEvents.length);
     expect(events).toMatchObject(expectedEvents);
+
+    WsChatHelpers.testEventsPayload();
+  });
+
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone updates their nickname`, async () => {
+    const newUsername = 'bob';
+    let roomId: string;
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addParticipant(httpUserCookie, roomId, {
+              id: createdUsers[2].id, // <--------- new user added to generate event
+            });
+          })
+          .then(async (response) => {
+            const cookiesForUser2 = await commons
+              .logUser(createdUsers[2].login)
+              .then((resp) => commons.getCookies(resp))
+              .catch((err) => {
+                throw new Error(`Signin should have worked: ${err}`);
+              });
+            return await commons.updateUsername(cookiesForUser2, newUsername);
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.OK);
+            expect(response.body.login).toBe(newUsername);
+          });
+      }, 100);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 250);
+    });
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+    ];
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    const infosUpdatedEvents = events.filter(
+      (e) => e.ev === Events.PUBLIC_USER_INFOS_UPDATED,
+    );
+    expect(infosUpdatedEvents[0].payload.login).toBe(newUsername);
+
+    WsChatHelpers.testEventsPayload();
+  });
+
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone updates their profile picture`, async () => {
+    let roomId: string;
+    let cookiesForUser2: string[];
+    let photo_url: string[] = [];
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addParticipant(httpUserCookie, roomId, {
+              id: createdUsers[2].id, // <--------- new user added to generate event
+            });
+          })
+          .then(async (response) => {
+            cookiesForUser2 = await commons
+              .logUser(createdUsers[2].login)
+              .then((resp) => commons.getCookies(resp))
+              .catch((err) => {
+                throw new Error(`Signin should have worked: ${err}`);
+              });
+            const filePath = `/assets/00_test_img_do_not_remove.jpg`;
+            return await commons.updateProfilPicture(cookiesForUser2, filePath);
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            return await commons.getMe(cookiesForUser2);
+          })
+          .then(async (response) => {
+            expect(response.body.photo_url).toMatch(/users\/photos/);
+            photo_url.push(response.body.photo_url);
+            const filePath = `/assets/01_test_img_do_not_remove.jpg`;
+            return await commons.updateProfilPicture(cookiesForUser2, filePath);
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            return await commons.getMe(cookiesForUser2);
+          })
+          .then(async (response) => {
+            expect(response.body.photo_url).toMatch(/users\/photos/);
+            photo_url.push(response.body.photo_url);
+          });
+      }, 200);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 350);
+    });
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+    ];
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    WsChatHelpers.testEventsPayload();
+    const infosUpdatedEvents = events.filter(
+      (e) => e.ev === Events.PUBLIC_USER_INFOS_UPDATED,
+    );
+    expect(infosUpdatedEvents[0].payload.photo_url).toBe(photo_url[0]);
+    expect(infosUpdatedEvents[1].payload.photo_url).toBe(photo_url[1]);
+  });
+
+  /*
+  ===================================================================
+  -------------------------------------------------------------------
+        helper ws connect
+  -------------------------------------------------------------------
+  ===================================================================
+  */
+
+  async function connectUserWs(tmpUser: Partial<User>) {
+    const tmpUserCookies = await commons
+      .logUser(tmpUser.login)
+      .then((response) => {
+        tmpUser.id = response.body.id;
+        return commons.getCookies(response);
+      });
+
+    await WsChatHelpers.getToken(tmpUserCookies).then((resp) => {
+      token = resp.body?.token;
+      expect(token).toBeDefined();
+      expect(token.length).toBeGreaterThan(1);
+    });
+
+    const newConn = io('ws://localhost:3000/chat', { auth: { key: token } });
+    newConn.on('connect_error', () => {
+      throw new Error('Should not fail');
+    });
+    return newConn;
+  }
+
+  /* =================================================================== */
+
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone changes their online status`, async () => {
+    let roomId: string;
+    let tmpWsUser = createdUsers[3];
+    let tmpWsConn: Socket;
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addParticipant(httpUserCookie, roomId, {
+              id: createdUsers[3].id,
+            });
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            tmpWsConn = await connectUserWs(tmpWsUser); // <--------- new user added to generate event
+            await new Promise((res) => {
+              setTimeout(() => {
+                tmpWsConn.off('connect_error');
+                tmpWsConn.disconnect();
+                res('');
+              }, 80);
+            });
+          });
+      }, 100);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 350);
+    });
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+      { ev: Events.PUBLIC_USER_INFOS_UPDATED },
+    ];
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    WsChatHelpers.testEventsPayload();
+    const infosUpdatedEvents = events.filter(
+      (e) => e.ev === Events.PUBLIC_USER_INFOS_UPDATED,
+    );
+    expect(infosUpdatedEvents[0].payload.id).toBe(tmpWsUser.id);
+    expect(infosUpdatedEvents[0].payload.status).toBe('online');
+    expect(infosUpdatedEvents[1].payload.id).toBe(tmpWsUser.id);
+    expect(infosUpdatedEvents[1].payload.status).toBe('offline');
+  });
+
+  it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone else is banned`, async () => {
+    let roomId: string;
+    let bannedUser = createdUsers[2];
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }, { id: bannedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addRestriction(httpUserCookie, roomId, {
+              user_id: bannedUser.id,
+              restriction_type: 'ban',
+              duration: 42,
+            });
+          })
+          .then((response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+          });
+      }, 100);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 250);
+    });
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+    ];
+
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    const roomParticipantUpdates = events.filter(
+      (e) => e.ev === Events.ROOM_PARTICIPANTS_UPDATED,
+    );
+
+    let participants = roomParticipantUpdates[1].payload
+      .participants as Participant[];
+    expect(participants.some((p) => p.user.id === bannedUser.id)).toBeTruthy();
+    participants = roomParticipantUpdates[2].payload
+      .participants as Participant[];
+    expect(participants.some((p) => p.user.id === bannedUser.id)).toBeFalsy();
 
     WsChatHelpers.testEventsPayload();
   });

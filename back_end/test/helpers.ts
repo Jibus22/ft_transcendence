@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { User } from '../src/modules/users/entities/users.entity';
+var fs = require('mz/fs');
 
 export class CommonTest {
   constructor(private app: INestApplication) {}
@@ -89,5 +90,25 @@ export class CommonTest {
     return await request(this.app.getHttpServer())
       .delete('/dev/deleteUserBatch')
       .send(users);
+  }
+
+  async updateUsername(tmpCookies: string[], newUsername: string) {
+    return await request(this.app.getHttpServer())
+      .patch(`/me`)
+      .set('Cookie', tmpCookies)
+      .send({
+        login: newUsername,
+      });
+  }
+
+  async updateProfilPicture(tmpCookies: string[], filePath: string) {
+    const fullPath = `${__dirname}/${filePath}`
+    return fs.exists(fullPath).then((exists) => {
+      if (!exists) throw new Error(`test file is missing ! ${fullPath}`);
+      return request(this.app.getHttpServer())
+      .post(`/me/photo`)
+      .set('Cookie', tmpCookies)
+      .attach('file', fullPath)
+    });
   }
 }

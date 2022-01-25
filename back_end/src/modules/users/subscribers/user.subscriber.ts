@@ -1,17 +1,22 @@
+import { plainToClass } from 'class-transformer';
 import {
   Connection,
   EntitySubscriberInterface,
   EventSubscriber,
   UpdateEvent,
 } from 'typeorm';
+import { AppUtilsService } from '../../../utils/app-utils.service';
 import { Participant } from '../../chat/entities/participant.entity';
-import { ChatGateway, Events } from '../../chat/gateways/chat.gateway';
+import { Events } from '../../chat/gateways/chat.gateway';
+import { ChatGatewayService } from '../../chat/gateways/chatGateway.service';
+import { UserDto } from '../dtos/user.dto';
 import { User } from '../entities/users.entity';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
   constructor(
-    private readonly chatGateway: ChatGateway,
+    private readonly utils: AppUtilsService,
+    private readonly chatGateway: ChatGatewayService,
     connection: Connection,
   ) {
     connection.subscribers.push(this);
@@ -21,46 +26,41 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     return User;
   }
 
-  private async fetchPossiblyMissingData(event: UpdateEvent<User>) {
-    let neededRelations: string[] = [];
-    if (!event.entity?.local_photo) neededRelations.push('local_photo');
-    if (!event.entity?.room_participations) {
-      neededRelations.push('room_participations');
-      neededRelations.push('room_participations.room');
-    }
-
-    if (neededRelations.length) {
-      await event.connection
-        .getRepository(User)
-        .findOne(event.entity.id, { relations: neededRelations })
-        .then((participant) => {
-          neededRelations.forEach((relation) => {
-            event.entity[relation] = participant[relation];
-          });
-        });
-    }
-  }
-
   private isValidForEventEmit(event: UpdateEvent<User>) {
-    const before: User = event.databaseEntity;
-    const after: User = event.entity as User;
+    const afterUpdate: User = event.entity as User;
     return (
-      before.room_participations.length &&
-      (before.login !== after.login ||
-        before.local_photo?.id !== after.local_photo?.id)
+      afterUpdate.room_participations.length &&
+      event.updatedColumns.some(
+        (update) =>
+          update.propertyName === 'login' ||
+          update.propertyName === 'ws_id' ||
+//TODO add ingame status here          // update.propertyName === 'in_game' ||
+          update.propertyName === 'use_local_photo',
+      )
     );
   }
 
-  async beforeUpdate(event: UpdateEvent<User>) {
-    await this.fetchPossiblyMissingData(event);
-
-    if (this.isValidForEventEmit(event)) {
-      const roomParticipations = event.databaseEntity
-        .room_participations as Participant[];
-      const dest = roomParticipations.map((part) => part.room);
-      this.chatGateway.sendEventToRoom(dest, Events.ROOM_PARTICIPANTS_UPDATED, {
-        id: event.entity.id,
-      });
-    }
+  async afterUpdate(event: UpdateEvent<User>) {
+    await this.utils
+      .fetchPossiblyMissingData(
+        event.connection.getRepository(User),
+        event.entity,
+        ['room_participations', 'room_participations.room', 'local_photo'],
+      )
+      .then(() => {
+        if (this.isValidForEventEmit(event)) {
+          const roomParticipations = event.entity
+            .room_participations as Participant[];
+          const dest = roomParticipations.map((part) => part.room);
+          this.chatGateway.sendEventToRoom(
+            dest,
+            Events.PUBLIC_USER_INFOS_UPDATED,
+            plainToClass(UserDto, event.entity, {
+              excludeExtraneousValues: true,
+            }),
+          );
+        }
+      })
+      .catch((e) => console.log(e));
   }
 }

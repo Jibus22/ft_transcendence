@@ -101,8 +101,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
   ===================================================================
   */
 
-
- it(`listen to ${Events.ROOM_PARTICIPANTS_UPDATED} event for a participating room, after someone leave the room`, async () => {
+  it(`listen to ${Events.USER_REMOVED}, after room is deleted`, async () => {
     let roomId: string;
     WsChatHelpers.setupToken(token);
     const conn = WsChatHelpers.connectSocket();
@@ -123,20 +122,9 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
             roomId = response.body?.id;
             expect(roomId).toBeDefined();
             expect(roomId).not.toHaveLength(0);
-            return await chatHelper.addParticipant(httpUserCookie, roomId, {
-              id: createdUsers[2].id, // <--------- new user added to generate event
-            });
+            return await chatHelper.deleteRoom(httpUserCookie, roomId);
           })
-          .then(async (response) => {
-            const cookiesForUser2 = await commons
-              .logUser(createdUsers[2].login)
-              .then((resp) => commons.getCookies(resp))
-              .catch((err) => {
-                throw new Error(`Signin should have worked: ${err}`);
-              });
-            return await chatHelper.leaveRoom(cookiesForUser2, roomId);
-          })
-          .then(async (response) => {
+          .then((response) => {
             expect(response.status).toBe(HttpStatus.OK);
           });
       }, 100);
@@ -151,19 +139,145 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
       { ev: Events.CONNECT },
       { ev: Events.USER_ADDED },
       { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
-      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.USER_REMOVED },
     ];
-
-    // console.log('http', httpLoggedUser.login, httpLoggedUser.id);
-    // console.log('ws', wsLoggedUser.login, wsLoggedUser.id);
-    // console.log('added', createdUsers[2].login, createdUsers[2].id);
-    // console.log(JSON.stringify(events, null, 4));
 
     expect(events).toHaveLength(expectedEvents.length);
     expect(events).toMatchObject(expectedEvents);
+    const userRemovedEvents = events.filter(
+      (e) => e.ev === Events.USER_REMOVED,
+    );
+    expect(userRemovedEvents[0].payload.id).toBe(roomId);
+    WsChatHelpers.testEventsPayload();
+  });
 
+  it(`listen to ${Events.USER_BANNED}, after someone banned user`, async () => {
+    let roomId: string;
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.addRestriction(httpUserCookie, roomId, {
+              user_id: wsLoggedUser.id,
+              restriction_type: 'ban',
+              duration: 42,
+            });
+          })
+          .then((response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+          });
+      }, 100);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 250);
+    });
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.USER_BANNED },
+      { ev: Events.USER_REMOVED },
+    ];
+
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    const userRemovedEvents = events.filter(
+      (e) => e.ev === Events.USER_REMOVED,
+    );
+    expect(userRemovedEvents[0].payload.id).toBe(roomId);
+    WsChatHelpers.testEventsPayload();
+  });
+
+  it(`listen to ${Events.USER_REMOVED}, after user is made moderator then removed moderation status`, async () => {
+    let roomId: string;
+    let wsLoggedUserParticipant: Participant;
+    WsChatHelpers.setupToken(token);
+    const conn = WsChatHelpers.connectSocket();
+    conn.on('connect_error', () => {
+      throw new Error('Should not receive this event');
+    });
+    WsChatHelpers.setAllEventsListenners(conn);
+
+    await new Promise((resolve, rejects) => {
+      setTimeout(async () => {
+        await chatHelper
+          .createSimpleRoom({
+            participants: [{ id: wsLoggedUser.id }],
+            is_private: true,
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.CREATED);
+            wsLoggedUserParticipant = (
+              response.body.participants as Participant[]
+            ).find((p) => p.user.id === wsLoggedUser.id);
+            roomId = response.body?.id;
+            expect(roomId).toBeDefined();
+            expect(roomId).not.toHaveLength(0);
+            return await chatHelper.updateModerators(httpUserCookie, roomId, {
+              participant_id: wsLoggedUserParticipant.id,
+              is_moderator: true,
+            });
+          })
+          .then(async (response) => {
+            expect(response.status).toBe(HttpStatus.OK);
+            return await chatHelper.updateModerators(httpUserCookie, roomId, {
+              participant_id: wsLoggedUserParticipant.id,
+              is_moderator: false,
+            });
+          })
+          .then((response) => {
+            expect(response.status).toBe(HttpStatus.OK);
+          });
+      }, 100);
+
+      setTimeout(async () => {
+        resolve('ok');
+      }, 250);
+    });
+
+    const events = WsChatHelpers.events;
+    const expectedEvents = [
+      { ev: Events.CONNECT },
+      { ev: Events.USER_ADDED },
+      { ev: Events.ROOM_PARTICIPANTS_UPDATED },
+      { ev: Events.USER_MODERATION },
+      { ev: Events.USER_MODERATION },
+    ];
+    expect(events).toHaveLength(expectedEvents.length);
+    expect(events).toMatchObject(expectedEvents);
+    const userModerationEvents = events.filter(
+      (e) => e.ev === Events.USER_MODERATION,
+    );
+    expect(userModerationEvents[0].payload.id).toBe(roomId);
+    let participant = (
+      userModerationEvents[0].payload.participants as Participant[]
+    ).find((p) => p.user.id === wsLoggedUser.id);
+    expect(participant).toBeDefined();
+    expect(participant.is_moderator).toBeTruthy();
+
+    participant = (
+      userModerationEvents[1].payload.participants as Participant[]
+    ).find((p) => p.user.id === wsLoggedUser.id);
+    expect(participant).toBeDefined();
+    expect(participant.is_moderator).toBeFalsy();
     WsChatHelpers.testEventsPayload();
   });
 }); // <<< end of describBlock

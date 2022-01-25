@@ -10,6 +10,9 @@ export class Player {
   @Column({ type: 'int', default: 0 })
   score: number;
 
+  @Column({ default: null })
+  ws_id: string;
+
   @ManyToOne(() => User, (user) => user.players)
   user: User;
 

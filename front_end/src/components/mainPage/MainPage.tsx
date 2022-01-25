@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
-import './mainPage.scss';
-import { Routes, Route } from 'react-router-dom';
-import { Header, ParamUser, UserRank, HistoryGame, Game, SnackBarre, ErrorPage, Play } from '..';
-import axios from 'axios';
-import { useMainPage } from '../../MainPageContext';
-import { io, Socket } from 'socket.io-client';
-import { useNavigate } from 'react-router-dom';
-import { useMount } from 'ahooks';
-// import { useSafeState } from 'ahooks';
 import { Backdrop, CircularProgress } from '@mui/material';
+import { useMount, useSafeState } from 'ahooks';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { io, Socket } from 'socket.io-client';
+import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
+import { useMainPage } from '../../MainPageContext';
+import './mainPage.scss';
 
 const MainPage = () => {
-	const { timeSnack, setData, setTimeSnack } = useMainPage();
+	const { timeSnack, setData, setTimeSnack, leaveGame } = useMainPage();
 	// const [wsStatus, setWsStatus] = useSafeState<Socket | undefined>(undefined);
-	// const [wsGame, setWsGame] = useSafeState<Socket | undefined>(undefined);
 	const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
 	const [wsGame, setWsGame] = useState<Socket | undefined>(undefined);
 	const [time, setTime] = useState(false);
@@ -85,9 +82,6 @@ const MainPage = () => {
 		});
   	socket.on ('userBanned', (message)=> {
 			console.log(`💌  Event: userBanned ->`, message);
-		});
-  	socket.on ('userMuted', (message)=> {
-			console.log(`💌  Event: userMuted ->`, message);
 		});
 
 	};
@@ -186,9 +180,19 @@ const MainPage = () => {
 	};
 
 	function disconnectGameWs() {
-		console.log('cloc ', wsGame?.id);
+		console.log('Click disconnect Chat ', wsGame?.id);
 		doDisconnect(wsGame, setWsGame);
 	}
+
+	const headerLeave = () => {
+		if (!leaveGame && isHeader) {
+			return (
+				<div>
+					<Header />
+				</div>
+			);
+		}
+	};
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
@@ -196,19 +200,14 @@ const MainPage = () => {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
-			{isHeader ? (
-				<div>
-					<button onClick={disconnectGameWs} >DISCONNECT GAME WS</button>
-					<Header />
-				</div>
-			) : null}
+			<div><button onClick={disconnectGameWs} >DISCONNECT GAME WS</button></div>
+			{headerLeave()}
 
 			<Routes>
-				<Route path="/MainPage/*" element={<Game wsStatus={wsStatus} />} />
+				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser setTime={setTime} />} />
 				<Route path="/Rank" element={<UserRank />} />
-
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 		</div>

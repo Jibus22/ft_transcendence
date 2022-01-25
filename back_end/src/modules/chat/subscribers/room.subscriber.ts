@@ -1,3 +1,4 @@
+import { plainToClass } from 'class-transformer';
 import {
   Connection,
   EntitySubscriberInterface,
@@ -7,14 +8,16 @@ import {
   UpdateEvent,
 } from 'typeorm';
 import { AppUtilsService } from '../../../utils/app-utils.service';
+import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
-import { ChatGateway, Events } from '../gateways/chat.gateway';
+import { Events } from '../gateways/chat.gateway';
+import { ChatGatewayService } from '../gateways/chatGateway.service';
 
 @EventSubscriber()
 export class RoomSubscriber implements EntitySubscriberInterface<Room> {
   constructor(
     private readonly utils: AppUtilsService,
-    private readonly chatGateway: ChatGateway,
+    private readonly chatGateway: ChatGatewayService,
     connection: Connection,
   ) {
     connection.subscribers.push(this);
@@ -32,9 +35,10 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     );
 
     if (event.entity.is_private === false) {
-      this.chatGateway.sendEventToServer(Events.PUBLIC_ROOM_CREATED, {
-        id: event.entity.id,
-      });
+      this.chatGateway.sendEventToServer(
+        Events.PUBLIC_ROOM_CREATED,
+        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
+      );
     }
   }
 
@@ -46,9 +50,10 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     );
 
     if (event.databaseEntity.is_private === false) {
-      this.chatGateway.sendEventToServer(Events.PUBLIC_ROOM_UPDATED, {
-        id: event.entity.id,
-      });
+      this.chatGateway.sendEventToServer(
+        Events.PUBLIC_ROOM_UPDATED,
+        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
+      );
     }
   }
 
@@ -60,9 +65,10 @@ export class RoomSubscriber implements EntitySubscriberInterface<Room> {
     );
 
     if (event.entity.is_private === false) {
-      this.chatGateway.sendEventToServer(Events.PUBLIC_ROOM_REMOVED, {
-        id: event.entity.id,
-      });
+      this.chatGateway.sendEventToServer(
+        Events.PUBLIC_ROOM_REMOVED,
+        plainToClass(RoomDto, event.entity, { excludeExtraneousValues: true }),
+      );
     }
   }
 }

@@ -28,31 +28,4 @@ export class UserPhoto {
 
   @Column({ unique: true, nullable: false })
   fileName: string;
-
-  // ----------------------
-
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Inserted UserPhoto: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Removed UserPhoto: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Hook | Updated UserPhoto: ', this);
-    }
-  }
 }

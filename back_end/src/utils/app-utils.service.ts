@@ -22,9 +22,8 @@ export class AppUtilsService {
 
   getNestedProperty(obj: Object, path: string) {
     const index = path.indexOf('.');
-    console.log(path, index, obj[path]);
     if (!obj[path]) {
-      return undefined
+      return undefined;
     }
     if (index <= 0) {
       return obj[path];
@@ -39,10 +38,12 @@ export class AppUtilsService {
     let relationHierarchy: string[] = [];
     let tmpTree = relation.split('.');
 
-    while(tmpTree.length) {
-      relationHierarchy.push(tmpTree.reduce((prev, curr) => {
+    while (tmpTree.length) {
+      relationHierarchy.push(
+        tmpTree.reduce((prev, curr) => {
           return `${prev}.${curr}`;
-      }));
+        }),
+      );
       tmpTree.pop();
     }
     return relationHierarchy;
@@ -51,7 +52,7 @@ export class AppUtilsService {
   private sortAndRemoveDuplicates(neededRelations: string[]) {
     const sortedAndDuplicateRemoved = new Set(neededRelations.sort());
     neededRelations.splice(0);
-    sortedAndDuplicateRemoved.forEach(val => neededRelations.push(val));
+    sortedAndDuplicateRemoved.forEach((val) => neededRelations.push(val));
   }
 
   async fetchPossiblyMissingData<EntityType extends ObjectLiteral>(
@@ -68,13 +69,11 @@ export class AppUtilsService {
 
     if (neededRelations.length) {
       this.sortAndRemoveDuplicates(neededRelations);
-      console.log('needed relations: after filter sort ---> ', neededRelations);
       await repo
         .findOne(entity.id, { relations: neededRelations })
         .then((fullEntity) => {
           Object.assign(entity, fullEntity);
-        })
-        .catch((e) => console.log(e));
+        });
     }
   }
 }

@@ -1,0 +1,104 @@
+.mainNavHeader {
+	.MuiSvgIcon-root {
+		width: 40px;
+		height: 40px;
+		color: white;
+	}
+}
+
+.drawerMui {
+	.MuiPaper-root {
+		width: 100%;
+
+		background: url('../src//Desktop-Menu\ \(1\).png');
+		background-size: 100% 100%;
+		background-color: #e69c6a;
+
+		.navTextMenu {
+			display: flex;
+			flex-direction: column;
+
+			align-items: center;
+
+			height: 100%;
+
+			h1 {
+				font-size: 3vw;
+			}
+		}
+
+		.closeNav {
+			display: flex;
+			justify-content: flex-end;
+
+			width: 98%;
+
+			margin-top: 20px;
+
+			.MuiSvgIcon-root {
+				width: 8vw;
+				height: 8vw;
+				color: black;
+			}
+		}
+
+		.userNav {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			margin-top: 100px;
+
+			.MuiBadge-badge {
+				width: 15%;
+				height: 15%;
+
+				border-radius: 100%;
+				box-shadow: 0 0 0 0.5px;
+			}
+			.MuiBadge-badge::after {
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				animation: badgeAnim 1.2s infinite ease-in-out;
+				border: 1px solid;
+				content: '';
+			}
+
+			.MuiAvatar-root {
+				width: 23vw;
+				height: 23vw;
+			}
+			h1 {
+				margin-top: 5px;
+				color: white;
+			}
+		}
+
+		.mainNav {
+			display: flex;
+			flex-direction: column;
+
+			align-items: center;
+
+			margin-top: 35px;
+			padding-bottom: 50px;
+
+			.navHeader {
+				margin-top: 30px;
+			}
+
+			h1 {
+				text-align: center;
+				transition: ease-out 0.125s;
+			}
+
+			h1:hover {
+				font-size: 3.5vw;
+			}
+		}
+	}
+}
