@@ -53,10 +53,12 @@ class PongGame extends React.Component {
 	gamerunning = true;
 	powerUp = true;
 	imgBackground = new Image();
-	Font:FontFace = new FontFace(
+	font:string = "";
+	fontFace:FontFace = new FontFace(
 		"",
 		""
 	);
+	map =1;
 
 	constructor(props: any) {
 		super(props);
@@ -70,27 +72,32 @@ class PongGame extends React.Component {
 		this._ctx!.fillStyle = 'black';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
 		this._drawBackground();
-		//this._ctx!.font = '30px Arial';
-		this._ctx!.font = "30px Orbitron";
-		this._ctx!.fillStyle = 'white';
-		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
-		this._ctx!.fillStyle = '38FC25';
+	//	this._ctx!.fillStyle = 'white';
+	//	this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
+	//	this._ctx!.fillStyle = '38FC25';
 		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2);
 	}
 
 	_initPongGame() {
 		this._canvas = document.querySelector('canvas')!;
 		this._ctx = this._canvas.getContext('2d')!;
-		this.imgBackground.src ="Fondmap1.jpeg";
-		this.imgBackground.alt ="alt";
-		this.Font = new FontFace(
-			"Orbitron",
-			"url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)"
-		);
-		this.Font.load().then((font) => {
-			document.fonts.add(font);
-			this._ctx!.font = "30px Orbitron";
-		});
+		this.font = '30px Arial';
+		this._ctx!.font = this.font;
+		if (this.map === 1)
+		{
+			this.imgBackground.src ="Fondmap1.jpeg";
+			this.imgBackground.alt ="alt";
+			this.fontFace = new FontFace(
+				"Orbitron",
+				"url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)"
+			);
+			this._ctx!.fillStyle = '38FC25';
+			this.fontFace.load().then((font) => {
+				document.fonts.add(font);
+				this.font = '30px Orbitron';
+				this._ctx!.font = this.font;
+			});
+		}
 		this._printText('Starting Game');
 	}
 
@@ -236,6 +243,8 @@ class PongGame extends React.Component {
 		gradient1.addColorStop(0.5,"#38FC25");
 		gradient1.addColorStop(1,"black");
 		this._ctx!.fillStyle = gradient1;
+		this._ctx!.shadowColor = '#38FC25';
+		this._ctx!.shadowBlur = 30;
 		this._ctx!.fillRect(this._playerOne.x, this._playerOne.y, this._widthPlayer, this._playerOne.size);
 
 		let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
