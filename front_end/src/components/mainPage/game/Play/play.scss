@@ -110,7 +110,7 @@
 			font-family: Montserrat, sans-serif;
 			margin: 3% auto;
 			width: 250px;
-
+			text-align: center;
 			color: red;
 			font-size: 1vw;
 		}
@@ -193,6 +193,11 @@
 		.formDivButton ::placeholder {
 			top: 56%;
 		}
+
+		.MuiFormHelperText-root {
+			line-height: 20px;
+			margin-right: 34px !important;
+		}
 	}
 }
 
@@ -224,6 +229,9 @@
 				margin: 3% auto;
 				color: red;
 				font-size: 1vw;
+
+				width: 12vw;
+				line-height: 15px;
 			}
 		}
 
@@ -332,9 +340,11 @@
 
 			.MuiFormHelperText-root {
 				font-family: Montserrat, sans-serif;
-				margin: 3% 0 0 21%;
+				margin: 3% 0 0 3%;
 				color: red;
 				font-size: 10px;
+				width: 140px;
+				text-align: center;
 			}
 		}
 

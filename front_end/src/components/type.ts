@@ -31,6 +31,9 @@ export interface UserMe {
 	status: string;
 	storeCustomPhoto: boolean;
 	hasTwoFASecret: boolean;
+	games_nbr: number;
+	wins_nbr: number;
+	losses_nbr: number;
 }
 
 export interface LoginGame {

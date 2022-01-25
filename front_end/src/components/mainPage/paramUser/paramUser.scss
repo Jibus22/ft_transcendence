@@ -589,6 +589,13 @@
 
 @media screen and (max-width: 1180px) {
 	.mainParamUser {
+		.MuiInputAdornment-root {
+			width: 15px;
+		}
+		.MuiIconButton-root {
+			margin-left: -5px !important;
+		}
+
 		.alertValidateIcon {
 			top: 414px !important;
 		}
