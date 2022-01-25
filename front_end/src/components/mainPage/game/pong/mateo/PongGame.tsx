@@ -53,14 +53,13 @@ class PongGame extends React.Component {
 	gamerunning = true;
 	powerUp = true;
 	imgBackground = new Image();
-	/*Font:FontFace = new FontFace(
-		"Orbitron",
-		"https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap"
-	);*/
+	Font:FontFace = new FontFace(
+		"",
+		""
+	);
 
 	constructor(props: any) {
 		super(props);
-		
 	}
 
 	sleep() {
@@ -71,8 +70,8 @@ class PongGame extends React.Component {
 		this._ctx!.fillStyle = 'black';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
 		this._drawBackground();
-		this._ctx!.font = '30px Arial';
-		//this._ctx!.font = "30px Orbitron";
+		//this._ctx!.font = '30px Arial';
+		this._ctx!.font = "30px Orbitron";
 		this._ctx!.fillStyle = 'white';
 		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
 		this._ctx!.fillStyle = '38FC25';
@@ -84,14 +83,14 @@ class PongGame extends React.Component {
 		this._ctx = this._canvas.getContext('2d')!;
 		this.imgBackground.src ="Fondmap1.jpeg";
 		this.imgBackground.alt ="alt";
-		/*this.Font = new FontFace(
+		this.Font = new FontFace(
 			"Orbitron",
-			"https://fonts.googleapis.com/css2?family=Orbitron&display=swap"
+			"url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)"
 		);
 		this.Font.load().then((font) => {
 			document.fonts.add(font);
 			this._ctx!.font = "30px Orbitron";
-		});*/
+		});
 		this._printText('Starting Game');
 	}
 
@@ -248,7 +247,7 @@ class PongGame extends React.Component {
 
 		//Score
 		this._ctx!.font = '30px Arial';
-		//this._ctx!.font = "30px Orbitron";
+		this._ctx!.font = "30px Orbitron";
 
 		this._ctx!.fillStyle = '#38FC25';
 		this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
@@ -292,9 +291,9 @@ class PongGame extends React.Component {
 	}
 
 	componentDidMount() {
-		let rep = prompt('J1 J2 ou W');
-		if (rep === 'J1') this._P1 = true;
-		else if (rep === 'J2') this._P2 = true;
+		 let rep = prompt('J1 J2 ou W');
+		 if (rep === 'J1') this._P1 = true;
+		 else if (rep === 'J2') this._P2 = true;
 		this._initPongGame();
 		client.onmessage = (message: any) => {
 			const data = JSON.parse(message.data);
