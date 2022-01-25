@@ -54,12 +54,13 @@ class PongGame extends React.Component {
 	gamerunning = true;
 	powerUp = true;
 	imgBackground = new Image();
-	font:string = "";
+	font:string = "30px Arial";
+	fillStyle:string = "white";
 	fontFace:FontFace = new FontFace(
 		"",
 		""
 	);
-	map =1;
+	map = 0;
 
 	sleep() {
 		sleep(this.sleepduration);
@@ -69,9 +70,9 @@ class PongGame extends React.Component {
 		this._ctx!.fillStyle = 'black';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
 		this._drawBackground();
-	//	this._ctx!.fillStyle = 'white';
-	//	this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
-	//	this._ctx!.fillStyle = '38FC25';
+		this._ctx!.fillStyle = 'white';
+		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
+		this._ctx!.fillStyle = this.fillStyle;
 		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2);
 	}
 
@@ -88,7 +89,10 @@ class PongGame extends React.Component {
 				"Orbitron",
 				"url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)"
 			);
-			this._ctx!.fillStyle = '38FC25';
+			this.fillStyle = '38FC25';
+			this._ctx!.fillStyle = this.fillStyle;
+			this._ctx!.shadowColor = '#38FC25';
+			this._ctx!.shadowBlur = 30;
 			this.fontFace.load().then((font) => {
 				document.fonts.add(font);
 				this.font = '30px Orbitron';
@@ -222,40 +226,44 @@ class PongGame extends React.Component {
 	_drawBackground(){
 		this._ctx!.fillStyle = 'black';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
-		this._ctx!.drawImage(this.imgBackground, 0,0,700, 600);
+
+		if (this.map === 1)
+			this._ctx!.drawImage(this.imgBackground, 0,0,700, 600);
 	}
 
 	_draw(){
 		this._drawBackground();
 
 		//draw Ball
-		this._ctx!.fillStyle = '#38FC25';
+		this._ctx!.fillStyle = this.fillStyle;
 		this._ctx!.beginPath();
 		this._ctx!.arc(this._ball.x, this._ball.y, this._ball.size, 0, 2 * Math.PI);
 		this._ctx!.fill();
 
-		//Draw Player
-		let gradient1 = this._ctx!.createLinearGradient(0, this.height/2, this._playerOne.width * 3, this.height/2)!;
-		gradient1.addColorStop(0,"black");
-		gradient1.addColorStop(0.5,"#38FC25");
-		gradient1.addColorStop(1,"black");
-		this._ctx!.fillStyle = gradient1;
-		this._ctx!.shadowColor = '#38FC25';
-		this._ctx!.shadowBlur = 30;
+		//Draw Player1
+		if (this.map === 1)
+		{
+			let gradient1 = this._ctx!.createLinearGradient(0, this.height/2, this._playerOne.width * 3, this.height/2)!;
+			gradient1.addColorStop(0,"black");
+			gradient1.addColorStop(0.5,"#38FC25");
+			gradient1.addColorStop(1,"black");
+			this._ctx!.fillStyle = gradient1;
+		}
 		this._ctx!.fillRect(this._playerOne.x, this._playerOne.y, this._widthPlayer, this._playerOne.size);
 
-		let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
-		gradient2.addColorStop(0,"black");
-		gradient2.addColorStop(0.5,"#38FC25");
-		gradient2.addColorStop(1,"black");
-		this._ctx!.fillStyle = gradient2;
+		//Draw Player 2
+		if (this.map === 1)
+		{
+			let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
+			gradient2.addColorStop(0,"black");
+			gradient2.addColorStop(0.5,"#38FC25");
+			gradient2.addColorStop(1,"black");
+			this._ctx!.fillStyle = gradient2;
+		}
 		this._ctx!.fillRect(this._playerTwo.x, this._playerTwo.y, this._widthPlayer, this._playerTwo.size);
 
 		//Score
-		this._ctx!.font = '30px Arial';
-		this._ctx!.font = "30px Orbitron";
-
-		this._ctx!.fillStyle = '#38FC25';
+		this._ctx!.fillStyle = this.fillStyle;
 		this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
 	};
 
@@ -318,8 +326,8 @@ class PongGame extends React.Component {
 				this.scoreP2 = data.P2;
 			}
 			if (!this._P1 && data.object === 'PowerUp') {
-				if (data.powerUp === 'inverted Control' && data.J === 2) this._playerTwo._invertControlTemporarily();
-				if (data.powerUp === 'large Paddle' && data.J === 2) this._playerTwo._largePaddle(this.height);
+				if (data.powerUp === 'inverted Control' && data.J === 2 && this._P2) this._playerTwo._invertControlTemporarily();
+				if (data.powerUp === 'large Paddle' && data.J === 2 && this._P2) this._playerTwo._largePaddle(this.height);
 				this.gamerunning = false;
 				let message = 'Player ';
 				if (data.J === 1) message += 'One ';
