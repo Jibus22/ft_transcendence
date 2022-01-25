@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import axios, { AxiosError } from 'axios';
 import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { useNavigate } from 'react-router-dom';
+import { useMainPage } from '../../../../../MainPageContext';
 
 interface Props {
 	closeQR: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,18 +15,7 @@ interface Props {
 export default function FormAuth({ closeQR }: Props) {
 	const [open, setOpen] = useState(false);
 
-	let navigate = useNavigate();
-
-	const disconectAuth = async () => {
-		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
-				withCredentials: true,
-			});
-			navigate('/');
-		} catch (error) {
-			console.log(error);
-		}
-	};
+	const { disconectAuth } = useMainPage();
 
 	const openDialog = () => {
 		setOpen(true);

@@ -58,7 +58,7 @@ export default function MainPong() {
 
 	useEffect(() => {
 		setLeaveGame(true);
-
+		console.log(isGameRandom);
 		if (isChoiceMap === false) {
 			countMap > 0 && setTimeout(() => setCountMap(countMap - 1), 1000);
 		}

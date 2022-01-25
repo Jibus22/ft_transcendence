@@ -7,6 +7,7 @@ import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
 import { useNavigate } from 'react-router-dom';
 import MainPong from '../../game/pong/MainPong';
+import axios, { AxiosError } from 'axios';
 
 interface Props {
 	data: Array<Rank>;
@@ -26,18 +27,42 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor, setIsGameRandom, setStartGame } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame, userName, setDataUserGame } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
 
+	const fetchDataChallenge = async (data: User) => {
+		const game = {
+			loginP1: userName,
+			loginP2: data.login,
+			login: '',
+			photo_url: '',
+		};
+
+		try {
+			const response = await axios.post('http://localhost:3000/game', game, {
+				withCredentials: true,
+			});
+			setDataUserGame([response.data]);
+		} catch (error) {
+			const err = error as AxiosError;
+			if (err.response?.status === 403) {
+				const dataError = err.response?.data;
+				// setErrors({ loggin: dataError['message'] });
+				console.log(dataError);
+			}
+		}
+	};
+
 	const getGame = (data: User) => () => {
-		setIsGameRandom(true);
+		fetchDataChallenge(data);
+		setIsGameRandom(false);
 		setTime(true);
 		setTimeout(() => {
 			setTime(false);
-			// setStartGame(true);
-			// navigate('/Mainpage');
+			setStartGame(true);
+			navigate('/Mainpage');
 		}, 2000);
 	};
 

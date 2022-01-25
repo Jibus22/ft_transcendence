@@ -25,7 +25,7 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 	});
 
-	const { setIsFriends, userName, setDataUserGame, setStartGame, setIsGameRandom } = useMainPage();
+	const { userName, setDataUserGame, setIsGameRandom } = useMainPage();
 
 	const validationSchema = yup.object({
 		loggin: yup.string().required('Enter a Nickname'),
@@ -45,16 +45,12 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 			};
 
 			try {
-				const response = await axios.post('http://localhost:3000/game', game, {
+				const response = await axios.post('http://localhost:3000/game/friend', game, {
 					withCredentials: true,
 				});
-				// console.log(response);
 				setDataUserGame([response.data]);
-				setStartGame(true);
 				setIsGameRandom(false);
-
 				Loadingclick();
-				setIsFriends(true);
 			} catch (error) {
 				const err = error as AxiosError;
 

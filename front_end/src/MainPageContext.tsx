@@ -1,7 +1,8 @@
 import ErrorIcon from '@mui/icons-material/Error';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserMe, LoginGame } from './components/type';
 
 interface IMainPageContext {
@@ -54,6 +55,9 @@ interface IMainPageContext {
 
 	isGameRandom: boolean;
 	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
+
+	dialogueDataError: (open: boolean) => void;
+	disconectAuth: () => void;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -81,6 +85,8 @@ const MainPageProvider = (props: any) => {
 	const [dataUserGame, setDataUserGame] = useState<LoginGame[]>([]);
 	const [isGameRandom, setIsGameRandom] = useState(false);
 
+	const navigate = useNavigate();
+
 	// const [dataHistory, setDataHistory] = useState([]);
 
 	const fetchDataUserMe = async () => {
@@ -91,6 +97,17 @@ const MainPageProvider = (props: any) => {
 			setData([data]);
 		} catch (err) {
 			console.log(err);
+		}
+	};
+
+	const disconectAuth = async () => {
+		try {
+			await axios.delete('http://localhost:3000/auth/signout', {
+				withCredentials: true,
+			});
+			navigate('/');
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -173,6 +190,31 @@ const MainPageProvider = (props: any) => {
 		);
 	};
 
+	const dialogueDataError = (open: boolean) => {
+		return (
+			<Dialog
+				open={open}
+				// onClose={handleClick}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+				scroll="body"
+				className="mainDialogMui"
+			>
+				<DialogTitle id="alert-dialog-title" className="d-flex">
+					<ErrorIcon sx={{ color: 'orange' }} />
+					<div className="titleDialogMui">
+						<p>This page could not be loaded</p>
+					</div>
+				</DialogTitle>
+				<DialogContent className="contentDialogMui">
+					<DialogContentText id="alert-dialog-description">You will be disconnected.</DialogContentText>
+					<DialogContentText id="alert-dialog-description">Please identify yourself on the home page</DialogContentText>
+					<CircularProgress className="circularDialogMui" />
+				</DialogContent>
+			</Dialog>
+		);
+	};
+
 	const setStatusColor = (status: string): string => {
 		if (status === 'offline') {
 			return '#FF3F00';
@@ -239,6 +281,11 @@ const MainPageProvider = (props: any) => {
 
 		isGameRandom,
 		setIsGameRandom,
+
+		dialogueDataError,
+
+		disconectAuth,
+		navigate,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

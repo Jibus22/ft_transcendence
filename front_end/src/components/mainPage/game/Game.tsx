@@ -37,7 +37,7 @@ export default function Game({ wsStatus }: Props) {
 			setIsDisable(true);
 			setStartGame(true);
 			// setTimeSnack(true);
-		}, 2000);
+		}, 1500);
 	}
 
 	const selectGame = () => {

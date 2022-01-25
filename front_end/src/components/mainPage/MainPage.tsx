@@ -1,6 +1,6 @@
 import { Backdrop, CircularProgress } from '@mui/material';
 import { useMount, useSafeState } from 'ahooks';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
@@ -9,21 +9,27 @@ import { useMainPage } from '../../MainPageContext';
 import './mainPage.scss';
 
 const MainPage = () => {
-	const { timeSnack, setData, setTimeSnack, leaveGame } = useMainPage();
+	const { timeSnack, setData, setTimeSnack, leaveGame, dialogueDataError, disconectAuth } = useMainPage();
 	const [wsStatus, setWsStatus] = useSafeState<Socket | undefined>(undefined);
 	const [time, setTime] = useState(false);
 	const [isHeader, setIsHeader] = useState(true);
+	const [openDialog, setOpenDIalog] = useState(false);
 
 	let navigate = useNavigate();
 
 	const fetchDataUserMe = async () => {
-		return await axios
-			.get('http://localhost:3000/me', {
+		try {
+			const response = await axios.get('http://localhost:3000/me', {
 				withCredentials: true,
-			})
-			.then((response) => {
-				setData([response.data]);
 			});
+			setData([response.data]);
+		} catch (error) {
+			setOpenDIalog(true);
+			setTimeout(function () {
+				setOpenDIalog(false);
+				disconectAuth();
+			}, 3000);
+		}
 	};
 
 	const setWsCallbacks = (socket: Socket) => {
@@ -53,34 +59,33 @@ const MainPage = () => {
 		 ** Events
 		 * -----------------------*/
 
-		socket.on ('publicRoomCreated', (message)=> {
+		socket.on('publicRoomCreated', (message) => {
 			console.log(`💌  Event: publicRoomCreated ->`, message);
 		});
-  	socket.on ('publicRoomUpdated', (message)=> {
+		socket.on('publicRoomUpdated', (message) => {
 			console.log(`💌  Event: publicRoomUpdated ->`, message);
 		});
-  	socket.on ('publicRoomRemoved', (message)=> {
+		socket.on('publicRoomRemoved', (message) => {
 			console.log(`💌  Event: publicRoomRemoved ->`, message);
 		});
-  	socket.on ('newMessage', (message)=> {
+		socket.on('newMessage', (message) => {
 			console.log(`💌  Event: newMessage ->`, message);
 		});
-  	socket.on ('roomParticipantUpdated', (message)=> {
+		socket.on('roomParticipantUpdated', (message) => {
 			console.log(`💌  Event: roomParticipantUpdated ->`, message);
 		});
-  	socket.on ('userAdded', (message)=> {
+		socket.on('userAdded', (message) => {
 			console.log(`💌  Event: userAdded ->`, message);
 		});
-  	socket.on ('userRemoved', (message)=> {
+		socket.on('userRemoved', (message) => {
 			console.log(`💌  Event: userRemoved ->`, message);
 		});
-  	socket.on ('userModeration', (message)=> {
+		socket.on('userModeration', (message) => {
 			console.log(`💌  Event: userModeration ->`, message);
 		});
-  	socket.on ('userBanned', (message)=> {
+		socket.on('userBanned', (message) => {
 			console.log(`💌  Event: userBanned ->`, message);
 		});
-
 	};
 	const getAuthToken = async () => {
 		return await axios('http://localhost:3000/auth/ws/token', {
@@ -161,6 +166,8 @@ const MainPage = () => {
 				<Route path="/Rank" element={<UserRank />} />
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
+
+			{dialogueDataError(openDialog)}
 		</div>
 	);
 };
