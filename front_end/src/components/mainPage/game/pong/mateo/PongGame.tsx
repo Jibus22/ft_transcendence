@@ -31,7 +31,7 @@ class PongGame extends React.Component {
 	//////////////////////////////////////
 
 	width = 700;
-	height = 350;
+	height = 600;
 	sleepduration = 5000;
 	_canvasStyle = {
 		margin: 'auto',
@@ -52,9 +52,15 @@ class PongGame extends React.Component {
 	scoreP2: number = 0;
 	gamerunning = true;
 	powerUp = true;
+	imgBackground = new Image();
+	/*Font:FontFace = new FontFace(
+		"Orbitron",
+		"https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap"
+	);*/
 
 	constructor(props: any) {
 		super(props);
+		
 	}
 
 	sleep() {
@@ -64,17 +70,28 @@ class PongGame extends React.Component {
 	_printText(str: string) {
 		this._ctx!.fillStyle = 'black';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
+		this._drawBackground();
 		this._ctx!.font = '30px Arial';
-		this._ctx!.fillStyle = 'grey';
-		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 2, this.height / 2 + 2);
+		//this._ctx!.font = "30px Orbitron";
 		this._ctx!.fillStyle = 'white';
+		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
+		this._ctx!.fillStyle = '38FC25';
 		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2);
 	}
 
 	_initPongGame() {
 		this._canvas = document.querySelector('canvas')!;
-
 		this._ctx = this._canvas.getContext('2d')!;
+		this.imgBackground.src ="Fondmap1.jpeg";
+		this.imgBackground.alt ="alt";
+		/*this.Font = new FontFace(
+			"Orbitron",
+			"https://fonts.googleapis.com/css2?family=Orbitron&display=swap"
+		);
+		this.Font.load().then((font) => {
+			document.fonts.add(font);
+			this._ctx!.font = "30px Orbitron";
+		});*/
 		this._printText('Starting Game');
 	}
 
@@ -199,24 +216,41 @@ class PongGame extends React.Component {
 		}
 	}
 
-	_draw = () => {
-		//font
+	_drawBackground(){
 		this._ctx!.fillStyle = 'black';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
-		this._ctx!.fillStyle = 'white';
+		this._ctx!.drawImage(this.imgBackground, 0,0,700, 600);
+	}
+
+	_draw(){
+		this._drawBackground();
 
 		//draw Ball
+		this._ctx!.fillStyle = '#38FC25';
 		this._ctx!.beginPath();
 		this._ctx!.arc(this._ball.x, this._ball.y, this._ball.size, 0, 2 * Math.PI);
 		this._ctx!.fill();
 
 		//Draw Player
+		let gradient1 = this._ctx!.createLinearGradient(0, this.height/2, this._playerOne.width * 3, this.height/2)!;
+		gradient1.addColorStop(0,"black");
+		gradient1.addColorStop(0.5,"#38FC25");
+		gradient1.addColorStop(1,"black");
+		this._ctx!.fillStyle = gradient1;
 		this._ctx!.fillRect(this._playerOne.x, this._playerOne.y, this._widthPlayer, this._playerOne.size);
+
+		let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
+		gradient2.addColorStop(0,"black");
+		gradient2.addColorStop(0.5,"#38FC25");
+		gradient2.addColorStop(1,"black");
+		this._ctx!.fillStyle = gradient2;
 		this._ctx!.fillRect(this._playerTwo.x, this._playerTwo.y, this._widthPlayer, this._playerTwo.size);
 
 		//Score
 		this._ctx!.font = '30px Arial';
-		this._ctx!.fillStyle = 'white';
+		//this._ctx!.font = "30px Orbitron";
+
+		this._ctx!.fillStyle = '#38FC25';
 		this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
 	};
 
@@ -258,9 +292,9 @@ class PongGame extends React.Component {
 	}
 
 	componentDidMount() {
-		// let rep = prompt('J1 J2 ou W');
-		// if (rep === 'J1') this._P1 = true;
-		// else if (rep === 'J2') this._P2 = true;
+		let rep = prompt('J1 J2 ou W');
+		if (rep === 'J1') this._P1 = true;
+		else if (rep === 'J2') this._P2 = true;
 		this._initPongGame();
 		client.onmessage = (message: any) => {
 			const data = JSON.parse(message.data);
