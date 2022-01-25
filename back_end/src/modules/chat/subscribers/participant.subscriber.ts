@@ -5,6 +5,7 @@ import {
   EventSubscriber,
   InsertEvent,
   RemoveEvent,
+  UpdateEvent,
 } from 'typeorm';
 import { AppUtilsService } from '../../../utils/app-utils.service';
 import { RoomDto } from '../dto/room.dto';
@@ -43,11 +44,6 @@ export class ParticipantSubscriber
       }),
     );
 
-    await this.chatGateway.makeClientJoinRoom(
-      event.entity.user,
-      event.entity.room,
-    );
-
     this.chatGateway.sendEventToRoom(
       event.entity.room,
       Events.ROOM_PARTICIPANTS_UPDATED,
@@ -55,6 +51,35 @@ export class ParticipantSubscriber
         excludeExtraneousValues: true,
       }),
     );
+
+    await this.chatGateway.makeClientJoinRoom(
+      event.entity.user,
+      event.entity.room,
+    );
+  }
+
+  private isValidForEventEmit(event: UpdateEvent<Participant>) {
+    return event.updatedColumns.some(
+      (update) => update.propertyName === 'is_moderator',
+    );
+  }
+
+  async afterUpdate(event: UpdateEvent<Participant>) {
+    if (this.isValidForEventEmit(event)) {
+      await this.utils.fetchPossiblyMissingData(
+        event.connection.getRepository(Participant),
+        event.entity,
+        ['room', 'room.participants', 'room.participants.user', 'user'],
+      );
+
+      this.chatGateway.sendEventToClient(
+        event.entity.user,
+        Events.USER_MODERATION,
+        plainToClass(RoomDto, event.entity.room, {
+          excludeExtraneousValues: true,
+        }),
+      );
+    }
   }
 
   async beforeRemove(event: RemoveEvent<Participant>) {
@@ -75,6 +100,14 @@ export class ParticipantSubscriber
     await this.chatGateway.makeClientLeaveRoom(
       event.entity.user,
       event.entity.room,
+    );
+  }
+
+  async afterRemove(event: RemoveEvent<Participant>) {
+    await this.utils.fetchPossiblyMissingData(
+      event.connection.getRepository(Participant),
+      event.entity,
+      ['room', 'room.participants', 'room.participants.user', 'user'],
     );
 
     this.chatGateway.sendEventToRoom(
