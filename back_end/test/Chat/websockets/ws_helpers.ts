@@ -1,5 +1,4 @@
 import { INestApplication } from '@nestjs/common';
-import { eventNames } from 'process';
 import { io, Socket } from 'socket.io-client';
 import * as request from 'supertest';
 import { Events } from '../../../src/modules/chat/gateways/chat.gateway';
@@ -74,6 +73,9 @@ export class WsChatHelpers {
           break;
 
         case Events.USER_ADDED:
+        case Events.USER_REMOVED:
+        case Events.USER_BANNED:
+        case Events.USER_MODERATION:
         case Events.ROOM_PARTICIPANTS_UPDATED:
         case Events.PUBLIC_ROOM_UPDATED:
         case Events.PUBLIC_ROOM_CREATED:
@@ -97,13 +99,6 @@ export class WsChatHelpers {
             'photo_url',
             'status',
           ]);
-          break;
-
-        case Events.USER_REMOVED:
-        case Events.USER_MODERATION:
-        case Events.USER_BANNED:
-        case Events.USER_MUTED:
-          throw new Error(`TEST EXPECTATION UNSET for ${event.ev}`);
           break;
 
         default:

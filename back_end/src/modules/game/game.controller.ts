@@ -15,7 +15,6 @@ import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Serialize } from '../../interceptors/serialize.interceptor';
-import { UserDto } from '../users/dtos/user.dto';
 
 @ApiTags('game')
 @Controller('game')
@@ -23,10 +22,18 @@ export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Post()
-  @Serialize(UserDto)
   @ApiOperation({ summary: 'adds a new game' })
-  async create(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.create(createGameDto);
+  async createGame(@Body() createGameDto: CreateGameDto) {
+    return await this.gameService.newGame(createGameDto, null);
+  }
+
+  @Post('friend')
+  @ApiOperation({ summary: 'adds a new game with a friend' })
+  async createFriendGame(@Body() createGameDto: CreateGameDto) {
+    return await this.gameService.newGame(
+      createGameDto,
+      this.gameService.isFriend,
+    );
   }
 
   // @Post('playnow')

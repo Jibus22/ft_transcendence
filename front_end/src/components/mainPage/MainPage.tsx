@@ -80,9 +80,6 @@ const MainPage = () => {
   	socket.on ('userBanned', (message)=> {
 			console.log(`💌  Event: userBanned ->`, message);
 		});
-  	socket.on ('userMuted', (message)=> {
-			console.log(`💌  Event: userMuted ->`, message);
-		});
 
 	};
 	const getAuthToken = async () => {

@@ -33,6 +33,8 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
       event.updatedColumns.some(
         (update) =>
           update.propertyName === 'login' ||
+          update.propertyName === 'ws_id' ||
+//TODO add ingame status here          // update.propertyName === 'in_game' ||
           update.propertyName === 'use_local_photo',
       )
     );
