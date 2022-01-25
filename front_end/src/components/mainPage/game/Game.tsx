@@ -8,10 +8,10 @@ import './game.scss';
 import MainPong from './pong/MainPong';
 
 interface Props {
-	wsStatus: Socket | undefined;
+	chatWs: Socket | undefined;
 }
 
-export default function Game({ wsStatus }: Props) {
+export default function Game({ chatWs }: Props) {
 	// const { setTimeSnack, timer, loading, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
 
 	const { selectNav, setStartGame, startGame } = useMainPage();
@@ -20,10 +20,10 @@ export default function Game({ wsStatus }: Props) {
 	function handleClick() {
 		/*
          TEST MESSAGE EMIT for ingame status: set
-         TODO: add `wsStatus && wsStatus.emit('ingame', 'out');`
+         TODO: add `chatWs && chatWs.emit('ingame', 'out');`
             when user exits game!
         */
-		wsStatus && wsStatus.emit('ingame', 'in');
+		chatWs && chatWs.emit('ingame', 'in');
 
 		setStartGame(true);
 

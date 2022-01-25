@@ -69,11 +69,11 @@ export class GameGateway
     this.server = server;
   }
   async handleConnection(client: Socket) {
-    console.log(' NEW SOCKET ----------  connect GAME WS -> ', client.id);
+    console.debug('ws game 🎲  connect -> ', client.id);
   }
 
   async handleDisconnect(client: Socket) {
-    console.log(' NEW SOCKET ----------  disconnect GAME WS -> ', client.id);
+    console.debug('ws game 🎲  disconnected -> ', client.id);
   }
 }
 
@@ -93,10 +93,12 @@ export class ChatGateway
   }
 
   async handleConnection(client: Socket) {
+    console.debug('ws chat 🍄  connect -> ', client.id);
     await this.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
+    console.debug('ws chat 🍄 disconnected -> ', client.id);
     await this.doHandleDisconnect(client);
   }
 

@@ -10,9 +10,11 @@ import './mainPage.scss';
 
 const MainPage = () => {
 	const { timeSnack, setData, setTimeSnack, leaveGame } = useMainPage();
-	// const [wsStatus, setWsStatus] = useSafeState<Socket | undefined>(undefined);
-	const [wsStatus, setWsStatus] = useState<Socket | undefined>(undefined);
-	const [wsGame, setWsGame] = useState<Socket | undefined>(undefined);
+	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
+	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
+	// const [connectionTrieschatWs, setConnectionsTriesChatWs] = useState<number>(0);
+	const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
+	// const [connectionTriesgameWs, setConnectionsTriesGameWs] = useState<number>(0);
 	const [time, setTime] = useState(false);
 	const [isHeader, setIsHeader] = useState(true);
 
@@ -86,7 +88,7 @@ const MainPage = () => {
 
 	};
 
-	const otherCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
+	const gameCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
 		/* -----------------------
 		 ** Connection
 		 * -----------------------*/
@@ -102,7 +104,7 @@ const MainPage = () => {
 
 		socket.on('connect_error', async (err) => {
 			console.log('[GAME SOCKET 🎲 ] connect_error', err);
-			connectWs('ws://localhost:3000/chat', otherCallbacks, stateSetter);
+			connectWs('ws://localhost:3000/game', gameCallbacks, stateSetter);
 		});
 
 		socket.io.on('error', (error) => {
@@ -147,14 +149,15 @@ const MainPage = () => {
 		}, 1000);
 	};
 
-	const connectWs = async (namespace: string, cbSetter: (socket: Socket, stateSetter:
+	const connectWs = async (uri: string, cbSetter: (socket: Socket, stateSetter:
 		React.Dispatch<React.SetStateAction<Socket | undefined>>
 		) => void, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void	) => {
 			await new Promise(res => {
 				setTimeout(() => {
-					const socket = io(namespace, {
+					const socket = io(uri, {
 						autoConnect: false,
 						reconnection: false,
+						forceNew: true
 					});
 					cbSetter(socket, stateSetter);
 					stateSetter(socket);
@@ -167,8 +170,8 @@ const MainPage = () => {
 			useMount(async () => {
 				await fetchDataUserMe()
 			.then(async () => {
-				await connectWs('ws://localhost:3000/chat', setWsCallbacks, setWsStatus);
-				await connectWs('ws://localhost:3000/game', otherCallbacks, setWsGame);
+				await connectWs('ws://localhost:3000/game', gameCallbacks, setGameWs);
+				await connectWs('ws://localhost:3000/chat', setWsCallbacks, setChatWs);
 			})
 			.catch((err) => {
 				navigate('/');
@@ -180,8 +183,8 @@ const MainPage = () => {
 	};
 
 	function disconnectGameWs() {
-		console.log('Click disconnect Chat ', wsGame?.id);
-		doDisconnect(wsGame, setWsGame);
+		console.log('Click disconnect Chat ', gameWs?.id);
+		doDisconnect(gameWs, setGameWs);
 	}
 
 	const headerLeave = () => {
@@ -204,7 +207,7 @@ const MainPage = () => {
 			{headerLeave()}
 
 			<Routes>
-				<Route path="/MainPage" element={<Game wsStatus={wsStatus} />} />
+				<Route path="/MainPage" element={<Game chatWs={chatWs} />} />
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser setTime={setTime} />} />
 				<Route path="/Rank" element={<UserRank />} />

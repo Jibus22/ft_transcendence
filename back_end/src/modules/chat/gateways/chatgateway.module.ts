@@ -7,14 +7,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppUtilsService } from '../../../utils/app-utils.service';
 import { User } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/service-users/users.service';
-import { ChatGateway } from './chat.gateway';
+import { ChatGateway, GameGateway } from './chat.gateway';
 import { ChatGatewayService } from './chatGateway.service';
 
 @Global()
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [],
-  providers: [ChatGateway, ChatGatewayService, UsersService, AppUtilsService],
+  providers: [
+    GameGateway,
+    ChatGateway,
+    ChatGatewayService,
+    UsersService,
+    AppUtilsService,
+  ],
   exports: [ChatGatewayService],
 })
 export class ChatGatewayModule {}
