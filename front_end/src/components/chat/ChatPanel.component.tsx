@@ -1,5 +1,9 @@
 import styled from "styled-components";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonAddDisabledIcon from '@mui/icons-material/PersonAddDisabled';
+import BlockIcon from '@mui/icons-material/Block';
 import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -14,6 +18,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState<any[]>([]);
+	const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
 
 	const onMessage = (e: any) => {
 		setMessage(e.target.value);
@@ -36,7 +41,21 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			return room.participants[0];
 		if (room.participants.length > 2)
 			return null;
+		if (!room.is_private)
+			return null;
 		return room.participants.filter((user: any) => user.user.id !== currentUser.id)[0];
+	};
+
+	const addFriend = async (id: any) => {
+		await axios.post(`http://localhost:3000/users/friend`, {
+			id
+		}, { withCredentials: true });
+	};
+
+	const blockUser = async (id: any) => {
+		await axios.post(`http://localhost:3000/users/block`, {
+			id
+		}, { withCredentials: true });
 	};
 
 	window.addEventListener("newMessage", ({ detail }: any) => {
@@ -56,15 +75,19 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	}, []);
 
 	return (<MessagesPaneWrapper>
-		<ChatHeader>
+		{!detailsOpen && (<ChatHeader>
 			{room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
 			<div>
 				{getUser() !== null && (<h4>{ getUser().user.login }</h4>)}
 				{getUser() === null && (<h4>{ chatName(room.participants) }</h4>)}
 				<span>{ getUser()?.user.status }</span>
 			</div>
-			<button><NavigateNextIcon style={{color: "#444444"}} /></button>
-		</ChatHeader>
+			<button><NavigateNextIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(true)} /></button>
+		</ChatHeader>)}
+		{detailsOpen && (<ChatHeader>
+			<button><ArrowBackIosIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(false)} /></button>
+		</ChatHeader>)}
+		{!detailsOpen && (<>
 		<ChatMessages>
 			{messages.map((message: any) => (
 				<Message self={message.sender.id === currentUser.id} key={message.id}>
@@ -82,6 +105,19 @@ const ChatPanel = ({ room, currentUser }: any) => {
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>
 		</ChatField>
+		</>)}
+		{detailsOpen && (
+			<>
+				<DetailsView>
+					{room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
+					{getUser() !== null && <h3>{ getUser().user.login }</h3>}
+				</DetailsView>
+				<ButtonRow>
+					<button><PersonAddIcon onClick={ () => addFriend(getUser()?.user.id) } /></button>
+					<button><BlockIcon onClick={ () => blockUser(getUser()?.user.id) } /></button>
+				</ButtonRow>
+			</>
+		)}
 	</MessagesPaneWrapper>);
 };
 
@@ -119,7 +155,7 @@ const ChatHeader = styled.div`
 		}
 	}
 
-	button:nth-child(3) {
+	button {
 		height: 100%;
 		border: none;
 		background: none;
@@ -208,6 +244,42 @@ const Message = styled.div<{self: boolean}>`
 		text-align: right;
 	}
 	`}
+`;
+
+const DetailsView = styled.div`
+	display: flex;
+	align-items: center;
+	width: 100%;
+	flex-direction: column;
+
+	img {
+		width: 60px;
+		height: 60px;
+		border-radius: 100%;
+	}
+
+	h3 {
+		margin: 10px;
+	}
+`;
+
+const ButtonRow = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+
+	button {
+		width: 40px;
+		height: 40px;
+		background-color: #F1F1F1;
+		border: none;
+		border-radius: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 5px;
+	}
 `;
 
 export default ChatPanel;

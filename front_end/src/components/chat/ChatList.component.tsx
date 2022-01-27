@@ -36,6 +36,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	const [searchResults, setSearchResults] = useState<any[]>([]);
 	const [search, setSearch] = useState("");
 	const [users, setUsers] = useState<any[]>([]);
+	const [friends, setFriends] = useState<any[]>([]);
 
 	const getChats = async () => {
 		const { data } = await axios.get("http://localhost:3000/room/all", {
@@ -44,9 +45,21 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		setChats(data);
 	};
 
+	const getPublicRooms = async () => {
+		const { data } = await axios.get("http://localhost:3000/room/publics", {
+			withCredentials: true
+		});
+		setPublicChats(data);
+	}
+
 	const getUsers = async () => {
 		const result = await axios.get("http://localhost:3000/users", { withCredentials: true }).catch(console.error);
 		setUsers(result?.data || []);
+	};
+
+	const getFriends = async () => {
+		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
+		setFriends(result?.data || []);
 	};
 
 	const onSearch = (e: any) => {
@@ -80,7 +93,20 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		setSearchResults([]);
 		setSearch("");
 		openChat(data);
-	}
+	};
+
+	const createChat = async () => {
+		const { data }: any = await axios.post("http://localhost:3000/room", {
+			participants: [ ],
+			is_private: false
+		}, { withCredentials: true });
+		openChat(data);
+	};
+
+	const openPublicRoom = async (roomId: any) => {
+		const { data }: any = await axios.get(`http://localhost:3000/room/${roomId}/infos`, { withCredentials: true });
+		openChat(data);
+	};
 
 	useEffect(() => {
 		getUsers();
@@ -89,6 +115,18 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	useEffect(() => {
 		getChats();
 	}, []);
+
+	useEffect(() => {
+		getFriends();
+	}, []);
+
+	useEffect(() => {
+		getPublicRooms();
+	}, []);
+
+	window.addEventListener("publicRoomCreated", ({ detail }: any) => {
+		getPublicRooms();
+	})
 
 	return (
 	<ChatListWrapper>
@@ -107,14 +145,27 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				</div>
 			</Preview>))}
 		</List>)}
-		{ tab === 2 && !searchResults.length && (<List>
-			{publicChats.map((chat: any) => (<Preview key={chat.id}>
+		{ tab === 1 && !searchResults.length && (<List>
+			{friends.map((friend: any) => (<Preview key={friend.id} onClick={() => openChatHandler(friend.id)}>
+				<img src={friend.photo_url} alt={friend.login} />
 				<div>
-					<h4>{chatName(chat.participants, currentUser)}</h4>
-					<p>{chat.id}</p>
+					<h4>{friend.login}</h4>
 				</div>
 			</Preview>))}
 		</List>)}
+		{ tab === 2 && !searchResults.length && (
+			<>
+				<List>
+					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => openPublicRoom(chat.id)}>
+						<div>
+							<h4>{chatName(chat.participants, currentUser)}</h4>
+							<p>{chat.id}</p>
+						</div>
+					</Preview>))}
+				</List>
+				<LargeButton onClick={() => createChat()}>+ Create chat</LargeButton>
+			</>
+		)}
 		{ searchResults.length > 0 && (<List>
 			{searchResults.map((user: any) => (<Preview key={user.id} onClick={() => openChatHandler(user.id)}>
 				<img src={user.photo_url} alt={user.login} />
@@ -227,6 +278,14 @@ const Tab = styled.button<{selected: boolean}>`
 	color: #CA6C88;
 	background: #F1F1F1;
 	`}
+`;
+
+const LargeButton = styled.button`
+	width: 100%;
+	padding: 10px;
+	color: #CA6C88;
+	border: none;
+	background-color: white;
 `;
 
 export default ChatList;

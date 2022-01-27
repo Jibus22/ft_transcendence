@@ -57,6 +57,7 @@ const MainPage = () => {
 
 		socket.on('publicRoomCreated', (message) => {
 			console.log('✅  publicRoomCreated', message);
+			window.dispatchEvent(new CustomEvent("publicRoomCreated", { detail: message }));
 		});
 		socket.on('publicRoomRemoved', (message) => {
 			console.log('🚮  publicRoomRemoved', message);
