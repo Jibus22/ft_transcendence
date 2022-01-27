@@ -164,12 +164,9 @@ export class GameService {
     return game;
   }
 
-  //update score of a game targeted by its uuid
-  async update(uuid: string, updateGameDto: UpdateGameDto) {
-    await this.game_repo.update(uuid, {
-      // scoreP1: updateGameDto.scoreP1,
-      // scoreP2: updateGameDto.scoreP2,
-    });
+  //update a game targeted by its uuid
+  async updateGame(uuid: string, patchedGame: UpdateGameDto) {
+    await this.game_repo.update(uuid, patchedGame);
     return await this.findOne(uuid);
   }
 

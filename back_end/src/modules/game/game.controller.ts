@@ -11,6 +11,7 @@ import {
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { Game } from './entities/game.entity';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { NewGameDto } from './dto/new-game.dto';
@@ -37,7 +38,7 @@ export class GameController {
     );
   }
 
-  @ApiResponse({ type: NewGameDto, isArray: true })
+  @ApiResponse({ type: NewGameDto, isArray: false })
   @ApiOperation({ summary: 'join a random game' })
   @Serialize(NewGameDto)
   @Post('join')
@@ -74,12 +75,12 @@ export class GameController {
   }
 
   @Patch(':uuid')
-  @ApiOperation({ summary: 'update a "uuid" game' })
+  @ApiOperation({ summary: 'update a game "uuid"' })
   async update(
     @Param('uuid', ParseUUIDPipe) uuid: string,
-    @Body() updateGameDto: UpdateGameDto,
+    @Body() patchedGame: UpdateGameDto,
   ) {
-    return await this.gameService.update(uuid, updateGameDto);
+    return await this.gameService.updateGame(uuid, patchedGame);
   }
 
   @Delete(':uuid')
