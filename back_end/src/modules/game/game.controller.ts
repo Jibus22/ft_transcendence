@@ -23,13 +23,13 @@ export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Post()
-  @ApiOperation({ summary: 'adds a new game' })
+  @ApiOperation({ summary: 'challenge anyone' })
   async createGame(@Body() createGameDto: CreateGameDto) {
     return await this.gameService.newGame(createGameDto, null);
   }
 
   @Post('friend')
-  @ApiOperation({ summary: 'adds a new game with a friend' })
+  @ApiOperation({ summary: 'challenge a friend' })
   async createFriendGame(@Body() createGameDto: CreateGameDto) {
     return await this.gameService.newGame(
       createGameDto,
@@ -38,7 +38,7 @@ export class GameController {
   }
 
   @ApiResponse({ type: NewGameDto, isArray: true })
-  @ApiOperation({ summary: 'join a game' })
+  @ApiOperation({ summary: 'join a random game' })
   @Serialize(NewGameDto)
   @Post('join')
   async playnow(@Body() createGameDto: CreateGameDto) {

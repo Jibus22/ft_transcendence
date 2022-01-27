@@ -27,19 +27,31 @@ export class GameService {
     private relationsService: RelationsService,
   ) {}
 
-  isFriend(friends_list: UserDto[], opponent_id: string) {
-    return friends_list.filter((elem) => elem.id === opponent_id).length === 1;
-  }
-
-  private errorUserNotFound(user: User, login: string) {
-    if (!user) {
-      throw new NotFoundException(`${login} not found`);
+  isFriend(friends_list: UserDto[], opponent: UserDto) {
+    if (friends_list.filter((elem) => elem.id === opponent.id).length !== 1) {
+      throw new ForbiddenException(
+        `${opponent.login} isn't your friend. Go to make some friends`,
+      );
     }
   }
 
-  private errorPlayerNotOnline(usr: UserDto, login: string) {
-    if (usr.status !== 'online') {
-      throw new ForbiddenException(`${login} is either offline or playing`);
+  private errorUserNotFound(elem: { user: User; login: string }) {
+    if (!elem.user) {
+      throw new NotFoundException(`${elem.login} not found`);
+    }
+  }
+
+  private errorPlayerNotOnline(elem: UserDto) {
+    if (elem.status !== 'online') {
+      throw new ForbiddenException(`${elem.login} is ${elem.status}, dumb`);
+    }
+  }
+
+  private errorSamePlayer(usr: UserDto[]) {
+    if (usr[0].id === usr[1].id) {
+      throw new ForbiddenException(
+        `${usr[0].login} can't play against himself`,
+      );
     }
   }
 
@@ -48,30 +60,22 @@ export class GameService {
     createGameDto: CreateGameDto,
     callback: Function,
   ) {
-    this.errorUserNotFound(user1, createGameDto.loginP1);
-    this.errorUserNotFound(user2, createGameDto.loginP2);
+    [
+      { user: user1, login: createGameDto.loginP1 },
+      { user: user2, login: createGameDto.loginP2 },
+    ].forEach(this.errorUserNotFound);
 
-    const [usr1dto, usr2dto] = plainToClass(UserDto, [user1, user2]);
+    const usersDto = plainToClass(UserDto, [user1, user2]);
 
-    if (usr1dto.id === usr2dto.id) {
-      throw new ForbiddenException(
-        `${createGameDto.loginP1} can't play against himself`,
-      );
-    }
-
-    this.errorPlayerNotOnline(usr1dto, createGameDto.loginP1);
-    this.errorPlayerNotOnline(usr2dto, createGameDto.loginP2);
+    this.errorSamePlayer(usersDto);
+    usersDto.forEach(this.errorPlayerNotOnline);
 
     if (callback) {
       const friend_list = await this.relationsService.readAllRelations(
         user1.id,
         RelationType.Friend,
       );
-      if (!callback(friend_list, user2.id)) {
-        throw new ForbiddenException(
-          `${createGameDto.loginP2} isn't your friend. Go to make some friends`,
-        );
-      }
+      callback(friend_list, usersDto[1]);
     }
   }
 
@@ -119,22 +123,28 @@ export class GameService {
   async joinGame(createGameDto: CreateGameDto) {
     let waiting_games: Game[] = [];
     const user1 = await this.usersService.findLogin(createGameDto.loginP1);
-    this.errorUserNotFound(user1, createGameDto.loginP1);
+    [{ user: user1, login: createGameDto.loginP1 }].forEach(
+      this.errorUserNotFound,
+    );
 
     const player1 = this.player_repo.create({ user: user1 });
 
-    const games = await this.game_repo.find({ relations: ['players'] });
+    const games = await this.game_repo.find({
+      relations: ['players', 'players.user'],
+    });
     if (games) {
       waiting_games = games.filter((elem) => {
-        return elem.players.length === 1;
+        return (
+          elem.players.length === 1 && elem.players[0].user.id !== user1.id
+        );
       });
     }
 
-    const game = await this.updatePlayernGame(player1, waiting_games);
-    const test = await this.game_repo.findOne(game.id, {
+    let game = await this.updatePlayernGame(player1, waiting_games);
+    game = await this.game_repo.findOne(game.id, {
       relations: ['players', 'players.user'],
     });
-    return test;
+    return game;
   }
 
   async findAll() {
