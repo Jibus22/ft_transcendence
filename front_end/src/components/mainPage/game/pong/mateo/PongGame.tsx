@@ -119,12 +119,20 @@ class PongGame extends React.Component {
 	private _score(ret: number) {
 		if (ret === 2) this.scoreP2++; //J2 score
 		if (ret === 1) this.scoreP1++;
+		
+		//Balle au centre
 		this._ball.y = this.height / 2;
 		this._ball.x = this.width / 2;
-		this._ball.x_dir = Math.random() * 2 - 1;
-		if (this._ball.x_dir <= 0 && this._ball.x > -0.7) this._ball.x_dir -= 0.5;
-		if (this._ball.x_dir > 0 && this._ball.x < 0.7) this._ball.x_dir += 0.5;
-		this._ball.y_dir = Math.random() * 2 - 1;
+		
+		//Direction de la balle
+		if (ret === 2)
+			this._ball.x_dir = Math.random() + 1;
+		if (ret === 1)
+			this._ball.x_dir = Math.random() - 2;
+		this._ball.y_dir = Math.random() * 4 - 2;
+		if (this._ball.y_dir <= 1 && this._ball.y_dir >= 0) this._ball.y_dir = 1;
+		if (this._ball.y_dir >= -1 && this._ball.y_dir < 0) this._ball.y_dir = 1;
+		
 		client.send(
 			JSON.stringify({
 				type: 'message',
