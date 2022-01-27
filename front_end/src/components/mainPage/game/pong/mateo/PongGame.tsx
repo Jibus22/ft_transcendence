@@ -67,11 +67,7 @@ class PongGame extends React.Component {
 	}
 
 	_printText(str: string) {
-		this._ctx!.fillStyle = 'black';
-		this._ctx!.fillRect(0, 0, this.width, this.height);
 		this._drawBackground();
-		this._ctx!.fillStyle = 'white';
-		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2 + 1, this.height / 2 + 1);
 		this._ctx!.fillStyle = this.fillStyle;
 		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2);
 	}
@@ -96,6 +92,24 @@ class PongGame extends React.Component {
 			this.fontFace.load().then((font) => {
 				document.fonts.add(font);
 				this.font = '30px Orbitron';
+				this._ctx!.font = this.font;
+			});
+		}
+		if (this.map === 2)
+		{
+			this.imgBackground.src ="Fondmap2.jpg";
+			this.imgBackground.alt ="alt";
+			this.fontFace = new FontFace(
+				"Chonburi",
+				"url(https://fonts.gstatic.com/s/chonburi/v8/8AtqGs-wOpGRTBq66LWdHLz5ixfY.woff2)"
+			);
+			this.fillStyle = '#CFB217';
+			this._ctx!.fillStyle = this.fillStyle;
+			this._ctx!.shadowColor = '#EAD043';
+			this._ctx!.shadowBlur = 30;
+			this.fontFace.load().then((font) => {
+				document.fonts.add(font);
+				this.font = '30px Chonburi';
 				this._ctx!.font = this.font;
 			});
 		}
@@ -224,10 +238,13 @@ class PongGame extends React.Component {
 	}
 
 	_drawBackground(){
-		this._ctx!.fillStyle = 'black';
+		if (this.map < 2)
+			this._ctx!.fillStyle = 'black';
+		if (this.map === 2)
+			this._ctx!.fillStyle = 'white';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
 
-		if (this.map === 1)
+		if (this.map >= 1)
 			this._ctx!.drawImage(this.imgBackground, 0,0,700, 600);
 	}
 
@@ -249,6 +266,15 @@ class PongGame extends React.Component {
 			gradient1.addColorStop(1,"black");
 			this._ctx!.fillStyle = gradient1;
 		}
+		if (this.map === 2)
+		{
+			let gradient1 = this._ctx!.createLinearGradient(0, this.height/2, this._playerOne.width * 3, this.height/2)!;
+			gradient1.addColorStop(0,"#88642F");
+			gradient1.addColorStop(0.5,"#E6C619");
+			gradient1.addColorStop(1,"#E6C619");
+			//gradient1.addColorStop(1,"#88642F");
+			this._ctx!.fillStyle = gradient1;
+		}
 		this._ctx!.fillRect(this._playerOne.x, this._playerOne.y, this._widthPlayer, this._playerOne.size);
 
 		//Draw Player 2
@@ -258,6 +284,14 @@ class PongGame extends React.Component {
 			gradient2.addColorStop(0,"black");
 			gradient2.addColorStop(0.5,"#38FC25");
 			gradient2.addColorStop(1,"black");
+			this._ctx!.fillStyle = gradient2;
+		}
+		if (this.map === 2)
+		{
+			let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
+			gradient2.addColorStop(0,"#E6C619");
+			gradient2.addColorStop(0.5,"#E6C619");
+			gradient2.addColorStop(1,"#88642F");
 			this._ctx!.fillStyle = gradient2;
 		}
 		this._ctx!.fillRect(this._playerTwo.x, this._playerTwo.y, this._widthPlayer, this._playerTwo.size);
