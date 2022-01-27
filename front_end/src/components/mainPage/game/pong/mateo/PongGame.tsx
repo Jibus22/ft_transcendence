@@ -161,8 +161,8 @@ class PongGame extends React.Component {
 		//Power Up
 		if (!this.powerUp) return;
 		let random = getRandomInt(100);
-		if (random < 45) {
-			//5)
+		if (random < 10)
+		{
 			//Power up large paddle
 			if (ret === 1) {
 				this._playerOne._largePaddle(this.height);
@@ -192,8 +192,8 @@ class PongGame extends React.Component {
 				setTimeout(() => (this.gamerunning = true), 1000);
 			}
 		}
-		if (random >= 55) {
-			//95)
+		if (random >= 90)
+		{
 			//Power Up controle inverse
 			if (ret === 2) {
 				this._playerOne._invertControlTemporarily();
