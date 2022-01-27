@@ -13,6 +13,7 @@ import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
+import { NewGameDto } from './dto/new-game.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 
@@ -36,11 +37,13 @@ export class GameController {
     );
   }
 
-  // @Post('playnow')
-  // @ApiOperation({ summary: 'adds a new game' })
-  // async playnow(@Body() createGameDto: CreateGameDto) {
-  //   return await this.gameService.create(createGameDto);
-  // }
+  @ApiResponse({ type: NewGameDto, isArray: true })
+  @ApiOperation({ summary: 'join a game' })
+  @Serialize(NewGameDto)
+  @Post('join')
+  async playnow(@Body() createGameDto: CreateGameDto) {
+    return await this.gameService.joinGame(createGameDto);
+  }
 
   @Get()
   @ApiOperation({ summary: 'returns all games' })

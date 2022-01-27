@@ -100,6 +100,43 @@ export class GameService {
     return { game_id, ...plainToClass(UserDto, opponent) };
   }
 
+  private async updatePlayernGame(player1: Player, waiting_games: Game[]) {
+    let game: Game;
+    if (waiting_games.length > 0) {
+      game = waiting_games[0];
+      player1.game = game;
+      game.players.push(player1);
+    } else {
+      game = this.game_repo.create();
+      await this.game_repo.save(game);
+      player1.game = game;
+      game.players = [player1];
+    }
+    await this.player_repo.save(player1);
+    return await this.game_repo.save(game);
+  }
+
+  async joinGame(createGameDto: CreateGameDto) {
+    let waiting_games: Game[] = [];
+    const user1 = await this.usersService.findLogin(createGameDto.loginP1);
+    this.errorUserNotFound(user1, createGameDto.loginP1);
+
+    const player1 = this.player_repo.create({ user: user1 });
+
+    const games = await this.game_repo.find({ relations: ['players'] });
+    if (games) {
+      waiting_games = games.filter((elem) => {
+        return elem.players.length === 1;
+      });
+    }
+
+    const game = await this.updatePlayernGame(player1, waiting_games);
+    const test = await this.game_repo.findOne(game.id, {
+      relations: ['players', 'players.user'],
+    });
+    return test;
+  }
+
   async findAll() {
     const game = await this.game_repo.find();
     if (!game) {
@@ -126,6 +163,7 @@ export class GameService {
     return await this.findOne(uuid);
   }
 
+  //TODO: remove en cascade : il faut aussi remove les players correspondant
   async remove(uuid: string) {
     const game = await this.findOne(uuid);
     return await this.game_repo.remove(game);
