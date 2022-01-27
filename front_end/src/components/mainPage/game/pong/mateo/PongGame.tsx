@@ -77,6 +77,8 @@ class PongGame extends React.Component {
 		this._ctx = this._canvas.getContext('2d')!;
 		this.font = '30px Arial';
 		this._ctx!.font = this.font;
+		if (this.map === 0)
+			this.powerUp = false;
 		if (this.map === 1)
 		{
 			this.imgBackground.src ="Fondmap1.jpeg";
@@ -117,9 +119,32 @@ class PongGame extends React.Component {
 	}
 
 	private _score(ret: number) {
+		//Maj Score
 		if (ret === 2) this.scoreP2++; //J2 score
 		if (ret === 1) this.scoreP1++;
-		
+
+		//Send Score
+		client.send(
+			JSON.stringify({
+				type: 'message',
+				object: 'Score',
+				P1: this.scoreP1,
+				P2: this.scoreP2,
+			}),
+		);
+		if (this.scoreP1 >= 10)
+		{
+			this.gamerunning = false;
+			this._printText('Player One win');
+			return;
+		}
+		if (this.scoreP2 >= 10)
+		{
+			this.gamerunning = false;
+			this._printText('Player Two win');
+			return;
+		}
+
 		//Balle au centre
 		this._ball.y = this.height / 2;
 		this._ball.x = this.width / 2;
@@ -133,14 +158,7 @@ class PongGame extends React.Component {
 		if (this._ball.y_dir <= 1 && this._ball.y_dir >= 0) this._ball.y_dir = 1;
 		if (this._ball.y_dir >= -1 && this._ball.y_dir < 0) this._ball.y_dir = 1;
 		
-		client.send(
-			JSON.stringify({
-				type: 'message',
-				object: 'Score',
-				P1: this.scoreP1,
-				P2: this.scoreP2,
-			}),
-		);
+		//Power Up
 		if (!this.powerUp) return;
 		let random = getRandomInt(100);
 		if (random < 45) {
@@ -211,8 +229,7 @@ class PongGame extends React.Component {
 		if (this._P1) {
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0)
-				// someone scored
-				this._score(ret);
+				this._score(ret);// someone scored
 			client.send(
 				JSON.stringify({
 					type: 'message',
@@ -229,6 +246,8 @@ class PongGame extends React.Component {
 					type: 'message',
 					object: 'Player1',
 					player: this._playerOne,
+					P1: this.scoreP1,
+					P2: this.scoreP2,
 				}),
 			);
 		}
@@ -358,6 +377,8 @@ class PongGame extends React.Component {
 			}
 			if (!this._P1 && data.object === 'Player1') {
 				this._playerOne = data.player;
+				this.scoreP1 = data.P1;
+				this.scoreP2 = data.P2;
 			}
 			if (!this._P1 && data.object === 'Ball') {
 				this._ball.x = data.x;
@@ -366,6 +387,18 @@ class PongGame extends React.Component {
 			if (!this._P1 && data.object === 'Score') {
 				this.scoreP1 = data.P1;
 				this.scoreP2 = data.P2;
+				if (this.scoreP1 >= 10)
+				{
+					this.gamerunning = false;
+					this._printText('Player One win');
+					return;
+				}
+				if (this.scoreP2 >= 10)
+				{
+					this.gamerunning = false;
+					this._printText('Player Two win');
+					return;
+				}
 			}
 			if (!this._P1 && data.object === 'PowerUp') {
 				if (data.powerUp === 'inverted Control' && data.J === 2 && this._P2) this._playerTwo._invertControlTemporarily();
