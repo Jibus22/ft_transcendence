@@ -11,8 +11,10 @@ import {
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { Game } from './entities/game.entity';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
+import { NewGameDto } from './dto/new-game.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 
@@ -22,13 +24,13 @@ export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Post()
-  @ApiOperation({ summary: 'adds a new game' })
+  @ApiOperation({ summary: 'challenge anyone' })
   async createGame(@Body() createGameDto: CreateGameDto) {
     return await this.gameService.newGame(createGameDto, null);
   }
 
   @Post('friend')
-  @ApiOperation({ summary: 'adds a new game with a friend' })
+  @ApiOperation({ summary: 'challenge a friend' })
   async createFriendGame(@Body() createGameDto: CreateGameDto) {
     return await this.gameService.newGame(
       createGameDto,
@@ -36,11 +38,13 @@ export class GameController {
     );
   }
 
-  // @Post('playnow')
-  // @ApiOperation({ summary: 'adds a new game' })
-  // async playnow(@Body() createGameDto: CreateGameDto) {
-  //   return await this.gameService.create(createGameDto);
-  // }
+  @ApiResponse({ type: NewGameDto, isArray: false })
+  @ApiOperation({ summary: 'join a random game' })
+  @Serialize(NewGameDto)
+  @Post('join')
+  async playnow(@Body() createGameDto: CreateGameDto) {
+    return await this.gameService.joinGame(createGameDto);
+  }
 
   @Get()
   @ApiOperation({ summary: 'returns all games' })
@@ -71,12 +75,12 @@ export class GameController {
   }
 
   @Patch(':uuid')
-  @ApiOperation({ summary: 'update a "uuid" game' })
+  @ApiOperation({ summary: 'update a game "uuid"' })
   async update(
     @Param('uuid', ParseUUIDPipe) uuid: string,
-    @Body() updateGameDto: UpdateGameDto,
+    @Body() patchedGame: UpdateGameDto,
   ) {
-    return await this.gameService.update(uuid, updateGameDto);
+    return await this.gameService.updateGame(uuid, patchedGame);
   }
 
   @Delete(':uuid')
