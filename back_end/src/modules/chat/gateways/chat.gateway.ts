@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
+import { UpdateUserDto } from '../../users/dtos/update-users.dto';
 import { UserDto } from '../../users/dtos/user.dto';
 import { User } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/service-users/users.service';
@@ -96,7 +97,7 @@ export class ChatGateway
     });
   }
 
-  private async updateUser(client: Socket, userData: Partial<User>) {
+  private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
       .find({ ws_id: client.id })
       .then(async (users) => {
