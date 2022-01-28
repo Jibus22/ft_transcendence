@@ -170,15 +170,9 @@ export class GameService {
     return await this.findOne(uuid);
   }
 
-  //TODO: remove en cascade : il faut aussi remove les players correspondant
   async remove(uuid: string) {
-    const game = await this.game_repo.findOne(uuid, { relations: ['players'] });
+    const game = await this.game_repo.findOne(uuid);
     if (!game) throw new NotFoundException('game not found');
-
-    for (let i = 0; i < game.players.length; i++) {
-      const player = await this.player_repo.findOne(game.players[i].id);
-      if (player) await this.player_repo.remove(player);
-    }
 
     return await this.game_repo.remove(game);
   }
