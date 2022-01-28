@@ -59,7 +59,7 @@ export class UsersController {
   @ApiResponse({ type: UserDto, isArray: false })
   @ApiResponse({ status: HttpStatus.OK, description: "User's public data" })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
-  async getUserById(@Param() { login }) {
+  async getUserById(@Param('login') login: string) {
     return await this.usersService.find({ login }).then((users) => {
       if (!users[0]) {
         throw new NotFoundException('user not found');

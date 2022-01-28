@@ -27,6 +27,7 @@ import { randomUUID } from 'crypto';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { authTokenDto } from './dtos/authToken.dto';
 import { privateUserDto } from './dtos/private-user.dto';
 import { User } from './entities/users.entity';
 import { AuthService } from './service-auth/auth.service';
@@ -145,7 +146,7 @@ export class AuthController {
     description: 'Token is valid and 2fa is set',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
-  async turn2fa_on(@Session() session, @Body() body: { token: string }) {
+  async turn2fa_on(@Session() session, @Body() body: authTokenDto) {
     return await this.authService
       .turn2fa_on(session, body.token)
       .catch((err) => {
@@ -160,8 +161,7 @@ export class AuthController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'User authenticated' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
-  async authenticate2fa(@Session() session, @Body() body: { token: string }) {
-    // TODO: use dto for body !
+  async authenticate2fa(@Session() session, @Body() body: authTokenDto) {
     return await this.authService
       .authenticate2fa(session, body.token)
       .catch((err) => {

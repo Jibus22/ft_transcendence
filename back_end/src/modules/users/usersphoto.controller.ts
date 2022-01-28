@@ -105,7 +105,7 @@ export class UsersPhotoController {
     description: 'file requested not found',
   })
   async servePhoto(
-    @Param('fileName') fileName,
+    @Param('fileName') fileName: string,
     @Response({ passthrough: true }) res,
   ) {
     return await this.usersPhotoService
