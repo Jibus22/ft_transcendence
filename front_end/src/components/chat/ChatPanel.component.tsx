@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PersonAddDisabledIcon from '@mui/icons-material/PersonAddDisabled';
-import BlockIcon from '@mui/icons-material/Block';
 import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import { useEffect, useState } from "react";
+import ChatParticipant from "./ChatParticipant.component";
+import RoomSettings from "./RoomSettings.component";
 
 const chatName = (participants: any) => {
 	let name = "";
@@ -46,16 +45,8 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		return room.participants.filter((user: any) => user.user.id !== currentUser.id)[0];
 	};
 
-	const addFriend = async (id: any) => {
-		await axios.post(`http://localhost:3000/users/friend`, {
-			id
-		}, { withCredentials: true });
-	};
-
-	const blockUser = async (id: any) => {
-		await axios.post(`http://localhost:3000/users/block`, {
-			id
-		}, { withCredentials: true });
+	const isGroup = () => {
+		return !room.is_private;
 	};
 
 	window.addEventListener("newMessage", ({ detail }: any) => {
@@ -68,7 +59,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			return;
 		}
 		setMessages([...messages, message]);
-	})
+	});
 
 	useEffect(() => {
 		getMessages();
@@ -76,12 +67,25 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	return (<MessagesPaneWrapper>
 		{!detailsOpen && (<ChatHeader>
-			{room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
+			{/* {room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
 			<div>
 				{getUser() !== null && (<h4>{ getUser().user.login }</h4>)}
 				{getUser() === null && (<h4>{ chatName(room.participants) }</h4>)}
 				<span>{ getUser()?.user.status }</span>
-			</div>
+			</div> */}
+			{!isGroup() && (
+			<>
+				<img src={getUser()?.user.photo_url} alt={getUser()?.user.login}/>
+				<div>
+					<h4>{ getUser()?.user.login }</h4>
+					<span>{ getUser()?.user.status }</span>
+				</div>
+			</>)}
+			{isGroup() && (<>
+				<div>
+					<h4>{ chatName(room.participants) }</h4>
+				</div>
+			</>)}
 			<button><NavigateNextIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(true)} /></button>
 		</ChatHeader>)}
 		{detailsOpen && (<ChatHeader>
@@ -108,14 +112,8 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		</>)}
 		{detailsOpen && (
 			<>
-				<DetailsView>
-					{room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
-					{getUser() !== null && <h3>{ getUser().user.login }</h3>}
-				</DetailsView>
-				<ButtonRow>
-					<button><PersonAddIcon onClick={ () => addFriend(getUser()?.user.id) } /></button>
-					<button><BlockIcon onClick={ () => blockUser(getUser()?.user.id) } /></button>
-				</ButtonRow>
+				{ !isGroup() && <ChatParticipant user={getUser()} currentUser={currentUser} /> }
+				{ isGroup() && <RoomSettings room={room} currentUser={currentUser} /> }
 			</>
 		)}
 	</MessagesPaneWrapper>);
@@ -138,20 +136,23 @@ const ChatHeader = styled.div`
 		height: 35px;
 		width: 35px;
 		margin: 10px;
+		margin-right: 0px;
 		border-radius: 100%;
 	}
 
-	div:nth-child(2) {
+	> div {
 		flex: 1;
 
 		h4 {
 			margin: 0;
 			margin-bottom: -5px;
+			margin-left: 10px;
 			color: #CA6C88;
 		}
 
 		span {
 			font-size: 12px;
+			margin-left: 10px;
 		}
 	}
 
@@ -244,42 +245,6 @@ const Message = styled.div<{self: boolean}>`
 		text-align: right;
 	}
 	`}
-`;
-
-const DetailsView = styled.div`
-	display: flex;
-	align-items: center;
-	width: 100%;
-	flex-direction: column;
-
-	img {
-		width: 60px;
-		height: 60px;
-		border-radius: 100%;
-	}
-
-	h3 {
-		margin: 10px;
-	}
-`;
-
-const ButtonRow = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-
-	button {
-		width: 40px;
-		height: 40px;
-		background-color: #F1F1F1;
-		border: none;
-		border-radius: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		margin: 5px;
-	}
 `;
 
 export default ChatPanel;
