@@ -72,6 +72,11 @@ class PongGame extends React.Component {
 		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2);
 	}
 
+	_printPowerUp(str: string) {
+		this._ctx!.fillStyle = this.fillStyle;
+		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2 + 30);
+	}
+
 	_initPongGame() {
 		this._canvas = document.querySelector('canvas')!;
 		this._ctx = this._canvas.getContext('2d')!;
@@ -130,6 +135,7 @@ class PongGame extends React.Component {
 				object: 'Score',
 				P1: this.scoreP1,
 				P2: this.scoreP2,
+				score : ret,
 			}),
 		);
 		if (this.scoreP1 >= 10)
@@ -144,6 +150,14 @@ class PongGame extends React.Component {
 			this._printText('Player Two win');
 			return;
 		}
+
+		//Affichage du score
+		this.gamerunning = false;
+		if (ret == 1)
+			this._printText('Player One score');
+		if (ret == 2)
+			this._printText('Player Two score');	
+		setTimeout(() => (this.gamerunning = true), 2000);
 
 		//Balle au centre
 		this._ball.y = this.height / 2;
@@ -174,9 +188,7 @@ class PongGame extends React.Component {
 						J: ret,
 					}),
 				);
-				this.gamerunning = false;
-				this._printText('Player One large Paddle');
-				setTimeout(() => (this.gamerunning = true), 1000);
+				this._printPowerUp('Player One large Paddle');
 			}
 			if (ret === 2) {
 				client.send(
@@ -187,9 +199,7 @@ class PongGame extends React.Component {
 						J: ret,
 					}),
 				);
-				this.gamerunning = false;
-				this._printText('Player Two large Paddle');
-				setTimeout(() => (this.gamerunning = true), 1000);
+				this._printPowerUp('Player Two large Paddle');
 			}
 		}
 		if (random >= 90)
@@ -205,9 +215,7 @@ class PongGame extends React.Component {
 						J: 1,
 					}),
 				);
-				this.gamerunning = false;
-				this._printText('Player One inverted Control');
-				setTimeout(() => (this.gamerunning = true), 1000);
+				this._printPowerUp('Player One inverted Control');
 			}
 			if (ret === 1) {
 				client.send(
@@ -218,9 +226,7 @@ class PongGame extends React.Component {
 						J: 2,
 					}),
 				);
-				this.gamerunning = false;
-				this._printText('Player Two inverted Control');
-				setTimeout(() => (this.gamerunning = true), 1000);
+				this._printPowerUp('Player Two inverted Control');
 			}
 		}
 	}
@@ -387,6 +393,8 @@ class PongGame extends React.Component {
 			if (!this._P1 && data.object === 'Score') {
 				this.scoreP1 = data.P1;
 				this.scoreP2 = data.P2;
+
+				//Affichage du gagnant
 				if (this.scoreP1 >= 10)
 				{
 					this.gamerunning = false;
@@ -399,16 +407,22 @@ class PongGame extends React.Component {
 					this._printText('Player Two win');
 					return;
 				}
+
+				//Affichage du score
+				this.gamerunning = false;
+				if (data.score == 1)
+					this._printText('Player One score');
+				if (data.score == 2)
+					this._printText('Player Two score');	
+				setTimeout(() => (this.gamerunning = true), 2000);
 			}
 			if (!this._P1 && data.object === 'PowerUp') {
 				if (data.powerUp === 'inverted Control' && data.J === 2 && this._P2) this._playerTwo._invertControlTemporarily();
 				if (data.powerUp === 'large Paddle' && data.J === 2 && this._P2) this._playerTwo._largePaddle(this.height);
-				this.gamerunning = false;
 				let message = 'Player ';
 				if (data.J === 1) message += 'One ';
 				else message += 'Two ';
-				this._printText(message + data.powerUp);
-				setTimeout(() => (this.gamerunning = true), 1000);
+				this._printPowerUp(message + data.powerUp);
 			}
 			if (data.object === 'Ready') this.gamerunning = true;
 			if (data.object === 'Pause') {
