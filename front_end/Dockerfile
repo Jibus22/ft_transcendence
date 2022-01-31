@@ -20,7 +20,7 @@ FROM node:17
 
 # Up one directory regarding the app, we set the node_modules
 WORKDIR /usr/src
-COPY package*.json package*.json* ./
+COPY package.json ./
 # RUN npm install --no-optional && npm cache clean --force
 RUN yarn && yarn cache clean
 

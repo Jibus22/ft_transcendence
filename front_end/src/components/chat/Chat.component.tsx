@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PeopleIcon from '@mui/icons-material/People';
 import CloseIcon from '@mui/icons-material/Close';
 import ChatContainer from './ChatContainer.component';
+import axios from "axios";
 
 const Chat = () => {
 	const [open, setOpen] = useState(false);
