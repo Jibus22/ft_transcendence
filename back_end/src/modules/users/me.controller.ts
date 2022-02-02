@@ -26,10 +26,11 @@ import { AppUtilsService } from '../../utils/app-utils.service';
 import { ChatService } from '../chat/chat.service';
 import { TargetedRoom } from '../chat/decorators/targeted-room.decorator';
 import { RoomDto, RoomWithMessagesDto } from '../chat/dto/room.dto';
+import { roomPasswordDto } from '../chat/dto/roomPassword.dto';
 import { Room } from '../chat/entities/room.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { privateUserDto } from './dtos/private-user.dto';
-import { UpdateUserDto } from './dtos/update-users.dto';
+import { UpdateLoginDto } from './dtos/update-profile.dto';
 import { User } from './entities/users.entity';
 import { UsersService } from './service-users/users.service';
 
@@ -81,10 +82,10 @@ export class MeController {
     status: HttpStatus.OK,
     description: 'User private informations updated',
   })
-  async update(@Body() body: UpdateUserDto, @Session() session) {
+  async update(@Body() body: UpdateLoginDto, @Session() session) {
     return this.usersService.update(session.userId, body).catch((error) => {
       const message = error.message as string;
-      if (message?.includes('UNIQUE')) {
+      if (message?.includes('UNIQUE') || message?.includes('unique')) {
         throw new BadRequestException('already used');
       } else {
         if (error.status) throw new HttpException(error, error.status);
@@ -155,7 +156,7 @@ export class MeController {
   async joinRoom(
     @CurrentUser() user: User,
     @TargetedRoom() room: Room,
-    @Body() body: { password?: string },
+    @Body() body: roomPasswordDto,
   ) {
     await this.chatService.joinRoom(user, room, body).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);

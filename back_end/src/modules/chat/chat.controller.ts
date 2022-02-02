@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
@@ -221,7 +222,7 @@ export class ChatController {
   @Get(':room_id/message')
   @Serialize(ChatMessageDto)
   @UseGuards(RoomParticipantGuard)
-  async getMessages(@Param('room_id') room_id: string) {
+  async getMessages(@Param('room_id', ParseUUIDPipe) room_id: string) {
     return await this.chatService.findAllMessages(room_id).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
       if (error.status) throw new HttpException(error, error.status);

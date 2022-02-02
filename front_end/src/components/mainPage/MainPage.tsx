@@ -58,34 +58,33 @@ const MainPage = () => {
 		 ** Events
 		 * -----------------------*/
 
-		socket.on ('publicRoomCreated', (message)=> {
+		socket.on('publicRoomCreated', (message) => {
 			console.log(`💌  Event: publicRoomCreated ->`, message);
 		});
-  	socket.on ('publicRoomUpdated', (message)=> {
+		socket.on('publicRoomUpdated', (message) => {
 			console.log(`💌  Event: publicRoomUpdated ->`, message);
 		});
-  	socket.on ('publicRoomRemoved', (message)=> {
+		socket.on('publicRoomRemoved', (message) => {
 			console.log(`💌  Event: publicRoomRemoved ->`, message);
 		});
-  	socket.on ('newMessage', (message)=> {
+		socket.on('newMessage', (message) => {
 			console.log(`💌  Event: newMessage ->`, message);
 		});
-  	socket.on ('roomParticipantUpdated', (message)=> {
+		socket.on('roomParticipantUpdated', (message) => {
 			console.log(`💌  Event: roomParticipantUpdated ->`, message);
 		});
-  	socket.on ('userAdded', (message)=> {
+		socket.on('userAdded', (message) => {
 			console.log(`💌  Event: userAdded ->`, message);
 		});
-  	socket.on ('userRemoved', (message)=> {
+		socket.on('userRemoved', (message) => {
 			console.log(`💌  Event: userRemoved ->`, message);
 		});
-  	socket.on ('userModeration', (message)=> {
+		socket.on('userModeration', (message) => {
 			console.log(`💌  Event: userModeration ->`, message);
 		});
-  	socket.on ('userBanned', (message)=> {
+		socket.on('userBanned', (message) => {
 			console.log(`💌  Event: userBanned ->`, message);
 		});
-
 	};
 
 	const gameCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
@@ -110,7 +109,6 @@ const MainPage = () => {
 		socket.io.on('error', (error) => {
 			console.log('[GAME SOCKET 🎲 ] ⚠️ RECEIVED ERROR', error);
 		});
-
 	};
 	const getAuthToken = async () => {
 		return await axios('http://localhost:3000/auth/ws/token', {
@@ -128,10 +126,12 @@ const MainPage = () => {
 		stateSetter(undefined);
 		if (socket) {
 			socket.off('disconnect');
-			socket.on('disconnect', () => {console.log('user chose to leave !')});
+			socket.on('disconnect', () => {
+				console.log('user chose to leave !');
+			});
 			socket.disconnect();
 		}
-	}
+	};
 
 	const doConnect = async (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
 		setTimeout(async () => {
@@ -149,26 +149,28 @@ const MainPage = () => {
 		}, 1000);
 	};
 
-	const connectWs = async (uri: string, cbSetter: (socket: Socket, stateSetter:
-		React.Dispatch<React.SetStateAction<Socket | undefined>>
-		) => void, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void	) => {
-			await new Promise(res => {
-				setTimeout(() => {
-					const socket = io(uri, {
-						autoConnect: false,
-						reconnection: false,
-						forceNew: true
-					});
-					cbSetter(socket, stateSetter);
-					stateSetter(socket);
-					doConnect(socket, stateSetter);
-					res('');
-				}, 500);
-			});
-		};
+	const connectWs = async (
+		uri: string,
+		cbSetter: (socket: Socket, stateSetter: React.Dispatch<React.SetStateAction<Socket | undefined>>) => void,
+		stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
+	) => {
+		await new Promise((res) => {
+			setTimeout(() => {
+				const socket = io(uri, {
+					autoConnect: false,
+					reconnection: false,
+					forceNew: true,
+				});
+				cbSetter(socket, stateSetter);
+				stateSetter(socket);
+				doConnect(socket, stateSetter);
+				res('');
+			}, 500);
+		});
+	};
 
-			useMount(async () => {
-				await fetchDataUserMe()
+	useMount(async () => {
+		await fetchDataUserMe()
 			.then(async () => {
 				await connectWs('ws://localhost:3000/game', gameCallbacks, setGameWs);
 				await connectWs('ws://localhost:3000/chat', setWsCallbacks, setChatWs);
@@ -203,7 +205,9 @@ const MainPage = () => {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
-			<div><button onClick={disconnectGameWs} >DISCONNECT GAME WS</button></div>
+			<div>
+				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
+			</div>
 			{headerLeave()}
 
 			<Routes>
