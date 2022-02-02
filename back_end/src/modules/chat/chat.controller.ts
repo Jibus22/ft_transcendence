@@ -1,12 +1,13 @@
 import {
+  BadGatewayException,
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
   HttpStatus,
-  BadGatewayException,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
@@ -35,6 +36,7 @@ import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
+import { RestrictionDto } from './dto/restriction.dto';
 import { RoomDto, RoomWithRestrictionsDto } from './dto/room.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -105,7 +107,7 @@ export class ChatController {
   async findAll() {
     return await this.chatService.findAllWithRestrictions().catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
-      if (error.status)throw new HttpException(error, error.status)
+      if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
   }
@@ -123,7 +125,7 @@ export class ChatController {
   async findAllPublic() {
     return await this.chatService.findAllPublic().catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
-      if (error.status)throw new HttpException(error, error.status)
+      if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
   }
@@ -161,7 +163,7 @@ export class ChatController {
   async remove(@TargetedRoom() targetedRoom: Room) {
     return await this.chatService.removeRoom(targetedRoom).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
-      if (error.status)throw new HttpException(error, error.status)
+      if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
   }
@@ -220,10 +222,10 @@ export class ChatController {
   @Get(':room_id/message')
   @Serialize(ChatMessageDto)
   @UseGuards(RoomParticipantGuard)
-  async getMessages(@Param('room_id') room_id: string) {
+  async getMessages(@Param('room_id', ParseUUIDPipe) room_id: string) {
     return await this.chatService.findAllMessages(room_id).catch((error) => {
       if (process.env.NODE_ENV === 'dev') console.log(error);
-      if (error.status)throw new HttpException(error, error.status)
+      if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
   }
@@ -248,6 +250,7 @@ export class ChatController {
     description: 'not enough rights',
   })
   @Post(':room_id/participant')
+  @Serialize(ParticipantDto)
   @UseGuards(RoomModeratorGuard)
   async addParticipant(
     @TargetedRoom() room: Room,
@@ -299,6 +302,7 @@ export class ChatController {
     description: 'not enough rights',
   })
   @Post(':room_id/restriction')
+  @Serialize(RestrictionDto)
   @UseGuards(RoomModeratorGuard)
   async addRestriction(
     @TargetedRoom() room: Room,
@@ -314,12 +318,12 @@ export class ChatController {
   }
 
   /*
-  ===================================================================
-  -------------------------------------------------------------------
-        OWNER ROUTES
-  -------------------------------------------------------------------
-  ===================================================================
-  */
+    ===================================================================
+    -------------------------------------------------------------------
+    OWNER ROUTES
+    -------------------------------------------------------------------
+    ===================================================================
+    */
 
   @ApiOperation({
     summary: "Update a owned room's password",
@@ -333,6 +337,7 @@ export class ChatController {
     description: 'not enough rights',
   })
   @Patch(':room_id/password')
+  @Serialize(RoomDto)
   @UseGuards(RoomOwnerGuard)
   async updatePassword(
     @TargetedRoom() room: Room,

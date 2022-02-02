@@ -131,6 +131,12 @@
 	}
 }
 
+@media screen and (max-width: 1000px) {
+	.wrong-para {
+		font-size: 20px !important;
+	}
+}
+
 @keyframes fadeInOpacity {
 	0% {
 		opacity: 0;

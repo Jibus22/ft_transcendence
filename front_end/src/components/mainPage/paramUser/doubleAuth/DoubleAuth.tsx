@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DoubleAuth({ isPop, dataFa }: Props) {
-	const { dialogMui } = useMainPage();
+	const { dialogMui, fetchDataUserMe } = useMainPage();
 
 	const [iFa, setFa] = useState(false);
 
@@ -35,6 +35,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 	const agree = async () => {
 		setOpenDeleteKey(false);
 		deleteKey();
+		fetchDataUserMe();
 	};
 
 	const handleChange = () => {

@@ -19,7 +19,7 @@ export default function ParamUser({ setTime }: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		from: { opacity: 0, transform: 'translate(0px, 170px)' },
 		config: {
 			delay: 350,
 			duration: 350,
@@ -95,13 +95,13 @@ export default function ParamUser({ setTime }: Props) {
 					<div className="StatUser d-flex flex-column">
 						<div className="infoStatUser d-flex ">
 							<div className="">
-								<p>Game</p>
+								<p>Games</p>
 							</div>
 							<div className="">
-								<p>Win</p>
+								<p>Wins</p>
 							</div>
 							<div className="">
-								<p>Looses</p>
+								<p>loses</p>
 							</div>
 						</div>
 						<div className="statNbUser d-flex ">

@@ -4,20 +4,8 @@ import { useSpring, animated } from 'react-spring';
 import { Avatar, Badge, useMediaQuery, CircularProgress, Tooltip, Fade, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
+import { User, Rank } from '../../../type';
 
-interface User {
-	id: string;
-	login: string;
-	photo_url: string;
-	status: string;
-}
-
-interface Rank {
-	games_count: number;
-	games_won: number;
-	games_lost: number;
-	user: User;
-}
 interface Props {
 	data: Array<Rank>;
 	dataFriends: User[];
@@ -30,8 +18,8 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 		transform: 'translate(0px, 0px)',
 		from: { opacity: 0, transform: 'translate(0px, 0px)' },
 		config: {
-			delay: 3000,
-			duration: 3100,
+			delay: 2000,
+			duration: 2000,
 		},
 	});
 
