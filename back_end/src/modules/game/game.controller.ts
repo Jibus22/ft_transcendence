@@ -26,15 +26,9 @@ export class GameController {
   @Post()
   @ApiOperation({ summary: 'challenge anyone' })
   async createGame(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.newGame(createGameDto, null);
-  }
-
-  @Post('friend')
-  @ApiOperation({ summary: 'challenge a friend' })
-  async createFriendGame(@Body() createGameDto: CreateGameDto) {
     return await this.gameService.newGame(
       createGameDto,
-      this.gameService.isFriend,
+      this.gameService.isBlocker,
     );
   }
 

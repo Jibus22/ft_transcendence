@@ -27,10 +27,10 @@ export class GameService {
     private relationsService: RelationsService,
   ) {}
 
-  isFriend(friends_list: UserDto[], opponent: UserDto) {
-    if (friends_list.filter((elem) => elem.id === opponent.id).length !== 1) {
+  isBlocker(blockerList: UserDto[], players: UserDto[]) {
+    if (blockerList.find((elem) => elem.id === players[0].id)) {
       throw new ForbiddenException(
-        `${opponent.login} isn't your friend. Go to make some friends`,
+        `Sadly ${players[1].login} blocked you... Try be nicer.`,
       );
     }
   }
@@ -50,7 +50,7 @@ export class GameService {
   private errorSamePlayer(usr: UserDto[]) {
     if (usr[0].id === usr[1].id) {
       throw new ForbiddenException(
-        `${usr[0].login} can't play against himself`,
+        `${usr[0].login} can't play against themself`,
       );
     }
   }
@@ -71,11 +71,11 @@ export class GameService {
     usersDto.forEach(this.errorPlayerNotOnline);
 
     if (callback) {
-      const friend_list = await this.relationsService.readAllRelations(
-        user1.id,
-        RelationType.Friend,
+      const blockerList = await this.relationsService.readAllRelations(
+        user2.id,
+        RelationType.Block,
       );
-      callback(friend_list, usersDto[1]);
+      callback(blockerList, usersDto);
     }
   }
 
