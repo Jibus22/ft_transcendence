@@ -4,6 +4,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -49,6 +50,34 @@ const options: GatewayMetadata = {
   },
 };
 
+const options_game: GatewayMetadata = {
+  namespace: 'game',
+  cors: {
+    origin: ['http://localhost:3001'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+};
+
+@WebSocketGateway(options_game)
+export class GameGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
+
+  afterInit(server: Server) {
+    this.server = server;
+  }
+  async handleConnection(client: Socket) {
+    console.debug('ws game 🎲  connect -> ', client.id);
+  }
+
+  async handleDisconnect(client: Socket) {
+    console.debug('ws game 🎲  disconnected -> ', client.id);
+  }
+}
+
 @WebSocketGateway(options)
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -65,10 +94,12 @@ export class ChatGateway
   }
 
   async handleConnection(client: Socket) {
+    console.debug('ws chat 🍄  connect -> ', client.id);
     await this.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
+    console.debug('ws chat 🍄 disconnected -> ', client.id);
     await this.doHandleDisconnect(client);
   }
 
