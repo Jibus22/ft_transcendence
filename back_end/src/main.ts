@@ -25,11 +25,14 @@ async function bootstrap() {
    * App listen port from the env, or defaults to 3000
    */
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: [
+      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
+      'http://localhost:3001',
+    ],
     credentials: true,
     exposedHeaders: ['secretKey', 'Completed-Auth'],
   });
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.BACK_PORT || 3000);
 }
 bootstrap();

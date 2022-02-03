@@ -5,6 +5,7 @@ services:
   back_end_server:
     env_file:
       - .env
+      - .env_prod.env
       - .env_debug.env
     volumes:
       - type: bind

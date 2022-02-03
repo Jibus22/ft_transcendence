@@ -92,6 +92,17 @@ frontbuild:  ## Build and run front end server
 	docker-compose build front_end_server
 
 ## -----------------------------------------------------------------------------
+##		FRONT
+## -----------------------------------------------------------------------------
+
+frontbash:  ## Open frontend back container in dev mode on a bash
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run front_end_server bash
+
+frontbash_prod:  ## Open frontend back container in production mode on a bash
+	docker-compose -f docker-compose.yml run front_end_server bash
+
+
+## -----------------------------------------------------------------------------
 ##		BACK
 ## -----------------------------------------------------------------------------
 
