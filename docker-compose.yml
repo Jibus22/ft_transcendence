@@ -23,6 +23,7 @@ services:
     build: ./back_end
     env_file:
       - .env
+      - .env_back.env
       - .env_prod.env
       - .env_prod_database.env
     volumes:
