@@ -27,7 +27,7 @@ const ChatList = () => {
 	const [publicChats, setPublicChats] = useState([]);
 
 	const getChats = async () => {
-		const { data } = await axios.get("http://localhost:3000/room/publics", {
+		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/publics`, {
 			withCredentials: true
 		});
 		console.log(data);

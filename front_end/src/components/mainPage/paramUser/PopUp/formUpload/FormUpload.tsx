@@ -41,7 +41,7 @@ export default function FormUpload() {
 		}
 
 		try {
-			await axios.post('http://localhost:3000/me/photo', data, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`, data, {
 				withCredentials: true,
 			});
 

@@ -16,7 +16,7 @@ export default function Loggin() {
 	let navigate = useNavigate();
 	const isLogged = async () => {
 		try {
-			const response = await axios.get('http://localhost:3000/me/is-logged', {
+			const response = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/is-logged`, {
 				withCredentials: true,
 			});
 
@@ -43,7 +43,7 @@ export default function Loggin() {
 
 	const changeUser = async () => {
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			isLogged();
@@ -66,7 +66,7 @@ export default function Loggin() {
 			<div className="buttonConnect d-flex">
 				<Bounce delay={1000} className="w-100 h1-100">
 					<form className="TextLog w-100 h-100">
-						<a href="https://api.intra.42.fr/oauth/authorize?client_id=7610cae5bea0cf5544204791cb2461c29e2d38081bcadfb36a30fa7b01531fb4&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public&state=coucou42">
+						<a href={`https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_AUTH_CALLBACK_URL}&response_type=code&scope=public&state=${process.env.REACT_APP_AUTH_CLIENT_STATE}`}>
 							<Button className="buttonMuiConnect " variant="contained" sx={{ borderRadius: 2, textTransform: 'none' }}>
 								Connect
 							</Button>
