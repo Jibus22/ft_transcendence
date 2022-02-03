@@ -11,25 +11,32 @@ import {
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { Game } from './entities/game.entity';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { NewGameDto } from './dto/new-game.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { UserDto } from '../users/dtos/user.dto';
+import { GameGateway } from './game.gateway';
 
 @ApiTags('game')
 @Controller('game')
 export class GameController {
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly gameGateway: GameGateway,
+  ) {}
 
-  @Post()
+  @ApiResponse({ type: UserDto, isArray: false })
   @ApiOperation({ summary: 'challenge anyone' })
-  async createGame(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.newGame(
+  @Serialize(UserDto)
+  @Post()
+  async gameInvitation(@Body() createGameDto: CreateGameDto) {
+    const [challenger, opponent] = await this.gameService.gameInvitation(
       createGameDto,
-      this.gameService.isBlocker,
     );
+    setTimeout(this.gameGateway.gameInvitation, 0, challenger, opponent);
+    return opponent;
   }
 
   @ApiResponse({ type: NewGameDto, isArray: false })

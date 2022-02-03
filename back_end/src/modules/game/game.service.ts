@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
@@ -17,6 +13,14 @@ import {
 import { User } from '../users/entities/users.entity';
 import { UserDto } from '../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
+import {
+  errorPlayerNotInGame,
+  errorPlayerNotOnline,
+  errorSamePlayer,
+  errorUserNotFound,
+  isBlocker,
+  isGameWs,
+} from './utils/utils';
 
 @Injectable()
 export class GameService {
@@ -27,56 +31,27 @@ export class GameService {
     private relationsService: RelationsService,
   ) {}
 
-  isBlocker(blockerList: UserDto[], players: UserDto[]) {
-    if (blockerList.find((elem) => elem.id === players[0].id)) {
-      throw new ForbiddenException(
-        `Sadly ${players[1].login} blocked you... Try be nicer.`,
-      );
-    }
-  }
-
-  private errorUserNotFound(elem: { user: User; login: string }) {
-    if (!elem.user) {
-      throw new NotFoundException(`${elem.login} not found`);
-    }
-  }
-
-  private errorPlayerNotOnline(elem: UserDto) {
-    if (elem.status !== 'online') {
-      throw new ForbiddenException(`${elem.login} is ${elem.status}, dumb`);
-    }
-  }
-
-  private errorSamePlayer(usr: UserDto[]) {
-    if (usr[0].id === usr[1].id) {
-      throw new ForbiddenException(
-        `${usr[0].login} can't play against themself`,
-      );
-    }
-  }
-
   private async checkErrors(
     [user1, user2]: User[],
     createGameDto: CreateGameDto,
-    callback: Function,
+    cb: (value: UserDto) => void,
   ) {
     [
       { user: user1, login: createGameDto.loginP1 },
       { user: user2, login: createGameDto.loginP2 },
-    ].forEach(this.errorUserNotFound);
+    ].forEach(errorUserNotFound);
 
     const usersDto = plainToClass(UserDto, [user1, user2]);
+    errorSamePlayer(usersDto);
+    usersDto.forEach(cb);
 
-    this.errorSamePlayer(usersDto);
-    usersDto.forEach(this.errorPlayerNotOnline);
+    const blockerList = await this.relationsService.readAllRelations(
+      user2.id,
+      RelationType.Block,
+    );
+    isBlocker(blockerList, usersDto);
 
-    if (callback) {
-      const blockerList = await this.relationsService.readAllRelations(
-        user2.id,
-        RelationType.Block,
-      );
-      callback(blockerList, usersDto);
-    }
+    [user1, user2].forEach(isGameWs);
   }
 
   private async createGameTable(user1: User, user2: User) {
@@ -90,19 +65,36 @@ export class GameService {
     return game.id;
   }
 
-  private async getOpponents(createGameDto: CreateGameDto) {
+  private async getOpponents(
+    createGameDto: CreateGameDto,
+    cb: (value: UserDto) => void,
+  ) {
     const user1 = await this.usersService.findLogin(createGameDto.loginP1);
     const user2 = await this.usersService.findLogin(createGameDto.loginP2);
+
+    await this.checkErrors([user1, user2], createGameDto, cb);
     return [user1, user2];
   }
 
-  async newGame(createGameDto: CreateGameDto, callback: Function) {
-    const [user1, opponent] = await this.getOpponents(createGameDto);
-
-    await this.checkErrors([user1, opponent], createGameDto, callback);
-    const game_id = await this.createGameTable(user1, opponent);
-    return { game_id, ...plainToClass(UserDto, opponent) };
+  async newGame(createGameDto: CreateGameDto) {
+    const [user1, opponent] = await this.getOpponents(
+      createGameDto,
+      errorPlayerNotInGame,
+    );
+    return await this.createGameTable(user1, opponent);
   }
+
+  async gameInvitation(createGameDto: CreateGameDto) {
+    const [user1, opponent] = await this.getOpponents(
+      createGameDto,
+      errorPlayerNotOnline,
+    );
+
+    this.usersService.update(user1.id, { is_in_game: true });
+    return [user1, opponent];
+  }
+
+  ////////////////
 
   private async updatePlayernGame(player1: Player, waiting_games: Game[]) {
     let game: Game;
@@ -123,9 +115,7 @@ export class GameService {
   async joinGame(createGameDto: CreateGameDto) {
     let waiting_games: Game[] = [];
     const user1 = await this.usersService.findLogin(createGameDto.loginP1);
-    [{ user: user1, login: createGameDto.loginP1 }].forEach(
-      this.errorUserNotFound,
-    );
+    [{ user: user1, login: createGameDto.loginP1 }].forEach(errorUserNotFound);
 
     const player1 = this.player_repo.create({ user: user1 });
 
@@ -147,6 +137,27 @@ export class GameService {
     return game;
   }
 
+  ////////////////
+
+  async getWs(login: string) {
+    const user = await this.usersService.findLogin(login);
+    if (user) return user.game_ws;
+  }
+
+  async getWsNPatchStatus(
+    createGameDto: CreateGameDto,
+    patch: { is_in_game: boolean },
+  ) {
+    const challenger = await this.usersService.findLogin(createGameDto.loginP1);
+    if (createGameDto.loginP2) {
+      const opponent = await this.usersService.findLogin(createGameDto.loginP2);
+      await this.usersService.update(opponent.id, patch);
+    } else await this.usersService.update(challenger.id, patch);
+    return challenger.game_ws;
+  }
+
+  ////////////////
+
   async findAll() {
     const game = await this.game_repo.find();
     if (!game) {
@@ -165,7 +176,7 @@ export class GameService {
   }
 
   //update a game targeted by its uuid
-  async updateGame(uuid: string, patchedGame: UpdateGameDto) {
+  async updateGame(uuid: string, patchedGame: Partial<UpdateGameDto>) {
     await this.game_repo.update(uuid, patchedGame);
     return await this.findOne(uuid);
   }

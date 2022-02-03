@@ -24,6 +24,9 @@ export class Game {
   @Column({ default: null })
   map: string;
 
+  @Column({ default: null })
+  watch: string;
+
   @BeforeInsert()
   updateDate() {
     this.createdAt = Date.now();
