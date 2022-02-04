@@ -38,7 +38,6 @@ import { UsersService } from './service-users/users.service';
 export class AuthController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private usersService: UsersService,
     private authService: AuthService,
     private configService: ConfigService,
   ) {}
@@ -49,6 +48,9 @@ export class AuthController {
     @Query() query: { code: string; state: string },
     @Session() session: any,
   ) {
+    if (query.state != this.configService.get('AUTH_CLIENT_STATE')) {
+      throw new BadRequestException('Wrong State value.');
+    }
     const user = await this.authService
       .registerUser(query.code, query.state)
       .catch((e) => {
@@ -63,6 +65,7 @@ export class AuthController {
     session.useTwoFA = user.useTwoFA;
     session.isTwoFAutanticated = false;
     return { url: this.configService.get('AUTH_REDIRECT_URL') };
+    // return { url: this.configService.get('/') };
   }
 
   @Delete('/signout')

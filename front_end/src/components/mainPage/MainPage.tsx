@@ -22,7 +22,7 @@ const MainPage = () => {
 
 	const fetchDataUserMe = async () => {
 		return await axios
-			.get('http://localhost:3000/me', {
+			.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
 				withCredentials: true,
 			})
 			.then((response) => {
@@ -111,7 +111,7 @@ const MainPage = () => {
 		});
 	};
 	const getAuthToken = async () => {
-		return await axios('http://localhost:3000/auth/ws/token', {
+		return await axios(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/ws/token`, {
 			withCredentials: true,
 		}).then((response) => {
 			const { token } = response.data;
@@ -172,8 +172,8 @@ const MainPage = () => {
 	useMount(async () => {
 		await fetchDataUserMe()
 			.then(async () => {
-				await connectWs('ws://localhost:3000/game', gameCallbacks, setGameWs);
-				await connectWs('ws://localhost:3000/chat', setWsCallbacks, setChatWs);
+				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, setGameWs);
+				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, setChatWs);
 			})
 			.catch((err) => {
 				navigate('/');

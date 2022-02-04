@@ -19,7 +19,7 @@ export default function FormAuth({ closeQR }: Props) {
 
 	const disconectAuth = async () => {
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			navigate('/');
@@ -51,7 +51,7 @@ export default function FormAuth({ closeQR }: Props) {
 			};
 
 			try {
-				const response = await axios.post('http://localhost:3000/auth/2fa/turn-on', token, {
+				const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/2fa/turn-on`, token, {
 					withCredentials: true,
 				});
 
