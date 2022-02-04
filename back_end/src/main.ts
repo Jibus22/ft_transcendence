@@ -26,6 +26,7 @@ async function bootstrap() {
    */
   app.enableCors({
     origin: [
+      `http://${process.env.SERVER_IP}`,
       `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
       'http://localhost:3001',
     ],
