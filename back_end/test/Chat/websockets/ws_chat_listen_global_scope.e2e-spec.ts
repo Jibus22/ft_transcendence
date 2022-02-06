@@ -111,11 +111,11 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
           .then(async (response) => {
             expect(response.status).toBe(HttpStatus.OK);
           });
-      }, 50);
+      }, 150);
 
       setTimeout(async () => {
         resolve('ok');
-      }, 100);
+      }, 250);
     });
 
     const events = WsChatHelpers.events;
@@ -134,7 +134,7 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     WsChatHelpers.testEventsPayload();
   }
 
-  it(`creats then delete a PUBLIC room`, async () => {
+  it(`creates then delete a PUBLIC room`, async () => {
     await createRoomAndDeleteIt(false);
   });
 
@@ -197,11 +197,11 @@ describe('WebSockets CHAT: listen to GLOBAL events', () => {
     WsChatHelpers.testEventsPayload();
   }
 
-  it(`creats then updates a PUBLIC room`, async () => {
+  it(`creates then updates a PUBLIC room`, async () => {
     await createRoomAndChangePassword(false);
   });
 
-  it(`creats then updates a PRIVATE room`, async () => {
+  it(`creates then updates a PRIVATE room`, async () => {
     await createRoomAndChangePassword(true);
   });
 }); // <<< end of describBlock

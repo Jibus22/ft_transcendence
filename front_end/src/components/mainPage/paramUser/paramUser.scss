@@ -558,6 +558,11 @@
 
 @media screen and (max-width: 1250px) {
 	.mainParamUser {
+		.MuiFormHelperText-root {
+			margin-top: 10px;
+			margin-left: -0px;
+		}
+
 		.alertValidateIcon {
 			top: 424px !important;
 		}
@@ -612,6 +617,26 @@
 		}
 		.disconectMui {
 			margin: 20px auto !important;
+		}
+	}
+}
+
+@media screen and (max-width: 1000px) {
+	.mainParamUser {
+		.MuiFormHelperText-root {
+			margin-top: 20px;
+			margin-left: -0px;
+			font-size: 9px !important;
+			width: 100px !important;
+		}
+	}
+}
+
+@media screen and (max-width: 750px) {
+	.mainParamUser {
+		.MuiFormHelperText-root {
+			margin-top: 30px;
+			margin-left: 5px;
 		}
 	}
 }

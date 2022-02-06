@@ -27,6 +27,7 @@ import { randomUUID } from 'crypto';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { authTokenDto } from './dtos/authToken.dto';
 import { privateUserDto } from './dtos/private-user.dto';
 import { User } from './entities/users.entity';
 import { AuthService } from './service-auth/auth.service';
@@ -37,7 +38,6 @@ import { UsersService } from './service-users/users.service';
 export class AuthController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private usersService: UsersService,
     private authService: AuthService,
     private configService: ConfigService,
   ) {}
@@ -48,6 +48,9 @@ export class AuthController {
     @Query() query: { code: string; state: string },
     @Session() session: any,
   ) {
+    if (query.state != this.configService.get('AUTH_CLIENT_STATE')) {
+      throw new BadRequestException('Wrong State value.');
+    }
     const user = await this.authService
       .registerUser(query.code, query.state)
       .catch((e) => {
@@ -62,6 +65,7 @@ export class AuthController {
     session.useTwoFA = user.useTwoFA;
     session.isTwoFAutanticated = false;
     return { url: this.configService.get('AUTH_REDIRECT_URL') };
+    // return { url: this.configService.get('/') };
   }
 
   @Delete('/signout')
@@ -145,7 +149,7 @@ export class AuthController {
     description: 'Token is valid and 2fa is set',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
-  async turn2fa_on(@Session() session, @Body() body: { token: string }) {
+  async turn2fa_on(@Session() session, @Body() body: authTokenDto) {
     return await this.authService
       .turn2fa_on(session, body.token)
       .catch((err) => {
@@ -160,8 +164,7 @@ export class AuthController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'User authenticated' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
-  async authenticate2fa(@Session() session, @Body() body: { token: string }) {
-    // TODO: use dto for body !
+  async authenticate2fa(@Session() session, @Body() body: authTokenDto) {
     return await this.authService
       .authenticate2fa(session, body.token)
       .catch((err) => {

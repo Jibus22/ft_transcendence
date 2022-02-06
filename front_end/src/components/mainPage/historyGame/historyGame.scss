@@ -60,6 +60,7 @@
 
 					border: #e69c6a 2px solid;
 					background-color: transparent;
+					transition: ease-out 0.125s;
 				}
 
 				.muiButton:hover {
@@ -83,7 +84,7 @@
 		h3 {
 			color: #e69c6a;
 			font-size: 1.2vw;
-			font-weight: 300;
+			font-weight: 700;
 		}
 
 		.infoPlayer {
@@ -91,22 +92,18 @@
 
 			text-align: center;
 			width: 45%;
-			// border: 1px solid green;
 		}
 		.infoScore {
 			width: 13%;
 			text-align: center;
-			// border: 1px solid green;
 		}
 		.infoDate {
 			width: 23%;
 			text-align: center;
-			// border: 1px solid green;
 		}
 		.infoDuration {
 			text-align: center;
 			width: 15%;
-			// border: 1px solid green;
 		}
 	}
 
@@ -117,12 +114,17 @@
 		margin: 1% 0 0 0;
 	}
 	::-webkit-scrollbar {
-		width: 8px;
+		width: 1vw;
+		position: absolute !important;
+		right: 5px !important;
 	}
 	::-webkit-scrollbar-track {
 		margin-top: 30px;
 		margin-bottom: 60px;
 		border-radius: 20px;
+		right: 5px !important;
+		position: absolute !important;
+		right: 5px !important;
 	}
 
 	.histUser {
@@ -133,16 +135,25 @@
 		display: flex;
 		flex-direction: column;
 
+		.animatedDiv {
+			width: 95%;
+			margin: 1.4% 0% 0% 0%;
+			display: flex;
+
+			align-self: flex-end;
+		}
+
 		.infoHistory {
 			display: flex;
 			color: white;
+
 			// margin: 0px 0 0 0px;
 			display: flex;
 
 			align-self: flex-end;
 
-			width: 95%;
-			margin: 1.4% 0% 0% 0%;
+			width: 100%;
+			// margin: 1.4% 0% 0% 0%;
 
 			.mainPlayer {
 				display: flex;
@@ -164,10 +175,10 @@
 					.MuiBadge-badge {
 						width: 17%;
 						height: 16%;
-						background-color: #e6da6a;
-						color: #e6da6a;
+						// background-color: #e6da6a;
+
 						border-radius: 100%;
-						box-shadow: 0 0 0 0.5px #e6da6a;
+						box-shadow: 0 0 0 0.5px;
 						z-index: 3;
 					}
 					.MuiBadge-badge::after {
@@ -178,7 +189,7 @@
 						height: 100%;
 						border-radius: 50%;
 						animation: badgeAnim 1.2s infinite ease-in-out;
-						border: 1px solid #e6da6a;
+						border: 1px solid;
 						content: '';
 					}
 					.domUser {
@@ -226,7 +237,7 @@
 				justify-content: center;
 				align-items: center;
 				// flex-grow: 2;
-				width: 14%;
+				width: 13%;
 
 				p {
 					font-size: 15px;
@@ -241,10 +252,10 @@
 				// margin: 0 0 0 70px;
 				justify-content: center;
 				align-items: center;
-				width: 14%;
+				width: 20%;
 				// border: 1px solid red;
-
 				// flex-grow: 2;
+				padding-left: 3.1vw;
 				p {
 					font-size: 1.2vw;
 					line-height: 50px;
@@ -263,8 +274,8 @@
 				align-items: center;
 
 				// border: 1px solid green;
-
-				width: 15%;
+				padding-left: 2.2vw;
+				width: 19%;
 
 				p {
 					font-size: 15px;
@@ -279,6 +290,10 @@
 @media screen and (max-width: 1920px) {
 	.mainHisUser {
 		border: 2px solid rgba(255, 255, 255, 0.7);
+
+		h3:first-child {
+			margin-top: 25px !important;
+		}
 	}
 }
 
@@ -289,52 +304,6 @@
 				.mainPlayer {
 					.playerName {
 						margin-left: 20px;
-					}
-				}
-			}
-		}
-	}
-}
-
-@media screen and (max-width: 1500px) {
-	.mainHisUser {
-		.histUser {
-			.infoHistory {
-				.mainPlayer {
-					.userImg {
-						.MuiAvatar-root {
-							width: 60px;
-							height: 60px;
-						}
-					}
-					.playerName {
-						margin-left: 20px;
-					}
-				}
-				.playerScore {
-					width: 23%;
-					p {
-						font-size: 14px;
-					}
-				}
-				.semilicon {
-					margin: 0 8px 0 8px;
-				}
-				.date {
-					width: 14%;
-					p {
-						font-size: 13px;
-						// line-height: 28px;
-					}
-					.timeHours {
-						margin: -15px 0 0 0;
-					}
-				}
-				.duration {
-					width: 20%;
-					p {
-						font-size: 13px;
-						letter-spacing: 3px;
 					}
 				}
 			}
@@ -357,11 +326,26 @@
 			}
 		}
 	}
+
+	@-moz-document url-prefix() {
+		.mainHisUser {
+			.histUser {
+				.duration {
+					padding-left: 33px !important;
+				}
+			}
+		}
+	}
 }
 
 @media screen and (max-width: 1270px) {
 	.mainHisUser {
 		height: 500px;
+		.searchCase {
+			h1 {
+				font-size: 30px;
+			}
+		}
 	}
 	.MainmyGameDIv {
 		height: 28px !important;
@@ -406,200 +390,14 @@
 	}
 }
 
-@media screen and (max-width: 1150px) {
+@media screen and (max-width: 900px) {
 	.mainHisUser {
-		width: 80%;
-		// margin: 90px auto;
-		// height: 38vw;
-		margin-bottom: 100px;
-		border: 1px solid rgba(255, 255, 255, 0.7);
+		.mainPlayer {
+			.userImg {
+				.MuiBadge-badge {
+					width: 7px !important;
 
-		.searchCase {
-			h1 {
-				font-size: 24px;
-			}
-		}
-
-		.dpdInfo {
-			h3 {
-				font-size: 12px;
-			}
-		}
-		.histUser {
-			.infoHistory {
-				.mainPlayer {
-					.userImg {
-						.MuiAvatar-root {
-							width: 55px;
-							height: 55px;
-						}
-					}
-					.playerName {
-						width: 300px;
-						p {
-							font-size: 12px;
-							margin: 2px 0 0 0;
-						}
-						.player {
-							.vs {
-								margin: 2px 10px 0 10px;
-								font-size: 13px;
-							}
-						}
-					}
-				}
-				.playerScore {
-					width: 23%;
-					p {
-						font-size: 12px;
-					}
-				}
-				.semilicon {
-					margin: 0 8px 0 8px;
-				}
-				.date {
-					width: 23%;
-					p {
-						font-size: 11px;
-						line-height: 28px;
-					}
-					.timeHours {
-						margin: -15px 0 0 0;
-					}
-				}
-				.duration {
-					p {
-						font-size: 11px;
-						// letter-spacing: 3px;
-					}
-				}
-			}
-		}
-	}
-}
-
-@media screen and (max-width: 1060px) {
-	.mainHisUser {
-		.histUser {
-			.infoHistory {
-				.mainPlayer {
-					.playerName {
-						.player {
-							.vs {
-								margin: 2px 3px 0 3px;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-@media screen and (max-width: 1000px) {
-	.mainHisUser {
-		height: 500px;
-
-		hr {
-			color: black;
-			border: 1px solid black;
-		}
-
-		.histUser {
-			.infoHistory {
-				.mainPlayer {
-					.playerName {
-						p {
-							font-size: 15px;
-							margin: 2px 0 0 0;
-						}
-						.player {
-							.vs {
-								margin: 2px 10px 0 10px;
-								font-size: 16px;
-							}
-						}
-					}
-				}
-				.playerScore {
-					width: 23%;
-					p {
-						font-size: 14px;
-					}
-				}
-				.semilicon {
-					margin: 0 8px 0 8px;
-				}
-				.date {
-					width: 23%;
-					p {
-						font-size: 13px;
-						line-height: 28px;
-					}
-					.timeHours {
-						margin: -15px 0 0 0;
-					}
-				}
-				.duration {
-					width: 20%;
-					p {
-						font-size: 13px;
-						letter-spacing: 3px;
-					}
-				}
-			}
-		}
-	}
-}
-
-@media screen and (max-width: 800px) {
-	.mainHisUser {
-		border-radius: 25px;
-
-		.dpdInfo {
-			width: 100%;
-		}
-		.histUser {
-			.infoHistory {
-				width: 100%;
-				.mainPlayer {
-					.playerName {
-						// margin-left: 20px;
-
-						margin: 0% 0% 0% 0%;
-						width: 100%;
-						p {
-							font-size: 10px;
-						}
-						.player {
-							.vs {
-								font-size: 11px;
-							}
-						}
-					}
-				}
-				.playerScore {
-					p {
-						font-size: 10px;
-					}
-				}
-				.semilicon {
-					margin: 0 8px 0 8px;
-				}
-				.date {
-					p {
-						font-size: 10px;
-						line-height: 28px;
-					}
-					.timeHours {
-						margin: -15px 0 0 0;
-					}
-				}
-				.duration {
-					p {
-						font-size: 10px;
-						letter-spacing: 3px;
-					}
+					height: 7px !important;
 				}
 			}
 		}
@@ -609,6 +407,7 @@
 @media screen and (max-width: 700px) {
 	.mainHisUser {
 		width: 410px;
+		border-radius: 20px;
 		.searchCase {
 			flex-direction: column;
 			justify-content: center;
@@ -618,6 +417,7 @@
 
 			h1 {
 				text-align: center;
+				font-size: 25px;
 			}
 		}
 
@@ -629,16 +429,74 @@
 		}
 
 		.dpdInfo {
-			margin: 5% 0% 0% 0%;
+			margin-top: 15px;
+			h3 {
+				font-size: 13px;
+			}
 
 			.infoPlayer {
-				margin: 27px 0 0 0px;
+				width: 35%;
+			}
+			.infoScore {
+				width: 23%;
+
+				padding-left: 16px;
+			}
+			.infoDate {
+				padding-left: 5px;
+			}
+			.infoDuration {
+				padding-left: 8px;
 			}
 		}
+
+		.pageOverflow {
+		}
+
 		.histUser {
+			p {
+				font-size: 10px !important;
+			}
 			.infoHistory {
-				.semilicon {
-					margin: 0 8px 0 8px;
+				width: 100%;
+				align-self: flex-start;
+				margin-top: 9px;
+
+				.mainPlayer {
+					margin-left: -10px !important;
+					.playerName {
+						width: 100%;
+						p {
+							font-size: 10px;
+						}
+
+						.player {
+							p {
+							}
+						}
+						.playerDiv {
+						}
+					}
+				}
+			}
+			.playerScore {
+				p {
+				}
+			}
+			.semilicon {
+			}
+			.date {
+				p {
+					line-height: 14px !important;
+					padding-left: 30px;
+				}
+				.timeHours {
+				}
+			}
+			.duration {
+				p {
+					font-size: 10px;
+					padding-left: 39px;
 				}
 			}
 		}

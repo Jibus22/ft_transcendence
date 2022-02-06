@@ -43,7 +43,7 @@ export default function FormUser({ isPop, userName }: Props) {
 				login: values.nickname,
 			};
 			try {
-				await axios.patch('http://localhost:3000/me', user, {
+				await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, user, {
 					withCredentials: true,
 				});
 				if (Boolean(formik.errors.nickname)) {

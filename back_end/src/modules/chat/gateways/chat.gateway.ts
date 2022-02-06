@@ -1,19 +1,24 @@
+import { CACHE_MANAGER, Inject } from '@nestjs/common';
 import {
   GatewayMetadata,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
+import { UpdateUserDto } from '../../users/dtos/update-users.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { User } from '../../users/entities/users.entity';
+import { UsersService } from '../../users/service-users/users.service';
 import { ChatMessageDto } from '../dto/chatMessade.dto';
 import { ParticipantDto } from '../dto/participant.dto';
 import { RestrictionDto } from '../dto/restriction.dto';
 import { RoomDto } from '../dto/room.dto';
 import { Room } from '../entities/room.entity';
-import { ChatGatewayService } from './chatGateway.service';
 
 export enum Events {
   CONNECT = 'connect',
@@ -21,17 +26,16 @@ export enum Events {
   PUBLIC_ROOM_UPDATED = 'publicRoomUpdated',
   PUBLIC_ROOM_REMOVED = 'publicRoomRemoved',
   NEW_MESSAGE = 'newMessage',
-  PARTICIPANT_JOINED = 'participantJoined',
-  PARTICIPANT_LEFT = 'participantLeft',
-  PARTICIPANT_UPDATED = 'participantUpdated',
+  ROOM_PARTICIPANTS_UPDATED = 'roomParticipantUpdated',
+  PUBLIC_USER_INFOS_UPDATED = 'publicUserInfosUpdated',
   USER_ADDED = 'userAdded',
   USER_REMOVED = 'userRemoved',
   USER_MODERATION = 'userModeration',
   USER_BANNED = 'userBanned',
-  USER_MUTED = 'userMuted',
 }
 
 export type messageType =
+  | UserDto
   | ChatMessageDto
   | RoomDto
   | ParticipantDto
@@ -40,82 +44,69 @@ export type messageType =
 const options: GatewayMetadata = {
   namespace: 'chat',
   cors: {
-    origin: ['http://localhost:3001'],
+    origin: [
+      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
+      'http://localhost:3001',
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
 };
 
-@WebSocketGateway(options)
-export class ChatGateway
+const options_game: GatewayMetadata = {
+  namespace: 'game',
+  cors: {
+    origin: [
+      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
+      'http://localhost:3001',
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+};
+
+@WebSocketGateway(options_game)
+export class GameGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  storage: Map<string, Socket>;
-  constructor(private readonly chatGatewayService: ChatGatewayService) {
-    this.storage = new Map<string, Socket>();
-  }
-
   @WebSocketServer()
   server: Server;
 
   afterInit(server: Server) {
     this.server = server;
   }
-
   async handleConnection(client: Socket) {
-    await this.chatGatewayService
-      .handleConnection(this.server, client)
-      .then(() => {
-        this.storage.set(client.id, client);
-      });
+    console.debug('ws game 🎲  connect -> ', client.id);
   }
 
   async handleDisconnect(client: Socket) {
-    await this.chatGatewayService
-      .handleDisconnect(this.server, client)
-      .then(() => {
-        this.storage.delete(client.id);
-      });
+    console.debug('ws game 🎲  disconnected -> ', client.id);
+  }
+}
+
+@WebSocketGateway(options)
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly usersService: UsersService,
+  ) {}
+
+  @WebSocketServer() server: Server;
+
+  afterInit(server: Server) {
+    this.server = server;
   }
 
-  sendEventToServer(event: string, message: messageType) {
-    return this.chatGatewayService.sendEventToServer(
-      this.server,
-      event,
-      message,
-    );
+  async handleConnection(client: Socket) {
+    console.debug('ws chat 🍄  connect -> ', client.id);
+    await this.doHandleConnection(client);
   }
 
-  sendEventToRoom(room: Room, event: string, message: messageType) {
-    return this.chatGatewayService.sendEventToRoom(
-      this.server,
-      room.id,
-      event,
-      message,
-    );
-  }
-
-  sendEventToClient(user: User, event: string, message: messageType) {
-    return this.chatGatewayService.sendEventToRoom(
-      this.server,
-      user.ws_id,
-      event,
-      message,
-    );
-  }
-
-  makeClientJoinRoom(user: User, room: Room) {
-    const clientSocket = this.storage.get(user.ws_id);
-    if (clientSocket) {
-      this.chatGatewayService.makeClientJoinRoom(clientSocket, room);
-    }
-  }
-
-  makeClientLeaveRoom(user: User, room: Room) {
-    const clientSocket = this.storage.get(user.ws_id);
-    if (clientSocket) {
-      this.chatGatewayService.makeClientLeaveRoom(clientSocket, room);
-    }
+  async handleDisconnect(client: Socket) {
+    console.debug('ws chat 🍄 disconnected -> ', client.id);
+    await this.doHandleDisconnect(client);
   }
 
   // @UsePipes(new ValidationPipe({
@@ -123,6 +114,150 @@ export class ChatGateway
   // }))
   // @SubscribeMessage('ingame')
   // async updateIngane(client: Socket, data: { value: 'in' | 'out' }) {
+  //   console.log('get ingame');
   //   return await this.chatGatewayService.setUserIngame(client, data);
   // }
+
+  /*
+	===================================================================
+	-------------------------------------------------------------------
+				UTILS FUNCTIONS
+	-------------------------------------------------------------------
+	===================================================================
+	*/
+
+  private async joinRoomsAtConnection(client: Socket, user: User) {
+    await this.usersService.findRoomParticipations(user.id).then((rooms) => {
+      if (rooms.length) {
+        client.join(rooms.map((r) => r.id));
+      }
+    });
+  }
+
+  private async updateUser(client: Socket, userData: UpdateUserDto) {
+    await this.usersService
+      .find({ ws_id: client.id })
+      .then(async (users) => {
+        if (users[0]) {
+          await this.usersService.update(users[0].id, userData);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+        client._error({ message: error.message });
+        return client.disconnect();
+      });
+  }
+
+  private async getUserIdFromToken(token: string) {
+    if (token) {
+      return await this.cacheManager.get<string>(token);
+    }
+  }
+
+  private doHandleConnectionFailure(client: Socket, errorMessage: string) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(
+        `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
+        errorMessage,
+      );
+    }
+    client._error({ message: errorMessage });
+    return client.disconnect();
+  }
+
+  /*
+	===================================================================
+	-------------------------------------------------------------------
+				SOCKET MANAGEMENT
+	-------------------------------------------------------------------
+	===================================================================
+	*/
+
+  async doHandleConnection(client: Socket) {
+    const { key: token } = client.handshake.auth;
+    const userId = await this.getUserIdFromToken(token).catch((error) => {
+      this.doHandleConnectionFailure(client, error.message);
+    });
+
+    if (!userId) {
+      return this.doHandleConnectionFailure(client, 'invalid token');
+    }
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`handleConnection: ${client.id} | token ${token}`);
+    }
+
+    await this.usersService
+      .update(userId, {
+        ws_id: client.id,
+      })
+      .catch((error) => {
+        this.doHandleConnectionFailure(client, error.message);
+      })
+      .then(async (user: User) => {
+        if (process.env.NODE_ENV === 'dev') {
+          console.log(`handleConnection: Client connected ! ✅`);
+        }
+
+        return await this.joinRoomsAtConnection(client, user);
+      })
+      .catch((error) => {
+        this.doHandleConnectionFailure(client, error.message);
+      });
+  }
+
+  async doHandleDisconnect(client: Socket) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Client disconnected: ${client.id}`);
+    }
+    await this.updateUser(client, {
+      ws_id: null,
+      is_in_game: false,
+    });
+  }
+
+  private async getClientSocket(ws_id: string) {
+    if (ws_id === null) return undefined;
+
+    const sockets = await this.server.fetchSockets();
+    const clientSocket = sockets.filter((s) => s.id === ws_id);
+    if (clientSocket.length) {
+      return clientSocket[0];
+    }
+    return undefined;
+  }
+
+  async makeClientJoinRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Add client ${user?.login} to room ${room.id}`);
+    }
+    const clientSocket = await this.getClientSocket(user.ws_id);
+    if (clientSocket) {
+      await clientSocket.join(room.id);
+    }
+  }
+
+  async makeClientLeaveRoom(user: User, room: Room) {
+    if (process.env.NODE_ENV === 'dev') {
+      console.log(`Remove client ${user?.login} from room ${room.id}`);
+    }
+    const clientSocket = await this.getClientSocket(user.ws_id);
+    if (clientSocket) {
+      await clientSocket.leave(room.id);
+    }
+  }
+
+  doSendEventToServer(event: string, message: messageType | string) {
+    this.server.emit(event, message);
+  }
+
+  doSendEventToRoom(
+    destId: string | string[],
+    event: string,
+    message: messageType,
+  ) {
+    if (destId && destId.length) {
+      this.server.to(destId).emit(event, message);
+    }
+  }
 }

@@ -184,16 +184,16 @@
 	}
 
 	::-webkit-scrollbar {
-		width: 20px;
+		width: 1vw;
 	}
 	::-webkit-scrollbar-track {
 		margin-top: 30px;
-		margin-bottom: 30px;
-		border-radius: 40px;
+		margin-bottom: 60px;
+		border-radius: 20px;
 	}
 
 	.userPrintDIv {
-		width: 100%;
+		width: 101%;
 		height: 70%;
 		margin-top: 2px;
 
@@ -234,6 +234,7 @@
 					height: 16%;
 					border-radius: 100%;
 					z-index: 3;
+					box-shadow: 0 0 0 0.5px;
 				}
 				.MuiBadge-badge::after {
 					position: absolute;
@@ -293,6 +294,7 @@
 					font-weight: 500;
 					font-size: 0.9vw;
 					border-radius: 0.8vw;
+					transition: ease-out 0.185s;
 				}
 				.muiButton:hover {
 					background-color: rgba(230, 156, 106, 0.5);
@@ -315,9 +317,9 @@
 	.mainUserRank {
 		border: 2px solid rgba(255, 255, 255, 0.7);
 
-		::-webkit-scrollbar {
-			width: 10px;
-		}
+		// ::-webkit-scrollbar {
+		// 	width: 10px;
+		// }
 
 		.mainSwitch {
 			.switch-button {
@@ -358,10 +360,6 @@
 @media screen and (max-width: 1440px) {
 	.mainUserRank {
 		border: 1px solid rgba(255, 255, 255, 0.7);
-
-		::-webkit-scrollbar {
-			width: 5px;
-		}
 
 		.userPrintDIv {
 			.MainUserRankdiv {
@@ -414,6 +412,18 @@
 				}
 			}
 		}
+		.rankInfo {
+			h3:first-child {
+				margin-top: 26px !important;
+			}
+
+			.nbUser {
+				width: 31.8%;
+			}
+		}
+		.userPrintDIv {
+			width: 102%;
+		}
 	}
 }
 
@@ -435,6 +445,10 @@
 
 		.rankInfo {
 			margin-top: 30px;
+
+			justify-content: center;
+			align-self: flex-start;
+			width: 86%;
 			h3 {
 				color: #e69c6a;
 				text-align: center;
@@ -442,28 +456,29 @@
 				font-size: 11px;
 			}
 
-			.nbRank {
-				width: 18%;
-				margin-top: 14px !important;
-			}
-			.nbUser {
-				width: 20%;
-			}
+			// .nbRank {
+			// 	width: 18%;
+			// 	margin-top: 14px !important;
+			// 	border: 1px solid red;
+			// }
+			// .nbUser {
+			// 	width: 20%;
+			// 	border: 1px solid red;
+			// }
 			.nbGame {
-				width: 22%;
 			}
 			.nbWin {
-				width: 9%;
+				padding-left: 34px;
 			}
 			.nbLoose {
-				width: 23%;
+				padding-left: 6.5vw;
 			}
 		}
 
 		.userPrintDIv {
 			height: 370px !important;
 
-			width: 106%;
+			width: 102.5%;
 
 			h1,
 			h3 {
@@ -475,56 +490,14 @@
 				margin-top: 20px !important;
 
 				.nbRank {
-					width: 10%;
+					width: 13%;
 
 					h1 {
 						font-size: 16px;
 					}
 				}
 
-				.logginUser {
-					// width: 15%;
-				}
-				.nbStatGame {
-					width: 15%;
-				}
-				.nbStatWin {
-					width: 15%;
-				}
-				.nbStatLoose {
-					width: 15%;
-				}
-
-				// .buttonDIv {
-				// 	width: 13%;
-
-				// 	.spanTooltip {
-				// 		display: flex;
-				// 		justify-content: center;
-				// 		align-items: center;
-				// 		border: 1px solid red;
-				// 		height: 2.1vw !important;
-				// 		width: 8vw;
-
-				// 	}
-
-				// 	.muiButton {
-				// 		width: 100%;
-				// 		height: 100%;
-				// 		border: white 2px solid;
-				// 		font-weight: 500;
-				// 		font-size: 0.9vw;
-				// 		border-radius: 0.8vw;
-				// 	}
-				// 	.muiButton:hover {
-				// 		background-color: rgba(230, 156, 106, 0.5);
-				// 		font-size: 1vw;
-				// 	}
-				// }
-
 				.buttonDIv {
-					width: 13%;
-
 					.spanTooltip {
 						height: 22px !important;
 						width: 63px;
@@ -569,6 +542,9 @@
 				margin-bottom: 14px !important;
 			}
 		}
+		.userPrintDIv {
+			width: 103%;
+		}
 	}
 }
 
@@ -581,6 +557,9 @@
 			}
 			h3:last-child {
 			}
+		}
+		.userPrintDIv {
+			width: 105% !important;
 		}
 	}
 }

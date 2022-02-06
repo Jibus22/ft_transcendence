@@ -1,28 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './userRank.scss';
 import { RankWorld } from '../..';
+import { User, Rank } from '../../type';
 import { useSpring, animated } from 'react-spring';
 import axios, { AxiosError } from 'axios';
-
-interface User {
-	id: string;
-	login: string;
-	photo_url: string;
-	status: string;
-}
-
-interface Rank {
-	games_count: number;
-	games_won: number;
-	games_lost: number;
-	user: User;
-}
 
 const UserRank = () => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		from: { opacity: 0, transform: 'translate(0px, 170px)' },
 		config: {
 			delay: 300,
 			duration: 300,
@@ -44,7 +31,7 @@ const UserRank = () => {
 
 	const fetchData = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/game/leaderboard', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/leaderboard`, {
 				withCredentials: true,
 			});
 			setData(data);
@@ -55,7 +42,7 @@ const UserRank = () => {
 	};
 	const fetchDataFriends = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/users/friend', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 				withCredentials: true,
 			});
 			setDataFriends(data);

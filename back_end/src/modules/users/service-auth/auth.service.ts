@@ -50,7 +50,7 @@ export class AuthService {
     });
   }
 
-  async getUserData(token: string): Promise<Partial<User>> {
+  async getUserData(token: string) {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -80,7 +80,7 @@ export class AuthService {
       return await this.usersService
         .update(users[0].id, {
           photo_url_42: user.photo_url_42,
-        } as User)
+        })
         .catch((e) => {
           throw new BadGatewayException(e.message);
         });
