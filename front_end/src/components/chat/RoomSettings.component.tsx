@@ -80,7 +80,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			room.participants.map((user: any) => (<User key={user.id}>
 				<img onClick={() => showUserDetail(user)} src={user.user.photo_url} alt={user.user.login} />
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
-				{isModerator() && (
+				{isModerator() && user.user.id !== currentUser.id && (
 					<ActionButtons>
 						<button>
 							<BlockIcon />
