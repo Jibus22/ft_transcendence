@@ -128,6 +128,23 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		getPublicRooms();
 	})
 
+	window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
+		getPublicRooms();
+	})
+
+	window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
+		getPublicRooms();
+	})
+
+	window.addEventListener("userAdded", ({ detail }: any) => {
+		getPublicRooms();
+		getChats();
+	})
+
+	window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
+		openPublicRoom(detail.id);
+	})
+
 	return (
 	<ChatListWrapper>
 		<SearchField>
@@ -136,14 +153,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		</SearchField>
 		{ tab === 0 && !searchResults.length && (<List>
 			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
-				{/* {chat.participants.length === 1 && (<img src={chat.participants[0].user.photo_url} alt={chat.participants[0].user.login} />)} */}
-				{/* {chat.participants.length === 2 && (<img src={chat.participants[1].user.photo_url} alt={chat.participants[1].user.login} />)} */}
 				{getUser(chat.participants, currentUser) !== null && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
 				<div>
 					<h4>{chatName(chat.participants, currentUser)}</h4>
-					<p>{chat.id}</p>
 				</div>
 			</Preview>))}
+			{!chats.length && <span className="empty-message">No chat yet</span>}
 		</List>)}
 		{ tab === 1 && !searchResults.length && (<List>
 			{friends.map((friend: any) => (<Preview key={friend.id} onClick={() => openChatHandler(friend.id)}>
@@ -152,6 +167,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 					<h4>{friend.login}</h4>
 				</div>
 			</Preview>))}
+			{!friends.length && <span className="empty-message">No friends yet</span>}
 		</List>)}
 		{ tab === 2 && !searchResults.length && (
 			<>
@@ -159,9 +175,9 @@ const ChatList = ({ openChat, currentUser }: any) => {
 					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => openPublicRoom(chat.id)}>
 						<div>
 							<h4>{chatName(chat.participants, currentUser)}</h4>
-							<p>{chat.id}</p>
 						</div>
 					</Preview>))}
+					{!publicChats.length && <span className="empty-message">No chat yet</span>}
 				</List>
 				<LargeButton onClick={() => createChat()}>+ Create chat</LargeButton>
 			</>
@@ -222,6 +238,13 @@ const List = styled.div`
 
 	::-webkit-scrollbar {
 		display: none;
+	}
+
+	.empty-message {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
 	}
 `;
 

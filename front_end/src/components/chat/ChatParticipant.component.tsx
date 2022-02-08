@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import BlockIcon from '@mui/icons-material/Block';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 
 const ChatParticipant = ({ user, currentUser }: any) => {
@@ -11,8 +12,14 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		}, { withCredentials: true });
 	};
 
+	const askGame = async (id: any) => {
+		await axios.post(`http://localhost:3000/users/friend`, {
+			id
+		}, { withCredentials: true });
+	};
+
 	const blockUser = async (id: any) => {
-		await axios.post(`http://localhost:3000/users/block`, {
+		await axios.post(`http://localhost:3000/?`, {
 			id
 		}, { withCredentials: true });
 	};
@@ -25,6 +32,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			</DetailsView>
 			{ currentUser.id !== user.user.id && (<ButtonRow>
 				<button><PersonAddIcon onClick={ () => addFriend(user.user.id) } /></button>
+				<button><SportsEsportsIcon onClick={ () => askGame(user.user.id) } /></button>
 				<button><BlockIcon onClick={ () => blockUser(user.user.id) } /></button>
 			</ButtonRow>) }
 		</>

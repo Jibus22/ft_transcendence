@@ -53,6 +53,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			alert(`User '${login}' not found or is already in the room.`);
 			return;
 		}
+		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
 
 	const toggleModerator = async (user: any) => {
@@ -60,7 +61,30 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			participant_id: user.id,
 			is_moderator: !user.is_moderator
 		}, { withCredentials: true });
+		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
+
+	const mute = async (user: any) => {
+		const duration = prompt("Mute duration, in minutes");
+		if (duration) {
+			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+				user_id: user.id,
+				restriction_type: "mute",
+				duration: parseInt(duration)
+			}, { withCredentials: true });
+		}
+	}
+
+	const ban = async (user: any) => {
+		const duration = prompt("Ban duration, in minutes");
+		if (duration) {
+			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+				user_id: user.id,
+				restriction_type: "ban",
+				duration: parseInt(duration)
+			}, { withCredentials: true });
+		}
+	}
 
 	if (userDetail) {
 		return (<ChatParticipant user={userDetail} currentUser={currentUser} />);
@@ -82,10 +106,10 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
 				{isModerator() && user.user.id !== currentUser.id && (
 					<ActionButtons>
-						<button>
+						<button onClick={() => ban(user)}>
 							<BlockIcon />
 						</button>
-						<button>
+						<button onClick={() => mute(user)}>
 							<VolumeOffIcon />
 						</button>
 						<button onClick={() => toggleModerator(user)}>
