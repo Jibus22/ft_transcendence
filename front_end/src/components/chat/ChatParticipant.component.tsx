@@ -13,13 +13,11 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const askGame = async (id: any) => {
-		await axios.post(`http://localhost:3000/users/friend`, {
-			id
-		}, { withCredentials: true });
+		// ?
 	};
 
 	const blockUser = async (id: any) => {
-		await axios.post(`http://localhost:3000/?`, {
+		await axios.post(`http://localhost:3000/users/block`, {
 			id
 		}, { withCredentials: true });
 	};

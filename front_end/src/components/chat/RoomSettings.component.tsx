@@ -68,7 +68,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		const duration = prompt("Mute duration, in minutes");
 		if (duration) {
 			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
-				user_id: user.id,
+				participant_id: user.id,
+				user_id: user.user.id,
 				restriction_type: "mute",
 				duration: parseInt(duration)
 			}, { withCredentials: true });
@@ -79,7 +80,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		const duration = prompt("Ban duration, in minutes");
 		if (duration) {
 			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
-				user_id: user.id,
+				participant_id: user.id,
+				user_id: user.user.id,
 				restriction_type: "ban",
 				duration: parseInt(duration)
 			}, { withCredentials: true });
