@@ -22,11 +22,11 @@ function sleep(milliseconds: number) {
 	} while (currentDate - date < milliseconds);
 }
 
-// type MyProps = {
-// 	startGame: React.Dispatch<React.SetStateAction<boolean>>;
-// };
+type MyProps = {
+	map: Number;
+};
 
-class PongGame extends React.Component {
+class PongGame extends React.Component<MyProps> {
 	///////////////////////////////////////////
 
 	//////////////////////////////////////
@@ -60,7 +60,7 @@ class PongGame extends React.Component {
 		"",
 		""
 	);
-	map = 0;
+	map = this.props.map;
 
 	sleep() {
 		sleep(this.sleepduration);
@@ -153,9 +153,9 @@ class PongGame extends React.Component {
 
 		//Affichage du score
 		this.gamerunning = false;
-		if (ret == 1)
+		if (ret === 1)
 			this._printText('Player One score');
-		if (ret == 2)
+		if (ret === 2)
 			this._printText('Player Two score');	
 		setTimeout(() => (this.gamerunning = true), 2000);
 
@@ -284,6 +284,15 @@ class PongGame extends React.Component {
 	_draw(){
 		this._drawBackground();
 
+		//filet map0
+		if (this.map === 0)
+		{
+			this._ctx!.fillStyle = "#B9B9B9";
+			this._ctx!.fillStyle = "#6E6E6E";
+			this._ctx!.fillRect(this.width/2 - 2, 0, 2, this.height);
+			this._ctx!.fillStyle = "white";
+		}
+
 		//draw Ball
 		this._ctx!.fillStyle = this.fillStyle;
 		this._ctx!.beginPath();
@@ -331,7 +340,10 @@ class PongGame extends React.Component {
 
 		//Score
 		this._ctx!.fillStyle = this.fillStyle;
-		this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
+		if (this.map === 0)
+		this._ctx!.fillText(this.scoreP1 + ' ' + this.scoreP2, this.width / 2 - ((15 * 3) / 2), 30);
+		else
+			this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
 	};
 
 	_startGame() {
@@ -410,9 +422,9 @@ class PongGame extends React.Component {
 
 				//Affichage du score
 				this.gamerunning = false;
-				if (data.score == 1)
+				if (data.score === 1)
 					this._printText('Player One score');
-				if (data.score == 2)
+				if (data.score === 2)
 					this._printText('Player Two score');	
 				setTimeout(() => (this.gamerunning = true), 2000);
 			}

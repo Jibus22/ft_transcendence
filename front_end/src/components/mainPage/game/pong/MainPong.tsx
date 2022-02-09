@@ -72,7 +72,7 @@ export default function MainPong() {
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
 					{count === 0 ? (
-						<PongGame />
+						<PongGame map={0} />
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
