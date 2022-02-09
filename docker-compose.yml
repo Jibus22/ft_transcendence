@@ -48,5 +48,5 @@ services:
       - node_modules_guest_front:/usr/src/app/node_modules
       - ./front_end:/usr/src/app
     ports:
-      - 3001:3000
+      - 80:3000
     command: npm run start

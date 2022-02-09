@@ -44,6 +44,7 @@ const options: GatewayMetadata = {
   namespace: 'chat',
   cors: {
     origin: [
+      `http://${process.env.SERVER_IP}`,
       `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
       'http://localhost:3001',
     ],
@@ -56,6 +57,7 @@ const options_game: GatewayMetadata = {
   namespace: 'game',
   cors: {
     origin: [
+      `http://${process.env.SERVER_IP}`,
       `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
       'http://localhost:3001',
     ],
