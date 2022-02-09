@@ -22,10 +22,6 @@ export class CurrentUserMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    // if (req.baseUrl.includes('/socket.io')) { // TODO remove debug
-    //   return next();
-    // }
-
     const logger = new Logger(' 🛠 👥  User Middlewear');
     logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
 

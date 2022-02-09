@@ -65,7 +65,6 @@ export class AuthController {
     session.useTwoFA = user.useTwoFA;
     session.isTwoFAutanticated = false;
     return { url: this.configService.get('AUTH_REDIRECT_URL') };
-    // return { url: this.configService.get('/') };
   }
 
   @Delete('/signout')
@@ -85,8 +84,6 @@ export class AuthController {
     ===================================================================
     */
 
-  //TODO use guard ?
-
   @Post('/2fa/generate')
   @ApiCookieAuth()
   @UseGuards(AuthGuard)
@@ -94,7 +91,6 @@ export class AuthController {
     summary:
       'Internally set a new key to user and return qr-code + key in headers',
   })
-  // @ApiResponse({ }) // TODO set png ?
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Qrcode as png and Key header',
@@ -110,7 +106,7 @@ export class AuthController {
         throw new BadRequestException(error);
       });
     response.setHeader('content-type', 'image/png');
-    response.setHeader('secretKey', secret); //TODO is it safe ?
+    response.setHeader('secretKey', secret);
     return this.authService.qrCodeStreamPipe(response, totpAuthUrl);
   }
 

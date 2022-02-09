@@ -27,7 +27,7 @@ export class RelationsService {
         return value;
       })
       .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+        throw new ConflictException(error.message);
       });
   }
 
@@ -45,7 +45,7 @@ export class RelationsService {
       .of(userId)
       .add(targetId)
       .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+        throw new ConflictException(error.message);
       });
   }
 
@@ -60,7 +60,7 @@ export class RelationsService {
       .of(userId)
       .remove(targetId)
       .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+        throw new ConflictException(error.message);
       });
   }
 }
