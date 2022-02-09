@@ -8,19 +8,20 @@ import {
   Get,
   HttpStatus,
   Inject,
+  Logger,
   Post,
   Query,
   Redirect,
   Res,
   Session,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
@@ -31,7 +32,6 @@ import { authTokenDto } from './dtos/authToken.dto';
 import { privateUserDto } from './dtos/private-user.dto';
 import { User } from './entities/users.entity';
 import { AuthService } from './service-auth/auth.service';
-import { UsersService } from './service-users/users.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -54,7 +54,7 @@ export class AuthController {
     const user = await this.authService
       .registerUser(query.code, query.state)
       .catch((e) => {
-        console.log(e);
+        new Logger('AuthCallback').debug(e);
       });
     if (!user) {
       throw new BadGatewayException(
@@ -194,9 +194,10 @@ export class AuthController {
   async producteWsToken(@CurrentUser() user) {
     const token = randomUUID() + '.' + user.id;
     await this.cacheManager.set(token, user.id, { ttl: 4 });
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
-    }
+    new Logger('Ws-AuthToken').debug(
+      `store in cache: ${token} for user -> `,
+      user.id,
+    );
     return { token };
   }
 }

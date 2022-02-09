@@ -19,7 +19,7 @@ export class TaskerService {
       .then((restrictions) => {
         return this.chatService.extractExpiredRestrictions(restrictions);
       })
-      .catch((error) => logger.log(error));
+      .catch((error) => logger.debug(error));
 
     if (!expired || !expired.length) return;
 

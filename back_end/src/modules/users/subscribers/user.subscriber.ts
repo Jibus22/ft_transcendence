@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import {
   Connection,
@@ -34,7 +35,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
         (update) =>
           update.propertyName === 'login' ||
           update.propertyName === 'ws_id' ||
-//TODO add ingame status here          // update.propertyName === 'in_game' ||
+          //TODO add ingame status here          // update.propertyName === 'in_game' ||
           update.propertyName === 'use_local_photo',
       )
     );
@@ -61,6 +62,6 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
           );
         }
       })
-      .catch((e) => console.log(e));
+      .catch((e) => new Logger('UserPhotoSubscriber').debug(e));
   }
 }
