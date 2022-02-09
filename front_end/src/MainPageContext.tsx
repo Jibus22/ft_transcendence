@@ -91,7 +91,7 @@ const MainPageProvider = (props: any) => {
 
 	const fetchDataUserMe = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/me', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
 				withCredentials: true,
 			});
 			setData([data]);
@@ -127,7 +127,7 @@ const MainPageProvider = (props: any) => {
 		let data = new FormData();
 		data.append('file', file);
 		try {
-			await axios.post('http://localhost:3000/' + path, data, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path, data, {
 				withCredentials: true,
 			});
 			fetchDataUserMe();
@@ -145,7 +145,7 @@ const MainPageProvider = (props: any) => {
 			data.append('file', file);
 		}
 		try {
-			await axios.post('http://localhost:3000/me/photo', data, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`, data, {
 				withCredentials: true,
 			});
 			fetchDataUserMe();

@@ -18,8 +18,4 @@ export class ChatMessage {
 
   @Column()
   body: string;
-
-  // @ManyToOne(type => Game, (game) => game.id)
-  // @Column()
-  // game: Game;
 }

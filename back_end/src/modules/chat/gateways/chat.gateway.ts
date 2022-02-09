@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Logger } from '@nestjs/common';
 import {
   GatewayMetadata,
   OnGatewayConnection,
@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Cache } from 'cache-manager';
 import { Server, Socket } from 'socket.io';
+import { UpdateUserDto } from '../../users/dtos/update-users.dto';
 import { UserDto } from '../../users/dtos/user.dto';
 import { User } from '../../users/entities/users.entity';
 import { UsersService } from '../../users/service-users/users.service';
@@ -42,11 +43,49 @@ export type messageType =
 const options: GatewayMetadata = {
   namespace: 'chat',
   cors: {
-    origin: ['http://localhost:3001'],
+    origin: [
+      `http://${process.env.SERVER_IP}`,
+      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
+      'http://localhost:3001',
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
 };
+
+const options_game: GatewayMetadata = {
+  namespace: 'game',
+  cors: {
+    origin: [
+      `http://${process.env.SERVER_IP}`,
+      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
+      'http://localhost:3001',
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+};
+
+@WebSocketGateway(options_game)
+export class GameGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
+
+  private readonly logger = new Logger(GameGateway.name);
+
+  afterInit(server: Server) {
+    this.server = server;
+  }
+  async handleConnection(client: Socket) {
+    this.logger.debug('ws game 🎲  connect -> ', client.id);
+  }
+
+  async handleDisconnect(client: Socket) {
+    this.logger.debug('ws game 🎲  disconnected -> ', client.id);
+  }
+}
 
 @WebSocketGateway(options)
 export class ChatGateway
@@ -59,15 +98,20 @@ export class ChatGateway
 
   @WebSocketServer() server: Server;
 
+  private readonly logger = new Logger(GameGateway.name);
+
   afterInit(server: Server) {
+    this.logger.log('Init Gateway');
     this.server = server;
   }
 
   async handleConnection(client: Socket) {
+    this.logger.debug('ws chat 🍄  connect -> ', client.id);
     await this.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
+    this.logger.debug('ws chat 🍄 disconnected -> ', client.id);
     await this.doHandleDisconnect(client);
   }
 
@@ -76,7 +120,7 @@ export class ChatGateway
   // }))
   // @SubscribeMessage('ingame')
   // async updateIngane(client: Socket, data: { value: 'in' | 'out' }) {
-  //   console.log('get ingame');
+  //   this.logger.debug('get ingame');
   //   return await this.chatGatewayService.setUserIngame(client, data);
   // }
 
@@ -96,7 +140,7 @@ export class ChatGateway
     });
   }
 
-  private async updateUser(client: Socket, userData: Partial<User>) {
+  private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
       .find({ ws_id: client.id })
       .then(async (users) => {
@@ -105,7 +149,7 @@ export class ChatGateway
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        this.logger.debug(error.message);
         client._error({ message: error.message });
         return client.disconnect();
       });
@@ -118,12 +162,10 @@ export class ChatGateway
   }
 
   private doHandleConnectionFailure(client: Socket, errorMessage: string) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(
-        `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
-        errorMessage,
-      );
-    }
+    this.logger.debug(
+      `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
+      errorMessage,
+    );
     client._error({ message: errorMessage });
     return client.disconnect();
   }
@@ -145,9 +187,7 @@ export class ChatGateway
     if (!userId) {
       return this.doHandleConnectionFailure(client, 'invalid token');
     }
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`handleConnection: ${client.id} | token ${token}`);
-    }
+    this.logger.log(`handleConnection: ${client.id} | token ${token}`);
 
     await this.usersService
       .update(userId, {
@@ -157,10 +197,7 @@ export class ChatGateway
         this.doHandleConnectionFailure(client, error.message);
       })
       .then(async (user: User) => {
-        if (process.env.NODE_ENV === 'dev') {
-          console.log(`handleConnection: Client connected ! ✅`);
-        }
-
+        this.logger.log(`handleConnection: Client connected ! ✅`);
         return await this.joinRoomsAtConnection(client, user);
       })
       .catch((error) => {
@@ -169,9 +206,7 @@ export class ChatGateway
   }
 
   async doHandleDisconnect(client: Socket) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Client disconnected: ${client.id}`);
-    }
+    this.logger.log(`Client disconnected: ${client.id}`);
     await this.updateUser(client, {
       ws_id: null,
       is_in_game: false,
@@ -190,9 +225,7 @@ export class ChatGateway
   }
 
   async makeClientJoinRoom(user: User, room: Room) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Add client ${user?.login} to room ${room.id}`);
-    }
+    this.logger.debug(`Add client ${user?.login} to room ${room.id}`);
     const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
       await clientSocket.join(room.id);
@@ -200,9 +233,7 @@ export class ChatGateway
   }
 
   async makeClientLeaveRoom(user: User, room: Room) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Remove client ${user?.login} from room ${room.id}`);
-    }
+    this.logger.debug(`Remove client ${user?.login} from room ${room.id}`);
     const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
       await clientSocket.leave(room.id);

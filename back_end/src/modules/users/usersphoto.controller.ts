@@ -47,8 +47,12 @@ export class UsersPhotoController {
 
   @Post('/me/photo')
   @UseInterceptors(
-    FileInterceptor('file', { dest: `/usr/assets/users_photos` }),
-  ) // TODO: change to env.
+    FileInterceptor('file', {
+      dest: `${
+        process.env.USERS_PHOTOS_STORAGE_PATH || '/usr/assets/users_photos'
+      }`,
+    }),
+  )
   @Serialize(privateUserDto)
   @ApiResponse({ type: privateUserDto })
   @ApiResponse({
@@ -105,7 +109,7 @@ export class UsersPhotoController {
     description: 'file requested not found',
   })
   async servePhoto(
-    @Param('fileName') fileName,
+    @Param('fileName') fileName: string,
     @Response({ passthrough: true }) res,
   ) {
     return await this.usersPhotoService
