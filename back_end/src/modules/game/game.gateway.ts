@@ -10,12 +10,13 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { GameService } from './game.service';
+import { GameService } from './services/game.service';
 import { User } from '../users/entities/users.entity';
 import { plainToClass } from 'class-transformer';
 import { UserDto } from '../users/dtos/user.dto';
 import { CreateGameDto } from './dto/create-game.dto';
 import { randomUUID } from 'crypto';
+import { WsGameService } from './services/ws-game.service';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -32,7 +33,10 @@ export class GameGateway
 {
   @WebSocketServer() private server: Server;
 
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly wsGameService: WsGameService,
+  ) {}
 
   afterInit() {
     console.debug('ws game 🎲  afterInit -> ', this.server);
@@ -40,10 +44,12 @@ export class GameGateway
 
   async handleConnection(client: Socket) {
     console.debug('ws game 🎲  connect -> ', client.id);
+    await this.wsGameService.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
     console.debug('ws game 🎲  disconnected -> ', client.id);
+    await this.wsGameService.doHandleDisconnect(client);
   }
 
   gameInvitation(challenger: User, opponent: User) {
@@ -52,50 +58,55 @@ export class GameGateway
       .emit('gameInvitation', plainToClass(UserDto, challenger));
   }
 
-  @SubscribeMessage('createGame')
-  async createGame(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() createGameDto: CreateGameDto,
-  ) {
-    const game_uuid = await this.gameService.newGame(createGameDto);
-    const ws_op = await this.gameService.getWs(createGameDto.loginP2);
-    const socket_op = await this.server.in(ws_op).fetchSockets();
-    client.join(game_uuid);
-    socket_op.join(game_uuid);
-    this.server.in(game_uuid).emit('getRoom', game_uuid);
-    this.countDown(client, game_uuid);
-  }
+  // @SubscribeMessage('createGame')
+  // async createGame(
+  //   @ConnectedSocket() client: Socket,
+  //   @MessageBody() createGameDto: CreateGameDto,
+  // ) {
+  //   const game_uuid = await this.gameService.newGame(createGameDto);
+  //   const ws_op = await this.gameService.getWs(createGameDto.loginP2);
+  //   const socket_op = await this.server.in(ws_op).fetchSockets();
+  //   client.join(game_uuid);
+  //   socket_op.join(game_uuid);
+  //   this.server.in(game_uuid).emit('getRoom', game_uuid);
+  //   this.countDown(client, game_uuid);
+  // }
 
-  @SubscribeMessage('acceptGame')
-  async acceptGame(@MessageBody() createGameDto: CreateGameDto) {
-    const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
-      is_in_game: true,
-    });
-    this.server.to(ws_ch).emit('gameAccepted');
-  }
+  // @SubscribeMessage('acceptGame')
+  // async acceptGame(@MessageBody() createGameDto: CreateGameDto) {
+  //   const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
+  //     is_in_game: true,
+  //   });
+  //   this.server.to(ws_ch).emit('gameAccepted');
+  // }
 
   // Here createGameDto.loginP2 should be null
-  @SubscribeMessage('denyGame')
-  async denyGame(@MessageBody() createGameDto: CreateGameDto) {
-    const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
-      is_in_game: false,
-    });
-    this.server.to(ws_ch).emit('gameDenied');
-  }
+  // @SubscribeMessage('denyGame')
+  // async denyGame(@MessageBody() createGameDto: CreateGameDto) {
+  //   const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
+  //     is_in_game: false,
+  //   });
+  //   this.server.to(ws_ch).emit('gameDenied');
+  // }
 
-  async countDown(@ConnectedSocket() client: Socket, room: string) {
-    let count = 10;
-    const uuid = randomUUID();
-    setInterval(() => {
-      this.server.in(room).emit('countDown', count);
-      count--;
-      if (!count) {
-        client.emit('setMap', (map: string) => {
-          this.gameService.updateGame(room, { map: map, watch: uuid });
-        });
-        this.server.in(room).emit('startGame', count);
-        clearInterval();
-      }
-    }, 1000);
-  }
+  // async countDown(@ConnectedSocket() client: Socket, room: string) {
+  //   let count = 10;
+  //   const uuid = randomUUID();
+  //   setInterval(() => {
+  //     this.server.in(room).emit('countDown', count);
+  //     count--;
+  //     if (!count) {
+  //       client.emit('setMap', (map: string) => {
+  //         this.gameService.updateGame(room, { map: map, watch: uuid });
+  //       });
+  //       this.server.in(room).emit('startGame', count);
+  //       clearInterval();
+  //     }
+  //   }, 1000);
+  // }
+
+  // @SubscribeMessage('testaccept')
+  // async test(@MessageBody() voila: string) {
+  //   console.log(`------test here------ ${voila}`);
+  // }
 }

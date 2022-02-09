@@ -7,19 +7,24 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { GameService } from './game.service';
+import { GameService } from './services/game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { NewGameDto } from './dto/new-game.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
-import { Serialize } from '../../interceptors/serialize.interceptor';
 import { UserDto } from '../users/dtos/user.dto';
 import { GameGateway } from './game.gateway';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { User } from '../users/entities/users.entity';
 
 @ApiTags('game')
+@UseGuards(AuthGuard)
 @Controller('game')
 export class GameController {
   constructor(
@@ -31,11 +36,15 @@ export class GameController {
   @ApiOperation({ summary: 'challenge anyone' })
   @Serialize(UserDto)
   @Post()
-  async gameInvitation(@Body() createGameDto: CreateGameDto) {
-    const [challenger, opponent] = await this.gameService.gameInvitation(
-      createGameDto,
+  async gameInvitation(
+    @CurrentUser() user: User,
+    @Body() createGameDto: CreateGameDto,
+  ) {
+    const opponent = await this.gameService.gameInvitation(
+      createGameDto.login_opponent,
+      user,
     );
-    setTimeout(this.gameGateway.gameInvitation, 0, challenger, opponent);
+    setTimeout(this.gameGateway.gameInvitation, 0, user, opponent);
     return opponent;
   }
 
@@ -43,8 +52,8 @@ export class GameController {
   @ApiOperation({ summary: 'join a random game' })
   @Serialize(NewGameDto)
   @Post('join')
-  async playnow(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.joinGame(createGameDto);
+  async playnow(@CurrentUser() user: User) {
+    return await this.gameService.joinGame(user);
   }
 
   @Get()
