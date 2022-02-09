@@ -1,10 +1,9 @@
-import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Logger } from '@nestjs/common';
 import {
   GatewayMetadata,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -72,15 +71,17 @@ export class GameGateway
   @WebSocketServer()
   server: Server;
 
+  private readonly logger = new Logger(GameGateway.name);
+
   afterInit(server: Server) {
     this.server = server;
   }
   async handleConnection(client: Socket) {
-    console.debug('ws game 🎲  connect -> ', client.id);
+    this.logger.debug('ws game 🎲  connect -> ', client.id);
   }
 
   async handleDisconnect(client: Socket) {
-    console.debug('ws game 🎲  disconnected -> ', client.id);
+    this.logger.debug('ws game 🎲  disconnected -> ', client.id);
   }
 }
 
@@ -95,17 +96,20 @@ export class ChatGateway
 
   @WebSocketServer() server: Server;
 
+  private readonly logger = new Logger(GameGateway.name);
+
   afterInit(server: Server) {
+    this.logger.log('Init Gateway');
     this.server = server;
   }
 
   async handleConnection(client: Socket) {
-    console.debug('ws chat 🍄  connect -> ', client.id);
+    this.logger.debug('ws chat 🍄  connect -> ', client.id);
     await this.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
-    console.debug('ws chat 🍄 disconnected -> ', client.id);
+    this.logger.debug('ws chat 🍄 disconnected -> ', client.id);
     await this.doHandleDisconnect(client);
   }
 
@@ -114,7 +118,7 @@ export class ChatGateway
   // }))
   // @SubscribeMessage('ingame')
   // async updateIngane(client: Socket, data: { value: 'in' | 'out' }) {
-  //   console.log('get ingame');
+  //   this.logger.debug('get ingame');
   //   return await this.chatGatewayService.setUserIngame(client, data);
   // }
 
@@ -143,7 +147,7 @@ export class ChatGateway
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        this.logger.debug(error.message);
         client._error({ message: error.message });
         return client.disconnect();
       });
@@ -156,12 +160,10 @@ export class ChatGateway
   }
 
   private doHandleConnectionFailure(client: Socket, errorMessage: string) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(
-        `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
-        errorMessage,
-      );
-    }
+    this.logger.debug(
+      `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
+      errorMessage,
+    );
     client._error({ message: errorMessage });
     return client.disconnect();
   }
@@ -183,9 +185,7 @@ export class ChatGateway
     if (!userId) {
       return this.doHandleConnectionFailure(client, 'invalid token');
     }
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`handleConnection: ${client.id} | token ${token}`);
-    }
+    this.logger.log(`handleConnection: ${client.id} | token ${token}`);
 
     await this.usersService
       .update(userId, {
@@ -195,10 +195,7 @@ export class ChatGateway
         this.doHandleConnectionFailure(client, error.message);
       })
       .then(async (user: User) => {
-        if (process.env.NODE_ENV === 'dev') {
-          console.log(`handleConnection: Client connected ! ✅`);
-        }
-
+        this.logger.log(`handleConnection: Client connected ! ✅`);
         return await this.joinRoomsAtConnection(client, user);
       })
       .catch((error) => {
@@ -207,9 +204,7 @@ export class ChatGateway
   }
 
   async doHandleDisconnect(client: Socket) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Client disconnected: ${client.id}`);
-    }
+    this.logger.log(`Client disconnected: ${client.id}`);
     await this.updateUser(client, {
       ws_id: null,
       is_in_game: false,
@@ -228,9 +223,7 @@ export class ChatGateway
   }
 
   async makeClientJoinRoom(user: User, room: Room) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Add client ${user?.login} to room ${room.id}`);
-    }
+    this.logger.debug(`Add client ${user?.login} to room ${room.id}`);
     const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
       await clientSocket.join(room.id);
@@ -238,9 +231,7 @@ export class ChatGateway
   }
 
   async makeClientLeaveRoom(user: User, room: Room) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Remove client ${user?.login} from room ${room.id}`);
-    }
+    this.logger.debug(`Remove client ${user?.login} from room ${room.id}`);
     const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
       await clientSocket.leave(room.id);

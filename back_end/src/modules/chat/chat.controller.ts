@@ -6,17 +6,18 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Logger,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomBanGuard } from '../../guards/roomBan.guard';
@@ -59,7 +60,8 @@ import { Room } from './entities/room.entity';
 @UseGuards(AuthGuard)
 @Controller('/room')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService,) {}
+    private readonly logger = new Logger(ChatController.name);
 
   /*
   ===================================================================
@@ -83,7 +85,7 @@ export class ChatController {
     return await this.chatService
       .createRoom(user, createRoomDto)
       .catch((error) => {
-        if (process.env.NODE_ENV === 'dev') console.log(error);
+        this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);
         throw new BadGatewayException('Database could not perform request');
       });
@@ -106,7 +108,7 @@ export class ChatController {
   @Serialize(RoomWithRestrictionsDto)
   async findAll() {
     return await this.chatService.findAllWithRestrictions().catch((error) => {
-      if (process.env.NODE_ENV === 'dev') console.log(error);
+      this.logger.debug(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
@@ -124,7 +126,7 @@ export class ChatController {
   @Serialize(RoomDto)
   async findAllPublic() {
     return await this.chatService.findAllPublic().catch((error) => {
-      if (process.env.NODE_ENV === 'dev') console.log(error);
+      this.logger.debug(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
@@ -162,7 +164,7 @@ export class ChatController {
   @UseGuards(RoomOwnerGuard)
   async remove(@TargetedRoom() targetedRoom: Room) {
     return await this.chatService.removeRoom(targetedRoom).catch((error) => {
-      if (process.env.NODE_ENV === 'dev') console.log(error);
+      this.logger.debug(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
@@ -201,7 +203,7 @@ export class ChatController {
     return await this.chatService
       .createMessage(room, user, body)
       .catch((error) => {
-        if (process.env.NODE_ENV === 'dev') console.log(error);
+        this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);
         throw new BadGatewayException('Database could not perform request');
       });
@@ -224,7 +226,7 @@ export class ChatController {
   @UseGuards(RoomParticipantGuard)
   async getMessages(@Param('room_id', ParseUUIDPipe) room_id: string) {
     return await this.chatService.findAllMessages(room_id).catch((error) => {
-      if (process.env.NODE_ENV === 'dev') console.log(error);
+      this.logger.debug(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
@@ -259,7 +261,7 @@ export class ChatController {
     return await this.chatService
       .addParticipant(room, createPaticipant)
       .catch((error) => {
-        if (process.env.NODE_ENV === 'dev') console.log(error);
+        this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);
         throw new BadGatewayException('Database could not perform request');
       });
@@ -284,7 +286,7 @@ export class ChatController {
     return await this.chatService
       .updateParticipant(updateDto)
       .catch((error) => {
-        if (process.env.NODE_ENV === 'dev') console.log(error);
+        this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);
         throw new BadGatewayException('Database could not perform request');
       });
@@ -311,7 +313,7 @@ export class ChatController {
     return await this.chatService
       .createRestriction(room, createRestrictionDto)
       .catch((error) => {
-        if (process.env.NODE_ENV === 'dev') console.log(error);
+        this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);
         throw new BadGatewayException('Database could not perform request');
       });
@@ -346,7 +348,7 @@ export class ChatController {
     return await this.chatService
       .updatePassword(room, updatePasswordDto)
       .catch((error) => {
-        if (process.env.NODE_ENV === 'dev') console.log(error);
+        this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);
         throw new BadGatewayException('Database could not perform request');
       });

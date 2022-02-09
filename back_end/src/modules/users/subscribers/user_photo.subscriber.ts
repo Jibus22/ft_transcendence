@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import {
   Connection,
@@ -31,10 +32,15 @@ export class UserPhotoSubscriber
 
   async manageWsEvent(event: InsertEvent<UserPhoto> | UpdateEvent<UserPhoto>) {
     await this.utils
-    .fetchPossiblyMissingData(
-      event.connection.getRepository(UserPhoto),
-      event.entity,
-      ['owner', 'owner.local_photo', 'owner.room_participations', 'owner.room_participations.room'],
+      .fetchPossiblyMissingData(
+        event.connection.getRepository(UserPhoto),
+        event.entity,
+        [
+          'owner',
+          'owner.local_photo',
+          'owner.room_participations',
+          'owner.room_participations.room',
+        ],
       )
       .then(() => {
         const roomParticipations = event.entity.owner
@@ -53,6 +59,8 @@ export class UserPhotoSubscriber
   }
 
   async afterUpdate(event: UpdateEvent<UserPhoto>) {
-    await this.manageWsEvent(event).catch((e) => console.log(e));
+    await this.manageWsEvent(event).catch((e) =>
+      new Logger('UserPhotoSubscriber').debug(e)
+    );
   }
 }
