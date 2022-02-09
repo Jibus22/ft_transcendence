@@ -102,7 +102,7 @@ const MainPageProvider = (props: any) => {
 
 	const disconectAuth = async () => {
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			navigate('/');
