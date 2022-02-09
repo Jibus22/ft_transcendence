@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { User } from '../../users/entities/users.entity';
 import { Room } from '../entities/room.entity';
 import { ChatGateway, Events, messageType } from './chat.gateway';
@@ -7,6 +7,8 @@ import { ChatGateway, Events, messageType } from './chat.gateway';
 export class ChatGatewayService {
   constructor(private chatGateway: ChatGateway) {
   }
+
+  private readonly logger = new Logger(ChatGatewayService.name);
 
   /*
 	===================================================================
@@ -18,14 +20,14 @@ export class ChatGatewayService {
 
   sendEventToServer(event: string, message: messageType) {
     if (process.env.NODE_ENV === 'dev') {
-      console.log('Emit event to SERVER: ', event);
+      this.logger.debug('Emit event to SERVER: ', event);
     }
     return this.chatGateway.doSendEventToServer(event, message);
   }
 
   sendEventToRoom(room: Room | Room[], event: string, message: messageType) {
     if (process.env.NODE_ENV === 'dev') {
-      console.log('Emit event to ROOM: ', event);
+      this.logger.debug('Emit event to ROOM: ', event);
     }
     if (room) {
       const dest = Array.isArray(room) ? room.map((r) => r.id) : room.id;
@@ -35,7 +37,7 @@ export class ChatGatewayService {
 
   sendEventToClient(user: User, event: string, message: messageType) {
     if (process.env.NODE_ENV === 'dev') {
-      console.log('Emit event to CLIENT: ', event);
+      this.logger.debug('Emit event to CLIENT: ', event);
     }
     return this.chatGateway.doSendEventToRoom(user.ws_id, event, message);
   }
@@ -63,15 +65,15 @@ export class ChatGatewayService {
 
   // async setUserIngame(client: Socket, data: { value: 'in' | 'out' }) {
   //   if (data.value === 'in') {
-  //     console.log(true);
+  //     this.logger.debug(true);
   //     await this.updateUser(client, {
   //       is_in_game: true,
-  //     }).catch((error) => console.log(error));
+  //     }).catch((error) => this.logger.debug(error));
   //   } else if (data.value === 'out') {
-  //     console.log(false);
+  //     this.logger.debug(false);
   //     await this.updateUser(client, {
   //       is_in_game: false,
-  //     }).catch((error) => console.log(error));
+  //     }).catch((error) => this.logger.debug(error));
   //   }
   // }
 }

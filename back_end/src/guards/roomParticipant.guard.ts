@@ -17,7 +17,7 @@ export class RoomParticipantGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💬 💂‍♂️ Room Participant Guard'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger('💬 💂‍♂️ Room Participant Guard');
     const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
     const targetRoom: Room = context.switchToHttp().getRequest()?.targetedRoom;
     if (
@@ -26,10 +26,10 @@ export class RoomParticipantGuard implements CanActivate {
       (this.isRoomAccessible(currentUser, targetRoom) ||
         currentUser.is_site_owner)
     ) {
-      logger.log(
+      logger.debug(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`,
       );
-      logger.log(`ROOM PARTICIPANT ACCESS GRANTED !`);
+      logger.debug(`ROOM PARTICIPANT ACCESS GRANTED !`);
       return true;
     }
     throw new UnauthorizedException(

@@ -47,8 +47,12 @@ export class UsersPhotoController {
 
   @Post('/me/photo')
   @UseInterceptors(
-    FileInterceptor('file', { dest: `/usr/assets/users_photos` }),
-  ) // TODO: change to env.
+    FileInterceptor('file', {
+      dest: `${
+        process.env.USERS_PHOTOS_STORAGE_PATH || '/usr/assets/users_photos'
+      }`,
+    }),
+  )
   @Serialize(privateUserDto)
   @ApiResponse({ type: privateUserDto })
   @ApiResponse({

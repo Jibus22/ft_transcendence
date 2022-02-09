@@ -5,7 +5,7 @@ import {
   Delete,
   Get,
   HttpException,
-  HttpStatus, Patch,
+  HttpStatus, Logger, Patch,
   Res,
   Session,
   UseGuards
@@ -82,8 +82,8 @@ export class MeController {
     status: HttpStatus.OK,
     description: 'User private informations updated',
   })
-  async update(@Body() body: UpdateLoginDto, @Session() session) {
-    return this.usersService.update(session.userId, body).catch((error) => {
+  async update(@Body() body: UpdateLoginDto, @CurrentUser() user: User) {
+    return this.usersService.update(user.id, body).catch((error) => {
       const message = error.message as string;
       if (message?.includes('UNIQUE') || message?.includes('unique')) {
         throw new BadRequestException('already used');
@@ -112,7 +112,7 @@ export class MeController {
     @Res() res: Response,
   ) {
     if (user.useTwoFA) {
-      return res.set('Completed-Auth', session.isTwoFAutanticated).send();
+      return res.set('Completed-Auth', session?.isTwoFAutanticated).send();
     }
     return res.set('Completed-Auth', 'true').send();
   }
@@ -159,7 +159,7 @@ export class MeController {
     @Body() body: roomPasswordDto,
   ) {
     await this.chatService.joinRoom(user, room, body).catch((error) => {
-      if (process.env.NODE_ENV === 'dev') console.log(error);
+      new Logger('JoinRoomRoute').debug(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
@@ -178,7 +178,7 @@ export class MeController {
   })
   async leaveRoom(@CurrentUser() user: User, @TargetedRoom() room: Room) {
     await this.chatService.leaveRoom(user, room).catch((error) => {
-      if (process.env.NODE_ENV === 'dev') console.log(error);
+      new Logger('LeaveRoomRoute').debug(error);
       if (error.status) throw new HttpException(error, error.status);
       throw new BadGatewayException('Database could not perform request');
     });
