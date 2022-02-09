@@ -111,7 +111,6 @@ export class AuthService {
   }
 
   async create2faKey(user: User) {
-    // TODO uncomment to avoid key deletion
     if (user.twoFASecret && user.useTwoFA) {
       throw '2fa key already set';
     }

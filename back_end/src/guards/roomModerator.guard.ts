@@ -18,7 +18,7 @@ export class RoomModeratorGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💬 💂‍♂️ Room Moderator Guard'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger('💬 💂‍♂️ Room Moderator Guard');
     const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
     const targetRoom: Room = context.switchToHttp().getRequest()?.targetedRoom;
     if (
@@ -27,10 +27,10 @@ export class RoomModeratorGuard implements CanActivate {
       (this.isRoomModerator(currentUser, targetRoom) ||
         currentUser.is_site_owner)
     ) {
-      logger.log(
+      logger.debug(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom}`,
       );
-      logger.log(`MODERATOR ACCESS GRANTED !`);
+      logger.debug(`MODERATOR ACCESS GRANTED !`);
       return true;
     }
     throw new UnauthorizedException('User must be logged and be moderator');
