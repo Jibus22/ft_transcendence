@@ -1,8 +1,8 @@
-
 export class UpdateUserDto {
   login?: string;
   login_42?: string;
   ws_id?: string | null;
+  game_ws?: string | null;
   photo_url_42?: string;
   use_local_photo?: boolean;
   twoFASecret?: string | null;

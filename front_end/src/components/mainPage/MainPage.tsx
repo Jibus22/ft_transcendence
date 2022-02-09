@@ -109,7 +109,20 @@ const MainPage = () => {
 		socket.io.on('error', (error) => {
 			console.log('[GAME SOCKET 🎲 ] ⚠️ RECEIVED ERROR', error);
 		});
+
+		/* -----------------------
+		 ** Game events
+		 * -----------------------*/
+
+		socket.on('test', (message) => {
+			console.log(`💌  Event: test ->`, message);
+		});
 	};
+
+	/* -----------------------
+	 ** Initialization
+	 * -----------------------*/
+
 	const getAuthToken = async () => {
 		return await axios(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/ws/token`, {
 			withCredentials: true,
@@ -199,6 +212,11 @@ const MainPage = () => {
 		}
 	};
 
+	const blabla = () => {
+		console.log('test emit client- server');
+		gameWs?.emit('testaccept', 'voila voila voila...');
+	};
+
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
@@ -209,6 +227,8 @@ const MainPage = () => {
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
 			</div>
 			{headerLeave()}
+
+			<button onClick={blabla}> push </button>
 
 			<Routes>
 				<Route path="/MainPage" element={<Game chatWs={chatWs} />} />
