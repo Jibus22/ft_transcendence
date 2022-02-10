@@ -111,18 +111,6 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
-	// const fetchDataHistory = async () => {
-	// 	try {
-	// 		const { data } = await axios.get('http://localhost:3000/game/history', {
-	// 			withCredentials: true,
-	// 		});
-	// 		setDataHistory(data);
-	// 	} catch (error) {
-	// 		const err = error as AxiosError;
-	// 		console.log(err);
-	// 	}
-	// };
-
 	const onSubmit = async (file: File, path: string) => {
 		let data = new FormData();
 		data.append('file', file);
