@@ -14,14 +14,14 @@ import {
   Redirect,
   Res,
   Session,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import { randomUUID } from 'crypto';
@@ -191,8 +191,7 @@ export class AuthController {
     const token = randomUUID() + '.' + user.id;
     await this.cacheManager.set(token, user.id, { ttl: 4 });
     new Logger('Ws-AuthToken').debug(
-      `store in cache: ${token} for user -> `,
-      user.id,
+      `store in cache:\n${token}\nfor user -> ${user.id}`,
     );
     return { token };
   }
