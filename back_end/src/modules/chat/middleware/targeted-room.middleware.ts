@@ -23,7 +23,6 @@ export class TargetedRoomMiddleware implements NestMiddleware {
     const targetedRoomId = req.params?.room_id;
 
     const logger = new Logger(' 🛠 💬  Chat Middlewear');
-
     if (currentUser && targetedRoomId) {
       await this.chatService
         .findOneWithParticipantsAndRestrictions(targetedRoomId)
@@ -35,14 +34,14 @@ export class TargetedRoomMiddleware implements NestMiddleware {
           );
           req.targetedRoomActiveMute =
             this.chatService.extractValidRestrictions(room, 'mute');
-          logger.log(`Room targeted: ${req?.targetedRoom?.id}`); // TODO remove debug
+          logger.debug(`Room targeted: ${req?.targetedRoom?.id}`);
         })
         .catch((error) => {
-          logger.log('Could not find Room targeted: ', error); // TODO remove debug
+          logger.debug('Could not find Room targeted: ', error);
         });
     } else {
-      if (!targetedRoomId) logger.log('No targeted room request');
-      if (!currentUser) logger.log('No user id in session');
+      if (!targetedRoomId) logger.debug('No targeted room request');
+      if (!currentUser) logger.debug('No user id in session');
     }
 
     next();

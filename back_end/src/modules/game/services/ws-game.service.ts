@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { UsersService } from 'src/modules/users/service-users/users.service';
 import { Socket } from 'socket.io';
@@ -11,6 +11,8 @@ export class WsGameService {
     private readonly usersService: UsersService,
   ) {}
 
+  private readonly logger = new Logger('WsGameService');
+
   private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
       .find({ game_ws: client.id })
@@ -20,19 +22,17 @@ export class WsGameService {
         }
       })
       .catch((error) => {
-        console.log(error.message);
+        this.logger.debug(error.message);
         client._error({ message: error.message });
         return client.disconnect();
       });
   }
 
   private doHandleConnectionFailure(client: Socket, errorMessage: string) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(
-        `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
-        errorMessage,
-      );
-    }
+    this.logger.debug(
+      `handleConnectionFAILURE: client ${client.id} disconnected !🛑  -> `,
+      errorMessage,
+    );
     client._error({ message: errorMessage });
     client.disconnect();
   }
@@ -52,9 +52,7 @@ export class WsGameService {
     if (!userId) {
       return this.doHandleConnectionFailure(client, 'invalid token');
     }
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`handleConnection: ${client.id} | token ${token}`);
-    }
+    this.logger.log(`handleConnection: ${client.id} | token ${token}`);
 
     await this.usersService
       .update(userId, {
@@ -64,15 +62,11 @@ export class WsGameService {
         this.doHandleConnectionFailure(client, error.message);
       });
 
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`handleConnection: Client connected ! ✅`);
-    }
+    this.logger.log(`handleConnection: Client connected ! ✅`);
   }
 
   async doHandleDisconnect(client: Socket) {
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`Client disconnected: ${client.id}`);
-    }
+    this.logger.log(`Client disconnected: ${client.id}`);
     await this.updateUser(client, {
       game_ws: null,
       is_in_game: false,

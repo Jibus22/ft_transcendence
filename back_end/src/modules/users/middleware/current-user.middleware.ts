@@ -22,30 +22,26 @@ export class CurrentUserMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    // if (req.baseUrl.includes('/socket.io')) { // TODO remove debug
-    //   return next();
-    // }
-
-    const logger = new Logger(' 🛠 👥  User Middleware');
+    const logger = new Logger(' 🛠 👥  User Middlewear');
     logger.log('💌', `New request: ${req.method} ${req.baseUrl}`);
 
     const { userId } = req.session || {};
     if (!userId) {
-      logger.log('No user id in session');
+      logger.debug('No user id in session');
       return next();
     }
 
     const currentUser = await this.usersService
       .findOneWithRelations(userId)
       .catch((error) => {
-        logger.log(error);
+        logger.debug(error);
       });
 
     if (currentUser) {
-      logger.log(`By user: ${currentUser.login} - ${currentUser.id}`);
+      logger.debug(`By user: ${currentUser.login} - ${currentUser.id}`);
       req.currentUser = currentUser as User;
     } else {
-      logger.log(`User Not Found from ${currentUser}: Clearing Session`);
+      logger.debug(`User Not Found from ${currentUser}: Clearing Session`);
       this.authService.clearSession(req.session);
     }
 
