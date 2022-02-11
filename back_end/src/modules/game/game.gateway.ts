@@ -21,7 +21,11 @@ import { WsGameService } from './services/ws-game.service';
 const options_game: GatewayMetadata = {
   namespace: 'game',
   cors: {
-    origin: ['http://localhost:3001'],
+    origin: [
+      `http://${process.env.SERVER_IP}`,
+      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
+      'http://localhost:3001',
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
