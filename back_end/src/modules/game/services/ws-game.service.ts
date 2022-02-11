@@ -13,7 +13,7 @@ export class WsGameService {
 
   private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
-      .find({ ws_id: client.id })
+      .find({ game_ws: client.id })
       .then(async (users) => {
         if (users[0]) {
           await this.usersService.update(users[0].id, userData);

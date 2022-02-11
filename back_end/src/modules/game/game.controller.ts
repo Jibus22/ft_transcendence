@@ -44,9 +44,17 @@ export class GameController {
       createGameDto.login_opponent,
       user,
     );
-    setTimeout(this.gameGateway.gameInvitation, 0, user, opponent);
+    this.gameGateway.gameInvitation(user, opponent);
     return opponent;
   }
+
+  /// ---------------- TEST --------------------
+  @Post('test')
+  test(@CurrentUser() user: User) {
+    console.log('TEST route');
+    this.gameGateway.serverToClient(user.game_ws, 'This is a test from SERVER');
+  }
+  /// ---------------- TEST END ----------------
 
   @ApiResponse({ type: NewGameDto, isArray: false })
   @ApiOperation({ summary: 'join a random game' })

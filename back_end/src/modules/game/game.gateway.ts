@@ -1,4 +1,4 @@
-import { Server, Socket } from 'socket.io';
+import { Server, Socket, RemoteSocket } from 'socket.io';
 import {
   GatewayMetadata,
   OnGatewayConnection,
@@ -39,7 +39,7 @@ export class GameGateway
   ) {}
 
   afterInit() {
-    console.debug('ws game 🎲  afterInit -> ', this.server);
+    console.debug('ws game 🎲  afterInit -> ');
   }
 
   async handleConnection(client: Socket) {
@@ -52,11 +52,73 @@ export class GameGateway
     await this.wsGameService.doHandleDisconnect(client);
   }
 
-  gameInvitation(challenger: User, opponent: User) {
-    this.server
-      .to(opponent.game_ws)
-      .emit('gameInvitation', plainToClass(UserDto, challenger));
+  private async countDown() {
+    console.log('SERVER: countDown');
+    // Sur une intervalle de 10 secondes j'émet dans la room de jeu le chiffre
+    // représentant la seconde S.
+    // à la fin du décompte j'émets au challenger un event qui va récupérer
+    // la map via un ACK, jet set un random uuid et update la table game avec
+    // ces 2 valeurs.
+    // Enfin, j'émets un event dans la room de jeu qui indique aux joueurs que
+    // le jeu commence et qui leur permettra de passer à la fenêtre de jeu
   }
+
+  private async createGame(
+    challenger: User,
+    opponent: User,
+    challenger_sock: any,
+    opponent_sock: any,
+  ) {
+    console.log('SERVER: createGame');
+    // Je créé la table game et récupère son uuid.
+    // je fais joindre les 2 players sur cette uuid.
+    // j'émit aux 2 players cette uuid afin qu'ils émettent ensuite dessus
+    // Je start le countdown async.
+    this.countDown();
+  }
+
+  async gameInvitation(challenger: User, opponent: User) {
+    const opponent_sock = await this.server.in(opponent.game_ws).fetchSockets();
+    const challenger_sock = await this.server
+      .in(challenger.game_ws)
+      .fetchSockets();
+    if (!opponent_sock || !challenger_sock) return;
+
+    const start = Date.now();
+    opponent_sock[0].emit(
+      'gameInvitation',
+      plainToClass(UserDto, challenger),
+      async (response: string) => {
+        const timestamp = Date.now() - start;
+        if (timestamp > 12000) {
+          this.gameService.updatePlayerStatus(challenger, {
+            is_in_game: false,
+          });
+        } else if (response === 'OK') {
+          console.log('SERVER: gameInvitation accepted');
+          // this.gameService.updatePlayerStatus(opponent, { is_in_game: true });
+          // TODO: uncomment the above line when finishing tests
+          challenger_sock[0].emit(
+            'gameAccepted',
+            plainToClass(UserDto, opponent),
+          );
+          this.createGame(challenger, opponent, challenger_sock, opponent_sock);
+        } else {
+          console.log('SERVER: gameInvitation denied');
+          this.gameService.updatePlayerStatus(challenger, {
+            is_in_game: false,
+          });
+          challenger_sock[0].emit(
+            'gameDenied',
+            plainToClass(UserDto, opponent),
+          );
+        }
+      },
+    );
+  }
+
+  // const wait = (timeToDelay: number) =>
+  //   new Promise((resolve) => setTimeout(resolve, timeToDelay));
 
   // @SubscribeMessage('createGame')
   // async createGame(
@@ -105,8 +167,22 @@ export class GameGateway
   //   }, 1000);
   // }
 
-  // @SubscribeMessage('testaccept')
-  // async test(@MessageBody() voila: string) {
-  //   console.log(`------test here------ ${voila}`);
-  // }
+  /// ---------------- TEST --------------------
+  async serverToClient(id: string, data: string) {
+    console.log('gateway: serverToClient');
+    const client = await this.server.in(id).fetchSockets();
+    if (!client) console.log('no client');
+    else if (client.length > 1) console.log('strange: client > 1');
+    else client[0].emit('serverToClient', data);
+  }
+
+  @SubscribeMessage('clientToServer')
+  clientToServer(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() voila: string,
+  ) {
+    console.log('clientToServer');
+    console.log(`------test here------ ${voila} --- client.id: ${client.id}`);
+  }
+  /// ---------------- TEST END ----------------
 }

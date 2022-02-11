@@ -82,7 +82,7 @@ export class GameService {
       login_opponent,
       errorPlayerNotOnline,
     );
-    this.usersService.update(user.id, { is_in_game: true });
+    // this.updatePlayerStatus(user, { is_in_game: true });
     return opponent;
   }
 
@@ -123,6 +123,12 @@ export class GameService {
       relations: ['players', 'players.user'],
     });
     return game;
+  }
+
+  ////////////////
+
+  async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
+    this.usersService.update(player.id, patch);
   }
 
   ////////////////

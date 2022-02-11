@@ -114,9 +114,53 @@ const MainPage = () => {
 		 ** Game events
 		 * -----------------------*/
 
-		socket.on('test', (message) => {
-			console.log(`💌  Event: test ->`, message);
+		// This is for test
+		const wait = (timeToDelay: number) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
+
+		//Cet event devrait être mis 'off' quand on est sur la page d'attente d'un
+		//jeu/en train de jouer.
+		socket.on('gameInvitation', async (challengerData, cb) => {
+			console.log(`💌  Event: gameInvitation ->`, challengerData);
+			await wait(5000); //C'est pour simuler le fait que la réponse peu prendre
+			//du temps. Une foi que le onClick event avec un timeout de 10sec est mis
+			//ce sera plus nécessaire.
+			cb('OK');
+			console.log('gameInvitation listener end');
+			// Afficher une notification avec challengerData (userDto) et créer
+			// un onClick event qui reste 10sec à l'écran
+			// Si dans les 10 secondes
+			// le user click (OK): cb('OK');
+			// sinon: cb('KO');
+			//
+			// Si c'est OK, afficher la page d'attente du jeu (sans avoir la possibilité
+			// de choisir la map, puisqu'on est l'invité)
+			// Sinon, virer la notif
 		});
+
+		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
+		socket.on('gameDenied', (opponentData) => {
+			console.log(`💌  Event: gameDenied -> ${opponentData}`);
+			// Afficher une notif ou whatever qui dit que l'opposant n'a pas accepté
+			// de jouer avec lui, et retourner sur la page d'accueil. (Parce que si cet
+			// event est trigger c'est que le user se trouve sur la page d'attente
+			// du jeu)
+		});
+
+		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
+		socket.on('gameAccepted', (opponentData) => {
+			console.log(`💌  Event: gameAccepted -> ${opponentData}`);
+			// quand on en est là c'est qu'on est sur la page d'attente du jeu.
+			// enlever le voile gris sur la photo de l'opponent pour montrer que
+			// c'est good.
+		});
+
+		/// ---------------- TEST --------------------
+
+		socket.on('serverToClient', async (data: string) => {
+			console.log(`💌  Event: serverToClient ->`, data);
+			socket.emit('clientToServer', 'This is a message from Client');
+		});
+		/// ---------------- TEST END ----------------
 	};
 
 	/* -----------------------

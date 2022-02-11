@@ -11,6 +11,7 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { DevGuard } from '../../guards/dev.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { privateUserDto } from '../users/dtos/private-user.dto';
+import { UpdateUserDto } from '../users/dtos/update-users.dto';
 import { UserDto } from '../users/dtos/user.dto';
 import { User } from '../users/entities/users.entity';
 import { DevelopmentService } from './development.service';
@@ -40,16 +41,14 @@ export class DevelopmentController {
 
   @ApiProperty()
   @Post('/createUserBatch')
-  async createUserBatch(@Body() body: UserDto[] | UserDto) {
-    let successCreation = 0;
-    const users: Partial<User>[] = body as UserDto[];
+  async createUserBatch(@Body() body: UpdateUserDto[] | UpdateUserDto) {
+    console.log('creatuserbatch', body);
+    const users: Partial<User>[] = body as UpdateUserDto[];
     for (const user of users) {
-      await this.developmentService
-        .dev_createUserBatch(user)
-        .then((value) => {
-          successCreation++;
-        })
-        .catch((err) => {});
+      console.log('creatuserbatch user', user);
+      await this.developmentService.dev_createUserBatch(user).catch((err) => {
+        console.log(`createUserBatch: error: ${err}`);
+      });
     }
     return await this.developmentService.dev_getAllUsers();
   }
