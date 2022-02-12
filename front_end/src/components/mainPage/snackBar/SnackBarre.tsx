@@ -1,75 +1,70 @@
-import React from 'react';
-import './snackBarre.scss';
-import Horloge from './img/Horloge.png';
-import Emoji from './img/emoji.png';
-
-// import 'react-toastify/scss/main.scss';
-// import 'react-toastify/dist/ReactToastify.css';
-import { injectStyle } from 'react-toastify/dist/inject-style';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react';
+import { LinearProgress } from '@mui/material';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 import { useMainPage } from '../../../MainPageContext';
+import './snackBarre.scss';
 
 interface ISnackBarreProps {
 	onClose: () => void;
 }
 
 export default function SnackBarre({ onClose }: ISnackBarreProps) {
-	const { isFriends } = useMainPage();
+	const { isFriends, setTimeSnack, timeSnack } = useMainPage();
 
-	if (typeof window !== 'undefined') {
-		injectStyle();
-	}
+	const [open, setOpen] = useState(true);
+	const [progress, setProgress] = React.useState(0);
 
-	const notify = () => {
-		!isFriends
-			? toast(
-					({ closeToast }) => (
-						<div className="mainSnackBarre d-flex">
-							<div className="snackBarImg">
-								<img src={Horloge} alt="" />
-							</div>
-							<div className="snackBarText">
-								<p>No one is here to play now.</p>
-								<p>Retry later</p>
-							</div>
-						</div>
-					),
-					{
-						onClose,
-					},
-			  )
-			: toast(
-					({ closeToast }) => (
-						<div className="mainSnackBarre d-flex">
-							<div className="snackBarImg">
-								<img src={Emoji} alt="" />
-							</div>
-							<div className="snackBarText">
-								<p>Your friend isn’t available for a</p>
-								<p>game right now</p>
-							</div>
-						</div>
-					),
-					{
-						onClose,
-					},
-			  );
+	const handleClose = () => {
+		// setOpen(false);
+		setTimeSnack(false);
 	};
 
-	notify();
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setProgress((oldProgress) => {
+				if (oldProgress === 102) {
+					setTimeSnack(false);
+					return 0;
+				}
+				const diff = Math.random() * 0.4;
+				return Math.min(oldProgress + diff, 102);
+			});
+		}, 20);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
+	const action = (
+		<>
+			<div className="contentButton">
+				<Button className="buttonMui" onClick={handleClose}>
+					ACCEPT
+				</Button>
+				<Button className="buttonMui" onClick={handleClose}>
+					REFUSE
+				</Button>
+			</div>
+			<div className="progressMui">
+				<LinearProgress variant="determinate" value={progress} />
+			</div>
+		</>
+	);
+
 	return (
 		<div className="SnackBarreGame">
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick={false}
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover={false}
-				limit={1}
+			<Snackbar
+				open={timeSnack}
+				autoHideDuration={99999000}
+				anchorOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				onClose={handleClose}
+				message="[login] Challenge you"
+				action={action}
 			/>
 		</div>
 	);

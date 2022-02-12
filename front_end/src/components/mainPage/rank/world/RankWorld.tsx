@@ -27,7 +27,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor, setIsGameRandom, setStartGame, userName, setDataUserGame } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame, userName, setDataUserGame, setTimeSnack } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
@@ -56,14 +56,16 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	};
 
 	const getGame = (data: User) => () => {
-		fetchDataChallenge(data);
-		setIsGameRandom(false);
-		setTime(true);
-		setTimeout(() => {
-			setTime(false);
-			setStartGame(true);
-			navigate('/Mainpage');
-		}, 2000);
+		setTimeSnack(true);
+
+		// fetchDataChallenge(data);
+		// setIsGameRandom(false);
+		// setTime(true);
+		// setTimeout(() => {
+		// 	setTime(false);
+		// 	setStartGame(true);
+		// 	navigate('/Mainpage');
+		// }, 2000);
 	};
 
 	const userSortRank = (a: Rank, b: Rank) => {
