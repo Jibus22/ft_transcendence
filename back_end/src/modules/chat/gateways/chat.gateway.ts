@@ -53,40 +53,6 @@ const options: GatewayMetadata = {
   },
 };
 
-const options_game: GatewayMetadata = {
-  namespace: 'game',
-  cors: {
-    origin: [
-      `http://${process.env.SERVER_IP}`,
-      `http://${process.env.SERVER_IP}:${process.env.FRONT_PORT}`,
-      'http://localhost:3001',
-    ],
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
-};
-
-@WebSocketGateway(options_game)
-export class GameGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
-  @WebSocketServer()
-  server: Server;
-
-  private readonly logger = new Logger(GameGateway.name);
-
-  afterInit(server: Server) {
-    this.server = server;
-  }
-  async handleConnection(client: Socket) {
-    this.logger.debug('ws game 🎲  connect -> ', client.id);
-  }
-
-  async handleDisconnect(client: Socket) {
-    this.logger.debug('ws game 🎲  disconnected -> ', client.id);
-  }
-}
-
 @WebSocketGateway(options)
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -98,7 +64,7 @@ export class ChatGateway
 
   @WebSocketServer() server: Server;
 
-  private readonly logger = new Logger(GameGateway.name);
+  private readonly logger = new Logger('ChatGateway');
 
   afterInit(server: Server) {
     this.logger.log('Init Gateway');

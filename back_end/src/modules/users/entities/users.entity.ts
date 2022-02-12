@@ -62,6 +62,9 @@ export class User {
   @Column({ nullable: true, unique: true })
   ws_id: string;
 
+  @Column({ nullable: true, unique: true })
+  game_ws: string;
+
   @Column({ default: false })
   is_in_game: boolean;
 
