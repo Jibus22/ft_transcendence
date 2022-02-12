@@ -65,14 +65,14 @@ export class GameService {
     return game.id;
   }
 
-  async newGame(login_opponent: string, user: User): Promise<string> {
-    const opponent = await this.usersService.findLogin(login_opponent);
+  async newGame(challenger: User, opponent: User): Promise<string> {
     await this.checkErrors(
-      [user, opponent],
-      login_opponent,
-      errorPlayerNotInGame,
+      [challenger, opponent],
+      opponent.login,
+      null,
+      // errorPlayerNotInGame,
     );
-    return await this.createGameTable(user, opponent);
+    return await this.createGameTable(challenger, opponent);
   }
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
@@ -125,10 +125,18 @@ export class GameService {
     return game;
   }
 
-  ////////////////
+  //////////////// UTILS ///////////////
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
     this.usersService.update(player.id, patch);
+  }
+
+  async getUserFromLogin(login: string) {
+    return await this.usersService.findLogin(login);
+  }
+
+  async getUserFromParam(param: Partial<User>) {
+    return await this.usersService.findOneWithAnyParam(param);
   }
 
   ////////////////

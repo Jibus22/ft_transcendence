@@ -128,26 +128,22 @@ const MainPage = () => {
 		 * -----------------------*/
 
 		// This is for test
-		const wait = (timeToDelay: number) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
+		// const wait = (timeToDelay: number) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
 
 		//Cet event devrait être mis 'off' quand on est sur la page d'attente d'un
 		//jeu/en train de jouer.
-		socket.on('gameInvitation', async (challengerData) => {
-			console.log(`💌  Event: gameInvitation ->`, challengerData);
-
-			setTimeSnack(true);
-
-			// cb('OK');
-			console.log('gameInvitation listener end');
+		socket.on('gameInvitation', async (challengerData, challengerWsId) => {
+			console.log(`💌  Event: gameInvitation ->`, challengerData, ` -- id: ${challengerWsId}`);
 			// Afficher une notification avec challengerData (userDto) et créer
 			// un onClick event qui reste 10sec à l'écran
 			// Si dans les 10 secondes
-			// le user click (OK): cb('OK');
-			// sinon: cb('KO');
 			//
 			// Si c'est OK, afficher la page d'attente du jeu (sans avoir la possibilité
 			// de choisir la map, puisqu'on est l'invité)
 			// Sinon, virer la notif
+
+			socket.emit('gameInvitResponse', { response: 'OK', to: challengerWsId });
+			socket.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
 		});
 
 		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
@@ -165,6 +161,11 @@ const MainPage = () => {
 			// quand on en est là c'est qu'on est sur la page d'attente du jeu.
 			// enlever le voile gris sur la photo de l'opponent pour montrer que
 			// c'est good.
+		});
+
+		socket.on('countDown', (count: number) => {
+			console.log(`💌  Event: countDown -> ${count}`);
+			// Afficher count dans la page d'intro du jeu
 		});
 
 		/// ---------------- TEST --------------------

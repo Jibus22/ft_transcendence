@@ -52,7 +52,7 @@ export class WsGameService {
     if (!userId) {
       return this.doHandleConnectionFailure(client, 'invalid token');
     }
-    this.logger.log(`handleConnection: ${client.id} | token ${token}`);
+    this.logger.log(`handleConnection:\n${client.id} | token ${token}`);
 
     await this.usersService
       .update(userId, {

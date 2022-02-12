@@ -43,7 +43,7 @@ export class GameGateway
   ) {}
 
   afterInit() {
-    console.debug('ws game 🎲  afterInit -> ');
+    console.debug('ws game 🎲  afterInit');
   }
 
   async handleConnection(client: Socket) {
@@ -56,15 +56,24 @@ export class GameGateway
     await this.wsGameService.doHandleDisconnect(client);
   }
 
-  private async countDown() {
+  private async countDown(challenger_sock: any, room: string) {
     console.log('SERVER: countDown');
-    // Sur une intervalle de 10 secondes j'émet dans la room de jeu le chiffre
-    // représentant la seconde S.
-    // à la fin du décompte j'émets au challenger un event qui va récupérer
-    // la map via un ACK, jet set un random uuid et update la table game avec
-    // ces 2 valeurs.
-    // Enfin, j'émets un event dans la room de jeu qui indique aux joueurs que
-    // le jeu commence et qui leur permettra de passer à la fenêtre de jeu
+    const start = Date.now();
+    let count = 10;
+
+    setInterval(() => {
+      this.server.to(room).emit('countDown', count);
+      count--;
+      if (!count) {
+        challenger_sock.emit('setMap', (map: string) => {
+          const timestamp = Date.now() - start;
+          if (timestamp > 3000) return; //connection issue: do something;
+          this.gameService.updateGame(room, { map: map, watch: randomUUID() });
+        });
+        this.server.to(room).emit('startGame', count);
+        clearInterval();
+      }
+    }, 1000);
   }
 
   private async createGame(
@@ -74,11 +83,12 @@ export class GameGateway
     opponent_sock: any,
   ) {
     console.log('SERVER: createGame');
-    // Je créé la table game et récupère son uuid.
-    // je fais joindre les 2 players sur cette uuid.
-    // j'émit aux 2 players cette uuid afin qu'ils émettent ensuite dessus
-    // Je start le countdown async.
-    this.countDown();
+    const game_uuid = await this.gameService.newGame(challenger, opponent);
+
+    challenger_sock.join(game_uuid);
+    opponent_sock.join(game_uuid);
+    this.server.to(game_uuid).emit('getRoom', game_uuid);
+    this.countDown(challenger_sock, game_uuid);
   }
 
   async gameInvitation(challenger: User, opponent: User) {
@@ -86,65 +96,52 @@ export class GameGateway
     const challenger_sock = await this.server
       .in(challenger.game_ws)
       .fetchSockets();
+
     if (!opponent_sock || !challenger_sock) return;
 
-    const start = Date.now();
     opponent_sock[0].emit(
       'gameInvitation',
       plainToClass(UserDto, challenger),
-      async (response: string) => {
-        const timestamp = Date.now() - start;
-        if (timestamp > 12000) {
-          this.gameService.updatePlayerStatus(challenger, {
-            is_in_game: false,
-          });
-        } else if (response === 'OK') {
-          console.log('SERVER: gameInvitation accepted');
-          // this.gameService.updatePlayerStatus(opponent, { is_in_game: true });
-          // TODO: uncomment the above line when finishing tests
-          challenger_sock[0].emit(
-            'gameAccepted',
-            plainToClass(UserDto, opponent),
-          );
-          this.createGame(challenger, opponent, challenger_sock, opponent_sock);
-        } else {
-          console.log('SERVER: gameInvitation denied');
-          this.gameService.updatePlayerStatus(challenger, {
-            is_in_game: false,
-          });
-          challenger_sock[0].emit(
-            'gameDenied',
-            plainToClass(UserDto, opponent),
-          );
-        }
-      },
+      challenger_sock[0].id,
     );
+  }
+
+  @SubscribeMessage('gameInvitResponse')
+  async gameInvitResponse(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() reply: { response: string; to: string },
+  ) {
+    console.log('SERVER: gameInvitResponse');
+    const challenger = await this.gameService.getUserFromParam({
+      game_ws: reply.to,
+    });
+    const opponent = await this.gameService.getUserFromParam({
+      game_ws: client.id,
+    });
+
+    if (!opponent || !challenger) return;
+
+    const challenger_sock = await this.server
+      .in(challenger.game_ws)
+      .fetchSockets();
+
+    if (reply.response === 'OK') {
+      console.log('SERVER: gameInvitation accepted');
+      // this.gameService.updatePlayerStatus(opponent, { is_in_game: true });
+      // TODO: uncomment the above line when finishing tests
+      challenger_sock[0].emit('gameAccepted', plainToClass(UserDto, opponent));
+      // this.createGame(challenger, opponent, challenger_sock, client);
+    } else {
+      console.log('SERVER: gameInvitation denied');
+      this.gameService.updatePlayerStatus(challenger, {
+        is_in_game: false,
+      });
+      challenger_sock[0].emit('gameDenied', plainToClass(UserDto, opponent));
+    }
   }
 
   // const wait = (timeToDelay: number) =>
   //   new Promise((resolve) => setTimeout(resolve, timeToDelay));
-
-  // @SubscribeMessage('createGame')
-  // async createGame(
-  //   @ConnectedSocket() client: Socket,
-  //   @MessageBody() createGameDto: CreateGameDto,
-  // ) {
-  //   const game_uuid = await this.gameService.newGame(createGameDto);
-  //   const ws_op = await this.gameService.getWs(createGameDto.loginP2);
-  //   const socket_op = await this.server.in(ws_op).fetchSockets();
-  //   client.join(game_uuid);
-  //   socket_op.join(game_uuid);
-  //   this.server.in(game_uuid).emit('getRoom', game_uuid);
-  //   this.countDown(client, game_uuid);
-  // }
-
-  // @SubscribeMessage('acceptGame')
-  // async acceptGame(@MessageBody() createGameDto: CreateGameDto) {
-  //   const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
-  //     is_in_game: true,
-  //   });
-  //   this.server.to(ws_ch).emit('gameAccepted');
-  // }
 
   // Here createGameDto.loginP2 should be null
   // @SubscribeMessage('denyGame')
