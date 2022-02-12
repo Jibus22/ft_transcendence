@@ -6,10 +6,10 @@ import { useMainPage } from '../../../MainPageContext';
 import './snackBarre.scss';
 
 interface ISnackBarreProps {
-	onClose: () => void;
+	cb: () => void;
 }
 
-export default function SnackBarre({ onClose }: ISnackBarreProps) {
+export default function SnackBarre({ cb }: ISnackBarreProps) {
 	const { isFriends, setTimeSnack, timeSnack } = useMainPage();
 
 	const [open, setOpen] = useState(true);
@@ -17,10 +17,21 @@ export default function SnackBarre({ onClose }: ISnackBarreProps) {
 
 	const handleClose = () => {
 		// setOpen(false);
+
+		// if (typeof cb === 'function') {
+		// 	cb('OK');
+		// }
+
+		console.log(cb);
+
 		setTimeSnack(false);
+
+		// console.log('dsjkfdsgfgdsgfdsfgdskfgkds', cb);
 	};
 
 	useEffect(() => {
+		console.log('COMPONANT MONTERRRR ');
+
 		const timer = setInterval(() => {
 			setProgress((oldProgress) => {
 				if (oldProgress === 102) {
@@ -43,9 +54,9 @@ export default function SnackBarre({ onClose }: ISnackBarreProps) {
 				<Button className="buttonMui" onClick={handleClose}>
 					ACCEPT
 				</Button>
-				<Button className="buttonMui" onClick={handleClose}>
+				{/* <Button className="buttonMui" onClick={handleClose}>
 					REFUSE
-				</Button>
+				</Button> */}
 			</div>
 			<div className="progressMui">
 				<LinearProgress variant="determinate" value={progress} />

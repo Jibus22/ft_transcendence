@@ -29,7 +29,7 @@ const HistoryGame = () => {
 		},
 	});
 
-	const { userName, setStatusColor } = useMainPage();
+	const { userName, setStatusColor, gameWs } = useMainPage();
 	const [dataGame, setDataGame] = useState<Array<Game>>([]);
 	const query = useMediaQuery('(max-width: 700px)');
 

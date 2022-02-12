@@ -27,24 +27,44 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor, setIsGameRandom, setStartGame, userName, setDataUserGame, setTimeSnack } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame, userName, setDataUserGame, setTimeSnack, gameWs } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
 
+	// const fetchDataChallenge = async (data: User) => {
+	// 	const game = {
+	// 		loginP1: userName,
+	// 		loginP2: data.login,
+	// 		login: '',
+	// 		photo_url: '',
+	// 	};
+
+	// 	try {
+	// 		const response = await axios.post('http://localhost:3000/game', game, {
+	// 			withCredentials: true,
+	// 		});
+	// 		setDataUserGame([response.data]);
+	// 	} catch (error) {
+	// 		const err = error as AxiosError;
+	// 		if (err.response?.status === 403) {
+	// 			const dataError = err.response?.data;
+	// 			// setErrors({ loggin: dataError['message'] });
+	// 			console.log(dataError);
+	// 		}
+	// 	}
+	// };
+
 	const fetchDataChallenge = async (data: User) => {
 		const game = {
-			loginP1: userName,
-			loginP2: data.login,
-			login: '',
-			photo_url: '',
+			login_opponent: data.login,
 		};
 
 		try {
 			const response = await axios.post('http://localhost:3000/game', game, {
 				withCredentials: true,
 			});
-			setDataUserGame([response.data]);
+			console.log(response);
 		} catch (error) {
 			const err = error as AxiosError;
 			if (err.response?.status === 403) {
@@ -56,8 +76,13 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	};
 
 	const getGame = (data: User) => () => {
-		setTimeSnack(true);
+		fetchDataChallenge(data);
 
+		// setTimeSnack(true);
+		// console.log('hihihihiih');
+		// gameWs?.on('gameInvitation', async (challengerData, cb) => {
+		// 	console.log('111111')
+		// });
 		// fetchDataChallenge(data);
 		// setIsGameRandom(false);
 		// setTime(true);

@@ -1,6 +1,7 @@
 import { Backdrop, CircularProgress } from '@mui/material';
 import { useMount, useSafeState } from 'ahooks';
 import axios, { AxiosError } from 'axios';
+import { generatePrimeSync } from 'crypto';
 import React, { useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
@@ -9,12 +10,14 @@ import { useMainPage } from '../../MainPageContext';
 import './mainPage.scss';
 
 const MainPage = () => {
-	const { timeSnack, setData, setTimeSnack, leaveGame, dialogueDataError, disconectAuth } = useMainPage();
+	const { timeSnack, gameWs, setGameWs, setData, setTimeSnack, leaveGame, dialogueDataError, disconectAuth } = useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
 	// const [connectionTrieschatWs, setConnectionsTriesChatWs] = useState<number>(0);
-	const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
+
+	// const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
+
 	// const [connectionTriesgameWs, setConnectionsTriesGameWs] = useState<number>(0);
 	const [time, setTime] = useState(false);
 	const [isHeader, setIsHeader] = useState(true);
@@ -94,6 +97,9 @@ const MainPage = () => {
 		});
 	};
 
+	let nike: () => void | undefined;
+	let lol: () => void | undefined;
+
 	const gameCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
 		/* -----------------------
 		 ** Connection
@@ -126,12 +132,12 @@ const MainPage = () => {
 
 		//Cet event devrait être mis 'off' quand on est sur la page d'attente d'un
 		//jeu/en train de jouer.
-		socket.on('gameInvitation', async (challengerData, cb) => {
+		socket.on('gameInvitation', async (challengerData) => {
 			console.log(`💌  Event: gameInvitation ->`, challengerData);
-			await wait(5000); //C'est pour simuler le fait que la réponse peu prendre
-			//du temps. Une foi que le onClick event avec un timeout de 10sec est mis
-			//ce sera plus nécessaire.
-			cb('OK');
+
+			setTimeSnack(true);
+
+			// cb('OK');
 			console.log('gameInvitation listener end');
 			// Afficher une notification avec challengerData (userDto) et créer
 			// un onClick event qui reste 10sec à l'écran
@@ -273,7 +279,8 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre onClose={resetTimeSnack} />}
+			{timeSnack && <SnackBarre cb={lol} />}
+
 			<div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
 			</div>

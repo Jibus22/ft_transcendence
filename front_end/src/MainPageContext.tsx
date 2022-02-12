@@ -1,5 +1,6 @@
 import ErrorIcon from '@mui/icons-material/Error';
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +59,9 @@ interface IMainPageContext {
 
 	dialogueDataError: (open: boolean) => void;
 	disconectAuth: () => void;
+
+	gameWs: Socket | undefined;
+	setGameWs: Dispatch<SetStateAction<Socket | undefined>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -84,6 +88,8 @@ const MainPageProvider = (props: any) => {
 
 	const [dataUserGame, setDataUserGame] = useState<LoginGame[]>([]);
 	const [isGameRandom, setIsGameRandom] = useState(false);
+
+	const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
 
 	const navigate = useNavigate();
 
@@ -274,6 +280,9 @@ const MainPageProvider = (props: any) => {
 
 		disconectAuth,
 		navigate,
+
+		gameWs,
+		setGameWs,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
