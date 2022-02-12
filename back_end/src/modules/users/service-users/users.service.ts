@@ -39,6 +39,13 @@ export class UsersService {
     return await this.repoUser.findOne(id);
   }
 
+  async findOneWithAnyParam(param: Partial<User>) {
+    if (!param) {
+      return null;
+    }
+    return await this.repoUser.findOne(param);
+  }
+
   async findLogin(login: string) {
     if (!login) {
       return null;

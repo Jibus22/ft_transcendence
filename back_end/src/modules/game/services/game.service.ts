@@ -69,7 +69,8 @@ export class GameService {
     await this.checkErrors(
       [challenger, opponent],
       opponent.login,
-      errorPlayerNotInGame,
+      null,
+      // errorPlayerNotInGame,
     );
     return await this.createGameTable(challenger, opponent);
   }
@@ -124,10 +125,18 @@ export class GameService {
     return game;
   }
 
-  ////////////////
+  //////////////// UTILS ///////////////
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
     this.usersService.update(player.id, patch);
+  }
+
+  async getUserFromLogin(login: string) {
+    return await this.usersService.findLogin(login);
+  }
+
+  async getUserFromParam(param: Partial<User>) {
+    return await this.usersService.findOneWithAnyParam(param);
   }
 
   ////////////////

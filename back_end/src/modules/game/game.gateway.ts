@@ -99,38 +99,45 @@ export class GameGateway
 
     if (!opponent_sock || !challenger_sock) return;
 
-    const start = Date.now();
     opponent_sock[0].emit(
       'gameInvitation',
       plainToClass(UserDto, challenger),
-      async (response: string) => {
-        const timestamp = Date.now() - start;
-
-        if (timestamp > 12000) {
-          this.gameService.updatePlayerStatus(challenger, {
-            is_in_game: false,
-          });
-        } else if (response === 'OK') {
-          console.log('SERVER: gameInvitation accepted');
-          // this.gameService.updatePlayerStatus(opponent, { is_in_game: true });
-          // TODO: uncomment the above line when finishing tests
-          challenger_sock[0].emit(
-            'gameAccepted',
-            plainToClass(UserDto, opponent),
-          );
-          this.createGame(challenger, opponent, challenger_sock, opponent_sock);
-        } else {
-          console.log('SERVER: gameInvitation denied');
-          this.gameService.updatePlayerStatus(challenger, {
-            is_in_game: false,
-          });
-          challenger_sock[0].emit(
-            'gameDenied',
-            plainToClass(UserDto, opponent),
-          );
-        }
-      },
+      challenger_sock[0].id,
     );
+  }
+
+  @SubscribeMessage('gameInvitResponse')
+  async gameInvitResponse(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() reply: { response: string; to: string },
+  ) {
+    console.log('SERVER: gameInvitResponse');
+    const challenger = await this.gameService.getUserFromParam({
+      game_ws: reply.to,
+    });
+    const opponent = await this.gameService.getUserFromParam({
+      game_ws: client.id,
+    });
+
+    if (!opponent || !challenger) return;
+
+    const challenger_sock = await this.server
+      .in(challenger.game_ws)
+      .fetchSockets();
+
+    if (reply.response === 'OK') {
+      console.log('SERVER: gameInvitation accepted');
+      // this.gameService.updatePlayerStatus(opponent, { is_in_game: true });
+      // TODO: uncomment the above line when finishing tests
+      challenger_sock[0].emit('gameAccepted', plainToClass(UserDto, opponent));
+      // this.createGame(challenger, opponent, challenger_sock, client);
+    } else {
+      console.log('SERVER: gameInvitation denied');
+      this.gameService.updatePlayerStatus(challenger, {
+        is_in_game: false,
+      });
+      challenger_sock[0].emit('gameDenied', plainToClass(UserDto, opponent));
+    }
   }
 
   // const wait = (timeToDelay: number) =>
