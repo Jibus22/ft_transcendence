@@ -65,14 +65,13 @@ export class GameService {
     return game.id;
   }
 
-  async newGame(login_opponent: string, user: User): Promise<string> {
-    const opponent = await this.usersService.findLogin(login_opponent);
+  async newGame(challenger: User, opponent: User): Promise<string> {
     await this.checkErrors(
-      [user, opponent],
-      login_opponent,
+      [challenger, opponent],
+      opponent.login,
       errorPlayerNotInGame,
     );
-    return await this.createGameTable(user, opponent);
+    return await this.createGameTable(challenger, opponent);
   }
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
