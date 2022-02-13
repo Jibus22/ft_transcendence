@@ -6,13 +6,15 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import { useEffect, useState }  from 'react'
 
-const chatName = (participants: any, currentUser: any) => {
-	const user = getUser(participants, currentUser);
-	if (user) {
+declare let window: any;
+
+const chatName = (chat: any, currentUser: any) => {
+	const user = getUser(chat.participants, currentUser);
+	if (user && chat.is_private) {
 		return user.user.login;
 	}
 	let name = "";
-	participants.forEach((p: any) => name += p.user.login[0]);
+	chat.participants.forEach((p: any) => name += p.user.login[0]);
 	return name;
 }
 
@@ -58,8 +60,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const getFriends = async () => {
+		if (window.friendsLoading)
+			return;
+		window.friendsLoading = true;
 		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
+		window.friendsLoading = false;
 	};
 
 	const onSearch = (e: any) => {
@@ -145,6 +151,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		openPublicRoom(detail.id);
 	})
 
+	window.addEventListener("friendsUpdated", ({ detail }: any) => {
+		if (window.friendsLoading)
+			return;
+		getFriends();
+	})
+
 	return (
 	<ChatListWrapper>
 		<SearchField>
@@ -155,7 +167,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
 				{getUser(chat.participants, currentUser) !== null && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
 				<div>
-					<h4>{chatName(chat.participants, currentUser)}</h4>
+					<h4>{chatName(chat, currentUser)}</h4>
 				</div>
 			</Preview>))}
 			{!chats.length && <span className="empty-message">No chat yet</span>}
@@ -174,7 +186,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				<List>
 					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => openPublicRoom(chat.id)}>
 						<div>
-							<h4>{chatName(chat.participants, currentUser)}</h4>
+							<h4>{chatName(chat, currentUser)}</h4>
 						</div>
 					</Preview>))}
 					{!publicChats.length && <span className="empty-message">No chat yet</span>}
