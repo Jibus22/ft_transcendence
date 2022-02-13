@@ -19,7 +19,7 @@ export class RoomOwnerGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💬 💂‍♂️ Room Owner Guard'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger('💬 💂‍♂️ Room Owner Guard');
     const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
     const targetRoom: Room = context.switchToHttp().getRequest()?.targetedRoom;
     if (
@@ -27,10 +27,10 @@ export class RoomOwnerGuard implements CanActivate {
       targetRoom &&
       (this.isRoomOwned(currentUser, targetRoom) || currentUser.is_site_owner)
     ) {
-      logger.log(
+      logger.debug(
         `User id: ${currentUser.id}, trying to target room: ${targetRoom.id}`,
       );
-      logger.log(`OWNER ACCESS GRANTED !`);
+      logger.debug(`OWNER ACCESS GRANTED !`);
       return true;
     }
     throw new ForbiddenException('User must be logged and own the room');

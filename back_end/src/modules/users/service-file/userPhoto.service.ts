@@ -36,7 +36,7 @@ export class UsersPhotoService {
       renameSync(oldPath, newPath);
     } catch (error) {
       const logger = new Logger('fileSystem');
-      logger.log(`Rename failed: ${error}`);
+      logger.debug(`Rename failed: ${error}`);
       throw {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         error: 'could not store the file',
@@ -52,7 +52,7 @@ export class UsersPhotoService {
     unlink(filePath, (error) => {
       if (error) {
         const logger = new Logger('fileSystem');
-        logger.log(`Unlink failed: ${error}`);
+        logger.debug(`Unlink failed: ${error}`);
       }
     });
   }

@@ -18,7 +18,7 @@ export class RoomBanGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💬 💂‍♂️ Room Ban Guard'); //TODO REMOVE LOGGER HERE
+    const logger = new Logger('💬 💂‍♂️ Room Ban Guard');
     const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
     const targetRoomBan: Restriction[] = context
       .switchToHttp()
@@ -30,7 +30,7 @@ export class RoomBanGuard implements CanActivate {
       (this.isUserBanned(currentUser, targetRoomBan) === false ||
         currentUser.is_site_owner)
     ) {
-      logger.log(`BAN ACCESS GRANTED, user is not banned !`);
+      logger.debug(`BAN ACCESS GRANTED, user is not banned !`);
       return true;
     }
     throw new UnauthorizedException('User is banned');

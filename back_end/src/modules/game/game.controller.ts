@@ -7,37 +7,61 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { GameService } from './game.service';
+import { GameService } from './services/game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { Game } from './entities/game.entity';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { NewGameDto } from './dto/new-game.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
-import { Serialize } from '../../interceptors/serialize.interceptor';
+import { UserDto } from '../users/dtos/user.dto';
+import { GameGateway } from './game.gateway';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { User } from '../users/entities/users.entity';
 
 @ApiTags('game')
+@UseGuards(AuthGuard)
 @Controller('game')
 export class GameController {
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly gameGateway: GameGateway,
+  ) {}
 
-  @Post()
+  @ApiResponse({ type: UserDto, isArray: false })
   @ApiOperation({ summary: 'challenge anyone' })
-  async createGame(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.newGame(
-      createGameDto,
-      this.gameService.isBlocker,
+  @Serialize(UserDto)
+  @Post()
+  async gameInvitation(
+    @CurrentUser() user: User,
+    @Body() createGameDto: CreateGameDto,
+  ) {
+    const opponent = await this.gameService.gameInvitation(
+      createGameDto.login_opponent,
+      user,
     );
+    this.gameGateway.gameInvitation(user, opponent);
+    return opponent;
   }
+
+  /// ---------------- TEST --------------------
+  @Post('test')
+  test(@CurrentUser() user: User) {
+    console.log('TEST route');
+    this.gameGateway.serverToClient(user.game_ws, 'This is a test from SERVER');
+  }
+  /// ---------------- TEST END ----------------
 
   @ApiResponse({ type: NewGameDto, isArray: false })
   @ApiOperation({ summary: 'join a random game' })
   @Serialize(NewGameDto)
   @Post('join')
-  async playnow(@Body() createGameDto: CreateGameDto) {
-    return await this.gameService.joinGame(createGameDto);
+  async playnow(@CurrentUser() user: User) {
+    return await this.gameService.joinGame(user);
   }
 
   @Get()
