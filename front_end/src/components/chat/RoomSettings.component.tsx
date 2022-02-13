@@ -16,6 +16,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const isModerator = () => {
+		if (isOwner())
+			return true;
 		let moderator = false;
 		room.participants.forEach((participant: any) => {
 			if (participant.user.id === currentUser.id && participant.is_moderator)
@@ -35,9 +37,11 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	
 	const changePassword = async () => {
 		const newPassword = prompt("New password (empty for no password)");
-		await axios.patch(`http://localhost:3000/room/${room.id}/password`, {
+		axios.patch(`http://localhost:3000/room/${room.id}/password`, {
 			password: newPassword
-		}, { withCredentials: true });
+		}, { withCredentials: true })
+		.then(() => alert("Password successfully set"))
+		.catch(err => alert(`Cannot set password: ${err}`));
 	}
 
 	const addParticipant = async () => {
