@@ -73,7 +73,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		setSearch(term);
 		if (!term.length)
 			return setSearchResults([]);
-
 		const result: any[] = users.filter(
 			(user: any) => user.login.indexOf(term) > -1
 		).sort((a: any, b: any) => a.login.indexOf(term) - b.login.indexOf(term));
@@ -163,16 +162,16 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			<input type="text" placeholder="Search" value={search} onChange={onSearch} />
 			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
-		{ tab === 0 && !searchResults.length && (<List>
+		{ tab === 0 && !search.length && (<List>
 			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
-				{getUser(chat.participants, currentUser) !== null && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
+				{getUser(chat.participants, currentUser) !== null && chat.is_private && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
 				<div>
 					<h4>{chatName(chat, currentUser)}</h4>
 				</div>
 			</Preview>))}
 			{!chats.length && <span className="empty-message">No chat yet</span>}
 		</List>)}
-		{ tab === 1 && !searchResults.length && (<List>
+		{ tab === 1 && !search.length && (<List>
 			{friends.map((friend: any) => (<Preview key={friend.id} onClick={() => openChatHandler(friend.id)}>
 				<img src={friend.photo_url} alt={friend.login} />
 				<div>
@@ -181,7 +180,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			</Preview>))}
 			{!friends.length && <span className="empty-message">No friends yet</span>}
 		</List>)}
-		{ tab === 2 && !searchResults.length && (
+		{ tab === 2 && !search.length && (
 			<>
 				<List>
 					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => openPublicRoom(chat.id)}>
@@ -194,7 +193,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				<LargeButton onClick={() => createChat()}>+ Create chat</LargeButton>
 			</>
 		)}
-		{ searchResults.length > 0 && (<List>
+		{ search.length > 0 && (<List>
 			{searchResults.map((user: any) => (<Preview key={user.id} onClick={() => openChatHandler(user.id)}>
 				<img src={user.photo_url} alt={user.login} />
 				<div>

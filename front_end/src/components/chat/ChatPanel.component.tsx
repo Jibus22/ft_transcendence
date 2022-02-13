@@ -25,7 +25,8 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	const getMessages = async () => {
 		const { data } = await axios.get(`http://localhost:3000/room/${room.id}/message`, { withCredentials: true });
-		setMessages(data);
+		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
+		setMessages(sortedMessages);
 	};
 
 	const sendMessage = async () => {
@@ -50,8 +51,10 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const scrollChatDown = () => {
-		const chat: any = document.querySelector("#chat-messages");
-		chat.scrollTop = chat.scrollHeight;
+		try {
+			const chat: any = document.querySelector("#chat-messages");
+			chat.scrollTop = chat.scrollHeight;
+		} catch {}
 	};
 
 	useEffect(() => {
