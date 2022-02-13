@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
-import BlockIcon from '@mui/icons-material/Block';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import { useEffect, useState } from "react";
 const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const [friends, setFriends] = useState<any[]>([]);
+	const [blocked, setBlocked] = useState<any[]>([]);
 	const [friendsLoading, setFriendsLoading] = useState<boolean>(false);
 
 	const getFriends = async () => {
@@ -16,6 +18,17 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
+	};
+
+	const getBlocks = async () => {
+		const result = await axios.get("http://localhost:3000/users/block", { withCredentials: true }).catch(console.error);
+		setBlocked(result?.data || []);
+		console.log("REOADING BLOCKS", result?.data);
+	};
+
+	const isBlocked = () => {
+		const block = blocked.filter((a: any) => a.id === user.user.id);
+		return block.length > 0;
 	};
 
 	const isFriend = () => {
@@ -52,10 +65,18 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		await axios.post(`http://localhost:3000/users/block`, {
 			id
 		}, { withCredentials: true });
+		getBlocks();
+	};
+
+	const unblockUser = async (id: any) => {
+		await axios.delete(`http://localhost:3000/users/block`, { withCredentials: true, data: { id } });
+		getBlocks();
+		console.log("DELETING", id)
 	};
 
 	useEffect(() => {
 		getFriends();
+		getBlocks();
 	}, []);
 
 	return (
@@ -68,7 +89,8 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				{!friendsLoading && !isFriend() && <button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button>}
 				{!friendsLoading && isFriend() && <button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button>}
 				<button onClick={ () => askGame(user.user.id) }><SportsEsportsIcon /></button>
-				<button onClick={ () => blockUser(user.user.id) }><BlockIcon /></button>
+				{!isBlocked() && <button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button>}
+				{isBlocked() && <button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button>}
 			</ButtonRow>) }
 		</>
 	);
