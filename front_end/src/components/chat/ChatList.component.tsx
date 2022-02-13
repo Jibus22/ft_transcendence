@@ -48,10 +48,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const getPublicRooms = async () => {
+		window.roomsLoading = true;
 		const { data } = await axios.get("http://localhost:3000/room/publics", {
 			withCredentials: true
 		});
 		setPublicChats(data);
+		window.roomsLoading = false;
 	}
 
 	const getUsers = async () => {
@@ -95,9 +97,11 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		}, { withCredentials: true });
 		const { id } = data;
 		await axios.post(`http://localhost:3000/room/${id}/participant`, { id: userId }, { withCredentials: true });
+		const data2 = (await axios.get(`http://localhost:3000/room/${id}/infos`, { withCredentials: true })).data;
+		console.log("DATA", data, data2)
 		setSearchResults([]);
 		setSearch("");
-		openChat(data);
+		openChat(data2);
 	};
 
 	const createChat = async () => {
@@ -130,18 +134,26 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	}, []);
 
 	window.addEventListener("publicRoomCreated", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
 		getPublicRooms();
 	})
 
 	window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
 		getPublicRooms();
 	})
 
 	window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
 		getPublicRooms();
 	})
 
 	window.addEventListener("userAdded", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
 		getPublicRooms();
 		getChats();
 	})
