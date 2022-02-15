@@ -1,6 +1,6 @@
 //import { useRef, useState, useEffect } from 'react';
 //import ReactDOM from 'react-dom';
-import { io, Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import React from 'react';
 import { Ball } from './Ball';
 import { Player } from './Player';
@@ -387,9 +387,11 @@ class PongGame extends React.Component<MyProps> {
 	}
 
 	componentDidMount() {
-		 let rep = prompt('J1 J2 ou W');
-		 if (rep === 'J1') this._P1 = true;
-		 else if (rep === 'J2') this._P2 = true;
+		 //let rep = prompt('J1 J2 ou W');
+		 //if (rep === 'J1') this._P1 = true;
+		 //else if (rep === 'J2') this._P2 = true;
+		if (this.props.joueur === 1) this._P1 = true;
+		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
 		this.props.socket.on('message', (message) => {
 			const data = JSON.parse(message.data);
