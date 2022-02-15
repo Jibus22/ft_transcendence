@@ -1,5 +1,6 @@
 //import { useRef, useState, useEffect } from 'react';
 //import ReactDOM from 'react-dom';
+import { io, Socket } from 'socket.io-client';
 import React from 'react';
 import { Ball } from './Ball';
 import { Player } from './Player';
@@ -7,8 +8,8 @@ import './PongGame.scss';
 import '../pongGame.scss';
 
 //Client
-const W3CWebSocket = require('websocket').w3cwebsocket;
-let client = new W3CWebSocket('ws://localhost:8000');
+//const W3CWebSocket = require('websocket').w3cwebsocket;
+//let client = new W3CWebSocket('ws://localhost:8000');
 
 function getRandomInt(max: number) {
 	return Math.floor(Math.random() * max);
@@ -23,7 +24,9 @@ function sleep(milliseconds: number) {
 }
 
 type MyProps = {
-	map: Number;
+	joueur: number,
+	map: number;
+	socket:Socket
 };
 
 class PongGame extends React.Component<MyProps> {
@@ -129,7 +132,7 @@ class PongGame extends React.Component<MyProps> {
 		if (ret === 1) this.scoreP1++;
 
 		//Send Score
-		client.send(
+		this.props.socket.send(
 			JSON.stringify({
 				type: 'message',
 				object: 'Score',
@@ -180,7 +183,7 @@ class PongGame extends React.Component<MyProps> {
 			//Power up large paddle
 			if (ret === 1) {
 				this._playerOne._largePaddle(this.height);
-				client.send(
+				this.props.socket.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -191,7 +194,7 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player One large Paddle');
 			}
 			if (ret === 2) {
-				client.send(
+				this.props.socket.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -207,7 +210,7 @@ class PongGame extends React.Component<MyProps> {
 			//Power Up controle inverse
 			if (ret === 2) {
 				this._playerOne._invertControlTemporarily();
-				client.send(
+				this.props.socket.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -218,7 +221,7 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player One inverted Control');
 			}
 			if (ret === 1) {
-				client.send(
+				this.props.socket.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -236,7 +239,7 @@ class PongGame extends React.Component<MyProps> {
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0)
 				this._score(ret);// someone scored
-			client.send(
+				this.props.socket.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Ball',
@@ -247,7 +250,7 @@ class PongGame extends React.Component<MyProps> {
 		}
 		if (this._P1) {
 			this._playerOne._update(this._keystate, this.height, this._ball);
-			client.send(
+			this.props.socket.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Player1',
@@ -260,7 +263,7 @@ class PongGame extends React.Component<MyProps> {
 		if (this._P2) {
 			this._playerTwo._update(this._keystate, this.height, this._ball);
 			//console.log(client);
-			client.send(
+			this.props.socket.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Player2',
@@ -370,7 +373,7 @@ class PongGame extends React.Component<MyProps> {
 			},
 			false,
 		);
-		client.send(
+		this.props.socket.send(
 			JSON.stringify({
 				type: 'message',
 				object: 'Ready',
@@ -388,7 +391,7 @@ class PongGame extends React.Component<MyProps> {
 		 if (rep === 'J1') this._P1 = true;
 		 else if (rep === 'J2') this._P2 = true;
 		this._initPongGame();
-		client.onmessage = (message: any) => {
+		this.props.socket.on('message', (message) => {
 			const data = JSON.parse(message.data);
 			if (!this._P2 && data.object === 'Player2') {
 				this._playerTwo = data.player;
@@ -441,12 +444,12 @@ class PongGame extends React.Component<MyProps> {
 				this.gamerunning = false;
 				this._printText('Jeu en pause');
 			}
-		};
+		});
 		setTimeout(() => this._startGame(), 1000);
 	}
 
 	componentWillUnmount() {
-		if (client) client.close();
+		//if (client) client.close();
 	}
 
 	private _touch(e: any) {
