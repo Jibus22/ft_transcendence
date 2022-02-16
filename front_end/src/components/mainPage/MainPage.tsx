@@ -129,8 +129,10 @@ const MainPage = () => {
 			// de choisir la map, puisqu'on est l'invité)
 			// Sinon, virer la notif
 
+			// event a lancer qd le opponent clique sur le 'OK' de la notif
 			socket.emit('gameInvitResponse', { response: 'OK', to: challengerWsId });
-			socket.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
+			// event a lancer qd le opponent clique sur le 'NO' de la notif
+			// socket.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
 		});
 
 		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
@@ -150,9 +152,33 @@ const MainPage = () => {
 			// c'est good.
 		});
 
+		socket.on('getRoom', (game_uuid: string) => {
+			console.log(`💌  Event: getRoom -> ${game_uuid}`);
+			// Enregistrer 'game_uuid' dans une variable utilisable dans le jeu: cela
+			// va servir aux 2 clients pour émettre leur position ds le jeu.
+		});
+
 		socket.on('countDown', (count: number) => {
 			console.log(`💌  Event: countDown -> ${count}`);
 			// Afficher count dans la page d'intro du jeu
+		});
+
+		socket.on('setMap', (cb: (map: string) => void) => {
+			console.log(`💌  Event: setMap -> ${cb}`);
+			// Mettre la map slectionnée par le challenger ou alors selectionnée
+			// aléatoirement en parametre de cb:   cb(map);
+			cb('test set map');
+		});
+
+		// Conception reste à confirmer
+		socket.on('startGame', (room: string) => {
+			console.log(`💌  Event: startGame -> ${room}`);
+			// Afficher la fenêtre de jeu.
+		});
+
+		socket.on('myerror', (message: string) => {
+			console.log(`💌  Event: myerror -> ${message}`);
+			//catch error
 		});
 
 		/// ---------------- TEST --------------------
