@@ -39,11 +39,13 @@ export class UsersService {
     return await this.repoUser.findOne(id);
   }
 
-  async findOneWithAnyParam(param: Partial<User>) {
-    if (!param) {
-      return null;
+  async findOneWithAnyParam(param: Partial<User>[]) {
+    let users: User[] = [];
+    for (let elem of param) {
+      let user = await this.repoUser.findOne(elem);
+      users.push(user);
     }
-    return await this.repoUser.findOne(param);
+    return users;
   }
 
   async findLogin(login: string) {
@@ -84,6 +86,14 @@ export class UsersService {
 
   async update(id: string, attrs: UpdateUserDto) {
     const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    Object.assign(user, attrs);
+    return await this.repoUser.save(user);
+  }
+
+  async updateUser(user: User, attrs: UpdateUserDto) {
     if (!user) {
       throw new NotFoundException('user not found');
     }

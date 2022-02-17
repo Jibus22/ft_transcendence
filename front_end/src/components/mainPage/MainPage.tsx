@@ -76,26 +76,26 @@ const MainPage = () => {
 
 		socket.on('publicRoomCreated', (message) => {
 			console.log(`💌  Event: publicRoomCreated ->`, message);
-			window.dispatchEvent(new CustomEvent("publicRoomCreated", { detail: message }));
+			window.dispatchEvent(new CustomEvent('publicRoomCreated', { detail: message }));
 		});
 		socket.on('publicRoomUpdated', (message) => {
 			console.log(`💌  Event: publicRoomUpdated ->`, message);
-			window.dispatchEvent(new CustomEvent("publicRoomUpdated", { detail: message }));
+			window.dispatchEvent(new CustomEvent('publicRoomUpdated', { detail: message }));
 		});
 		socket.on('publicRoomRemoved', (message) => {
 			console.log(`💌  Event: publicRoomRemoved ->`, message);
 		});
 		socket.on('newMessage', (message) => {
 			console.log(`💌  Event: newMessage ->`, message);
-			window.dispatchEvent(new CustomEvent("newMessage", { detail: message }));
+			window.dispatchEvent(new CustomEvent('newMessage', { detail: message }));
 		});
 		socket.on('roomParticipantUpdated', (message) => {
 			console.log(`💌  Event: roomParticipantUpdated ->`, message);
-			window.dispatchEvent(new CustomEvent("roomParticipantUpdated", { detail: message }));
+			window.dispatchEvent(new CustomEvent('roomParticipantUpdated', { detail: message }));
 		});
 		socket.on('userAdded', (message) => {
 			console.log(`💌  Event: userAdded ->`, message);
-			window.dispatchEvent(new CustomEvent("userAdded", { detail: message }));
+			window.dispatchEvent(new CustomEvent('userAdded', { detail: message }));
 		});
 		socket.on('userRemoved', (message) => {
 			console.log(`💌  Event: userRemoved ->`, message);
@@ -179,9 +179,33 @@ const MainPage = () => {
 		// 	// c'est good.
 		// });
 
+		socket.on('getRoom', (game_uuid: string) => {
+			console.log(`💌  Event: getRoom -> ${game_uuid}`);
+			// Enregistrer 'game_uuid' dans une variable utilisable dans le jeu: cela
+			// va servir aux 2 clients pour émettre leur position ds le jeu.
+		});
+
 		socket.on('countDown', (count: number) => {
 			console.log(`💌  Event: countDown -> ${count}`);
 			// Afficher count dans la page d'intro du jeu
+		});
+
+		socket.on('setMap', (cb: (map: string) => void) => {
+			console.log(`💌  Event: setMap -> ${cb}`);
+			// Mettre la map slectionnée par le challenger ou alors selectionnée
+			// aléatoirement en parametre de cb:   cb(map);
+			cb('test set map');
+		});
+
+		// Conception reste à confirmer
+		socket.on('startGame', (room: string) => {
+			console.log(`💌  Event: startGame -> ${room}`);
+			// Afficher la fenêtre de jeu.
+		});
+
+		socket.on('myerror', (message: string) => {
+			console.log(`💌  Event: myerror -> ${message}`);
+			//catch error
 		});
 
 		/// ---------------- TEST --------------------

@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateGameDto } from '../dto/update-game.dto';
-import { CreateGameDto } from '../dto/create-game.dto';
 import { Game } from '../entities/game.entity';
 import { Player } from '../entities/player.entity';
 import { Repository } from 'typeorm';
@@ -13,45 +12,41 @@ import {
 import { User } from '../../users/entities/users.entity';
 import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
-import {
-  errorPlayerNotInGame,
-  errorPlayerNotOnline,
-  errorSamePlayer,
-  errorUserNotFound,
-  isBlocker,
-  isGameWs,
-} from '../utils/utils';
+import { IPlayerError, PlayerHttpError, PlayerWsError } from '../utils/error';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(Game) private game_repo: Repository<Game>,
     @InjectRepository(Player) private player_repo: Repository<Player>,
-    private usersService: UsersService,
-    private relationsService: RelationsService,
+    private readonly usersService: UsersService,
+    private readonly relationsService: RelationsService,
   ) {}
+
+  private readonly logger = new Logger('GameService');
 
   private async checkErrors(
     [user, opponent]: User[],
     login_opponent: string,
+    cbErr: IPlayerError,
     cb: (value: UserDto) => void,
   ) {
     [
       { user: user, login: user.login },
       { user: opponent, login: login_opponent },
-    ].forEach(errorUserNotFound);
+    ].forEach(cbErr.errorUserNotFound);
 
     const usersDto = plainToClass(UserDto, [user, opponent]);
-    errorSamePlayer(usersDto);
+    cbErr.errorSamePlayer(usersDto);
     usersDto.forEach(cb);
 
     const blockerList = await this.relationsService.readAllRelations(
       opponent.id,
       RelationType.Block,
     );
-    isBlocker(blockerList, usersDto);
+    cbErr.isBlocker(blockerList, usersDto);
 
-    [user, opponent].forEach(isGameWs);
+    [user, opponent].forEach(cbErr.isGameWs);
   }
 
   private async createGameTable(user1: User, user2: User) {
@@ -66,23 +61,31 @@ export class GameService {
   }
 
   async newGame(challenger: User, opponent: User): Promise<string> {
+    this.logger.log('newGame');
+
+    const err = new PlayerWsError();
     await this.checkErrors(
       [challenger, opponent],
       opponent.login,
-      null,
-      // errorPlayerNotInGame,
+      err,
+      err.errorPlayerNotInGame,
+      // null,
     );
     return await this.createGameTable(challenger, opponent);
   }
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
     const opponent = await this.usersService.findLogin(login_opponent);
+    this.usersService.updateUser(user, { is_in_game: false }); //TODO: delete
+    this.usersService.updateUser(opponent, { is_in_game: false }); //TODO: delete
+    const err = new PlayerHttpError();
     await this.checkErrors(
       [user, opponent],
       login_opponent,
-      errorPlayerNotOnline,
+      err,
+      err.errorPlayerNotOnline,
     );
-    // this.updatePlayerStatus(user, { is_in_game: true });
+    this.usersService.updateUser(user, { is_in_game: true }); //TODO: uncomment
     return opponent;
   }
 
@@ -124,41 +127,6 @@ export class GameService {
     });
     return game;
   }
-
-  //////////////// UTILS ///////////////
-
-  async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
-    this.usersService.update(player.id, patch);
-  }
-
-  async getUserFromLogin(login: string) {
-    return await this.usersService.findLogin(login);
-  }
-
-  async getUserFromParam(param: Partial<User>) {
-    return await this.usersService.findOneWithAnyParam(param);
-  }
-
-  ////////////////
-
-  // async getWs(login: string) {
-  //   const user = await this.usersService.findLogin(login);
-  //   if (user) return user.game_ws;
-  // }
-
-  // async getWsNPatchStatus(
-  //   createGameDto: CreateGameDto,
-  //   patch: { is_in_game: boolean },
-  // ) {
-  //   const challenger = await this.usersService.findLogin(createGameDto.loginP1);
-  //   if (createGameDto.login_opponent) {
-  //     const opponent = await this.usersService.findLogin(
-  //       createGameDto.login_opponent,
-  //     );
-  //     await this.usersService.update(opponent.id, patch);
-  //   } else await this.usersService.update(challenger.id, patch);
-  //   return challenger.game_ws;
-  // }
 
   ////////////////
 
