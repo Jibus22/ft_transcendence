@@ -16,14 +16,14 @@ export default function Play({ Loadingclick }: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 170px)' },
+		from: { opacity: 0, transform: 'translate(0px, 5vw)' },
 		config: {
 			delay: 300,
 			duration: 300,
 		},
 	});
 
-	const { isDisable, loading, setSelectQuery } = useMainPage();
+	const { isDisable, loading, setSelectQuery, setIsGameRandom, setStartGame } = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
 
@@ -38,6 +38,12 @@ export default function Play({ Loadingclick }: Props) {
 			setSelectQuery(false);
 		};
 	});
+
+	const getGame = () => {
+		setIsGameRandom(true);
+		// setStartGame(true);
+		Loadingclick();
+	};
 
 	let buttonFriends;
 	if (!isForm) {
@@ -74,11 +80,10 @@ export default function Play({ Loadingclick }: Props) {
 				<div className="playRandom">
 					<LoadingButton
 						className="buttonMui"
-						onClick={Loadingclick}
+						onClick={getGame}
 						disabled={loading}
 						variant="contained"
 						sx={{
-							borderRadius: 3,
 							width: 2 / 2,
 							height: 2 / 2,
 							textTransform: 'none',

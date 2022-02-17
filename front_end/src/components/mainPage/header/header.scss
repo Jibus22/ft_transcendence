@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 .mainHeader {
 	// animation hover //
 
@@ -57,6 +58,7 @@
 		.selectedNave {
 			height: 100%;
 			border-bottom: 2px #e6da6a solid;
+			transition: ease-out 0.2s;
 		}
 	}
 
@@ -98,36 +100,36 @@
 	}
 
 	.logHeader {
-		width: 20%;
+		width: 15%;
+		display: flex;
+		justify-content: flex-end;
+		margin-right: 20px;
+
+		.SelectedNavLoggin {
+			background-color: rgba(243, 213, 192, 0.1);
+			border-radius: 2vw;
+			transition: ease-out 0.2s;
+		}
 
 		.profil {
-			width: 100%;
-
+			display: flex;
+			justify-content: flex-end;
+			gap: 0.6vw;
 			.profilLoggin {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				width: 10vw;
-				min-width: 3vw;
 
+				padding-left: 0.6vw;
 				h2 {
 					font-family: Montserrat, sans-serif;
 					color: white;
 					font-weight: 500;
-					font-size: 37px;
-					font-size: 1.4vw;
-					text-align: center;
-					transition: ease-out 0.185s;
+					font-size: 1.3vw;
+					transition: ease-out 0.3s;
 				}
 			}
-
 			.profilLogginImg {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: 50%;
-				margin-left: 20px;
-
 				.MuiBadge-badge {
 					width: 19%;
 					height: 19%;
@@ -154,17 +156,11 @@
 		}
 
 		.profil:hover {
+			background-color: rgba(243, 213, 192, 0.1);
+			border-radius: 2vw;
 			h2 {
-				font-size: 1.45vw;
+				font-size: 1.35vw;
 			}
-		}
-	}
-}
-
-@media screen and (max-width: 2100px) {
-	.mainHeader {
-		.profilLogginImg {
-			margin: 0% 0% 0% -20px;
 		}
 	}
 }
@@ -179,14 +175,6 @@
 	}
 }
 
-@media screen and (max-width: 1600px) {
-	.mainHeader {
-		.profilLogginImg {
-			margin: 0% 0% 0% -40px;
-		}
-	}
-}
-
 /////////////////////////////////////////////
 ////// reponsive macbook 13 pouces  /////////
 /////////////////////////////////////////////
@@ -194,7 +182,7 @@
 @media screen and (max-width: 1440px) {
 	.mainHeader {
 		width: 100%;
-		justify-content: center;
+		// justify-content: center;
 
 		nav.stroke ul li h1:after,
 		nav.fill ul li h1:after {
@@ -203,7 +191,7 @@
 			height: 0.09vw;
 		}
 
-		height: 70px;
+		height: 75px;
 		.menuHeader {
 			border-radius: 1.5vw;
 
@@ -214,42 +202,54 @@
 		}
 
 		.logHeader {
-			width: 20%;
+			// width: 20%;
 
 			.profil {
-				width: 100%;
+				// width: 100%;
 
 				.profilLoggin {
-					display: flex;
-					justify-content: center;
-					align-items: center;
+					// display: flex;
+					// justify-content: center;
+					// align-items: center;
 
 					h2 {
 					}
 				}
 
 				.profilLogginImg {
-					width: 50%;
-					margin-top: -3px;
+					// width: 50%;
+					// margin-top: -3px;
 
 					.MuiBadge-badge {
-						width: 19%;
-						height: 19%;
+						// width: 19%;
+						// height: 19%;
 
-						border-radius: 100%;
-						box-shadow: 0 0 0 0.5px;
+						// border-radius: 100%;
+						// box-shadow: 0 0 0 0.5px;
 					}
 				}
 			}
 
 			.profil:hover {
 				h2 {
-					font-size: 1.5vw;
+					// font-size: 1.5vw;
 				}
 			}
 		}
 	}
 }
+
+// @media screen and (max-width: 1300px) {
+// 	.mainHeader {
+// 		.logHeader {
+// 			border: 1px solid green;
+// 			.testSelectedNav {
+// 				margin-right: 30px !important;
+// 				border: 1px solid red;
+// 			}
+// 		}
+// 	}
+// }
 
 @media screen and (max-width: 1100px) {
 	.mainHeader {
@@ -343,10 +343,6 @@
 			border-radius: 16px;
 		}
 		.queryNav {
-			// .selectedNave {
-			// 	height: 100%;
-			// 	border-bottom: 1px #e6da6a solid;
-			// }
 			button {
 				text-transform: none;
 				border: none;
@@ -356,11 +352,7 @@
 				margin-top: 5px;
 				height: 25px !important;
 			}
-			// @-moz-document url-prefix() {
-			// 	button {
-			// 		margin-top: 2px;
-			// 	}
-			// }
+
 			button:hover {
 				font-size: 15px;
 			}
@@ -373,10 +365,6 @@
 			border: 1px solid rgba(255, 255, 255, 0.6);
 			margin: -1.9px 10px 0% -10px;
 		}
-		// .MuiMenu-list {
-		// 	background: #4f3e35;
-		// }
-		@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 	}
 
 	.MuiPaper-elevation {
@@ -398,10 +386,29 @@
 	}
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 850px) {
 	.mainHeader {
 		width: 100%;
 		justify-content: center;
+
+		.logHeader {
+			margin-right: 4px;
+			.SelectedNavLoggin {
+			}
+			.profil {
+				.profilLoggin {
+					h2 {
+						padding: 10px 0 10px 0px;
+					}
+				}
+			}
+			.profil:hover {
+				h2 {
+					font-size: 14.5px;
+					transition: ease-out 0.2s;
+				}
+			}
+		}
 	}
 }
 

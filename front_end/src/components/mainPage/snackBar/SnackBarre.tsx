@@ -1,75 +1,83 @@
-import React from 'react';
-import './snackBarre.scss';
-import Horloge from './img/Horloge.png';
-import Emoji from './img/emoji.png';
-
-// import 'react-toastify/scss/main.scss';
-// import 'react-toastify/dist/ReactToastify.css';
-import { injectStyle } from 'react-toastify/dist/inject-style';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react';
+import { LinearProgress } from '@mui/material';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 import { useMainPage } from '../../../MainPageContext';
+import { User, Rank } from '../../type';
+import './snackBarre.scss';
+import { useNavigate } from 'react-router-dom';
 
-interface ISnackBarreProps {
-	onClose: () => void;
+interface Props {
+	wsId: string;
+	timeSnack: boolean;
+	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SnackBarre({ onClose }: ISnackBarreProps) {
-	const { isFriends } = useMainPage();
+export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
+	const { isFriends, gameWs, invitName, challengData, setStartGame } = useMainPage();
 
-	if (typeof window !== 'undefined') {
-		injectStyle();
-	}
+	const [progress, setProgress] = React.useState(0);
 
-	const notify = () => {
-		!isFriends
-			? toast(
-					({ closeToast }) => (
-						<div className="mainSnackBarre d-flex">
-							<div className="snackBarImg">
-								<img src={Horloge} alt="" />
-							</div>
-							<div className="snackBarText">
-								<p>No one is here to play now.</p>
-								<p>Retry later</p>
-							</div>
-						</div>
-					),
-					{
-						onClose,
-					},
-			  )
-			: toast(
-					({ closeToast }) => (
-						<div className="mainSnackBarre d-flex">
-							<div className="snackBarImg">
-								<img src={Emoji} alt="" />
-							</div>
-							<div className="snackBarText">
-								<p>Your friend isn’t available for a</p>
-								<p>game right now</p>
-							</div>
-						</div>
-					),
-					{
-						onClose,
-					},
-			  );
+	const [userName, setUserName] = useState('');
+
+	const navigate = useNavigate();
+
+	const handleClose = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
+		setTimeSnack(false);
 	};
 
-	notify();
+	const handleOk = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId });
+
+		setTimeSnack(false);
+		setStartGame(true);
+		navigate('/Mainpage');
+	};
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setProgress((oldProgress) => {
+				if (oldProgress === 102) {
+					handleClose();
+					return 0;
+				}
+				const diff = Math.random() * 0.4;
+				return Math.min(oldProgress + diff, 102);
+			});
+		}, 20);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
+	const action = (
+		<>
+			<div className="contentButton">
+				<Button className="buttonMui" onClick={handleOk}>
+					ACCEPT
+				</Button>
+				<Button className="buttonMui" onClick={handleClose}>
+					REFUSE
+				</Button>
+			</div>
+			<div className="progressMui">
+				<LinearProgress variant="determinate" value={progress} />
+			</div>
+		</>
+	);
+
 	return (
 		<div className="SnackBarreGame">
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick={false}
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover={false}
-				limit={1}
+			<Snackbar
+				open={timeSnack}
+				anchorOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				message={`${challengData[0].login} Challenge you`}
+				action={action}
 			/>
 		</div>
 	);

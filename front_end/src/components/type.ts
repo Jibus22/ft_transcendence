@@ -31,4 +31,20 @@ export interface UserMe {
 	status: string;
 	storeCustomPhoto: boolean;
 	hasTwoFASecret: boolean;
+	games_nbr: number;
+	wins_nbr: number;
+	losses_nbr: number;
+}
+
+export interface LoginGame {
+	loginP1: string;
+	loginP2: string;
+	login: string;
+	photo_url: string;
+}
+
+export interface UserChallenge {
+	login_opponent: string;
+	login: string;
+	photo_url: string;
 }

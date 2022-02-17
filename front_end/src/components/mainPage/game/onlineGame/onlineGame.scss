@@ -213,6 +213,12 @@
 	}
 }
 
+@media screen and (max-width: 1600px) {
+	.mainOnlineGame {
+		height: 42vw;
+	}
+}
+
 @media screen and (max-width: 1500px) {
 	.mainOnlineGame {
 		.pageOverflow {
