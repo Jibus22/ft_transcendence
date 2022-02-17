@@ -12,7 +12,7 @@ import './mainPage.scss';
 import { User, Rank } from '../type';
 
 const MainPage = () => {
-	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueDataError, disconectAuth } = useMainPage();
+	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueLoading, disconectAuth } = useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
@@ -185,24 +185,6 @@ const MainPage = () => {
 			// va servir aux 2 clients pour émettre leur position ds le jeu.
 		});
 
-		socket.on('countDown', (count: number) => {
-			console.log(`💌  Event: countDown -> ${count}`);
-			// Afficher count dans la page d'intro du jeu
-		});
-
-		socket.on('setMap', (cb: (map: string) => void) => {
-			console.log(`💌  Event: setMap -> ${cb}`);
-			// Mettre la map slectionnée par le challenger ou alors selectionnée
-			// aléatoirement en parametre de cb:   cb(map);
-			cb('test set map');
-		});
-
-		// Conception reste à confirmer
-		socket.on('startGame', (room: string) => {
-			console.log(`💌  Event: startGame -> ${room}`);
-			// Afficher la fenêtre de jeu.
-		});
-
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);
 			//catch error
@@ -342,7 +324,12 @@ const MainPage = () => {
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 
-			{dialogueDataError(openDialog)}
+			{dialogueLoading(
+				openDialog,
+				'This page could not be loaded',
+				'You will be disconnected.',
+				'Please identify yourself on the home page',
+			)}
 		</div>
 	);
 };
