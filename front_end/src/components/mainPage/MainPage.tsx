@@ -76,21 +76,26 @@ const MainPage = () => {
 
 		socket.on('publicRoomCreated', (message) => {
 			console.log(`💌  Event: publicRoomCreated ->`, message);
+			window.dispatchEvent(new CustomEvent("publicRoomCreated", { detail: message }));
 		});
 		socket.on('publicRoomUpdated', (message) => {
 			console.log(`💌  Event: publicRoomUpdated ->`, message);
+			window.dispatchEvent(new CustomEvent("publicRoomUpdated", { detail: message }));
 		});
 		socket.on('publicRoomRemoved', (message) => {
 			console.log(`💌  Event: publicRoomRemoved ->`, message);
 		});
 		socket.on('newMessage', (message) => {
 			console.log(`💌  Event: newMessage ->`, message);
+			window.dispatchEvent(new CustomEvent("newMessage", { detail: message }));
 		});
 		socket.on('roomParticipantUpdated', (message) => {
 			console.log(`💌  Event: roomParticipantUpdated ->`, message);
+			window.dispatchEvent(new CustomEvent("roomParticipantUpdated", { detail: message }));
 		});
 		socket.on('userAdded', (message) => {
 			console.log(`💌  Event: userAdded ->`, message);
+			window.dispatchEvent(new CustomEvent("userAdded", { detail: message }));
 		});
 		socket.on('userRemoved', (message) => {
 			console.log(`💌  Event: userRemoved ->`, message);
