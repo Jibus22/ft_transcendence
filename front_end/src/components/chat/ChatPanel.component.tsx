@@ -1,44 +1,133 @@
 import styled from "styled-components";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import ChatParticipant from "./ChatParticipant.component";
+import RoomSettings from "./RoomSettings.component";
 
-const ChatPanel = () => {
+const chatName = (participants: any) => {
+	let name = "";
+	participants.forEach((p: any) => name += p.user.login[0]);
+	return name;
+}
 
-	const messages = [
-		{ id: 0, author: "vgoldman", message: "Hello!", timestamp: 1639925559701 },
-		{ id: 1, author: "vgoldman", message: "How you doing?", timestamp: 1639925559701 },
-		{ id: 2, author: "bvalette", message: "Doing good, what about you?", timestamp: 1639925559701 },
-		{ id: 3, author: "vgoldman", message: "Good, good...", timestamp: 1639925559701 },
-		{ id: 4, author: "bvalette", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
-		{ id: 5, author: "vgoldman", message: "Oh, by the way, did I tell you that lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", timestamp: 1639925559701 },
-	];
+const ChatPanel = ({ room, currentUser }: any) => {
+
+	const [message, setMessage] = useState("");
+	const [messages, setMessages] = useState<any[]>([]);
+	const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
+
+	const onMessage = (e: any) => {
+		setMessage(e.target.value);
+	};
+
+	const getMessages = async () => {
+		const { data } = await axios.get(`http://localhost:3000/room/${room.id}/message`, { withCredentials: true });
+		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
+		setMessages(sortedMessages);
+	};
+
+	const sendMessage = async () => {
+		await axios.post(`http://localhost:3000/room/${room.id}/message`,
+		{ body: message },
+		{ withCredentials: true });
+		setMessage("");
+	}
+
+	const getUser = () => {
+		if (room.participants.length === 1)
+			return room.participants[0];
+		if (room.participants.length > 2)
+			return null;
+		if (!room.is_private)
+			return null;
+		return room.participants.filter((user: any) => user.user.id !== currentUser.id)[0];
+	};
+
+	const isGroup = () => {
+		return !room.is_private;
+	};
+
+	const scrollChatDown = () => {
+		try {
+			const chat: any = document.querySelector("#chat-messages");
+			chat.scrollTop = chat.scrollHeight;
+		} catch {}
+	};
+
+	useEffect(() => {
+		scrollChatDown();
+	}, [messages]);
+
+	window.addEventListener("newMessage", ({ detail }: any) => {
+		const message: any = detail;
+		if (message.room_id !== room.id) {
+			return;
+		}
+		const found = messages.filter((m: any) => message.id === m.id);
+		if (found.length > 0) {
+			return;
+		}
+		setMessages([...messages, message]);
+	});
+
+	useEffect(() => {
+		getMessages();
+	}, []);
 
 	return (<MessagesPaneWrapper>
-		<ChatHeader>
-			<img src="https://i.pravatar.cc/200?d" alt=""/>
+		{!detailsOpen && (<ChatHeader>
+			{/* {room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
 			<div>
-				<h4>Test person</h4>
-				<span>Online</span>
-			</div>
-			<button><NavigateNextIcon style={{color: "#444444"}} /></button>
-		</ChatHeader>
-		<ChatMessages>
-			{messages.map(message => (
-				<Message self={message.author === 'vgoldman'} key={message.id}>
-					<span className="message-content">{message.message}
+				{getUser() !== null && (<h4>{ getUser().user.login }</h4>)}
+				{getUser() === null && (<h4>{ chatName(room.participants) }</h4>)}
+				<span>{ getUser()?.user.status }</span>
+			</div> */}
+			{!isGroup() && (
+			<>
+				<img src={getUser()?.user.photo_url} alt={getUser()?.user.login}/>
+				<div>
+					<h4>{ getUser()?.user.login }</h4>
+					<span>{ getUser()?.user.status }</span>
+				</div>
+			</>)}
+			{isGroup() && (<>
+				<div>
+					<h4>{ chatName(room.participants) }</h4>
+				</div>
+			</>)}
+			<button><NavigateNextIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(true)} /></button>
+		</ChatHeader>)}
+		{detailsOpen && (<ChatHeader>
+			<button><ArrowBackIosIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(false)} /></button>
+		</ChatHeader>)}
+		{!detailsOpen && (<>
+		<ChatMessages id="chat-messages">
+			{messages.map((message: any) => (
+				<Message self={message.sender.id === currentUser.id} key={message.id}>
+					<span className="message-content">{message.body}
 					<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M6.7895 0C6.02488 3.47758 2.00431 6.12164 0.523383 6.81875C0.135401 6.93318 -0.0590963 7 0.0158405 7C0.0918121 7 0.2706 6.93774 0.523383 6.81875C2.83311 6.13753 12 3.76923 12 3.76923L6.7895 0Z" fill="#F1F1F1"/>
 					</svg></span>
-					<span className="message-date">{new Date(message.timestamp).toLocaleDateString() + ' ' + new Date(message.timestamp).toLocaleTimeString()}</span>
+					<span className="message-date">{message.sender.id !== currentUser.id && `${message.sender.login} - `}{new Date(message.timestamp).toLocaleDateString() + ' ' + new Date(message.timestamp).toLocaleTimeString()}</span>
 				</Message>
 			))}
 		</ChatMessages>
 		<ChatField>
-			<input type="text" placeholder="Type here" />
-			<button>
+			<input type="text" placeholder="Type here" value={message} onChange={onMessage}/>
+			<button onClick={sendMessage}>
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>
 		</ChatField>
+		</>)}
+		{detailsOpen && (
+			<>
+				{ !isGroup() && <ChatParticipant user={getUser()} currentUser={currentUser} /> }
+				{ isGroup() && <RoomSettings room={room} currentUser={currentUser} /> }
+			</>
+		)}
 	</MessagesPaneWrapper>);
 };
 
@@ -59,24 +148,27 @@ const ChatHeader = styled.div`
 		height: 35px;
 		width: 35px;
 		margin: 10px;
+		margin-right: 0px;
 		border-radius: 100%;
 	}
 
-	div:nth-child(2) {
+	> div {
 		flex: 1;
 
 		h4 {
 			margin: 0;
 			margin-bottom: -5px;
+			margin-left: 10px;
 			color: #CA6C88;
 		}
 
 		span {
 			font-size: 12px;
+			margin-left: 10px;
 		}
 	}
 
-	button:nth-child(3) {
+	button {
 		height: 100%;
 		border: none;
 		background: none;

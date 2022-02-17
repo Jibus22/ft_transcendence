@@ -83,6 +83,9 @@
 					font-weight: 500;
 				}
 			}
+			.photoOp {
+				filter: brightness(0.6);
+			}
 
 			.loadingVersus {
 				align-self: center;
@@ -100,6 +103,9 @@
 					font-family: 'Mochiy Pop P One', sans-serif;
 				}
 			}
+		}
+		.infoUserReverse {
+			flex-direction: row-reverse;
 		}
 
 		.titleMap {
@@ -183,9 +189,6 @@
 					// width: 100%;
 					// height: 100%;
 				}
-				.active:hover {
-					// transform: scale(1.1);
-				}
 
 				.inactive {
 					filter: blur(2px);
@@ -197,13 +200,15 @@
 			}
 		}
 	}
+
 	.closeButton {
-		margin-top: 20px;
+		margin-top: 00px;
 		display: flex;
 		width: 30%;
 		height: 7%;
 
 		.buttonMui {
+			// margin-top: -3vw;
 			width: 100%;
 			height: 100%;
 			text-transform: none;
@@ -228,7 +233,6 @@
 	height: 45vw;
 
 	margin: 0 auto;
-	border: 1px solid red;
 }
 
 @media screen and (max-width: 1440px) {

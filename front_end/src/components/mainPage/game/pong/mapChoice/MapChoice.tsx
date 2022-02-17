@@ -9,11 +9,12 @@ interface Props {
 	disableMap: boolean;
 	isChoiceMap: boolean;
 	countMap: number;
+	isOpponant: boolean;
 	setDisableMap: Dispatch<SetStateAction<boolean>>;
 	setIsChoiceMap: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setIsChoiceMap, countMap }: Props) {
+export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setIsChoiceMap, countMap, isOpponant }: Props) {
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 
 	const selectedMap = (str: null | 'one' | 'two' | 'three') => () => {
@@ -54,12 +55,12 @@ export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setI
 				className={clsx(
 					'map',
 					map === 'one' || map == null ? 'active' : 'inactive',
-					!disableMap && 'buttonTransform',
+					(!disableMap || !isOpponant) && 'buttonTransform',
 					map === 'one' && disableMap && 'mapBig',
 				)}
 			>
 				<button disabled={disableMap} onClick={selectedMap('one')}>
-					<img src={PC} alt="" />{' '}
+					<img src={PC} alt="" />
 				</button>
 			</div>
 			<div

@@ -91,6 +91,9 @@ backbuild:  ## Build and run back end server
 frontbuild:  ## Build and run front end server
 	docker-compose build front_end_server
 
+frontbash:
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml run front_end_server bash
+
 ## -----------------------------------------------------------------------------
 ##		FRONT
 ## -----------------------------------------------------------------------------

@@ -12,7 +12,7 @@ const HistoryGame = () => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 170px)' },
+		from: { opacity: 0, transform: 'translate(0px, 5vw)' },
 		config: {
 			delay: 300,
 			duration: 300,
@@ -29,7 +29,7 @@ const HistoryGame = () => {
 		},
 	});
 
-	const { userName, setStatusColor } = useMainPage();
+	const { userName, setStatusColor, gameWs } = useMainPage();
 	const [dataGame, setDataGame] = useState<Array<Game>>([]);
 	const query = useMediaQuery('(max-width: 700px)');
 
