@@ -25,7 +25,7 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 	});
 
-	const { userName, setDataUserGame, setIsGameRandom } = useMainPage();
+	const { userName, setDataUserGame, setIsGameRandom, setDataUserChallenge, setIsOpponant } = useMainPage();
 
 	const validationSchema = yup.object({
 		loggin: yup.string().required('Enter a Nickname'),
@@ -38,17 +38,17 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		validationSchema: validationSchema,
 		onSubmit: async (values, { setErrors }) => {
 			const game = {
-				loginP1: userName,
-				loginP2: values.loggin,
+				login_opponent: values.loggin,
 				login: '',
 				photo_url: '',
 			};
 
 			try {
-				const response = await axios.post('http://localhost:3000/game/friend', game, {
+				const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 					withCredentials: true,
 				});
-				setDataUserGame([response.data]);
+				setDataUserChallenge([response.data]);
+				setIsOpponant(true);
 				setIsGameRandom(false);
 				Loadingclick();
 			} catch (error) {

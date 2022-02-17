@@ -64,7 +64,7 @@ interface IMainPageContext {
 	isGameRandom: boolean;
 	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
 
-	dialogueDataError: (open: boolean) => void;
+	dialogueLoading: (open: boolean, text: string, h1: string, h2: string) => void;
 	disconectAuth: () => void;
 
 	gameWs: Socket | undefined;
@@ -209,11 +209,10 @@ const MainPageProvider = (props: any) => {
 		);
 	};
 
-	const dialogueDataError = (open: boolean) => {
+	const dialogueLoading = (open: boolean, title: string, h1: string, h2: string) => {
 		return (
 			<Dialog
 				open={open}
-				// onClose={handleClick}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
 				scroll="body"
@@ -222,12 +221,12 @@ const MainPageProvider = (props: any) => {
 				<DialogTitle id="alert-dialog-title" className="d-flex">
 					<ErrorIcon sx={{ color: 'orange' }} />
 					<div className="titleDialogMui">
-						<p>This page could not be loaded</p>
+						<p>{title}</p>
 					</div>
 				</DialogTitle>
 				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">You will be disconnected.</DialogContentText>
-					<DialogContentText id="alert-dialog-description">Please identify yourself on the home page</DialogContentText>
+					<DialogContentText id="alert-dialog-description">{h1}</DialogContentText>
+					<DialogContentText id="alert-dialog-description">{h2}</DialogContentText>
 					<CircularProgress className="circularDialogMui" />
 				</DialogContent>
 			</Dialog>
@@ -308,7 +307,7 @@ const MainPageProvider = (props: any) => {
 		isGameRandom,
 		setIsGameRandom,
 
-		dialogueDataError,
+		dialogueLoading,
 
 		disconectAuth,
 

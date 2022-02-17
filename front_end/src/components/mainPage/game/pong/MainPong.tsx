@@ -29,7 +29,7 @@ export default function MainPong() {
 		setLeaveGame,
 		isGameRandom,
 		challengData,
-		dataUserGame,
+		dialogueLoading,
 		dataUserChallenge,
 		gameWs,
 		isOpponant,
@@ -37,12 +37,12 @@ export default function MainPong() {
 		setOpacity,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
-	const [count, setCount] = useState(5);
-	const [countMap, setCountMap] = useState(2000);
-	const [isCount, setIsCount] = useState(false);
-	const [interval, setInterval] = useState<number | undefined>(undefined);
-	const [isChoiceMap, setIsChoiseMao] = useState(false);
+	const [openDialogLoading, setOpenDialogLoading] = useState(false);
+	const [count, setCount] = useState<number | undefined>();
 
+	const [isChoiceMap, setIsChoiseMao] = useState(false);
+	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
+	const [roomId, setRoomId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
 
 	const closeGame = () => {
@@ -53,38 +53,20 @@ export default function MainPong() {
 
 	const [data, setData] = useState<User[] | UserChallenge[]>([]);
 
-	const countdown = () => {
-		setIsCount(true);
-
-		setInterval(1000);
-	};
-
 	const [disableMap, setDisableMap] = useState<boolean>(false);
-
-	useInterval(() => {
-		setCount(count - 1);
-		if (count === 1) {
-			setInterval(undefined);
-		}
-	}, interval);
 
 	useEffect(() => {
 		setLeaveGame(true);
 
 		if (!isOpponant) {
 			setData(challengData);
-			// setOpacity();
-			console.log('exterieur');
+			//console.log('exterieur');
 		} else {
 			setData(dataUserChallenge);
-			console.log('domicile');
+			//console.log('domicile');
 			if (acceptGame === false) {
 				setOpacity(true);
 			}
-		}
-
-		if (isChoiceMap === false) {
-			countMap > 0 && setTimeout(() => setCountMap(countMap - 1), 1000);
 		}
 
 		gameWs?.on('gameAccepted', (opponentData) => {
@@ -95,35 +77,42 @@ export default function MainPong() {
 		gameWs?.on('gameDenied', (opponentData) => {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
-			closeGame();
+			setOpenDialogLoading(true);
+			setTimeout(function () {
+				setOpenDialogLoading(false);
+				closeGame();
+			}, 3000);
+		});
+
+		gameWs?.on('countDown', (count: number) => {
+			setCount(count);
+		});
+
+		gameWs?.on('startGame', (room: string) => {
+			console.log(`💌  Event: startGame -> ${room}`);
+			setRoomId(room);
 		});
 
 		return () => {
 			setLeaveGame(false);
 		};
-	}, [countMap, gameWs]);
+	}, [gameWs, count, map]);
+
+	useEffect(() => {
+		if (map !== null) {
+			gameWs?.on('setMap', (cb: (map: string) => void) => {
+				cb(map);
+				// console.log(`💌  Event: setMap -> ${cb}`);
+				console.log('map is ==== ', map);
+			});
+		}
+	}, [map]);
 
 	const titlePrint = () => {
 		if (!isGameRandom) {
 			return <h1>Waiting for {data[0]?.login}...</h1>;
 		} else {
 			return <h1>Waiting for an opponent...</h1>;
-		}
-	};
-
-	const titleMapSelect = () => {
-		if (!disableMap) {
-			if (isOpponant) {
-				return <h1>Choose the map</h1>;
-			}
-			if (!isOpponant) {
-				return <h1>Waiting for the player who chooses the map</h1>;
-			}
-		}
-		if (disableMap) {
-			if (!isOpponant) {
-				return <h1>coucou les filouuu</h1>;
-			}
 		}
 	};
 
@@ -138,6 +127,7 @@ export default function MainPong() {
 				</>
 			);
 		} else {
+			console.log('fdwsfdfsdfsgsdgdsfdssdf');
 			return (
 				<>
 					<Avatar alt="userImg" />
@@ -157,7 +147,9 @@ export default function MainPong() {
 						<PongGame />
 					) : (
 						<div className="mainPongGame">
-							<div className="titlePongGame">{isCount ? <span className="counterOutput">{count}</span> : titlePrint()}</div>
+							<div className="titlePongGame">
+								{acceptGame || !isOpponant ? <span className="counterOutput">{count}</span> : titlePrint()}
+							</div>
 
 							<div className={clsx('infoUser', !isOpponant && 'infoUserReverse')}>
 								<div className="photoUser">
@@ -167,14 +159,11 @@ export default function MainPong() {
 									</div>
 								</div>
 
-								<div className="loadingVersus">{isCount ? <h1>VS</h1> : <CircularProgress />}</div>
+								<div className="loadingVersus">{acceptGame || !isOpponant ? <h1>VS</h1> : <CircularProgress />}</div>
 								<div className={`${!opacity ? '' : 'photoOp'} photoUser `}>{infoOpponent()}</div>
 							</div>
 							<div className="titleMap">
-								<div className="countMap"> {countMap === 0 || isChoiceMap ? null : countMap}</div>
-
-								{/* {!disableMap ? <h1>Choose the map</h1> : null} */}
-								{titleMapSelect()}
+								{isOpponant ? <h1>Choose the map</h1> : null}
 
 								{isOpponant && (
 									<div className="selectMap">
@@ -183,8 +172,10 @@ export default function MainPong() {
 											setDisableMap={setDisableMap}
 											isChoiceMap={isChoiceMap}
 											setIsChoiceMap={setIsChoiseMao}
-											countMap={countMap}
+											count={count}
 											isOpponant={isOpponant}
+											setMap={setMap}
+											map={map}
 										/>
 									</div>
 								)}
@@ -196,10 +187,9 @@ export default function MainPong() {
 					<Button className="buttonMui" variant="contained" onClick={() => setOpen(true)}>
 						Leave
 					</Button>
-
-					<button onClick={countdown}>Start</button>
 				</div>
 				{dialogMui(open, () => setOpen(false), closeGame, 'Warning !', 'Are you sure you want to quit the game ?')}
+				{dialogueLoading(openDialogLoading, 'Warning', 'your opponant did not accept the invitation', 'You will return to the home page')}
 			</div>
 		</animated.div>
 	);
