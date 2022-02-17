@@ -14,7 +14,7 @@ export class WsGameService {
 
   private readonly logger = new Logger('WsGameService');
 
-  private async countDown(challenger_sock: any, room: string, server: Server) {
+  private async countDown(ch_id: string, room: string, server: Server) {
     this.logger.log('countDown');
     let count = 10;
 
@@ -23,7 +23,7 @@ export class WsGameService {
       count--;
       if (!count) {
         const start = Date.now();
-        challenger_sock.emit('setMap', async (map: string) => {
+        server.to(ch_id).emit('setMap', async (map: string) => {
           if (Date.now() - start > 3000) return; //TODO: conn issue: do something;
           this.gameService.updateGame(room, { map: map, watch: randomUUID() });
         });
@@ -32,7 +32,7 @@ export class WsGameService {
       }
     }, 1000);
 
-    ///// TEST
+    ///// TEST // TODO: delete test below
     await new Promise((resolve) => setTimeout(resolve, 12000));
     console.log(
       'countdown finished, game: ',
@@ -52,8 +52,7 @@ export class WsGameService {
 
     challenger_sock.join(game_uuid);
     opponent_sock.join(game_uuid);
-    // server.to(game_uuid).emit('getRoom', game_uuid);
-    this.countDown(challenger_sock, game_uuid, server);
+    this.countDown(challenger_sock.id, game_uuid, server);
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {

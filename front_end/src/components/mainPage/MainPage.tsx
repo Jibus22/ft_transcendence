@@ -179,12 +179,6 @@ const MainPage = () => {
 		// 	// c'est good.
 		// });
 
-		socket.on('getRoom', (game_uuid: string) => {
-			console.log(`💌  Event: getRoom -> ${game_uuid}`);
-			// Enregistrer 'game_uuid' dans une variable utilisable dans le jeu: cela
-			// va servir aux 2 clients pour émettre leur position ds le jeu.
-		});
-
 		socket.on('countDown', (count: number) => {
 			console.log(`💌  Event: countDown -> ${count}`);
 			// Afficher count dans la page d'intro du jeu
@@ -201,6 +195,16 @@ const MainPage = () => {
 		socket.on('startGame', (room: string) => {
 			console.log(`💌  Event: startGame -> ${room}`);
 			// Afficher la fenêtre de jeu.
+		});
+
+		socket.on('newOnlineGame', (obj: {}) => {
+			console.log(`💌  Event: newOnlineGame -> ${obj}`);
+			//catch error
+		});
+
+		socket.on('gameFinished', (room: string) => {
+			console.log(`💌  Event: gameFinished -> ${room}`);
+			//catch error
 		});
 
 		socket.on('myerror', (message: string) => {

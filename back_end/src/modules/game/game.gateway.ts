@@ -16,8 +16,8 @@ import { plainToClass } from 'class-transformer';
 import { UserDto } from '../users/dtos/user.dto';
 import { WsGameService } from './services/ws-game.service';
 import { Logger, UseFilters } from '@nestjs/common';
-import { WsErrorFilter } from './filters/ws-error.filter';
 import { WsConnectionService } from './services/ws-connection.service';
+import { WsErrorFilter } from './filters/ws-error.filter';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -120,6 +120,44 @@ export class GameGateway
       });
       challenger_sock[0].emit('gameDenied', plainToClass(UserDto, opponent));
     }
+  }
+
+  //Le challenger envoie ça qd il arrive ds la map de jeu
+  //ça envoie a tt les users un event pour afficher un nouveau jeu
+  @SubscribeMessage('gameStarted')
+  async gameStarted(@MessageBody() room: string) {
+    let obj: {};
+    // construire grace à room, le gameDto
+    // trouver le game avec ttes les relations
+    // sérialiser le game comme il faut
+    this.server.of('game').except(room).emit('newOnlineGame', obj);
+  }
+
+  //Le challenger envoie ça qd il termine le jeu
+  //ça envoie a tt les users un event pour arreter d'afficher un jeu
+  //et ça fait leave tt les gens qui watchent et qui jouent
+  @SubscribeMessage('gameFinished')
+  async gameFinished(@MessageBody() room: string) {
+    this.server.of('game').except(room).emit('gameFinished', room);
+    //1 choper le watch uuid du game:room
+    // const watch = this.wsGameService.getWatchId(room);
+    // this.server.socketsLeave([room, watch]);//TODO uncomment
+  }
+
+  @SubscribeMessage('watchGame')
+  async watchGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    client.join(room);
+  }
+
+  @SubscribeMessage('leaveWatchGame')
+  async leaveWatchGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    client.leave(room);
   }
 
   // const wait = (timeToDelay: number) =>
