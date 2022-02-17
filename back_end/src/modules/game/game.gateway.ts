@@ -102,10 +102,8 @@ export class GameGateway
       challenger_sock[0].emit('gameAccepted', plainToClass(UserDto, opponent));
       this.wsGameService
         .createGame(
-          challenger,
-          opponent,
-          challenger_sock[0],
-          client,
+          [challenger, opponent],
+          [challenger_sock[0].id, client.id],
           this.server,
         )
         .catch((e) => {
@@ -122,24 +120,12 @@ export class GameGateway
     }
   }
 
-  //Le challenger envoie ça qd il arrive ds la map de jeu
-  //ça envoie a tt les users un event pour afficher un nouveau jeu
-  @SubscribeMessage('gameStarted')
-  async gameStarted(@MessageBody() room: string) {
-    let obj: {};
-    // construire grace à room, le gameDto
-    // trouver le game avec ttes les relations
-    // sérialiser le game comme il faut
-    this.server.of('game').except(room).emit('newOnlineGame', obj);
-  }
-
-  //Le challenger envoie ça qd il termine le jeu
-  //ça envoie a tt les users un event pour arreter d'afficher un jeu
-  //et ça fait leave tt les gens qui watchent et qui jouent
+  //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs
+  //ou bien est-ce une methode a appeler differemment ? Genre qd l'update d'un
+  //game atteint un score de 10 ?
   @SubscribeMessage('gameFinished')
   async gameFinished(@MessageBody() room: string) {
     this.server.of('game').except(room).emit('gameFinished', room);
-    //1 choper le watch uuid du game:room
     // const watch = this.wsGameService.getWatchId(room);
     // this.server.socketsLeave([room, watch]);//TODO uncomment
   }
@@ -160,19 +146,9 @@ export class GameGateway
     client.leave(room);
   }
 
-  // const wait = (timeToDelay: number) =>
-  //   new Promise((resolve) => setTimeout(resolve, timeToDelay));
-
-  // Here createGameDto.loginP2 should be null
-  // @SubscribeMessage('denyGame')
-  // async denyGame(@MessageBody() createGameDto: CreateGameDto) {
-  //   const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
-  //     is_in_game: false,
-  //   });
-  //   this.server.to(ws_ch).emit('gameDenied');
-  // }
-
-  /// ---------------- TEST --------------------
+  /////////////////////////////////////////////////
+  /// ---------------- TEST --------------------///
+  /////////////////////////////////////////////////
   async serverToClient(id: string, data: string) {
     console.log('gateway: serverToClient');
     const client = await this.server.in(id).fetchSockets();
@@ -189,5 +165,5 @@ export class GameGateway
     console.log('clientToServer');
     console.log(`------test here------ ${voila} --- client.id: ${client.id}`);
   }
-  /// ---------------- TEST END ----------------
+  /// ---------------- TEST END ----------------///
 }

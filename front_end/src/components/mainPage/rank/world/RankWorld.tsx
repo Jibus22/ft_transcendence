@@ -27,7 +27,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor, setIsGameRandom, setStartGame, setDataUserGame, setDataUserChallenge, setIsOpponant } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame, setDataUserGame, setDataUserChallenge, setIsOpponant, userName } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
@@ -82,7 +82,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	const userList = (data: any, rank: number) => {
 		let disableStatus = false;
 
-		if (data.user.status !== 'online') {
+		if (data.user.status !== 'online' || userName === data.user.login) {
 			disableStatus = true;
 		}
 
@@ -132,7 +132,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 				<div className="buttonDIv d-flex">
 					<Tooltip
 						className="lalala"
-						title={<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>You can't challenge someone offline or in games </Typography>}
+						title={<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>You can't challenge someone offline, in games or you</Typography>}
 						followCursor={true}
 						TransitionComponent={Fade}
 						TransitionProps={{ timeout: 600 }}

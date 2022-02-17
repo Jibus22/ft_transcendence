@@ -13,27 +13,25 @@ export class WsGameService {
   ) {}
 
   private readonly logger = new Logger('WsGameService');
+  private readonly sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
-  private async countDown(ch_id: string, room: string, server: Server) {
+  private async countdown(server: Server, ch_id: string, room: string) {
     this.logger.log('countDown');
-    let count = 10;
-
-    const idInterval = setInterval(() => {
+    for (let count = 10; count > 0; count--) {
       server.to(room).emit('countDown', count);
-      count--;
       if (!count) {
-        const start = Date.now();
         server.to(ch_id).emit('setMap', async (map: string) => {
-          if (Date.now() - start > 3000) return; //TODO: conn issue: do something;
           this.gameService.updateGame(room, { map: map, watch: randomUUID() });
         });
         server.to(room).emit('startGame', room);
-        clearInterval(idInterval);
       }
-    }, 1000);
+      await this.sleep(1000);
+    }
+    server.except(room).emit('newOnlineGame', { test: 'test' });
 
     ///// TEST // TODO: delete test below
-    await new Promise((resolve) => setTimeout(resolve, 12000));
     console.log(
       'countdown finished, game: ',
       await this.gameService.findOne(room),
@@ -41,18 +39,15 @@ export class WsGameService {
   }
 
   async createGame(
-    challenger: User,
-    opponent: User,
-    challenger_sock: any,
-    opponent_sock: any,
+    [challenger, opponent]: User[],
+    [ch_id, op_id]: string[],
     server: Server,
   ) {
     this.logger.log('createGame');
     const game_uuid = await this.gameService.newGame(challenger, opponent);
 
-    challenger_sock.join(game_uuid);
-    opponent_sock.join(game_uuid);
-    this.countDown(challenger_sock.id, game_uuid, server);
+    server.in([ch_id, op_id]).socketsJoin(game_uuid);
+    this.countdown(server, ch_id, game_uuid);
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
