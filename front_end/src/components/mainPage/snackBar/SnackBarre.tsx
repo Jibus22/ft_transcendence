@@ -3,39 +3,43 @@ import { LinearProgress } from '@mui/material';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import { useMainPage } from '../../../MainPageContext';
+import { User, Rank } from '../../type';
 import './snackBarre.scss';
+import { useNavigate } from 'react-router-dom';
 
-interface ISnackBarreProps {
-	cb: () => void;
+interface Props {
+	wsId: string;
+	timeSnack: boolean;
+	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function SnackBarre({ cb }: ISnackBarreProps) {
-	const { isFriends, setTimeSnack, timeSnack } = useMainPage();
+export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
+	const { isFriends, gameWs, invitName, challengData, setStartGame } = useMainPage();
 
-	const [open, setOpen] = useState(true);
 	const [progress, setProgress] = React.useState(0);
 
+	const [userName, setUserName] = useState('');
+
+	const navigate = useNavigate();
+
 	const handleClose = () => {
-		// setOpen(false);
+		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
+		setTimeSnack(false);
+	};
 
-		// if (typeof cb === 'function') {
-		// 	cb('OK');
-		// }
-
-		console.log(cb);
+	const handleOk = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId });
 
 		setTimeSnack(false);
-
-		// console.log('dsjkfdsgfgdsgfdsfgdskfgkds', cb);
+		setStartGame(true);
+		navigate('/Mainpage');
 	};
 
 	useEffect(() => {
-		console.log('COMPONANT MONTERRRR ');
-
 		const timer = setInterval(() => {
 			setProgress((oldProgress) => {
 				if (oldProgress === 102) {
-					setTimeSnack(false);
+					handleClose();
 					return 0;
 				}
 				const diff = Math.random() * 0.4;
@@ -51,12 +55,12 @@ export default function SnackBarre({ cb }: ISnackBarreProps) {
 	const action = (
 		<>
 			<div className="contentButton">
-				<Button className="buttonMui" onClick={handleClose}>
+				<Button className="buttonMui" onClick={handleOk}>
 					ACCEPT
 				</Button>
-				{/* <Button className="buttonMui" onClick={handleClose}>
+				<Button className="buttonMui" onClick={handleClose}>
 					REFUSE
-				</Button> */}
+				</Button>
 			</div>
 			<div className="progressMui">
 				<LinearProgress variant="determinate" value={progress} />
@@ -68,13 +72,11 @@ export default function SnackBarre({ cb }: ISnackBarreProps) {
 		<div className="SnackBarreGame">
 			<Snackbar
 				open={timeSnack}
-				autoHideDuration={99999000}
 				anchorOrigin={{
 					vertical: 'top',
 					horizontal: 'right',
 				}}
-				onClose={handleClose}
-				message="[login] Challenge you"
+				message={`${challengData[0].login} Challenge you`}
 				action={action}
 			/>
 		</div>

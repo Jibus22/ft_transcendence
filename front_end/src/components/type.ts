@@ -42,3 +42,9 @@ export interface LoginGame {
 	login: string;
 	photo_url: string;
 }
+
+export interface UserChallenge {
+	login_opponent: string;
+	login: string;
+	photo_url: string;
+}

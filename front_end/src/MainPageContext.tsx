@@ -4,10 +4,15 @@ import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserMe, LoginGame } from './components/type';
+import { UserMe, LoginGame, User, UserChallenge } from './components/type';
 
 interface IMainPageContext {
 	data: Array<UserMe>;
+
+	dataUserGame: Array<LoginGame>;
+	dataUserChallenge: Array<UserChallenge>;
+
+	challengData: Array<User>;
 	timeSnack: boolean;
 	isDisable: boolean;
 	isFriends: boolean;
@@ -27,6 +32,11 @@ interface IMainPageContext {
 	pathPop: string;
 
 	setData: Dispatch<SetStateAction<never[]>>;
+	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
+	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
+
+	setChallengData: Dispatch<SetStateAction<User[]>>;
+
 	setTimeSnack: Dispatch<SetStateAction<boolean>>;
 	setIsDisable: Dispatch<SetStateAction<boolean>>;
 	setLoading: Dispatch<SetStateAction<boolean>>;
@@ -51,9 +61,6 @@ interface IMainPageContext {
 	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 	setStatusColor: (status: string) => string;
 
-	dataUserGame: Array<LoginGame>;
-	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
-
 	isGameRandom: boolean;
 	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
 
@@ -62,12 +69,26 @@ interface IMainPageContext {
 
 	gameWs: Socket | undefined;
 	setGameWs: Dispatch<SetStateAction<Socket | undefined>>;
+
+	invitName: string;
+	setInvitName: Dispatch<SetStateAction<string>>;
+
+	isOpponant: boolean;
+	setIsOpponant: Dispatch<SetStateAction<boolean>>;
+
+	opacity: boolean;
+	setOpacity: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
 
 const MainPageProvider = (props: any) => {
 	const [data, setData] = useState([]);
+	const [dataUserGame, setDataUserGame] = useState([]);
+
+	const [dataUserChallenge, setDataUserChallenge] = useState([]);
+
+	const [challengData, setChallengData] = useState([]);
 
 	const [timeSnack, setTimeSnack] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -86,10 +107,14 @@ const MainPageProvider = (props: any) => {
 	const [selectedImage, setSelectedImage] = useState();
 	const [selectQuery, setSelectQuery] = useState(false);
 
-	const [dataUserGame, setDataUserGame] = useState<LoginGame[]>([]);
 	const [isGameRandom, setIsGameRandom] = useState(false);
 
 	const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
+
+	const [invitName, setInvitName] = useState('');
+
+	const [isOpponant, setIsOpponant] = useState(false);
+	const [opacity, setOpacity] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -224,10 +249,15 @@ const MainPageProvider = (props: any) => {
 	};
 
 	const ProviderValue = {
+		data,
+		dataUserGame,
+		dataUserChallenge,
+
+		challengData,
+
 		timeSnack,
 		isDisable,
 		loading,
-		data,
 		userName,
 		userImg,
 		isFriends,
@@ -242,12 +272,17 @@ const MainPageProvider = (props: any) => {
 		startGame,
 		leaveGame,
 
+		setData,
+		setDataUserGame,
+		setDataUserChallenge,
+
+		setChallengData,
+
 		setSelectQuery,
 		setCustomPhoto,
 		setTimeSnack,
 		setIsDisable,
 		setLoading,
-		setData,
 		fetchDataUserMe,
 		setUserName,
 		setUserImg,
@@ -270,19 +305,23 @@ const MainPageProvider = (props: any) => {
 
 		// fetchDataHistory,
 
-		dataUserGame,
-		setDataUserGame,
-
 		isGameRandom,
 		setIsGameRandom,
 
 		dialogueDataError,
 
 		disconectAuth,
-		navigate,
 
 		gameWs,
 		setGameWs,
+
+		invitName,
+		setInvitName,
+		isOpponant,
+		setIsOpponant,
+
+		opacity,
+		setOpacity,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
