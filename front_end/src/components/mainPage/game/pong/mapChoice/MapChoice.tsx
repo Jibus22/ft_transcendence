@@ -8,13 +8,16 @@ import PD from './img/pong_design.png';
 interface Props {
 	disableMap: boolean;
 	isChoiceMap: boolean;
-	countMap: number;
+	count: number | undefined;
+	isOpponant: boolean;
 	setDisableMap: Dispatch<SetStateAction<boolean>>;
 	setIsChoiceMap: Dispatch<SetStateAction<boolean>>;
+	map: null | 'one' | 'two' | 'three';
+	setMap: Dispatch<SetStateAction<null | 'one' | 'two' | 'three'>>;
 }
 
-export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setIsChoiceMap, countMap }: Props) {
-	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
+export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setIsChoiceMap, count, isOpponant, setMap, map }: Props) {
+	// const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 
 	const selectedMap = (str: null | 'one' | 'two' | 'three') => () => {
 		setMap(str);
@@ -42,11 +45,11 @@ export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setI
 		if (map !== null) {
 			setIsChoiceMap(true);
 		}
-		if (countMap === 0 && isChoiceMap === false) {
+		if (count === 1 && isChoiceMap === false) {
 			randMap(1, 3);
 			return;
 		}
-	});
+	}, [map, count]);
 
 	return (
 		<>
@@ -54,12 +57,12 @@ export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setI
 				className={clsx(
 					'map',
 					map === 'one' || map == null ? 'active' : 'inactive',
-					!disableMap && 'buttonTransform',
+					(!disableMap || !isOpponant) && 'buttonTransform',
 					map === 'one' && disableMap && 'mapBig',
 				)}
 			>
 				<button disabled={disableMap} onClick={selectedMap('one')}>
-					<img src={PC} alt="" />{' '}
+					<img src={PC} alt="" />
 				</button>
 			</div>
 			<div

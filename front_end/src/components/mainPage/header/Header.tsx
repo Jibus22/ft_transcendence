@@ -8,7 +8,7 @@ import NavHeader from './navHeader/NavHeader';
 export default function Header() {
 	const { data, userName, userImg, setUserName, setUserImg, selectQuery, setSelectNav } = useMainPage();
 
-	const query = useMediaQuery('(max-width:850px)');
+	const query = useMediaQuery('(max-width: 850px)');
 	const queryNav = useMediaQuery('(max-width:1060px)');
 	const queryNavMobile = useMediaQuery('(max-width:600px)');
 
@@ -89,7 +89,7 @@ export default function Header() {
 					</div>
 
 					<div className="logHeader d-flex ">
-						<Link className={(navData) => (navData.isActive && query ? 'selectedNave' : '')} to="/Setting">
+						<Link className={(navData) => (navData.isActive ? 'SelectedNavLoggin' : '')} to="/Setting">
 							<div className="profil d-flex   ">
 								<div className="profilLoggin  ">
 									<h2 className="">{userName}</h2>
@@ -121,7 +121,7 @@ export default function Header() {
 					</div>
 				</nav>
 			) : (
-				<NavHeader />
+				<NavHeader userImg={userImg} userName={userName} />
 			)}
 		</div>
 	);

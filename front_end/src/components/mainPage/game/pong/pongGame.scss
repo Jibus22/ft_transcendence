@@ -83,6 +83,9 @@
 					font-weight: 500;
 				}
 			}
+			.photoOp {
+				filter: brightness(0.6);
+			}
 
 			.loadingVersus {
 				align-self: center;
@@ -100,6 +103,9 @@
 					font-family: 'Mochiy Pop P One', sans-serif;
 				}
 			}
+		}
+		.infoUserReverse {
+			flex-direction: row-reverse;
 		}
 
 		.titleMap {
@@ -183,9 +189,6 @@
 					// width: 100%;
 					// height: 100%;
 				}
-				.active:hover {
-					// transform: scale(1.1);
-				}
 
 				.inactive {
 					filter: blur(2px);
@@ -197,13 +200,15 @@
 			}
 		}
 	}
+
 	.closeButton {
-		margin-top: 20px;
+		margin-top: 00px;
 		display: flex;
 		width: 30%;
 		height: 7%;
 
 		.buttonMui {
+			// margin-top: -3vw;
 			width: 100%;
 			height: 100%;
 			text-transform: none;
@@ -232,6 +237,7 @@
 
 @media screen and (max-width: 1440px) {
 	.divMainPongGame {
+		height: 55vw;
 		margin: 8% auto;
 		margin-bottom: 40px;
 		.mainPongGame {
@@ -271,6 +277,12 @@
 	.divMainPongGame {
 		margin: 12vw auto;
 		margin-bottom: -15px;
+
+		.titleMap {
+			.selectMap {
+				margin-top: -20px;
+			}
+		}
 	}
 }
 
@@ -357,6 +369,7 @@
 
 @media screen and (max-width: 670px) {
 	.divMainPongGame {
+		height: 440px;
 		.titleMap {
 			.countMap {
 				top: 50% !important;

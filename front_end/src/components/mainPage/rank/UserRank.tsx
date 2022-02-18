@@ -9,7 +9,7 @@ const UserRank = () => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 170px)' },
+		from: { opacity: 0, transform: 'translate(0px, 5vw)' },
 		config: {
 			delay: 300,
 			duration: 300,
@@ -31,7 +31,7 @@ const UserRank = () => {
 
 	const fetchData = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/game/leaderboard', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/leaderboard`, {
 				withCredentials: true,
 			});
 			setData(data);
@@ -42,7 +42,7 @@ const UserRank = () => {
 	};
 	const fetchDataFriends = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/users/friend', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 				withCredentials: true,
 			});
 			setDataFriends(data);

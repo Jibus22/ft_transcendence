@@ -16,6 +16,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const isModerator = () => {
+		if (isOwner())
+			return true;
 		let moderator = false;
 		room.participants.forEach((participant: any) => {
 			if (participant.user.id === currentUser.id && participant.is_moderator)
@@ -35,9 +37,11 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	
 	const changePassword = async () => {
 		const newPassword = prompt("New password (empty for no password)");
-		await axios.patch(`http://localhost:3000/room/${room.id}/password`, {
+		axios.patch(`http://localhost:3000/room/${room.id}/password`, {
 			password: newPassword
-		}, { withCredentials: true });
+		}, { withCredentials: true })
+		.then(() => alert("Password successfully set"))
+		.catch(err => alert(`Cannot set password: ${err}`));
 	}
 
 	const addParticipant = async () => {
@@ -53,6 +57,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			alert(`User '${login}' not found or is already in the room.`);
 			return;
 		}
+		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
 
 	const toggleModerator = async (user: any) => {
@@ -60,7 +65,32 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			participant_id: user.id,
 			is_moderator: !user.is_moderator
 		}, { withCredentials: true });
+		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
+
+	const mute = async (user: any) => {
+		const duration = prompt("Mute duration, in minutes");
+		if (duration) {
+			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+				participant_id: user.id,
+				user_id: user.user.id,
+				restriction_type: "mute",
+				duration: parseInt(duration)
+			}, { withCredentials: true });
+		}
+	}
+
+	const ban = async (user: any) => {
+		const duration = prompt("Ban duration, in minutes");
+		if (duration) {
+			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+				participant_id: user.id,
+				user_id: user.user.id,
+				restriction_type: "ban",
+				duration: parseInt(duration)
+			}, { withCredentials: true });
+		}
+	}
 
 	if (userDetail) {
 		return (<ChatParticipant user={userDetail} currentUser={currentUser} />);
@@ -80,12 +110,12 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			room.participants.map((user: any) => (<User key={user.id}>
 				<img onClick={() => showUserDetail(user)} src={user.user.photo_url} alt={user.user.login} />
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
-				{isModerator() && (
+				{isModerator() && user.user.id !== currentUser.id && (
 					<ActionButtons>
-						<button>
+						<button onClick={() => ban(user)}>
 							<BlockIcon />
 						</button>
-						<button>
+						<button onClick={() => mute(user)}>
 							<VolumeOffIcon />
 						</button>
 						<button onClick={() => toggleModerator(user)}>

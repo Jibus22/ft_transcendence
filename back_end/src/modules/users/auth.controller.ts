@@ -8,6 +8,7 @@ import {
   Get,
   HttpStatus,
   Inject,
+  Logger,
   Post,
   Query,
   Redirect,
@@ -27,17 +28,16 @@ import { randomUUID } from 'crypto';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { authTokenDto } from './dtos/authToken.dto';
 import { privateUserDto } from './dtos/private-user.dto';
 import { User } from './entities/users.entity';
 import { AuthService } from './service-auth/auth.service';
-import { UsersService } from './service-users/users.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private usersService: UsersService,
     private authService: AuthService,
     private configService: ConfigService,
   ) {}
@@ -48,10 +48,13 @@ export class AuthController {
     @Query() query: { code: string; state: string },
     @Session() session: any,
   ) {
+    if (query.state != this.configService.get('AUTH_CLIENT_STATE')) {
+      throw new BadRequestException('Wrong State value.');
+    }
     const user = await this.authService
       .registerUser(query.code, query.state)
       .catch((e) => {
-        console.log(e);
+        new Logger('AuthCallback').debug(e);
       });
     if (!user) {
       throw new BadGatewayException(
@@ -81,8 +84,6 @@ export class AuthController {
     ===================================================================
     */
 
-  //TODO use guard ?
-
   @Post('/2fa/generate')
   @ApiCookieAuth()
   @UseGuards(AuthGuard)
@@ -90,7 +91,6 @@ export class AuthController {
     summary:
       'Internally set a new key to user and return qr-code + key in headers',
   })
-  // @ApiResponse({ }) // TODO set png ?
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Qrcode as png and Key header',
@@ -106,7 +106,7 @@ export class AuthController {
         throw new BadRequestException(error);
       });
     response.setHeader('content-type', 'image/png');
-    response.setHeader('secretKey', secret); //TODO is it safe ?
+    response.setHeader('secretKey', secret);
     return this.authService.qrCodeStreamPipe(response, totpAuthUrl);
   }
 
@@ -145,7 +145,7 @@ export class AuthController {
     description: 'Token is valid and 2fa is set',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
-  async turn2fa_on(@Session() session, @Body() body: { token: string }) {
+  async turn2fa_on(@Session() session, @Body() body: authTokenDto) {
     return await this.authService
       .turn2fa_on(session, body.token)
       .catch((err) => {
@@ -160,8 +160,7 @@ export class AuthController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'User authenticated' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'invalid token' })
-  async authenticate2fa(@Session() session, @Body() body: { token: string }) {
-    // TODO: use dto for body !
+  async authenticate2fa(@Session() session, @Body() body: authTokenDto) {
     return await this.authService
       .authenticate2fa(session, body.token)
       .catch((err) => {
@@ -191,9 +190,9 @@ export class AuthController {
   async producteWsToken(@CurrentUser() user) {
     const token = randomUUID() + '.' + user.id;
     await this.cacheManager.set(token, user.id, { ttl: 4 });
-    if (process.env.NODE_ENV === 'dev') {
-      console.log(`store in cache: ${token} for user -> `, user.id); //TODO remove debug
-    }
+    new Logger('Ws-AuthToken').debug(
+      `store in cache:\n${token}\nfor user -> ${user.id}`,
+    );
     return { token };
   }
 }

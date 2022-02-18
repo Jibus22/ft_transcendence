@@ -1,10 +1,12 @@
-import React from 'react';
+import { CircularProgress, IconButton, TextField } from '@mui/material';
+import axios, { AxiosError } from 'axios';
 import { useFormik } from 'formik';
-import { IconButton, CircularProgress, TextField } from '@mui/material';
-import { useSpring, animated } from 'react-spring';
-import IconMess from './img/carbon_send-alt-filled.png';
+import React, { useState } from 'react';
+import { animated, useSpring } from 'react-spring';
 import * as yup from 'yup';
+import { string } from 'yup/lib/locale';
 import { useMainPage } from '../../../../MainPageContext';
+import IconMess from './img/carbon_send-alt-filled.png';
 
 interface Props {
 	Loadingclick: () => void;
@@ -23,7 +25,7 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 	});
 
-	const { setIsFriends } = useMainPage();
+	const { userName, setDataUserGame, setIsGameRandom, setDataUserChallenge, setIsOpponant } = useMainPage();
 
 	const validationSchema = yup.object({
 		loggin: yup.string().required('Enter a Nickname'),
@@ -34,9 +36,32 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 			loggin: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: (values) => {
-			Loadingclick();
-			setIsFriends(true);
+		onSubmit: async (values, { setErrors }) => {
+			const game = {
+				login_opponent: values.loggin,
+				login: '',
+				photo_url: '',
+			};
+
+			try {
+				const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
+					withCredentials: true,
+				});
+				setDataUserChallenge([response.data]);
+				setIsOpponant(true);
+				setIsGameRandom(false);
+				Loadingclick();
+			} catch (error) {
+				const err = error as AxiosError;
+
+				if (err.response?.status === 404) {
+					setErrors({ loggin: 'User not found' });
+				}
+				if (err.response?.status === 403) {
+					const dataError = err.response?.data;
+					setErrors({ loggin: dataError['message'] });
+				}
+			}
 		},
 	});
 
@@ -58,6 +83,9 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 							error={formik.touched.loggin && Boolean(formik.errors.loggin)}
 							helperText={formik && formik.errors.loggin}
 							disabled={!disable}
+							inputProps={{
+								maxLength: 10,
+							}}
 						/>
 
 						<div className="buttonDiv">

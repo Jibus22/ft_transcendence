@@ -1,11 +1,18 @@
 import ErrorIcon from '@mui/icons-material/Error';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
-import { UserMe } from './components/type';
+import { useNavigate } from 'react-router-dom';
+import { UserMe, LoginGame, User, UserChallenge } from './components/type';
 
 interface IMainPageContext {
 	data: Array<UserMe>;
+
+	dataUserGame: Array<LoginGame>;
+	dataUserChallenge: Array<UserChallenge>;
+
+	challengData: Array<User>;
 	timeSnack: boolean;
 	isDisable: boolean;
 	isFriends: boolean;
@@ -20,12 +27,16 @@ interface IMainPageContext {
 	userStatus: boolean;
 	selectQuery: boolean;
 	selectedImage: File;
-	timer: number;
 	userName: string;
 	userImg: string;
 	pathPop: string;
 
 	setData: Dispatch<SetStateAction<never[]>>;
+	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
+	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
+
+	setChallengData: Dispatch<SetStateAction<User[]>>;
+
 	setTimeSnack: Dispatch<SetStateAction<boolean>>;
 	setIsDisable: Dispatch<SetStateAction<boolean>>;
 	setLoading: Dispatch<SetStateAction<boolean>>;
@@ -39,7 +50,6 @@ interface IMainPageContext {
 	setSelectNav: Dispatch<SetStateAction<boolean>>;
 	setLeaveGame: Dispatch<SetStateAction<boolean>>;
 	setSelectedImage: Dispatch<SetStateAction<File>>;
-	setTimer: Dispatch<SetStateAction<number>>;
 	setUserName: Dispatch<SetStateAction<string>>;
 	setUserImg: Dispatch<SetStateAction<string>>;
 	setPathPop: Dispatch<SetStateAction<string>>;
@@ -50,12 +60,35 @@ interface IMainPageContext {
 	onSubmitUpload: (file: File) => void;
 	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
 	setStatusColor: (status: string) => string;
+
+	isGameRandom: boolean;
+	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
+
+	dialogueLoading: (open: boolean, text: string, h1: string, h2: string) => void;
+	disconectAuth: () => void;
+
+	gameWs: Socket | undefined;
+	setGameWs: Dispatch<SetStateAction<Socket | undefined>>;
+
+	invitName: string;
+	setInvitName: Dispatch<SetStateAction<string>>;
+
+	isOpponant: boolean;
+	setIsOpponant: Dispatch<SetStateAction<boolean>>;
+
+	opacity: boolean;
+	setOpacity: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
 
 const MainPageProvider = (props: any) => {
 	const [data, setData] = useState([]);
+	const [dataUserGame, setDataUserGame] = useState([]);
+
+	const [dataUserChallenge, setDataUserChallenge] = useState([]);
+
+	const [challengData, setChallengData] = useState([]);
 
 	const [timeSnack, setTimeSnack] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -68,18 +101,28 @@ const MainPageProvider = (props: any) => {
 	const [leaveGame, setLeaveGame] = useState(false);
 	const [isDisable, setIsDisable] = useState(true);
 	const [customPhoto, setCustomPhoto] = useState(true);
-	const [timer, setTimer] = useState(5000);
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
 	const [selectQuery, setSelectQuery] = useState(false);
 
+	const [isGameRandom, setIsGameRandom] = useState(false);
+
+	const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
+
+	const [invitName, setInvitName] = useState('');
+
+	const [isOpponant, setIsOpponant] = useState(false);
+	const [opacity, setOpacity] = useState(false);
+
+	const navigate = useNavigate();
+
 	// const [dataHistory, setDataHistory] = useState([]);
 
 	const fetchDataUserMe = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/me', {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
 				withCredentials: true,
 			});
 			setData([data]);
@@ -88,23 +131,22 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
-	// const fetchDataHistory = async () => {
-	// 	try {
-	// 		const { data } = await axios.get('http://localhost:3000/game/history', {
-	// 			withCredentials: true,
-	// 		});
-	// 		setDataHistory(data);
-	// 	} catch (error) {
-	// 		const err = error as AxiosError;
-	// 		console.log(err);
-	// 	}
-	// };
+	const disconectAuth = async () => {
+		try {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
+				withCredentials: true,
+			});
+			navigate('/');
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const onSubmit = async (file: File, path: string) => {
 		let data = new FormData();
 		data.append('file', file);
 		try {
-			await axios.post('http://localhost:3000/' + path, data, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path, data, {
 				withCredentials: true,
 			});
 			fetchDataUserMe();
@@ -122,7 +164,7 @@ const MainPageProvider = (props: any) => {
 			data.append('file', file);
 		}
 		try {
-			await axios.post('http://localhost:3000/me/photo', data, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`, data, {
 				withCredentials: true,
 			});
 			fetchDataUserMe();
@@ -167,6 +209,30 @@ const MainPageProvider = (props: any) => {
 		);
 	};
 
+	const dialogueLoading = (open: boolean, title: string, h1: string, h2: string) => {
+		return (
+			<Dialog
+				open={open}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+				scroll="body"
+				className="mainDialogMui"
+			>
+				<DialogTitle id="alert-dialog-title" className="d-flex">
+					<ErrorIcon sx={{ color: 'orange' }} />
+					<div className="titleDialogMui">
+						<p>{title}</p>
+					</div>
+				</DialogTitle>
+				<DialogContent className="contentDialogMui">
+					<DialogContentText id="alert-dialog-description">{h1}</DialogContentText>
+					<DialogContentText id="alert-dialog-description">{h2}</DialogContentText>
+					<CircularProgress className="circularDialogMui" />
+				</DialogContent>
+			</Dialog>
+		);
+	};
+
 	const setStatusColor = (status: string): string => {
 		if (status === 'offline') {
 			return '#FF3F00';
@@ -182,11 +248,15 @@ const MainPageProvider = (props: any) => {
 	};
 
 	const ProviderValue = {
+		data,
+		dataUserGame,
+		dataUserChallenge,
+
+		challengData,
+
 		timeSnack,
-		timer,
 		isDisable,
 		loading,
-		data,
 		userName,
 		userImg,
 		isFriends,
@@ -201,13 +271,17 @@ const MainPageProvider = (props: any) => {
 		startGame,
 		leaveGame,
 
+		setData,
+		setDataUserGame,
+		setDataUserChallenge,
+
+		setChallengData,
+
 		setSelectQuery,
 		setCustomPhoto,
 		setTimeSnack,
-		setTimer,
 		setIsDisable,
 		setLoading,
-		setData,
 		fetchDataUserMe,
 		setUserName,
 		setUserImg,
@@ -229,6 +303,24 @@ const MainPageProvider = (props: any) => {
 		// setDataHistory,
 
 		// fetchDataHistory,
+
+		isGameRandom,
+		setIsGameRandom,
+
+		dialogueLoading,
+
+		disconectAuth,
+
+		gameWs,
+		setGameWs,
+
+		invitName,
+		setInvitName,
+		isOpponant,
+		setIsOpponant,
+
+		opacity,
+		setOpacity,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

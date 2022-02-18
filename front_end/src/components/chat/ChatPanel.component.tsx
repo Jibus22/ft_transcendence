@@ -25,7 +25,8 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	const getMessages = async () => {
 		const { data } = await axios.get(`http://localhost:3000/room/${room.id}/message`, { withCredentials: true });
-		setMessages(data)
+		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
+		setMessages(sortedMessages);
 	};
 
 	const sendMessage = async () => {
@@ -48,6 +49,17 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	const isGroup = () => {
 		return !room.is_private;
 	};
+
+	const scrollChatDown = () => {
+		try {
+			const chat: any = document.querySelector("#chat-messages");
+			chat.scrollTop = chat.scrollHeight;
+		} catch {}
+	};
+
+	useEffect(() => {
+		scrollChatDown();
+	}, [messages]);
 
 	window.addEventListener("newMessage", ({ detail }: any) => {
 		const message: any = detail;
@@ -92,14 +104,14 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			<button><ArrowBackIosIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(false)} /></button>
 		</ChatHeader>)}
 		{!detailsOpen && (<>
-		<ChatMessages>
+		<ChatMessages id="chat-messages">
 			{messages.map((message: any) => (
 				<Message self={message.sender.id === currentUser.id} key={message.id}>
 					<span className="message-content">{message.body}
 					<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M6.7895 0C6.02488 3.47758 2.00431 6.12164 0.523383 6.81875C0.135401 6.93318 -0.0590963 7 0.0158405 7C0.0918121 7 0.2706 6.93774 0.523383 6.81875C2.83311 6.13753 12 3.76923 12 3.76923L6.7895 0Z" fill="#F1F1F1"/>
 					</svg></span>
-					<span className="message-date">{new Date(message.timestamp).toLocaleDateString() + ' ' + new Date(message.timestamp).toLocaleTimeString()}</span>
+					<span className="message-date">{message.sender.id !== currentUser.id && `${message.sender.login} - `}{new Date(message.timestamp).toLocaleDateString() + ' ' + new Date(message.timestamp).toLocaleTimeString()}</span>
 				</Message>
 			))}
 		</ChatMessages>

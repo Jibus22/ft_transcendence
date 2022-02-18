@@ -7,7 +7,6 @@ import {
   NotFoundException,
   Param,
   Post,
-  Session,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,8 +17,10 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { editRelationDto } from './dtos/edit-relation.dto';
 import { UserDto } from './dtos/user.dto';
+import { User } from './entities/users.entity';
 import {
   RelationsService,
   RelationType,
@@ -59,7 +60,7 @@ export class UsersController {
   @ApiResponse({ type: UserDto, isArray: false })
   @ApiResponse({ status: HttpStatus.OK, description: "User's public data" })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
-  async getUserById(@Param() { login }) {
+  async getUserById(@Param('login') login: string) {
     return await this.usersService.find({ login }).then((users) => {
       if (!users[0]) {
         throw new NotFoundException('user not found');
@@ -85,9 +86,9 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'Array of users in the friends list',
   })
-  async readAllFriends(@Session() session: Record<string, any>) {
+  async readAllFriends(@CurrentUser() user: User) {
     return await this.relationsService.readAllRelations(
-      session.userId,
+      user.id,
       RelationType.Friend,
     );
   }
@@ -103,10 +104,10 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to add' })
   async createFriend(
     @Body() target: editRelationDto,
-    @Session() session: Record<string, any>,
+    @CurrentUser() user: User,
   ) {
     await this.relationsService.createRelation(
-      session.userId,
+      user.id,
       target.id,
       RelationType.Friend,
     );
@@ -120,10 +121,10 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to delete' })
   async deleteFriend(
     @Body() target: editRelationDto,
-    @Session() session: Record<string, any>,
+    @CurrentUser() user: User,
   ) {
     return await this.relationsService.deleteRelation(
-      session.userId,
+      user.id,
       target.id,
       RelationType.Friend,
     );
@@ -146,9 +147,9 @@ export class UsersController {
     status: HttpStatus.OK,
     description: 'Array of users in the blocked list',
   })
-  async readAllBlocks(@Session() session: Record<string, any>) {
+  async readAllBlocks(@CurrentUser() user: User) {
     return await this.relationsService.readAllRelations(
-      session.userId,
+      user.id,
       RelationType.Block,
     );
   }
@@ -164,10 +165,10 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to add' })
   async createBlock(
     @Body() target: editRelationDto,
-    @Session() session: Record<string, any>,
+    @CurrentUser() user: User,
   ) {
     await this.relationsService.createRelation(
-      session.userId,
+      user.id,
       target.id,
       RelationType.Block,
     );
@@ -181,10 +182,10 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Failed to delete' })
   async deleteBlock(
     @Body() target: editRelationDto,
-    @Session() session: Record<string, any>,
+    @CurrentUser() user: User,
   ) {
     await this.relationsService.deleteRelation(
-      session.userId,
+      user.id,
       target.id,
       RelationType.Block,
     );

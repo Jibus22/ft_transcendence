@@ -6,13 +6,15 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import { useEffect, useState }  from 'react'
 
-const chatName = (participants: any, currentUser: any) => {
-	const user = getUser(participants, currentUser);
-	if (user) {
+declare let window: any;
+
+const chatName = (chat: any, currentUser: any) => {
+	const user = getUser(chat.participants, currentUser);
+	if (user && chat.is_private) {
 		return user.user.login;
 	}
 	let name = "";
-	participants.forEach((p: any) => name += p.user.login[0]);
+	chat.participants.forEach((p: any) => name += p.user.login[0]);
 	return name;
 }
 
@@ -46,10 +48,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const getPublicRooms = async () => {
+		window.roomsLoading = true;
 		const { data } = await axios.get("http://localhost:3000/room/publics", {
 			withCredentials: true
 		});
 		setPublicChats(data);
+		window.roomsLoading = false;
 	}
 
 	const getUsers = async () => {
@@ -58,8 +62,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const getFriends = async () => {
+		if (window.friendsLoading)
+			return;
+		window.friendsLoading = true;
 		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
+		window.friendsLoading = false;
 	};
 
 	const onSearch = (e: any) => {
@@ -67,7 +75,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		setSearch(term);
 		if (!term.length)
 			return setSearchResults([]);
-
 		const result: any[] = users.filter(
 			(user: any) => user.login.indexOf(term) > -1
 		).sort((a: any, b: any) => a.login.indexOf(term) - b.login.indexOf(term));
@@ -90,9 +97,11 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		}, { withCredentials: true });
 		const { id } = data;
 		await axios.post(`http://localhost:3000/room/${id}/participant`, { id: userId }, { withCredentials: true });
+		const data2 = (await axios.get(`http://localhost:3000/room/${id}/infos`, { withCredentials: true })).data;
+		console.log("DATA", data, data2)
 		setSearchResults([]);
 		setSearch("");
-		openChat(data);
+		openChat(data2);
 	};
 
 	const createChat = async () => {
@@ -125,7 +134,38 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	}, []);
 
 	window.addEventListener("publicRoomCreated", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
 		getPublicRooms();
+	})
+
+	window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
+		getPublicRooms();
+	})
+
+	window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
+		getPublicRooms();
+	})
+
+	window.addEventListener("userAdded", ({ detail }: any) => {
+		if (window.roomsLoading)
+			return;
+		getPublicRooms();
+		getChats();
+	})
+
+	window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
+		openPublicRoom(detail.id);
+	})
+
+	window.addEventListener("friendsUpdated", ({ detail }: any) => {
+		if (window.friendsLoading)
+			return;
+		getFriends();
 	})
 
 	return (
@@ -134,39 +174,38 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			<input type="text" placeholder="Search" value={search} onChange={onSearch} />
 			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
-		{ tab === 0 && !searchResults.length && (<List>
+		{ tab === 0 && !search.length && (<List>
 			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
-				{/* {chat.participants.length === 1 && (<img src={chat.participants[0].user.photo_url} alt={chat.participants[0].user.login} />)} */}
-				{/* {chat.participants.length === 2 && (<img src={chat.participants[1].user.photo_url} alt={chat.participants[1].user.login} />)} */}
-				{getUser(chat.participants, currentUser) !== null && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
+				{getUser(chat.participants, currentUser) !== null && chat.is_private && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
 				<div>
-					<h4>{chatName(chat.participants, currentUser)}</h4>
-					<p>{chat.id}</p>
+					<h4>{chatName(chat, currentUser)}</h4>
 				</div>
 			</Preview>))}
+			{!chats.length && <span className="empty-message">No chat yet</span>}
 		</List>)}
-		{ tab === 1 && !searchResults.length && (<List>
+		{ tab === 1 && !search.length && (<List>
 			{friends.map((friend: any) => (<Preview key={friend.id} onClick={() => openChatHandler(friend.id)}>
 				<img src={friend.photo_url} alt={friend.login} />
 				<div>
 					<h4>{friend.login}</h4>
 				</div>
 			</Preview>))}
+			{!friends.length && <span className="empty-message">No friends yet</span>}
 		</List>)}
-		{ tab === 2 && !searchResults.length && (
+		{ tab === 2 && !search.length && (
 			<>
 				<List>
 					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => openPublicRoom(chat.id)}>
 						<div>
-							<h4>{chatName(chat.participants, currentUser)}</h4>
-							<p>{chat.id}</p>
+							<h4>{chatName(chat, currentUser)}</h4>
 						</div>
 					</Preview>))}
+					{!publicChats.length && <span className="empty-message">No chat yet</span>}
 				</List>
 				<LargeButton onClick={() => createChat()}>+ Create chat</LargeButton>
 			</>
 		)}
-		{ searchResults.length > 0 && (<List>
+		{ search.length > 0 && (<List>
 			{searchResults.map((user: any) => (<Preview key={user.id} onClick={() => openChatHandler(user.id)}>
 				<img src={user.photo_url} alt={user.login} />
 				<div>
@@ -222,6 +261,13 @@ const List = styled.div`
 
 	::-webkit-scrollbar {
 		display: none;
+	}
+
+	.empty-message {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
 	}
 `;
 

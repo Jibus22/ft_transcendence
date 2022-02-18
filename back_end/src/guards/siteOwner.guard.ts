@@ -13,8 +13,8 @@ export class SiteOwnerGuard implements CanActivate {
     const logger = new Logger('🔓 💂‍♂️ Site Owner Guard');
     const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
     if (currentUser && currentUser.is_site_owner) {
-      logger.log(`User id: ${currentUser.id}`);
-      logger.log(`SITE OWNER ACCESS GRANTED !`);
+      logger.debug(`User id: ${currentUser.id}`);
+      logger.debug(`SITE OWNER ACCESS GRANTED !`);
       return true;
     }
     throw new ForbiddenException('User must be site owner');

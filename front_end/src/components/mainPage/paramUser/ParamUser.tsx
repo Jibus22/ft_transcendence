@@ -19,14 +19,14 @@ export default function ParamUser({ setTime }: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 170px)' },
+		from: { opacity: 0, transform: 'translate(0px, 5vw)' },
 		config: {
 			delay: 350,
 			duration: 350,
 		},
 	});
 
-	const { userImg, userName, dialogMui, data } = useMainPage();
+	const { userImg, userName, dialogMui, data, fetchDataUserMe } = useMainPage();
 	const ref = useRef<HTMLDivElement>(null);
 	const isHovering = useHover(ref);
 
@@ -36,9 +36,20 @@ export default function ParamUser({ setTime }: Props) {
 
 	const [dataFa, setDataFa] = useState(false);
 
+	const [dataPlay, setDataPlay] = useState(0);
+	const [dataWin, setDataWin] = useState(0);
+	const [dataLoose, setDataLoose] = useState(0);
+
+	useEffect(() => {
+		fetchDataUserMe();
+	}, []);
+
 	useEffect(() => {
 		if (data.length > 0) {
 			setDataFa(data[0].hasTwoFASecret);
+			setDataPlay(data[0].games_nbr);
+			setDataWin(data[0].wins_nbr);
+			setDataLoose(data[0].losses_nbr);
 		}
 	}, [data]);
 
@@ -54,7 +65,7 @@ export default function ParamUser({ setTime }: Props) {
 	const agree = async () => {
 		setOpen(false);
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			setTime(true);
@@ -106,13 +117,13 @@ export default function ParamUser({ setTime }: Props) {
 						</div>
 						<div className="statNbUser d-flex ">
 							<div className="">
-								<p>15</p>
+								<p>{dataPlay}</p>
 							</div>
 							<div className="middleNbUser">
-								<p>2</p>
+								<p>{dataWin}</p>
 							</div>
 							<div className="">
-								<p>13</p>
+								<p>{dataLoose}</p>
 							</div>
 						</div>
 					</div>

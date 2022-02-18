@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
 import { Avatar, Badge, useMediaQuery, CircularProgress, Tooltip, Fade, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
+import { useNavigate } from 'react-router-dom';
+import MainPong from '../../game/pong/MainPong';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 interface Props {
 	data: Array<Rank>;
@@ -24,16 +27,49 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame, setDataUserGame, setDataUserChallenge, setIsOpponant, userName } = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
-
+	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
-	function handleClick() {
-		setTime(true);
-		setTimeout(function () {
-			setTime(false);
-		}, 2000);
-	}
+
+	const fetchDataChallenge = async (data: User) => {
+		const game = {
+			login_opponent: data.login,
+			login: '',
+			photo_url: '',
+		};
+		try {
+			const response = await axios.post('http://localhost:3000/game', game, {
+				withCredentials: true,
+			});
+			setDataUserChallenge([response.data]);
+			setIsOpponant(true);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const getGame = (data: User) => () => {
+		fetchDataChallenge(data);
+
+		// setTimeSnack(true);
+		// console.log('hihihihiih');
+		// gameWs?.on('gameInvitation', async (challengerData, cb) => {
+		// 	console.log('111111')
+		// });
+		// fetchDataChallenge(data);
+		// setIsGameRandom(false);
+
+		setStartGame(true);
+		navigate('/Mainpage');
+
+		// setTime(true);
+		// setTimeout(() => {
+		// 	setTime(false);
+		// 	setStartGame(true);
+		// 	navigate('/Mainpage');
+		// }, 2000);
+	};
 
 	const userSortRank = (a: Rank, b: Rank) => {
 		if (b.games_won === a.games_won) {
@@ -46,7 +82,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	const userList = (data: any, rank: number) => {
 		let disableStatus = false;
 
-		if (data.user.status !== 'online') {
+		if (data.user.status !== 'online' || userName === data.user.login) {
 			disableStatus = true;
 		}
 
@@ -96,7 +132,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 				<div className="buttonDIv d-flex">
 					<Tooltip
 						className="lalala"
-						title={<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>You can't challenge someone offline or in games </Typography>}
+						title={<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>You can't challenge someone offline, in games or you</Typography>}
 						followCursor={true}
 						TransitionComponent={Fade}
 						TransitionProps={{ timeout: 600 }}
@@ -107,7 +143,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 								className="muiButton"
 								disabled={time || disableStatus}
 								variant="contained"
-								onClick={handleClick}
+								onClick={getGame(data.user)}
 								sx={{ width: 2 / 2, textTransform: 'none', backgroundColor: '#E69C6A' }}
 							>
 								{time && !disableStatus && <CircularProgress size="1.2em" />}

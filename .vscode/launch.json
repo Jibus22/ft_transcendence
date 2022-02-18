@@ -8,9 +8,12 @@
       "restart": true,
       "port": 9229,
       "address": "localhost",
-      "localRoot": "${workspaceFolder}/back_end",
-      "remoteRoot": "/usr/src/app",
-      "protocol": "inspector"
-    }
+      "localRoot": "${workspaceFolder}/data/backDist",
+      "remoteRoot": "/urs/src/app/dist",
+      "outFiles": ["${workspaceFolder}/data/backDist/**/*.js"],
+      "skipFiles": ["<node_internals>/**/*.js"],
+      "protocol": "inspector",
+      "sourceMaps": true
+   },
   ]
 }

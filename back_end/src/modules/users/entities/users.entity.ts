@@ -62,6 +62,9 @@ export class User {
   @Column({ nullable: true, unique: true })
   ws_id: string;
 
+  @Column({ nullable: true, unique: true })
+  game_ws: string;
+
   @Column({ default: false })
   is_in_game: boolean;
 
@@ -70,29 +73,4 @@ export class User {
 
   @OneToMany(() => Participant, (participant) => participant.user)
   room_participations: Participant[];
-
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted User: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed User: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated User: ', this);
-    }
-  }
 }
