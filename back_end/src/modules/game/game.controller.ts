@@ -22,6 +22,9 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
+import { OnlineGameDto } from './dto/online-game.dto';
+import { Game } from './entities/game.entity';
+import { plainToClass } from 'class-transformer';
 
 @ApiTags('game')
 @UseGuards(AuthGuard)
@@ -86,10 +89,19 @@ export class GameController {
     return await this.gameService.leaderboard();
   }
 
+  @ApiResponse({ type: OnlineGameDto, isArray: true })
+  @Serialize(OnlineGameDto)
+  @Get('onlineGames')
+  @ApiOperation({ summary: 'get a list of OnlineGameDto' })
+  async onlineGames() {
+    const games = await this.gameService.history();
+    return games.filter((elem: Game) => elem.watch);
+  }
+
   @Get(':uuid')
   @ApiOperation({ summary: 'returns a "uuid" game' })
   async findOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
-    return await this.gameService.findOne(uuid);
+    return await this.gameService.findOne(uuid, null);
   }
 
   @Patch(':uuid')

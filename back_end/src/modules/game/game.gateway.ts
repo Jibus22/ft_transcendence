@@ -18,6 +18,8 @@ import { WsGameService } from './services/ws-game.service';
 import { Logger, UseFilters } from '@nestjs/common';
 import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
+import { randomUUID } from 'crypto';
+import { GameService } from './services/game.service';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -40,6 +42,7 @@ export class GameGateway
   @WebSocketServer() private server: Server;
 
   constructor(
+    private readonly gameService: GameService,
     private readonly wsGameService: WsGameService,
     private readonly wsConnectionService: WsConnectionService,
   ) {}
@@ -92,22 +95,16 @@ export class GameGateway
       throw new WsException('Wow shit');
     }
 
-    const challenger_sock = await this.server
-      .in(challenger.game_ws)
-      .fetchSockets();
-
     if (reply.response === 'OK') {
       this.logger.log(`gameInvitation accepted: ${reply.response}`);
       this.wsGameService.updatePlayerStatus(opponent, { is_in_game: true });
-      challenger_sock[0].emit('gameAccepted', plainToClass(UserDto, opponent));
+      this.server
+        .to(reply.to)
+        .emit('gameAccepted', plainToClass(UserDto, opponent));
       this.wsGameService
-        .createGame(
-          [challenger, opponent],
-          [challenger_sock[0].id, client.id],
-          this.server,
-        )
+        .createGame([challenger, opponent], [reply.to, client.id], this.server)
         .catch((e) => {
-          this.logger.log(`------ ERROR ------ ${e.error}`);
+          this.logger.log(`--- ERROR --- ${e.error}`);
           this.wsGameService.cancelPanicGame([challenger, opponent]);
           client.emit('myerror', e.error);
         });
@@ -116,8 +113,27 @@ export class GameGateway
       this.wsGameService.updatePlayerStatus(challenger, {
         is_in_game: false,
       });
-      challenger_sock[0].emit('gameDenied', plainToClass(UserDto, opponent));
+      this.server
+        .to(reply.to)
+        .emit('gameDenied', plainToClass(UserDto, opponent));
     }
+  }
+
+  @SubscribeMessage('setMap')
+  async setMap(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() obj: { room: string; map: string },
+  ) {
+    await this.gameService.updateGame(obj.room, {
+      map: obj.map,
+      watch: randomUUID(),
+    });
+
+    ///// TEST // TODO: delete test below
+    console.log(
+      'countdown finished, game: ',
+      await this.gameService.findOne(obj.room, null),
+    );
   }
 
   //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs

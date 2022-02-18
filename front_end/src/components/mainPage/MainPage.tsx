@@ -180,13 +180,13 @@ const MainPage = () => {
 		// });
 
 		socket.on('newOnlineGame', (obj: any) => {
-			console.log(`💌  Event: newOnlineGame -> ${obj}`);
-			//catch error
+			console.log(`💌  Event: newOnlineGame -> `, obj);
+			//Afficher l'objet au dessus de la liste des onlineGame
 		});
 
 		socket.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
-			//catch error
+			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
 		socket.on('myerror', (message: string) => {
@@ -301,10 +301,10 @@ const MainPage = () => {
 		}
 	};
 
-	const blabla = () => {
-		console.log('test emit client- server');
-		gameWs?.emit('testaccept', 'voila voila voila...');
-	};
+	// const blabla = () => {
+	// 	console.log('test emit client- server');
+	// 	gameWs?.emit('testaccept', 'voila voila voila...');
+	// };
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
@@ -318,7 +318,7 @@ const MainPage = () => {
 			</div>
 			{headerLeave()}
 
-			<button onClick={blabla}> push </button>
+			{/* <button onClick={blabla}> push </button> */}
 
 			<Routes>
 				<Route path="/MainPage" element={<Game chatWs={chatWs} />} />
