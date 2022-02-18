@@ -16,8 +16,10 @@ import { plainToClass } from 'class-transformer';
 import { UserDto } from '../users/dtos/user.dto';
 import { WsGameService } from './services/ws-game.service';
 import { Logger, UseFilters } from '@nestjs/common';
-import { WsErrorFilter } from './filters/ws-error.filter';
 import { WsConnectionService } from './services/ws-connection.service';
+import { WsErrorFilter } from './filters/ws-error.filter';
+import { randomUUID } from 'crypto';
+import { GameService } from './services/game.service';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -40,6 +42,7 @@ export class GameGateway
   @WebSocketServer() private server: Server;
 
   constructor(
+    private readonly gameService: GameService,
     private readonly wsGameService: WsGameService,
     private readonly wsConnectionService: WsConnectionService,
   ) {}
@@ -92,24 +95,16 @@ export class GameGateway
       throw new WsException('Wow shit');
     }
 
-    const challenger_sock = await this.server
-      .in(challenger.game_ws)
-      .fetchSockets();
-
     if (reply.response === 'OK') {
       this.logger.log(`gameInvitation accepted: ${reply.response}`);
       this.wsGameService.updatePlayerStatus(opponent, { is_in_game: true });
-      challenger_sock[0].emit('gameAccepted', plainToClass(UserDto, opponent));
+      this.server
+        .to(reply.to)
+        .emit('gameAccepted', plainToClass(UserDto, opponent));
       this.wsGameService
-        .createGame(
-          challenger,
-          opponent,
-          challenger_sock[0],
-          client,
-          this.server,
-        )
+        .createGame([challenger, opponent], [reply.to, client.id], this.server)
         .catch((e) => {
-          this.logger.log(`------ ERROR ------ ${e.error}`);
+          this.logger.log(`--- ERROR --- ${e.error}`);
           this.wsGameService.cancelPanicGame([challenger, opponent]);
           client.emit('myerror', e.error);
         });
@@ -118,23 +113,58 @@ export class GameGateway
       this.wsGameService.updatePlayerStatus(challenger, {
         is_in_game: false,
       });
-      challenger_sock[0].emit('gameDenied', plainToClass(UserDto, opponent));
+      this.server
+        .to(reply.to)
+        .emit('gameDenied', plainToClass(UserDto, opponent));
     }
   }
 
-  // const wait = (timeToDelay: number) =>
-  //   new Promise((resolve) => setTimeout(resolve, timeToDelay));
+  @SubscribeMessage('setMap')
+  async setMap(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() obj: { room: string; map: string },
+  ) {
+    await this.gameService.updateGame(obj.room, {
+      map: obj.map,
+      watch: randomUUID(),
+    });
 
-  // Here createGameDto.loginP2 should be null
-  // @SubscribeMessage('denyGame')
-  // async denyGame(@MessageBody() createGameDto: CreateGameDto) {
-  //   const ws_ch = await this.gameService.getWsNPatchStatus(createGameDto, {
-  //     is_in_game: false,
-  //   });
-  //   this.server.to(ws_ch).emit('gameDenied');
-  // }
+    ///// TEST // TODO: delete test below
+    console.log(
+      'countdown finished, game: ',
+      await this.gameService.findOne(obj.room, null),
+    );
+  }
 
-  /// ---------------- TEST --------------------
+  //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs
+  //ou bien est-ce une methode a appeler differemment ? Genre qd l'update d'un
+  //game atteint un score de 10 ?
+  @SubscribeMessage('gameFinished')
+  async gameFinished(@MessageBody() room: string) {
+    this.server.of('game').except(room).emit('gameFinished', room);
+    // const watch = this.wsGameService.getWatchId(room);
+    // this.server.socketsLeave([room, watch]);//TODO uncomment
+  }
+
+  @SubscribeMessage('watchGame')
+  async watchGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    client.join(room);
+  }
+
+  @SubscribeMessage('leaveWatchGame')
+  async leaveWatchGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    client.leave(room);
+  }
+
+  /////////////////////////////////////////////////
+  /// ---------------- TEST --------------------///
+  /////////////////////////////////////////////////
   async serverToClient(id: string, data: string) {
     console.log('gateway: serverToClient');
     const client = await this.server.in(id).fetchSockets();
@@ -151,5 +181,5 @@ export class GameGateway
     console.log('clientToServer');
     console.log(`------test here------ ${voila} --- client.id: ${client.id}`);
   }
-  /// ---------------- TEST END ----------------
+  /// ---------------- TEST END ----------------///
 }

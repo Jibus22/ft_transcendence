@@ -4,6 +4,8 @@ import { User } from 'src/modules/users/entities/users.entity';
 import { Injectable, Logger } from '@nestjs/common';
 import { GameService } from './game.service';
 import { randomUUID } from 'crypto';
+import { plainToClass } from 'class-transformer';
+import { OnlineGameDto } from '../dto/online-game.dto';
 
 @Injectable()
 export class WsGameService {
@@ -13,47 +15,45 @@ export class WsGameService {
   ) {}
 
   private readonly logger = new Logger('WsGameService');
+  private readonly sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
-  private async countDown(challenger_sock: any, room: string, server: Server) {
+  private async countdown(server: Server, ch_id: string, room: string) {
     this.logger.log('countDown');
-    let count = 10;
 
-    const idInterval = setInterval(() => {
+    for (let count = 10; count >= 0; count--) {
       server.to(room).emit('countDown', count);
-      count--;
       if (!count) {
-        const start = Date.now();
-        challenger_sock.emit('setMap', async (map: string) => {
-          if (Date.now() - start > 3000) return; //TODO: conn issue: do something;
-          this.gameService.updateGame(room, { map: map, watch: randomUUID() });
-        });
+        server.to(ch_id).emit('setMap', room);
         server.to(room).emit('startGame', room);
-        clearInterval(idInterval);
       }
-    }, 1000);
+      await this.sleep(1000);
+    }
+  }
 
-    ///// TEST
-    await new Promise((resolve) => setTimeout(resolve, 12000));
-    console.log(
-      'countdown finished, game: ',
-      await this.gameService.findOne(room),
-    );
+  private async getOnlineGame(game_uuid: string) {
+    const game = await this.gameService.findOne(game_uuid, {
+      relations: ['players', 'players.user', 'players.user.local_photo'],
+    });
+    return plainToClass(OnlineGameDto, game, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async createGame(
-    challenger: User,
-    opponent: User,
-    challenger_sock: any,
-    opponent_sock: any,
+    [challenger, opponent]: User[],
+    [ch_id, op_id]: string[],
     server: Server,
   ) {
     this.logger.log('createGame');
     const game_uuid = await this.gameService.newGame(challenger, opponent);
 
-    challenger_sock.join(game_uuid);
-    opponent_sock.join(game_uuid);
-    // server.to(game_uuid).emit('getRoom', game_uuid);
-    this.countDown(challenger_sock, game_uuid, server);
+    server.in([ch_id, op_id]).socketsJoin(game_uuid);
+    this.countdown(server, ch_id, game_uuid).then(async () => {
+      const onlineGame = await this.getOnlineGame(game_uuid);
+      server.except(game_uuid).emit('newOnlineGame', onlineGame);
+    });
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {

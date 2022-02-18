@@ -88,6 +88,7 @@ export default function MainPong() {
 		});
 
 		gameWs?.on('countDown', (count: number) => {
+			// console.log(`count: ${count}`);
 			setCount(count);
 		});
 
@@ -103,9 +104,9 @@ export default function MainPong() {
 
 	useEffect(() => {
 		if (map !== null) {
-			gameWs?.on('setMap', (cb: (map: string) => void) => {
-				cb(map);
+			gameWs?.on('setMap', (room: string) => {
 				// console.log(`💌  Event: setMap -> ${cb}`);
+				gameWs?.emit('setMap', { room: room, map: map });
 				console.log('map is ==== ', map);
 			});
 		}
