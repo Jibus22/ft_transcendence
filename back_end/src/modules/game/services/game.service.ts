@@ -139,8 +139,10 @@ export class GameService {
   }
 
   //returns a specific game according to its uuid
-  async findOne(uuid: string) {
-    const game = await this.game_repo.findOne(uuid);
+  async findOne(uuid: string, relations: { relations: string[] }) {
+    let game: Game;
+    if (!relations) game = await this.game_repo.findOne(uuid);
+    else game = await this.game_repo.findOne(uuid, relations);
     if (!game) {
       throw new NotFoundException('game not found');
     }
@@ -150,7 +152,7 @@ export class GameService {
   //update a game targeted by its uuid
   async updateGame(uuid: string, patchedGame: Partial<UpdateGameDto>) {
     await this.game_repo.update(uuid, patchedGame);
-    return await this.findOne(uuid);
+    return await this.findOne(uuid, null);
   }
 
   async remove(uuid: string) {

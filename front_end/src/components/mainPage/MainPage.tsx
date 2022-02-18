@@ -179,10 +179,14 @@ const MainPage = () => {
 		// 	// c'est good.
 		// });
 
-		socket.on('getRoom', (game_uuid: string) => {
-			console.log(`💌  Event: getRoom -> ${game_uuid}`);
-			// Enregistrer 'game_uuid' dans une variable utilisable dans le jeu: cela
-			// va servir aux 2 clients pour émettre leur position ds le jeu.
+		socket.on('newOnlineGame', (obj: any) => {
+			console.log(`💌  Event: newOnlineGame -> `, obj);
+			//Afficher l'objet au dessus de la liste des onlineGame
+		});
+
+		socket.on('gameFinished', (room: string) => {
+			console.log(`💌  Event: gameFinished -> ${room}`);
+			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
 		socket.on('myerror', (message: string) => {
@@ -297,10 +301,10 @@ const MainPage = () => {
 		}
 	};
 
-	const blabla = () => {
-		console.log('test emit client- server');
-		gameWs?.emit('testaccept', 'voila voila voila...');
-	};
+	// const blabla = () => {
+	// 	console.log('test emit client- server');
+	// 	gameWs?.emit('testaccept', 'voila voila voila...');
+	// };
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
