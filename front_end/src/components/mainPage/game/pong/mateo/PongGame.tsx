@@ -24,9 +24,10 @@ function sleep(milliseconds: number) {
 }
 
 type MyProps = {
-	joueur: number,
-	map: number;
-	socket:Socket
+	joueur: number;
+	map: null | 'one' | 'two' | 'three';
+	socket: Socket | undefined;
+	roomId: string;
 };
 
 class PongGame extends React.Component<MyProps> {
@@ -57,12 +58,9 @@ class PongGame extends React.Component<MyProps> {
 	gamerunning = true;
 	powerUp = true;
 	imgBackground = new Image();
-	font:string = "30px Arial";
-	fillStyle:string = "white";
-	fontFace:FontFace = new FontFace(
-		"",
-		""
-	);
+	font: string = '30px Arial';
+	fillStyle: string = 'white';
+	fontFace: FontFace = new FontFace('', '');
 	map = this.props.map;
 
 	sleep() {
@@ -85,15 +83,13 @@ class PongGame extends React.Component<MyProps> {
 		this._ctx = this._canvas.getContext('2d')!;
 		this.font = '30px Arial';
 		this._ctx!.font = this.font;
-		if (this.map === 0)
-			this.powerUp = false;
-		if (this.map === 1)
-		{
-			this.imgBackground.src ="Fondmap1.jpeg";
-			this.imgBackground.alt ="alt";
+		if (this.map === 0) this.powerUp = false;
+		if (this.map === 1) {
+			this.imgBackground.src = 'Fondmap1.jpeg';
+			this.imgBackground.alt = 'alt';
 			this.fontFace = new FontFace(
-				"Orbitron",
-				"url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)"
+				'Orbitron',
+				'url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)',
 			);
 			this.fillStyle = '38FC25';
 			this._ctx!.fillStyle = this.fillStyle;
@@ -105,14 +101,10 @@ class PongGame extends React.Component<MyProps> {
 				this._ctx!.font = this.font;
 			});
 		}
-		if (this.map === 2)
-		{
-			this.imgBackground.src ="Fondmap2.jpg";
-			this.imgBackground.alt ="alt";
-			this.fontFace = new FontFace(
-				"Chonburi",
-				"url(https://fonts.gstatic.com/s/chonburi/v8/8AtqGs-wOpGRTBq66LWdHLz5ixfY.woff2)"
-			);
+		if (this.map === 2) {
+			this.imgBackground.src = 'Fondmap2.jpg';
+			this.imgBackground.alt = 'alt';
+			this.fontFace = new FontFace('Chonburi', 'url(https://fonts.gstatic.com/s/chonburi/v8/8AtqGs-wOpGRTBq66LWdHLz5ixfY.woff2)');
 			this.fillStyle = '#CFB217';
 			this._ctx!.fillStyle = this.fillStyle;
 			this._ctx!.shadowColor = '#EAD043';
@@ -138,17 +130,15 @@ class PongGame extends React.Component<MyProps> {
 				object: 'Score',
 				P1: this.scoreP1,
 				P2: this.scoreP2,
-				score : ret,
+				score: ret,
 			}),
 		);
-		if (this.scoreP1 >= 10)
-		{
+		if (this.scoreP1 >= 10) {
 			this.gamerunning = false;
 			this._printText('Player One win');
 			return;
 		}
-		if (this.scoreP2 >= 10)
-		{
+		if (this.scoreP2 >= 10) {
 			this.gamerunning = false;
 			this._printText('Player Two win');
 			return;
@@ -156,30 +146,25 @@ class PongGame extends React.Component<MyProps> {
 
 		//Affichage du score
 		this.gamerunning = false;
-		if (ret === 1)
-			this._printText('Player One score');
-		if (ret === 2)
-			this._printText('Player Two score');	
+		if (ret === 1) this._printText('Player One score');
+		if (ret === 2) this._printText('Player Two score');
 		setTimeout(() => (this.gamerunning = true), 2000);
 
 		//Balle au centre
 		this._ball.y = this.height / 2;
 		this._ball.x = this.width / 2;
-		
+
 		//Direction de la balle
-		if (ret === 2)
-			this._ball.x_dir = Math.random() + 1;
-		if (ret === 1)
-			this._ball.x_dir = Math.random() - 2;
+		if (ret === 2) this._ball.x_dir = Math.random() + 1;
+		if (ret === 1) this._ball.x_dir = Math.random() - 2;
 		this._ball.y_dir = Math.random() * 4 - 2;
 		if (this._ball.y_dir <= 1 && this._ball.y_dir >= 0) this._ball.y_dir = 1;
 		if (this._ball.y_dir >= -1 && this._ball.y_dir < 0) this._ball.y_dir = 1;
-		
+
 		//Power Up
 		if (!this.powerUp) return;
 		let random = getRandomInt(100);
-		if (random < 10)
-		{
+		if (random < 10) {
 			//Power up large paddle
 			if (ret === 1) {
 				this._playerOne._largePaddle(this.height);
@@ -205,8 +190,7 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player Two large Paddle');
 			}
 		}
-		if (random >= 90)
-		{
+		if (random >= 90) {
 			//Power Up controle inverse
 			if (ret === 2) {
 				this._playerOne._invertControlTemporarily();
@@ -237,9 +221,8 @@ class PongGame extends React.Component<MyProps> {
 	private _update() {
 		if (this._P1) {
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
-			if (ret > 0)
-				this._score(ret);// someone scored
-				this.props.socket.send(
+			if (ret > 0) this._score(ret); // someone scored
+			this.props.socket.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Ball',
@@ -273,27 +256,23 @@ class PongGame extends React.Component<MyProps> {
 		}
 	}
 
-	_drawBackground(){
-		if (this.map < 2)
-			this._ctx!.fillStyle = 'black';
-		if (this.map === 2)
-			this._ctx!.fillStyle = 'white';
+	_drawBackground() {
+		if (this.map < 2) this._ctx!.fillStyle = 'black';
+		if (this.map === 2) this._ctx!.fillStyle = 'white';
 		this._ctx!.fillRect(0, 0, this.width, this.height);
 
-		if (this.map >= 1)
-			this._ctx!.drawImage(this.imgBackground, 0,0,700, 600);
+		if (this.map >= 1) this._ctx!.drawImage(this.imgBackground, 0, 0, 700, 600);
 	}
 
-	_draw(){
+	_draw() {
 		this._drawBackground();
 
 		//filet map0
-		if (this.map === 0)
-		{
-			this._ctx!.fillStyle = "#B9B9B9";
-			this._ctx!.fillStyle = "#6E6E6E";
-			this._ctx!.fillRect(this.width/2 - 2, 0, 2, this.height);
-			this._ctx!.fillStyle = "white";
+		if (this.map === 0) {
+			this._ctx!.fillStyle = '#B9B9B9';
+			this._ctx!.fillStyle = '#6E6E6E';
+			this._ctx!.fillRect(this.width / 2 - 2, 0, 2, this.height);
+			this._ctx!.fillStyle = 'white';
 		}
 
 		//draw Ball
@@ -303,51 +282,55 @@ class PongGame extends React.Component<MyProps> {
 		this._ctx!.fill();
 
 		//Draw Player1
-		if (this.map === 1)
-		{
-			let gradient1 = this._ctx!.createLinearGradient(0, this.height/2, this._playerOne.width * 3, this.height/2)!;
-			gradient1.addColorStop(0,"black");
-			gradient1.addColorStop(0.5,"#38FC25");
-			gradient1.addColorStop(1,"black");
+		if (this.map === 1) {
+			let gradient1 = this._ctx!.createLinearGradient(0, this.height / 2, this._playerOne.width * 3, this.height / 2)!;
+			gradient1.addColorStop(0, 'black');
+			gradient1.addColorStop(0.5, '#38FC25');
+			gradient1.addColorStop(1, 'black');
 			this._ctx!.fillStyle = gradient1;
 		}
-		if (this.map === 2)
-		{
-			let gradient1 = this._ctx!.createLinearGradient(0, this.height/2, this._playerOne.width * 3, this.height/2)!;
-			gradient1.addColorStop(0,"#88642F");
-			gradient1.addColorStop(0.5,"#E6C619");
-			gradient1.addColorStop(1,"#E6C619");
+		if (this.map === 2) {
+			let gradient1 = this._ctx!.createLinearGradient(0, this.height / 2, this._playerOne.width * 3, this.height / 2)!;
+			gradient1.addColorStop(0, '#88642F');
+			gradient1.addColorStop(0.5, '#E6C619');
+			gradient1.addColorStop(1, '#E6C619');
 			//gradient1.addColorStop(1,"#88642F");
 			this._ctx!.fillStyle = gradient1;
 		}
 		this._ctx!.fillRect(this._playerOne.x, this._playerOne.y, this._widthPlayer, this._playerOne.size);
 
 		//Draw Player 2
-		if (this.map === 1)
-		{
-			let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
-			gradient2.addColorStop(0,"black");
-			gradient2.addColorStop(0.5,"#38FC25");
-			gradient2.addColorStop(1,"black");
+		if (this.map === 1) {
+			let gradient2 = this._ctx!.createLinearGradient(
+				this.width - this._playerTwo.width * 3,
+				this.height / 2,
+				this.width,
+				this.height / 2,
+			)!;
+			gradient2.addColorStop(0, 'black');
+			gradient2.addColorStop(0.5, '#38FC25');
+			gradient2.addColorStop(1, 'black');
 			this._ctx!.fillStyle = gradient2;
 		}
-		if (this.map === 2)
-		{
-			let gradient2 = this._ctx!.createLinearGradient(this.width - this._playerTwo.width * 3, this.height/2, this.width, this.height/2)!;
-			gradient2.addColorStop(0,"#E6C619");
-			gradient2.addColorStop(0.5,"#E6C619");
-			gradient2.addColorStop(1,"#88642F");
+		if (this.map === 2) {
+			let gradient2 = this._ctx!.createLinearGradient(
+				this.width - this._playerTwo.width * 3,
+				this.height / 2,
+				this.width,
+				this.height / 2,
+			)!;
+			gradient2.addColorStop(0, '#E6C619');
+			gradient2.addColorStop(0.5, '#E6C619');
+			gradient2.addColorStop(1, '#88642F');
 			this._ctx!.fillStyle = gradient2;
 		}
 		this._ctx!.fillRect(this._playerTwo.x, this._playerTwo.y, this._widthPlayer, this._playerTwo.size);
 
 		//Score
 		this._ctx!.fillStyle = this.fillStyle;
-		if (this.map === 0)
-		this._ctx!.fillText(this.scoreP1 + ' ' + this.scoreP2, this.width / 2 - ((15 * 3) / 2), 30);
-		else
-			this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
-	};
+		if (this.map === 0) this._ctx!.fillText(this.scoreP1 + ' ' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
+		else this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
+	}
 
 	_startGame() {
 		const keystate = this._keystate;
@@ -387,9 +370,9 @@ class PongGame extends React.Component<MyProps> {
 	}
 
 	componentDidMount() {
-		 //let rep = prompt('J1 J2 ou W');
-		 //if (rep === 'J1') this._P1 = true;
-		 //else if (rep === 'J2') this._P2 = true;
+		//let rep = prompt('J1 J2 ou W');
+		//if (rep === 'J1') this._P1 = true;
+		//else if (rep === 'J2') this._P2 = true;
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
@@ -412,14 +395,12 @@ class PongGame extends React.Component<MyProps> {
 				this.scoreP2 = data.P2;
 
 				//Affichage du gagnant
-				if (this.scoreP1 >= 10)
-				{
+				if (this.scoreP1 >= 10) {
 					this.gamerunning = false;
 					this._printText('Player One win');
 					return;
 				}
-				if (this.scoreP2 >= 10)
-				{
+				if (this.scoreP2 >= 10) {
 					this.gamerunning = false;
 					this._printText('Player Two win');
 					return;
@@ -427,10 +408,8 @@ class PongGame extends React.Component<MyProps> {
 
 				//Affichage du score
 				this.gamerunning = false;
-				if (data.score === 1)
-					this._printText('Player One score');
-				if (data.score === 2)
-					this._printText('Player Two score');	
+				if (data.score === 1) this._printText('Player One score');
+				if (data.score === 2) this._printText('Player Two score');
 				setTimeout(() => (this.gamerunning = true), 2000);
 			}
 			if (!this._P1 && data.object === 'PowerUp') {
