@@ -47,7 +47,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 
 	const addParticipant = async () => {
 		const login = prompt("Enter the login of the participant");
-		
+		if (!login)
+			return;
 		try {
 			const { data } = await axios.get(`http://localhost:3000/users/profile/${login}`, { withCredentials: true });
 			const { id } = data;
