@@ -48,6 +48,11 @@ const ChatContainerWrapper = styled.div<{open: boolean}>`
 	transition: .2s ease all;
 	pointer-events: none;
 
+	@media (min-width: 1600px) {
+		width: 700px;
+		height: 600px;
+	}
+
 	${({ open }: any) => open && `
 		opacity: 1;
 		transform: translateY(0);

@@ -30,7 +30,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const sendMessage = async () => {
-		await axios.post(`http://localhost:3000/room/${room.id}/message`,
+		axios.post(`http://localhost:3000/room/${room.id}/message`,
 		{ body: message },
 		{ withCredentials: true });
 		setMessage("");
@@ -79,12 +79,6 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	return (<MessagesPaneWrapper>
 		{!detailsOpen && (<ChatHeader>
-			{/* {room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
-			<div>
-				{getUser() !== null && (<h4>{ getUser().user.login }</h4>)}
-				{getUser() === null && (<h4>{ chatName(room.participants) }</h4>)}
-				<span>{ getUser()?.user.status }</span>
-			</div> */}
 			{!isGroup() && (
 			<>
 				<img src={getUser()?.user.photo_url} alt={getUser()?.user.login}/>
@@ -116,7 +110,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			))}
 		</ChatMessages>
 		<ChatField>
-			<input type="text" placeholder="Type here" value={message} onChange={onMessage}/>
+			<input type="text" placeholder="Type here" value={message} onChange={onMessage} onKeyPress={(e: any) => e.key === "Enter" && sendMessage()}/>
 			<button onClick={sendMessage}>
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>

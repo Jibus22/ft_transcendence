@@ -6,6 +6,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import RemoveModeratorIcon from '@mui/icons-material/RemoveModerator';
+import Tooltip from "@mui/material/Tooltip";
 
 const RoomSettings = ({ room, currentUser }: any) => {
 
@@ -112,16 +113,16 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
 				{isModerator() && user.user.id !== currentUser.id && (
 					<ActionButtons>
-						<button onClick={() => ban(user)}>
+						<Tooltip title="Ban user"><button onClick={() => ban(user)}>
 							<BlockIcon />
-						</button>
-						<button onClick={() => mute(user)}>
+						</button></Tooltip>
+						<Tooltip title="Mute user"><button onClick={() => mute(user)}>
 							<VolumeOffIcon />
-						</button>
-						<button onClick={() => toggleModerator(user)}>
+						</button></Tooltip>
+						<Tooltip title={user.is_moderator ? "Remove moderator rights" : "Add moderator rights"}><button onClick={() => toggleModerator(user)}>
 							{!user.is_moderator && (<AddModeratorIcon />)}
 							{user.is_moderator && (<RemoveModeratorIcon />)}
-						</button>
+						</button></Tooltip>
 					</ActionButtons>
 				)}
 			</User>))
