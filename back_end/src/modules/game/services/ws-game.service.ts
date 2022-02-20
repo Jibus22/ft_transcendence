@@ -41,6 +41,15 @@ export class WsGameService {
     });
   }
 
+  async startGame([ch_id, op_id]: string[], game_uuid: string, server: Server) {
+    this.logger.log('startGame');
+    server.in([ch_id, op_id]).socketsJoin(game_uuid);
+    this.countdown(server, ch_id, game_uuid).then(async () => {
+      const onlineGame = await this.getOnlineGame(game_uuid);
+      server.except(game_uuid).emit('newOnlineGame', onlineGame);
+    });
+  }
+
   async createGame(
     [challenger, opponent]: User[],
     [ch_id, op_id]: string[],
@@ -48,12 +57,7 @@ export class WsGameService {
   ) {
     this.logger.log('createGame');
     const game_uuid = await this.gameService.newGame(challenger, opponent);
-
-    server.in([ch_id, op_id]).socketsJoin(game_uuid);
-    this.countdown(server, ch_id, game_uuid).then(async () => {
-      const onlineGame = await this.getOnlineGame(game_uuid);
-      server.except(game_uuid).emit('newOnlineGame', onlineGame);
-    });
+    this.startGame([ch_id, op_id], game_uuid, server);
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {

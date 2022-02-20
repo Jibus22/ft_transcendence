@@ -25,6 +25,7 @@ import { User } from '../users/entities/users.entity';
 import { OnlineGameDto } from './dto/online-game.dto';
 import { Game } from './entities/game.entity';
 import { plainToClass } from 'class-transformer';
+import { Player } from './entities/player.entity';
 
 @ApiTags('game')
 @UseGuards(AuthGuard)
@@ -64,7 +65,9 @@ export class GameController {
   @Serialize(NewGameDto)
   @Post('join')
   async playnow(@CurrentUser() user: User) {
-    return await this.gameService.joinGame(user);
+    const ret: { game_id: string; player: Player; joining: boolean } =
+      await this.gameService.joinGame(user);
+    this.gameGateway.joinGame(ret.game_id, ret.player, ret.joining);
   }
 
   @Get()

@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateGameDto } from '../dto/update-game.dto';
 import { Game } from '../entities/game.entity';
 import { Player } from '../entities/player.entity';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../../users/service-users/users.service';
 import {
@@ -91,41 +91,40 @@ export class GameService {
 
   ////////////////
 
-  private async updatePlayernGame(player1: Player, waiting_games: Game[]) {
-    let game: Game;
-    if (waiting_games.length > 0) {
-      game = waiting_games[0];
-      player1.game = game;
-      game.players.push(player1);
-    } else {
-      game = this.game_repo.create();
-      await this.game_repo.save(game);
-      player1.game = game;
-      game.players = [player1];
-    }
-    await this.player_repo.save(player1);
-    return await this.game_repo.save(game);
-  }
-
   async joinGame(user: User) {
-    let waiting_games: Game[] = [];
+    let game: Game;
+    let waiting_game: { gameId: string; total: number } = await this.player_repo
+      .createQueryBuilder('player')
+      .select('player.game')
+      .groupBy('player.game')
+      .addSelect('COUNT(player.game)', 'total')
+      .having('total = :tot', { tot: 1 })
+      .where('player.game is not null')
+      .getRawOne();
 
-    const player1 = this.player_repo.create({ user: user });
+    if (!waiting_game) {
+      game = this.game_repo.create();
+      game = await this.game_repo.save(game);
+    } else game = await this.game_repo.findOne(waiting_game.gameId);
+    let player1 = this.player_repo.create({ user: user, game: game });
+    player1 = await this.player_repo.save(player1);
+    this.game_repo
+      .createQueryBuilder()
+      .relation(Game, 'players')
+      .of(game)
+      .add(player1);
 
-    const games = await this.game_repo.find({
+    const game2 = await this.findOne(game.id, {
       relations: ['players', 'players.user'],
     });
-    if (games) {
-      waiting_games = games.filter((elem) => {
-        return elem.players.length === 1 && elem.players[0].user.id !== user.id;
-      });
-    }
+    console.log(`game_id: ${game2.id}  -- game.players:`);
+    console.log(game2.players);
 
-    let game = await this.updatePlayernGame(player1, waiting_games);
-    game = await this.game_repo.findOne(game.id, {
-      relations: ['players', 'players.user'],
-    });
-    return game;
+    return {
+      game_id: game.id,
+      player: player1,
+      joining: !!waiting_game,
+    };
   }
 
   ////////////////

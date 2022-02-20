@@ -20,6 +20,8 @@ import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
+import { Game } from './entities/game.entity';
+import { Player } from './entities/player.entity';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -61,6 +63,31 @@ export class GameGateway
   async handleDisconnect(client: Socket) {
     console.debug('ws game 🎲  disconnected -> ', client.id);
     await this.wsConnectionService.doHandleDisconnect(client);
+  }
+
+  async joinGame(game_id: string, player: Player, joining: boolean) {
+    console.log('joinGame - Gateway');
+    this.wsGameService.updatePlayerStatus(player.user, { is_in_game: true });
+    if (!joining) return null;
+    console.log('JOINING');
+
+    const game = await this.gameService.findOne(game_id, {
+      relations: ['players', 'players.user'],
+    });
+    console.log(`game_id: ${game.id}  -- game.players:`);
+    console.log(game.players);
+    return;
+    const ws_ids = [game.players[0].user.game_ws, game.players[1].user.game_ws];
+    this.server.to(ws_ids[0]).emit(
+      'newPlayerJoined',
+      plainToClass(UserDto, game.players[1].user, {
+        excludeExtraneousValues: true,
+      }),
+    );
+    this.wsGameService.startGame(ws_ids, game.id, this.server);
+    return plainToClass(UserDto, game.players[0].user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async gameInvitation(challenger: User, opponent: User) {
@@ -130,6 +157,7 @@ export class GameGateway
     });
 
     ///// TEST // TODO: delete test below
+    console.log(`client id: ${client.id}`);
     console.log(
       'countdown finished, game: ',
       await this.gameService.findOne(obj.room, null),
