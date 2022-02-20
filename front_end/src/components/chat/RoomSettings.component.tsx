@@ -70,6 +70,14 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
 
+	const makePublic = async () => {
+		
+	};
+
+	const makePrivate = async () => {
+
+	};
+
 	const mute = async (user: any) => {
 		const duration = prompt("Mute duration, in minutes");
 		if (duration) {
@@ -104,6 +112,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				<h3>Chat settings</h3>
 				<SettingsWrapper>
 					<Button onClick={() => changePassword()}>Change/Set password</Button>
+					{room.is_private && <Button onClick={() => makePublic()}>Set room as public</Button>}
+					{!room.is_private && <Button onClick={() => makePrivate()}>Set room as private</Button>}
 				</SettingsWrapper>
 			</>
 		)}

@@ -144,7 +144,7 @@ const ChatHeader = styled.div`
 	}
 
 	img:nth-child(1) {
-		margin-left: 0;
+		margin-left: 10px;
 	}
 
 	> div {

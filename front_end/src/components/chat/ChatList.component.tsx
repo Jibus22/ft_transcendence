@@ -115,19 +115,31 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		openChat(data);
 	};
 
+	const joinPublicChatRoom = async (room: any) => {
+		if (room.participants.filter((participant: any) => participant.user.id === currentUser.id).length > 0) {
+			return openPublicRoom(room.id);
+		}
+		let password = null;
+		if (room.is_password_protected) {
+			password = prompt("Enter the password for this room");
+			if (!password)
+				return;
+		}
+		axios.patch(`http://localhost:3000/me/rooms/${room.id}`, { password }, { withCredentials: true })
+		.then(data => {
+			console.log("Joined public", data);
+			openPublicRoom(room.id);
+		})
+		.catch(error => {
+			console.log("CANNOT JOIN", error)
+			alert("Wrong password!");
+		});
+	};
+
 	useEffect(() => {
 		getUsers();
-	}, []);
-
-	useEffect(() => {
 		getChats();
-	}, []);
-
-	useEffect(() => {
 		getFriends();
-	}, []);
-
-	useEffect(() => {
 		getPublicRooms();
 	}, []);
 
@@ -193,9 +205,11 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		{ tab === 2 && !search.length && (
 			<>
 				<List>
-					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => openPublicRoom(chat.id)}>
+					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => joinPublicChatRoom(chat)}>
+						{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 						<div>
 							<h4>{chatName(chat, currentUser)}</h4>
+							<span>{chat.is_password_protected ? "locked" : ""}</span>
 						</div>
 					</Preview>))}
 					{!publicChats.length && <span className="empty-message">No chat yet</span>}
@@ -280,10 +294,10 @@ const Preview = styled.div`
 	}
 
 	> img {
-		width: 50px;
-		height: 50px;
+		width: 40px;
+		height: 40px;
 		border-radius: 100%;
-		margin-left: -30px;
+		margin-left: -20px;
 		background-color: white;
 	}
 
