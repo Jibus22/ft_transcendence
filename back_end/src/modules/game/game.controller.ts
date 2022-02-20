@@ -66,7 +66,7 @@ export class GameController {
   @Post('join')
   async playnow(@CurrentUser() user: User) {
     const ret: { game_id: string; player: Player; joining: boolean } =
-      await this.gameService.joinGame(user);
+      await this.gameService.joinGame(user.id);
     this.gameGateway.joinGame(ret.game_id, ret.player, ret.joining);
   }
 

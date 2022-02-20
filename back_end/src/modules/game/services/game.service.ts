@@ -91,22 +91,25 @@ export class GameService {
 
   ////////////////
 
-  async joinGame(user: User) {
+  async joinGame(userId: string) {
     let game: Game;
-    let waiting_game: { gameId: string; total: number } = await this.player_repo
-      .createQueryBuilder('player')
-      .select('player.game')
-      .groupBy('player.game')
-      .addSelect('COUNT(player.game)', 'total')
-      .having('total = :tot', { tot: 1 })
-      .where('player.game is not null')
-      .getRawOne();
+    let player1: Player;
+    const user = await this.usersService.findOne(userId);
+    const waiting_game: { gameId: string; total: number } =
+      await this.player_repo
+        .createQueryBuilder('player')
+        .select('player.game')
+        .groupBy('player.game')
+        .addSelect('COUNT(player.game)', 'total')
+        .having('total = :tot', { tot: 1 })
+        .where('player.game is not null')
+        .getRawOne();
 
     if (!waiting_game) {
       game = this.game_repo.create();
       game = await this.game_repo.save(game);
     } else game = await this.game_repo.findOne(waiting_game.gameId);
-    let player1 = this.player_repo.create({ user: user, game: game });
+    player1 = this.player_repo.create({ user: user, game: game });
     player1 = await this.player_repo.save(player1);
     this.game_repo
       .createQueryBuilder()
@@ -115,7 +118,7 @@ export class GameService {
       .add(player1);
 
     const game2 = await this.findOne(game.id, {
-      relations: ['players', 'players.user'],
+      relations: ['players', 'players.user', 'players.game'],
     });
     console.log(`game_id: ${game2.id}  -- game.players:`);
     console.log(game2.players);

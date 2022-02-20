@@ -72,7 +72,7 @@ export class GameGateway
     console.log('JOINING');
 
     const game = await this.gameService.findOne(game_id, {
-      relations: ['players', 'players.user'],
+      relations: ['players', 'players.user', 'players.game'],
     });
     console.log(`game_id: ${game.id}  -- game.players:`);
     console.log(game.players);
