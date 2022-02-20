@@ -9,25 +9,21 @@ import { useEffect, useState }  from 'react'
 declare let window: any;
 
 const chatName = (chat: any, currentUser: any) => {
-	const user = getUser(chat.participants, currentUser);
-	if (user && chat.is_private) {
-		return user.user.login;
-	}
+	try {
+		if (chat.participants.length === 1) {
+			return chat.participants[0].user.login;
+		}
+		if (chat.participants.length === 2) {
+			if (chat.participants.filter((user: any) => user.user.id === currentUser.id).length > 0) {
+				return chat.participants[0].user.login === currentUser.login
+				? chat.participants[1].user.login
+				: chat.participants[0].user.login;
+			}
+		}
+	} catch {}
 	let name = "";
 	chat.participants.forEach((p: any) => name += p.user.login[0]);
 	return name;
-}
-
-const getUser = (participants: any, currentUser: any) => {
-	if (!currentUser)
-		return null;
-	if (participants.length === 1) {
-		return participants[0];
-	}
-	if (participants.length === 2) {
-		return participants.filter((user: any) => user.user.id !== currentUser.id)[0];
-	}
-	return null;
 }
 
 const ChatList = ({ openChat, currentUser }: any) => {
@@ -41,7 +37,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	const [friends, setFriends] = useState<any[]>([]);
 
 	const getChats = async () => {
-		const { data } = await axios.get("http://localhost:3000/room/all", {
+		const { data } = await axios.get("http://localhost:3000/me/rooms", {
 			withCredentials: true
 		});
 		setChats(data);
@@ -83,9 +79,11 @@ const ChatList = ({ openChat, currentUser }: any) => {
 
 	const openChatHandler = async (userId: any) => {
 		const existingChats = chats.filter(
-			(chat: any) => chat.participants.length === 2 &&
-				chat.participants.filter((participant: any) => participant.user.id === userId).length > 0
+			(chat: any) => chat.participants.length === 2
+				&& chat.participants.filter((participant: any) => participant.user.id === userId).length > 0
+				&& chat.participants.filter((participant: any) => participant.user.id === currentUser.id).length > 0
 		);
+		console.log("EXISTING CHATS", existingChats);
 		if (existingChats.length > 0) {
 			setSearchResults([]);
 			setSearch("");
@@ -175,8 +173,8 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
 		{ tab === 0 && !search.length && (<List>
-			{chats.map((chat: any) => (<Preview key={chat.id} onClick={() => openChat(chat)}>
-				{getUser(chat.participants, currentUser) !== null && chat.is_private && (<img src={getUser(chat.participants, currentUser).user.photo_url} alt={getUser(chat.participants, currentUser).user.login} />)}
+			{chats.map((chat: any) => (chat && <Preview key={chat.id} onClick={() => openChat(chat)}>
+				{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 				<div>
 					<h4>{chatName(chat, currentUser)}</h4>
 				</div>
@@ -285,6 +283,12 @@ const Preview = styled.div`
 		width: 50px;
 		height: 50px;
 		border-radius: 100%;
+		margin-left: -30px;
+		background-color: white;
+	}
+
+	> img:nth-child(1) {
+		margin: 0;
 	}
 
 	> div {
