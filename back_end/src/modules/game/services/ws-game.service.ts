@@ -3,9 +3,7 @@ import { Server } from 'socket.io';
 import { User } from 'src/modules/users/entities/users.entity';
 import { Injectable, Logger } from '@nestjs/common';
 import { GameService } from './game.service';
-import { randomUUID } from 'crypto';
-import { plainToClass } from 'class-transformer';
-import { OnlineGameDto } from '../dto/online-game.dto';
+import { myPtoOnlineGameDto, sleep } from '../utils/utils';
 
 @Injectable()
 export class WsGameService {
@@ -15,9 +13,6 @@ export class WsGameService {
   ) {}
 
   private readonly logger = new Logger('WsGameService');
-  private readonly sleep = (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
 
   private async countdown(server: Server, ch_id: string, room: string) {
     this.logger.log('countDown');
@@ -28,7 +23,7 @@ export class WsGameService {
         server.to(ch_id).emit('setMap', room);
         server.to(room).emit('startGame', room);
       }
-      await this.sleep(1000);
+      await sleep(1000);
     }
   }
 
@@ -36,8 +31,15 @@ export class WsGameService {
     const game = await this.gameService.findOne(game_uuid, {
       relations: ['players', 'players.user', 'players.user.local_photo'],
     });
-    return plainToClass(OnlineGameDto, game, {
-      excludeExtraneousValues: true,
+    return myPtoOnlineGameDto(game);
+  }
+
+  async startGame([ch_id, op_id]: string[], game_uuid: string, server: Server) {
+    this.logger.log('startGame');
+    server.in([ch_id, op_id]).socketsJoin(game_uuid);
+    this.countdown(server, ch_id, game_uuid).then(async () => {
+      const onlineGame = await this.getOnlineGame(game_uuid);
+      server.except(game_uuid).emit('newOnlineGame', onlineGame);
     });
   }
 
@@ -48,12 +50,7 @@ export class WsGameService {
   ) {
     this.logger.log('createGame');
     const game_uuid = await this.gameService.newGame(challenger, opponent);
-
-    server.in([ch_id, op_id]).socketsJoin(game_uuid);
-    this.countdown(server, ch_id, game_uuid).then(async () => {
-      const onlineGame = await this.getOnlineGame(game_uuid);
-      server.except(game_uuid).emit('newOnlineGame', onlineGame);
-    });
+    this.startGame([ch_id, op_id], game_uuid, server);
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
