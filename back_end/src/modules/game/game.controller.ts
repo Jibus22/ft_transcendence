@@ -14,7 +14,6 @@ import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
-import { NewGameDto } from './dto/new-game.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { UserDto } from '../users/dtos/user.dto';
 import { GameGateway } from './game.gateway';
@@ -24,8 +23,6 @@ import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
 import { OnlineGameDto } from './dto/online-game.dto';
 import { Game } from './entities/game.entity';
-import { plainToClass } from 'class-transformer';
-import { Player } from './entities/player.entity';
 
 @ApiTags('game')
 @UseGuards(AuthGuard)
@@ -52,6 +49,15 @@ export class GameController {
     return opponent;
   }
 
+  @ApiResponse({ type: UserDto, isArray: false })
+  @ApiOperation({ summary: 'join a random game' })
+  @Post('join')
+  async playnow(@CurrentUser() user: User) {
+    const ret: { game_id: string; joining: boolean } =
+      await this.gameService.joinGame(user.id);
+    return await this.gameGateway.joinGame(ret.game_id, ret.joining);
+  }
+
   /// ---------------- TEST --------------------
   @Post('test')
   test(@CurrentUser() user: User) {
@@ -59,16 +65,6 @@ export class GameController {
     this.gameGateway.serverToClient(user.game_ws, 'This is a test from SERVER');
   }
   /// ---------------- TEST END ----------------
-
-  @ApiResponse({ type: NewGameDto, isArray: false })
-  @ApiOperation({ summary: 'join a random game' })
-  @Serialize(NewGameDto)
-  @Post('join')
-  async playnow(@CurrentUser() user: User) {
-    const ret: { game_id: string; player: Player; joining: boolean } =
-      await this.gameService.joinGame(user.id);
-    this.gameGateway.joinGame(ret.game_id, ret.player, ret.joining);
-  }
 
   @Get()
   @ApiOperation({ summary: 'returns all games' })

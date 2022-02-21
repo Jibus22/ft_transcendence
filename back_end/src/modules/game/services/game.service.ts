@@ -69,7 +69,6 @@ export class GameService {
       opponent.login,
       err,
       err.errorPlayerNotInGame,
-      // null,
     );
     return await this.createGameTable(challenger, opponent);
   }
@@ -117,17 +116,8 @@ export class GameService {
       .of(game)
       .add(player1);
 
-    const game2 = await this.findOne(game.id, {
-      relations: ['players', 'players.user', 'players.game'],
-    });
-    console.log(`game_id: ${game2.id}  -- game.players:`);
-    console.log(game2.players);
-
-    return {
-      game_id: game.id,
-      player: player1,
-      joining: !!waiting_game,
-    };
+    this.usersService.updateUser(user, { is_in_game: true });
+    return { game_id: game.id, joining: !!waiting_game };
   }
 
   ////////////////

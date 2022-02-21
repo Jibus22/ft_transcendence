@@ -189,6 +189,12 @@ const MainPage = () => {
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
+		socket.on('newPlayerJoined', (obj: any) => {
+			console.log(`💌  Event: newPlayerJoined -> `, obj);
+			//Dans la page d'attente du joueur 1, afficher le userdto obj
+			//du type qui vient de rejoindre le jeu
+		});
+
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);
 			//catch error

@@ -12,16 +12,14 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { User } from '../users/entities/users.entity';
-import { plainToClass } from 'class-transformer';
-import { UserDto } from '../users/dtos/user.dto';
 import { WsGameService } from './services/ws-game.service';
 import { Logger, UseFilters } from '@nestjs/common';
 import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
-import { Game } from './entities/game.entity';
-import { Player } from './entities/player.entity';
+import { myPtoUserDto } from './utils/utils';
+import { UserDto } from '../users/dtos/user.dto';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -52,42 +50,34 @@ export class GameGateway
   private readonly logger = new Logger('GameGateway');
 
   afterInit() {
-    console.debug('ws game 🎲  afterInit');
+    this.logger.debug('ws game 🎲  afterInit');
   }
 
   async handleConnection(client: Socket) {
-    console.debug('ws game 🎲  connect -> ', client.id);
+    this.logger.debug('ws game 🎲  connect -> ', client.id);
     await this.wsConnectionService.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
-    console.debug('ws game 🎲  disconnected -> ', client.id);
+    this.logger.debug('ws game 🎲  disconnected -> ', client.id);
     await this.wsConnectionService.doHandleDisconnect(client);
   }
 
-  async joinGame(game_id: string, player: Player, joining: boolean) {
-    console.log('joinGame - Gateway');
-    this.wsGameService.updatePlayerStatus(player.user, { is_in_game: true });
+  async joinGame(game_id: string, joining: boolean) {
+    this.logger.log('joinGame');
     if (!joining) return null;
-    console.log('JOINING');
 
     const game = await this.gameService.findOne(game_id, {
-      relations: ['players', 'players.user', 'players.game'],
+      relations: ['players', 'players.user'],
     });
-    console.log(`game_id: ${game.id}  -- game.players:`);
-    console.log(game.players);
-    return;
+    this.logger.log(`game_id: ${game.id}  -- game.players:`);
+    this.logger.log(game.players);
     const ws_ids = [game.players[0].user.game_ws, game.players[1].user.game_ws];
-    this.server.to(ws_ids[0]).emit(
-      'newPlayerJoined',
-      plainToClass(UserDto, game.players[1].user, {
-        excludeExtraneousValues: true,
-      }),
-    );
+    this.server
+      .to(ws_ids[0])
+      .emit('newPlayerJoined', myPtoUserDto(game.players[1].user));
     this.wsGameService.startGame(ws_ids, game.id, this.server);
-    return plainToClass(UserDto, game.players[0].user, {
-      excludeExtraneousValues: true,
-    });
+    return myPtoUserDto(game.players[0].user);
   }
 
   async gameInvitation(challenger: User, opponent: User) {
@@ -100,7 +90,7 @@ export class GameGateway
 
     opponent_sock[0].emit(
       'gameInvitation',
-      plainToClass(UserDto, challenger),
+      myPtoUserDto(challenger),
       challenger_sock[0].id,
     );
   }
@@ -125,9 +115,7 @@ export class GameGateway
     if (reply.response === 'OK') {
       this.logger.log(`gameInvitation accepted: ${reply.response}`);
       this.wsGameService.updatePlayerStatus(opponent, { is_in_game: true });
-      this.server
-        .to(reply.to)
-        .emit('gameAccepted', plainToClass(UserDto, opponent));
+      this.server.to(reply.to).emit('gameAccepted', myPtoUserDto(opponent));
       this.wsGameService
         .createGame([challenger, opponent], [reply.to, client.id], this.server)
         .catch((e) => {
@@ -140,19 +128,17 @@ export class GameGateway
       this.wsGameService.updatePlayerStatus(challenger, {
         is_in_game: false,
       });
-      this.server
-        .to(reply.to)
-        .emit('gameDenied', plainToClass(UserDto, opponent));
+      this.server.to(reply.to).emit('gameDenied', myPtoUserDto(opponent));
     }
   }
 
   @SubscribeMessage('setMap')
   async setMap(
     @ConnectedSocket() client: Socket,
-    @MessageBody() obj: { room: string; map: string },
+    @MessageBody() obj: { room: string; gamemap: string },
   ) {
     await this.gameService.updateGame(obj.room, {
-      map: obj.map,
+      map: obj.gamemap,
       watch: randomUUID(),
     });
 
