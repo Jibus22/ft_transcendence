@@ -52,6 +52,7 @@ export default function MainPong() {
 	};
 
 	const [data, setData] = useState<User[] | UserChallenge[]>([]);
+	const [nbPlayer, setNbPlayer] = useState(0);
 
 	const [disableMap, setDisableMap] = useState<boolean>(false);
 
@@ -60,10 +61,12 @@ export default function MainPong() {
 
 		if (!isOpponant) {
 			setData(challengData);
-			//console.log('exterieur');
+			//console.log('exterieur');]
+			setNbPlayer(1);
 		} else {
 			setData(dataUserChallenge);
 			//console.log('domicile');
+			setNbPlayer(2);
 			if (acceptGame === false) {
 				setOpacity(true);
 			}

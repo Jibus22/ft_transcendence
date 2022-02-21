@@ -61,7 +61,7 @@ export default function Play({ Loadingclick }: Props) {
 						textTransform: 'none',
 					}}
 				>
-					Invite a friend
+					Invite someone
 				</Button>
 			</div>
 		);

@@ -319,9 +319,9 @@ const MainPage = () => {
 			</Backdrop>
 			{timeSnack && <SnackBarre wsId={wsId} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
 
-			<div>
+			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
-			</div>
+			</div> */}
 			{headerLeave()}
 
 			{/* <button onClick={blabla}> push </button> */}
