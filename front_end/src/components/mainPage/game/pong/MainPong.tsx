@@ -62,11 +62,11 @@ export default function MainPong() {
 		if (!isOpponant) {
 			setData(challengData);
 			//console.log('exterieur');]
-			setNbPlayer(1);
+			setNbPlayer(2);
 		} else {
 			setData(dataUserChallenge);
 			//console.log('domicile');
-			setNbPlayer(2);
+			setNbPlayer(1);
 			if (acceptGame === false) {
 				setOpacity(true);
 			}
@@ -148,7 +148,7 @@ export default function MainPong() {
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
 					{count === 0 ? (
-						<PongGame />
+						<PongGame map={map} roomId={roomId} joueur={nbPlayer} socket={gameWs} />
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
