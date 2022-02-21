@@ -48,3 +48,16 @@ export interface UserChallenge {
 	login: string;
 	photo_url: string;
 }
+
+interface UserOnlineGame {
+	login: string;
+	photo_url: string;
+	status: string;
+	score: number;
+}
+
+export interface OnlineGameType {
+	challenger: UserOnlineGame;
+	opponent: UserOnlineGame;
+	watch: string;
+}

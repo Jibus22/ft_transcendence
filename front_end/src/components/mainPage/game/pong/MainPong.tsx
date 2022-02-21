@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import MapChoice from './mapChoice/MapChoice';
-// import PongGame from './mateo/PongGame';
+import PongGame from './mateo/PongGame';
 import './pongGame.scss';
 import { User, UserChallenge } from '../../../type';
 
@@ -143,12 +143,14 @@ export default function MainPong() {
 		}
 	};
 
+	// <PongGame map={map} roomId={roomId} joueur={nbPlayer} socket={gameWs} />
+
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
 					{count === 0 ? (
-						<h1>lalalaalal</h1>
+						<PongGame />
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
