@@ -61,7 +61,7 @@ class PongGame extends React.Component<MyProps> {
 	font: string = '30px Arial';
 	fillStyle: string = 'white';
 	fontFace: FontFace = new FontFace('', '');
-	map = this.props.map;
+	map :number = 0;
 
 	sleep() {
 		sleep(this.sleepduration);
@@ -83,6 +83,12 @@ class PongGame extends React.Component<MyProps> {
 		this._ctx = this._canvas.getContext('2d')!;
 		this.font = '30px Arial';
 		this._ctx!.font = this.font;
+		if (this.props.map === "one")
+			this.map = 0;
+		else if (this.props.map === "two")
+			this.map = 1;
+		else
+			this.map = 2;
 		if (this.map === 0) this.powerUp = false;
 		if (this.map === 1) {
 			this.imgBackground.src = 'Fondmap1.jpeg';
@@ -124,7 +130,7 @@ class PongGame extends React.Component<MyProps> {
 		if (ret === 1) this.scoreP1++;
 
 		//Send Score
-		this.props.socket.send(
+		this.props.socket!.send(
 			JSON.stringify({
 				type: 'message',
 				object: 'Score',
@@ -168,7 +174,7 @@ class PongGame extends React.Component<MyProps> {
 			//Power up large paddle
 			if (ret === 1) {
 				this._playerOne._largePaddle(this.height);
-				this.props.socket.send(
+				this.props.socket!.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -179,7 +185,7 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player One large Paddle');
 			}
 			if (ret === 2) {
-				this.props.socket.send(
+				this.props.socket!.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -194,7 +200,7 @@ class PongGame extends React.Component<MyProps> {
 			//Power Up controle inverse
 			if (ret === 2) {
 				this._playerOne._invertControlTemporarily();
-				this.props.socket.send(
+				this.props.socket!.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -205,7 +211,7 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player One inverted Control');
 			}
 			if (ret === 1) {
-				this.props.socket.send(
+				this.props.socket!.send(
 					JSON.stringify({
 						type: 'message',
 						object: 'PowerUp',
@@ -222,7 +228,7 @@ class PongGame extends React.Component<MyProps> {
 		if (this._P1) {
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0) this._score(ret); // someone scored
-			this.props.socket.send(
+			this.props.socket!.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Ball',
@@ -233,7 +239,7 @@ class PongGame extends React.Component<MyProps> {
 		}
 		if (this._P1) {
 			this._playerOne._update(this._keystate, this.height, this._ball);
-			this.props.socket.send(
+			this.props.socket!.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Player1',
@@ -246,7 +252,7 @@ class PongGame extends React.Component<MyProps> {
 		if (this._P2) {
 			this._playerTwo._update(this._keystate, this.height, this._ball);
 			//console.log(client);
-			this.props.socket.send(
+			this.props.socket!.send(
 				JSON.stringify({
 					type: 'message',
 					object: 'Player2',
@@ -356,7 +362,7 @@ class PongGame extends React.Component<MyProps> {
 			},
 			false,
 		);
-		this.props.socket.send(
+		this.props.socket!.send(
 			JSON.stringify({
 				type: 'message',
 				object: 'Ready',
@@ -376,7 +382,7 @@ class PongGame extends React.Component<MyProps> {
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
-		this.props.socket.on('message', (message) => {
+		this.props.socket!.on('message', (message) => {
 			const data = JSON.parse(message.data);
 			if (!this._P2 && data.object === 'Player2') {
 				this._playerTwo = data.player;
