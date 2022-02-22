@@ -199,14 +199,6 @@ const MainPage = () => {
 			console.log(`💌  Event: myerror -> ${message}`);
 			//catch error
 		});
-
-		/// ---------------- TEST --------------------
-
-		socket.on('serverToClient', async (data: string) => {
-			console.log(`💌  Event: serverToClient ->`, data);
-			socket.emit('clientToServer', 'This is a message from Client');
-		});
-		/// ---------------- TEST END ----------------
 	};
 
 	/* -----------------------

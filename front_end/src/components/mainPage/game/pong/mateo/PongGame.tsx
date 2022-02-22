@@ -15,6 +15,7 @@ function getRandomInt(max: number) {
 	return Math.floor(Math.random() * max);
 }
 
+//TODO: Potentially resources expensive algo -> improve it
 function sleep(milliseconds: number) {
 	const date = Date.now();
 	let currentDate = null;
@@ -61,7 +62,7 @@ class PongGame extends React.Component<MyProps> {
 	font: string = '30px Arial';
 	fillStyle: string = 'white';
 	fontFace: FontFace = new FontFace('', '');
-	map :number = 0;
+	map: number = 0;
 
 	sleep() {
 		sleep(this.sleepduration);
@@ -83,12 +84,9 @@ class PongGame extends React.Component<MyProps> {
 		this._ctx = this._canvas.getContext('2d')!;
 		this.font = '30px Arial';
 		this._ctx!.font = this.font;
-		if (this.props.map === "one")
-			this.map = 0;
-		else if (this.props.map === "two")
-			this.map = 1;
-		else
-			this.map = 2;
+		if (this.props.map === 'one') this.map = 0;
+		else if (this.props.map === 'two') this.map = 1;
+		else this.map = 2;
 		if (this.map === 0) this.powerUp = false;
 		if (this.map === 1) {
 			this.imgBackground.src = 'Fondmap1.jpeg';
@@ -348,20 +346,6 @@ class PongGame extends React.Component<MyProps> {
 			evt.preventDefault();
 			delete keystate[evt.key];
 		});
-		document.addEventListener(
-			'ontouchstart',
-			function (e) {
-				e.preventDefault();
-			},
-			false,
-		);
-		document.addEventListener(
-			'ontouchmove',
-			function (e) {
-				e.preventDefault();
-			},
-			false,
-		);
 		this.props.socket!.send(
 			JSON.stringify({
 				type: 'message',
@@ -442,7 +426,7 @@ class PongGame extends React.Component<MyProps> {
 	private _touch(e: any) {
 		console.log(e);
 		e.preventDefault();
-		var yPos = e.touches[0].pageY - e.touches[0].target.offsetTop - this._playerOne.size / 2;
+		yPos = e.touches[0].pageY - e.touches[0].target.offsetTop - this._playerOne.size / 2;
 		this._playerOne.y = yPos;
 	}
 

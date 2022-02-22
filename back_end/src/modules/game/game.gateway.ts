@@ -19,7 +19,6 @@ import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
 import { myPtoUserDto } from './utils/utils';
-import { UserDto } from '../users/dtos/user.dto';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -175,25 +174,4 @@ export class GameGateway
   ) {
     client.leave(room);
   }
-
-  /////////////////////////////////////////////////
-  /// ---------------- TEST --------------------///
-  /////////////////////////////////////////////////
-  async serverToClient(id: string, data: string) {
-    console.log('gateway: serverToClient');
-    const client = await this.server.in(id).fetchSockets();
-    if (!client) console.log('no client');
-    else if (client.length > 1) console.log('strange: client > 1');
-    else client[0].emit('serverToClient', data);
-  }
-
-  @SubscribeMessage('clientToServer')
-  clientToServer(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() voila: string,
-  ) {
-    console.log('clientToServer');
-    console.log(`------test here------ ${voila} --- client.id: ${client.id}`);
-  }
-  /// ---------------- TEST END ----------------///
 }

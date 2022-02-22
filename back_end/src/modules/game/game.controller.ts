@@ -58,14 +58,6 @@ export class GameController {
     return await this.gameGateway.joinGame(ret.game_id, ret.joining);
   }
 
-  /// ---------------- TEST --------------------
-  @Post('test')
-  test(@CurrentUser() user: User) {
-    console.log('TEST route');
-    this.gameGateway.serverToClient(user.game_ws, 'This is a test from SERVER');
-  }
-  /// ---------------- TEST END ----------------
-
   @Get()
   @ApiOperation({ summary: 'returns all games' })
   async findAll() {
