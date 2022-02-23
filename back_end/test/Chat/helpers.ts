@@ -158,6 +158,19 @@ export class ChatHelpers {
       .send(body);
   }
 
+  async updateIsPrivateStatus(
+    tmpCookies: string[],
+    room_id: string,
+    bodyRequest?: { is_private: boolean },
+  ) {
+    const body = bodyRequest ? bodyRequest : {};
+
+    return await request(this.app.getHttpServer())
+      .patch(`/room/${room_id}/privateStatus`)
+      .set('Cookie', tmpCookies)
+      .send(body);
+  }
+
   async joinRoom(
     tmpCookies: string[],
     room_id: string,
