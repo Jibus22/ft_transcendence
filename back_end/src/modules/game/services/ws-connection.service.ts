@@ -1,8 +1,8 @@
 import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { UsersService } from 'src/modules/users/service-users/users.service';
 import { Socket } from 'socket.io';
-import { UpdateUserDto } from 'src/modules/users/dtos/update-users.dto';
+import { UpdateUserDto } from '../../users/dtos/update-users.dto';
+import { UsersService } from '../../users/service-users/users.service';
 
 @Injectable()
 export class WsConnectionService {

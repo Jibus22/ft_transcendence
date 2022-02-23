@@ -42,12 +42,12 @@ export class DevelopmentController {
   @ApiProperty()
   @Post('/createUserBatch')
   async createUserBatch(@Body() body: UpdateUserDto[] | UpdateUserDto) {
-    console.log('creatuserbatch', body);
+    // console.log('creatuserbatch', body);
     const users: Partial<User>[] = body as UpdateUserDto[];
     for (const user of users) {
-      console.log('creatuserbatch user', user);
+      // console.log('creatuserbatch user', user);
       await this.developmentService.dev_createUserBatch(user).catch((err) => {
-        console.log(`createUserBatch: error: ${err}`);
+        // console.log(`createUserBatch: error: ${err}`);
       });
     }
     return await this.developmentService.dev_getAllUsers();

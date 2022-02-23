@@ -1,8 +1,6 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { type } from 'os';
-import { async } from 'rxjs';
 import { FindManyOptions, Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
@@ -10,6 +8,7 @@ import { UsersService } from '../users/service-users/users.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
+import { UpdateIsPrivateDto } from './dto/update-isPrivate.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
@@ -60,7 +59,10 @@ export class ChatService {
       newParticipant.is_moderator = isOwner;
       return await this.repoParticipants.save(newParticipant);
     } else {
-      new Logger('CreateParticipant').debug('failed to add missing user', userId);
+      new Logger('CreateParticipant').debug(
+        'failed to add missing user',
+        userId,
+      );
     }
   }
 
@@ -193,6 +195,16 @@ export class ChatService {
       room.password = await this.encodePassword(updatePasswordDto.password);
     }
     return await this.repoRoom.save(room);
+  }
+
+  async updatePrivateStatus(
+    room: Room,
+    updateIsPrivateDto: UpdateIsPrivateDto,
+  ) {
+    if (updateIsPrivateDto.is_private !== room.is_private) {
+      room.is_private = updateIsPrivateDto.is_private;
+      return await this.repoRoom.save(room);
+    }
   }
 
   async removeRoom(targetedRoom: Room) {
