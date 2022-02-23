@@ -11,13 +11,13 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
   ApiOperation,
   ApiResponse,
-  ApiTags
+  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RoomBanGuard } from '../../guards/roomBan.guard';
@@ -39,6 +39,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { ParticipantDto } from './dto/participant.dto';
 import { RestrictionDto } from './dto/restriction.dto';
 import { RoomDto, RoomWithRestrictionsDto } from './dto/room.dto';
+import { UpdateIsPrivateDto } from './dto/update-isPrivate.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Room } from './entities/room.entity';
@@ -60,8 +61,8 @@ import { Room } from './entities/room.entity';
 @UseGuards(AuthGuard)
 @Controller('/room')
 export class ChatController {
-  constructor(private readonly chatService: ChatService,) {}
-    private readonly logger = new Logger(ChatController.name);
+  constructor(private readonly chatService: ChatService) {}
+  private readonly logger = new Logger(ChatController.name);
 
   /*
   ===================================================================
@@ -347,6 +348,33 @@ export class ChatController {
   ) {
     return await this.chatService
       .updatePassword(room, updatePasswordDto)
+      .catch((error) => {
+        this.logger.debug(error);
+        if (error.status) throw new HttpException(error, error.status);
+        throw new BadGatewayException('Database could not perform request');
+      });
+  }
+
+  @ApiOperation({
+    summary: "Update a owned room's private status",
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Private status updated',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'not enough rights',
+  })
+  @Patch(':room_id/privateStatus')
+  @Serialize(RoomDto)
+  @UseGuards(RoomOwnerGuard)
+  async updatePrivateStatus(
+    @TargetedRoom() room: Room,
+    @Body() updateIsPrivateDto: UpdateIsPrivateDto,
+  ) {
+    return await this.chatService
+      .updatePrivateStatus(room, updateIsPrivateDto)
       .catch((error) => {
         this.logger.debug(error);
         if (error.status) throw new HttpException(error, error.status);

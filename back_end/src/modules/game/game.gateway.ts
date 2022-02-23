@@ -50,7 +50,7 @@ export class GameGateway
   private readonly logger = new Logger('GameGateway');
 
   afterInit() {
-    console.debug('ws game 🎲  afterInit');
+    // console.debug('ws game 🎲  afterInit');
   }
 
   async handleConnection(client: Socket) {
