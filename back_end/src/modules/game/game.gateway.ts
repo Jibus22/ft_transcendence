@@ -19,6 +19,13 @@ import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
 import { myPtoUserDto } from './utils/utils';
+import {
+  BallPosDto,
+  BroadcastDto,
+  GamePlayerDto,
+  PowerUpDto,
+  ScoreDto,
+} from './dto/gameplay.dto';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -48,6 +55,8 @@ export class GameGateway
 
   private readonly logger = new Logger('GameGateway');
 
+  //------------------------- LIFECYCLE EVENTS -------------------------------//
+
   afterInit() {
     this.logger.debug('ws game 🎲  afterInit');
   }
@@ -61,6 +70,8 @@ export class GameGateway
     this.logger.debug('ws game 🎲  disconnected -> ', client.id);
     await this.wsConnectionService.doHandleDisconnect(client);
   }
+
+  //---------------------- GAME SUBSCRIPTION EVENTS --------------------------//
 
   async joinGame(game_id: string, joining: boolean) {
     this.logger.log('joinGame');
@@ -160,18 +171,74 @@ export class GameGateway
   }
 
   @SubscribeMessage('watchGame')
-  async watchGame(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() room: string,
-  ) {
+  watchGame(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     client.join(room);
   }
 
   @SubscribeMessage('leaveWatchGame')
-  async leaveWatchGame(
+  leaveWatchGame(
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
     client.leave(room);
+  }
+
+  //------------------------- GAMEPLAY EVENTS --------------------------------//
+
+  @SubscribeMessage('ready')
+  gameReady(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+  ) {
+    console.log('ready');
+    console.log(`client: ${client.id} \n---`);
+    client.to([bcast.room, bcast.watchers]).emit('ready');
+  }
+
+  @SubscribeMessage('scoreUpdate')
+  scoreUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('score') score: ScoreDto,
+  ) {
+    console.log('scoreUpdate');
+    console.log(`client: ${client.id} \n---`);
+    client.to([bcast.room, bcast.watchers]).emit('scoreUpdate', score);
+  }
+
+  @SubscribeMessage('powerUpUpdate')
+  powerUpUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('powerup') powerup: PowerUpDto,
+  ) {
+    console.log('powerUpUpdate');
+    console.log(`client: ${client.id} \n---`);
+    client.to([bcast.room, bcast.watchers]).emit('powerUpUpdate', powerup);
+  }
+
+  @SubscribeMessage('ballPosUpdate')
+  ballPosUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('ballpos') ballpos: BallPosDto,
+  ) {
+    console.log('ballPosUpdate');
+    console.log(`client: ${client.id} \n---`);
+    client.to([bcast.room, bcast.watchers]).emit('ballPosUpdate', ballpos);
+  }
+
+  @SubscribeMessage('playerUpdate')
+  playerUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('gamePlayer') gamePlayer: GamePlayerDto,
+    @MessageBody('playerNb') playerNb: number,
+  ) {
+    console.log('playerUpdate');
+    console.log(`client: ${client.id} \n---`);
+    client
+      .to([bcast.room, bcast.watchers])
+      .emit('playerUpdate', gamePlayer, playerNb);
   }
 }

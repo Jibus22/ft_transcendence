@@ -43,6 +43,7 @@ export default function MainPong() {
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [roomId, setRoomId] = useState('');
+	const [watchId, setWatchId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
 
 	const closeGame = () => {
@@ -147,8 +148,8 @@ export default function MainPong() {
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
-					{count === 0 ? (
-						<PongGame map={map} roomId={roomId} joueur={nbPlayer} socket={gameWs} />
+					{roomId !== '' ? (
+						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
