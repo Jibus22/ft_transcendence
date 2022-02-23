@@ -148,17 +148,6 @@ class PongGame extends React.Component<MyProps> {
 		if (ret === 2) this.scoreP2++; //J2 score
 		if (ret === 1) this.scoreP1++;
 
-		//Send Score
-		// this.props.socket!.send(
-		// 	JSON.stringify({
-		// 		type: 'message',
-		// 		object: 'Score',
-		// 		P1: this.scoreP1,
-		// 		P2: this.scoreP2,
-		// 		score: ret,
-		// 	}),
-		// );
-
 		this.props.socket?.emit('scoreUpdate', {
 			bcast: this.broadcast,
 			score: {
@@ -202,14 +191,6 @@ class PongGame extends React.Component<MyProps> {
 			//Power up large paddle
 			if (ret === 1) {
 				this._playerOne._largePaddle(this.height);
-				// this.props.socket!.send(
-				// 	JSON.stringify({
-				// 		type: 'message',
-				// 		object: 'PowerUp',
-				// 		powerUp: 'large Paddle',
-				// 		J: ret,
-				// 	}),
-				// );
 				this.props.socket?.emit('powerUpUpdate', {
 					bcast: this.broadcast,
 					powerup: {
@@ -220,14 +201,6 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player One large Paddle');
 			}
 			if (ret === 2) {
-				// this.props.socket!.send(
-				// 	JSON.stringify({
-				// 		type: 'message',
-				// 		object: 'PowerUp',
-				// 		powerUp: 'large Paddle',
-				// 		J: ret,
-				// 	}),
-				// );
 				this.props.socket?.emit('powerUpUpdate', {
 					bcast: this.broadcast,
 					powerup: {
@@ -242,14 +215,6 @@ class PongGame extends React.Component<MyProps> {
 			//Power Up controle inverse
 			if (ret === 2) {
 				this._playerOne._invertControlTemporarily();
-				// this.props.socket!.send(
-				// 	JSON.stringify({
-				// 		type: 'message',
-				// 		object: 'PowerUp',
-				// 		powerUp: 'inverted Control',
-				// 		J: 1,
-				// 	}),
-				// );
 				this.props.socket?.emit('powerUpUpdate', {
 					bcast: this.broadcast,
 					powerup: {
@@ -260,14 +225,6 @@ class PongGame extends React.Component<MyProps> {
 				this._printPowerUp('Player One inverted Control');
 			}
 			if (ret === 1) {
-				// this.props.socket!.send(
-				// 	JSON.stringify({
-				// 		type: 'message',
-				// 		object: 'PowerUp',
-				// 		powerUp: 'inverted Control',
-				// 		J: 2,
-				// 	}),
-				// );
 				this.props.socket?.emit('powerUpUpdate', {
 					bcast: this.broadcast,
 					powerup: {
@@ -284,14 +241,6 @@ class PongGame extends React.Component<MyProps> {
 		if (this._P1) {
 			let ret = this._ball._update(this._playerOne, this._playerTwo);
 			if (ret > 0) this._score(ret); // someone scored
-			// this.props.socket!.send(
-			// 	JSON.stringify({
-			// 		type: 'message',
-			// 		object: 'Ball',
-			// 		x: this._ball.x,
-			// 		y: this._ball.y,
-			// 	}),
-			// );
 			this.props.socket?.emit('ballPosUpdate', {
 				bcast: this.broadcast,
 				ballpos: {
@@ -302,15 +251,6 @@ class PongGame extends React.Component<MyProps> {
 		}
 		if (this._P1) {
 			this._playerOne._update(this._keystate, this.height, this._ball);
-			// this.props.socket!.send(
-			// 	JSON.stringify({
-			// 		type: 'message',
-			// 		object: 'Player1',
-			// 		player: this._playerOne,
-			// 		P1: this.scoreP1,
-			// 		P2: this.scoreP2,
-			// 	}),
-			// );
 			this.props.socket?.emit('playerUpdate', {
 				bcast: this.broadcast,
 				gamePlayer: this._playerOne,
@@ -327,14 +267,6 @@ class PongGame extends React.Component<MyProps> {
 		}
 		if (this._P2) {
 			this._playerTwo._update(this._keystate, this.height, this._ball);
-			//console.log(client);
-			// this.props.socket!.send(
-			// 	JSON.stringify({
-			// 		type: 'message',
-			// 		object: 'Player2',
-			// 		player: this._playerTwo,
-			// 	}),
-			// );
 			this.props.socket?.emit('playerUpdate', {
 				bcast: this.broadcast,
 				gamePlayer: this._playerTwo,
@@ -429,14 +361,7 @@ class PongGame extends React.Component<MyProps> {
 			evt.preventDefault();
 			delete keystate[evt.key];
 		});
-		// this.props.socket!.send(
-		// 	JSON.stringify({
-		// 		type: 'message',
-		// 		object: 'Ready',
-		// 	}),
-		// );
 		this.props.socket?.emit('ready', { bcast: this.broadcast });
-		//let _loop =
 		setInterval(() => {
 			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
@@ -529,58 +454,3 @@ class PongGame extends React.Component<MyProps> {
 }
 
 export default PongGame;
-
-//this.props.socket!.on('message', (message) => {
-//	const data = JSON.parse(message.data);
-//	 if (!this._P2 && data.object === 'Player2') {
-//	 	this._playerTwo = data.player;
-//	 }
-//	 if (!this._P1 && data.object === 'Player1') {
-//	 	this._playerOne = data.player;
-//	 	this.scoreP1 = data.P1;
-//	 	this.scoreP2 = data.P2;
-//	 }
-//	 if (!this._P1 && data.object === 'Ball') {
-//	 	this._ball.x = data.x;
-//	 	this._ball.y = data.y;
-//	 }
-//	if (!this._P1 && data.object === 'Score') {
-//		this.scoreP1 = data.P1;
-//		this.scoreP2 = data.P2;
-
-//		//Affichage du gagnant
-//		if (this.scoreP1 >= 10) {
-//			this.gamerunning = false;
-//			this._printText('Player One win');
-//			return;
-//		}
-//		if (this.scoreP2 >= 10) {
-//			this.gamerunning = false;
-//			this._printText('Player Two win');
-//			return;
-//		}
-
-//		//Affichage du score
-//		this.gamerunning = false;
-//		if (data.score === 1) this._printText('Player One score');
-//		if (data.score === 2) this._printText('Player Two score');
-//		setTimeout(() => (this.gamerunning = true), 2000);
-//	}
-
-//	 if (!this._P1 && data.object === 'PowerUp') {
-//	 	if (data.powerUp === 'inverted Control' && data.J === 2 && this._P2)
-//	 		this._playerTwo._invertControlTemporarily();
-//	 	if (data.powerUp === 'large Paddle' && data.J === 2 && this._P2)
-//	 		this._playerTwo._largePaddle(this.height);
-//	 	let message = 'Player ';
-//	 	if (data.J === 1) message += 'One ';
-//	 	else message += 'Two ';
-//	 	this._printPowerUp(message + data.powerUp);
-//	 }
-
-//	 if (data.object === 'Ready') this.gamerunning = true;
-//	 if (data.object === 'Pause') {
-//	 	this.gamerunning = false;
-//	 	this._printText('Jeu en pause');
-//	 }
-//});
