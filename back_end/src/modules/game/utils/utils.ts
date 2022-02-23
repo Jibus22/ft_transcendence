@@ -1,6 +1,6 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { UserDto } from 'src/modules/users/dtos/user.dto';
-import { User } from 'src/modules/users/entities/users.entity';
+import { UserDto } from '../../users/dtos/user.dto';
+import { User } from '../../users/entities/users.entity';
 
 export function isBlocker(blockerList: UserDto[], players: UserDto[]) {
   if (blockerList.find((elem) => elem.id === players[0].id)) {
