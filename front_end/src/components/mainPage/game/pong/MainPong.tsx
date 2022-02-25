@@ -149,6 +149,8 @@ export default function MainPong() {
 		}
 	};
 
+	// <PongGame map={map} roomId={roomId} joueur={nbPlayer} socket={gameWs} />
+
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">

@@ -425,14 +425,16 @@ class PongGame extends React.Component<MyProps> {
 	render() {
 		return (
 			<div className="pongGame">
-				<canvas
-					className="h-100 w-100 canvasGame"
-					onTouchStart={(e) => this._touch(e)}
-					onTouchMove={(e) => this._touch(e)}
-					style={this._canvasStyle}
-					width={this.width}
-					height={this.height}
-				/>
+				{
+					<canvas
+						className="h-100 w-100 canvasGame"
+						onTouchStart={(e) => this._touch(e)}
+						onTouchMove={(e) => this._touch(e)}
+						style={this._canvasStyle}
+						width={this.width}
+						height={this.height}
+					/>
+				}
 			</div>
 		);
 	}

@@ -2,7 +2,7 @@
 	margin: 90px 0 0 20px;
 	width: 78%;
 	height: 37vw;
-	padding: 0 20px 20px 20px;
+	// padding: 0 20px 20px 20px;
 	border-radius: 2.2vw;
 	border: 3px solid rgba(255, 255, 255, 0.7);
 	background: linear-gradient(5.69deg, #e69c6a -3.67%, rgba(230, 156, 106, 0) 102.8%);
@@ -49,15 +49,15 @@
 
 	.partyOnline {
 		margin: 0 0 50px 0;
+		width: 100%;
 
 		.userImg {
 			.MuiAvatarGroup-root {
 				width: 100%;
 			}
 			.MuiAvatar-root {
-				width: 95px;
+				border-radius: 2.3vw;
 				width: 5vw;
-				height: 95px;
 				height: 5vw;
 				border: none;
 			}
@@ -91,60 +91,94 @@
 		}
 
 		.userStat {
-			width: 45%;
-			margin: 0 0 0 50px;
-
-			.user {
-				color: rgba(255, 255, 255, 0.8);
-				font-family: Montserrat, sans-serif;
-				font-size: 19px;
-				font-size: 1.2vw;
-			}
-		}
-		.player {
-			margin: 20px auto;
-			height: 34px;
+			width: 53%;
+			margin: 0 0 0 20px;
+			gap: 5px;
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 
-			.vs {
-				margin: 0 9px 0 9px;
-				color: #ca6c88;
-				font-size: 21px;
-				font-size: 1.3vw;
-				font-family: Montserrat, sans-serif;
+			.player {
+				display: flex;
+
+				.user {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+
+					p {
+						color: rgba(255, 255, 255, 0.8);
+						font-family: Montserrat, sans-serif;
+						font-size: 1vw;
+					}
+				}
+
+				.challenger {
+					width: 45%;
+				}
+				.opponant {
+					width: 45%;
+				}
+
+				.vs {
+					width: 10%;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+
+					p {
+						color: #ca6c88;
+
+						font-size: 1.1vw;
+						font-family: Montserrat, sans-serif;
+					}
+				}
 			}
 		}
+
 		.score {
 			display: flex;
-			margin: -25px auto;
+			justify-content: center;
+			align-self: center;
+			width: 50%;
+
+			.scoreUser {
+				width: 17%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin-top: 1px;
+			}
+			.scoreUser:nth-child(1) {
+				margin-top: 1px;
+			}
+
 			p {
 				color: white;
-
-				font-size: 19px;
 				font-size: 1.1vw;
 			}
 			.semiliconGame {
-				margin: 0 5px 0 5px;
+				margin: 0px 5px 0 5px;
 			}
 		}
 
 		.userWatch {
 			width: 130px;
 			width: 6vw;
-			margin: 0 0 0 45px;
+			margin: 0 0 0 17px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 
 			.muiButton {
-				height: 40px;
 				height: 2vw;
 				border: white 2px solid;
 				border-radius: 0.7vw;
 				color: white;
 				font-family: Montserrat, sans-serif;
 				font-weight: 500;
-				font-size: 17px;
 				font-size: 0.9vw;
-				margin: 25px 0 0 0;
+
 				transition: ease-out 0.185s;
 			}
 			.muiButton:hover {
@@ -169,21 +203,12 @@
 		height: 40vw;
 		border: 2px solid rgba(255, 255, 255, 0.7) !important;
 
-		.pageOverflow {
-			margin: -14px auto;
+		.title {
+			height: 60px;
 		}
-		.partyOnline {
-			.userStat {
-				.user {
-				}
-			}
-			.userWatch {
-				margin: 0 0 0 35px;
-				.muiButton {
-				}
-				.muiButton:hover {
-				}
-			}
+
+		.pageOverflow {
+			height: 78% !important;
 		}
 	}
 }
@@ -193,21 +218,6 @@
 		.partyOnline {
 			.userStat {
 				margin: 0 0 0 20px;
-
-				width: 60%;
-				.user {
-				}
-			}
-			.userWatch {
-				// margin: 0 0 0 35px;
-
-				width: 7vw;
-				margin: 0 0 0 15px;
-
-				.muiButton {
-				}
-				.muiButton:hover {
-				}
 			}
 		}
 	}
@@ -219,57 +229,31 @@
 	}
 }
 
-@media screen and (max-width: 1500px) {
-	.mainOnlineGame {
-		.pageOverflow {
-		}
-		.player {
-			.vs {
-			}
-		}
-		.score {
-			p {
-			}
-			.semiliconGame {
-			}
-		}
-		.userWatch {
-			.muiButton {
-			}
-			.muiButton:hover {
-			}
-		}
-	}
-}
-
 @media screen and (max-width: 1440px) {
 	.mainOnlineGame {
 		border: 1px solid rgba(255, 255, 255, 0.7) !important;
-		.pageOverflow {
-			margin: -30px auto;
-		}
+
 		.partyOnline {
 			width: 105% !important;
 			margin: 0 0 35px 0;
 			.userStat {
-				width: 70% !important;
+				margin-left: 10px;
+				width: 52%;
 				.user {
 					font-size: 1.1vw;
 				}
 			}
 			.userWatch {
-				margin: 0 0 0 25px;
-				width: 9vw !important;
+				margin: 0 0 0 10px;
+				width: 5.5vw !important;
+
 				.muiButton {
 					border: white 1px solid;
-					// margin: 0% 0% 0% 3px;
-				}
-				.muiButton:hover {
 				}
 			}
 			.player {
 				.vs {
-					// font-size: 1.3vw;
+					font-size: 1.1vw;
 				}
 			}
 		}
@@ -282,7 +266,7 @@
 
 		.pageOverflow {
 			height: 90%;
-			margin: -5% 0% 0% 0%;
+			// margin: -5% 0% 0% 0%;
 		}
 	}
 }
@@ -292,32 +276,16 @@
 		margin-top: 60px;
 		height: 500px;
 
-		.pageOverflow {
-			margin: -30px auto;
-			height: 75%;
+		.title {
+			height: 30px !important;
 		}
-	}
-}
 
-@media screen and (max-width: 1170px) {
-	.mainOnlineGame {
 		.pageOverflow {
-			padding: 0 20px 0 10px;
+			height: 75%;
 		}
 		.partyOnline {
 			.userStat {
-				.user {
-				}
-			}
-			.userWatch {
-				.muiButton {
-				}
-				.muiButton:hover {
-				}
-			}
-			.player {
-				.vs {
-				}
+				width: 62%;
 			}
 		}
 	}
@@ -329,7 +297,7 @@
 		margin-bottom: 20px;
 		width: 440px;
 		height: 480px;
-		padding: 0 20px 20px 20px;
+		padding: 0 0px 20px 0px;
 		border-radius: 25px;
 		border: 1px solid rgba(255, 255, 255, 0.7) !important;
 
@@ -342,8 +310,8 @@
 			}
 		}
 		.pageOverflow {
-			width: 105%;
-			padding: 0 30px 0 8px;
+			width: 100% !important;
+			padding: 0 5px 0 15px;
 		}
 		.onlineDiv {
 			width: 100%;
@@ -351,6 +319,7 @@
 		.partyOnline {
 			margin: 0 0 35px 0;
 
+			width: 100% !important;
 			.userImg {
 				.MuiAvatarGroup-root {
 					width: 100%;
@@ -359,6 +328,7 @@
 					width: 55px;
 					height: 55px;
 					border: none;
+					border-radius: 30px;
 				}
 				.domUser {
 					z-index: 1;
@@ -368,47 +338,48 @@
 				}
 			}
 			.userStat {
-				.user {
-					font-size: 14px;
+				width: 56% !important;
+				// margin: 0 0 0 20px;
+
+				.player {
+					.user {
+						p {
+							font-size: 11px;
+						}
+					}
+
+					.challenger {
+						width: 46%;
+					}
+					.opponant {
+						width: 46%;
+					}
+					.vs {
+						width: 8%;
+						p {
+							font-size: 12px;
+						}
+					}
+				}
+				.score {
+					.scoreUser {
+					}
+					p {
+						font-size: 12px;
+					}
+					.semiliconGame {
+						font-size: 11px;
+					}
 				}
 			}
-			.player {
-				margin: 10px 60px 0 0;
-				width: 170px;
-				.vs {
-					font-size: 15px;
-					margin-top: -3px;
-				}
-			}
-			.score {
-				margin-left: 65px;
-				margin-top: -15px;
-				p {
-					font-size: 12px;
-				}
-			}
+
 			.userWatch {
-				margin: 0px 0px 0 -50px;
+				margin: 0px 0px 0 10px;
+				width: 17% !important;
 				.muiButton {
-					width: 80%;
+					width: 100%;
 					height: 22px;
 					border-radius: 8px;
-					font-size: 9px;
-				}
-				.muiButton:hover {
-					font-size: 10px;
-				}
-			}
-		}
-	}
-}
-
-@media screen and (max-width: 800px) {
-	.mainOnlineGame {
-		.partyOnline {
-			.userWatch {
-				.muiButton {
-					margin-left: -20px;
 					font-size: 9px;
 				}
 				.muiButton:hover {
