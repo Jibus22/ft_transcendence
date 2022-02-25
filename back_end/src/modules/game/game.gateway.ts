@@ -145,18 +145,22 @@ export class GameGateway
   @SubscribeMessage('setMap')
   async setMap(
     @ConnectedSocket() client: Socket,
-    @MessageBody() obj: { room: string; gamemap: string },
+    @MessageBody('room') room: string,
+    @MessageBody('map') map: string,
   ) {
-    await this.gameService.updateGame(obj.room, {
-      map: obj.gamemap,
+    console.log('map:', map);
+    await this.gameService.updateGame(room, {
+      map: map,
       watch: randomUUID(),
     });
+
+    client.to(room).emit('getMap', map);
 
     ///// TEST // TODO: delete test below
     console.log(`client id: ${client.id}`);
     console.log(
       'countdown finished, game: ',
-      await this.gameService.findOne(obj.room, null),
+      await this.gameService.findOne(room, null),
     );
   }
 
@@ -185,24 +189,12 @@ export class GameGateway
 
   //------------------------- GAMEPLAY EVENTS --------------------------------//
 
-  @SubscribeMessage('ready')
-  gameReady(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('bcast') bcast: BroadcastDto,
-  ) {
-    console.log('ready');
-    console.log(`client: ${client.id} \n---`);
-    client.to([bcast.room, bcast.watchers]).emit('ready');
-  }
-
   @SubscribeMessage('scoreUpdate')
   scoreUpdate(
     @ConnectedSocket() client: Socket,
     @MessageBody('bcast') bcast: BroadcastDto,
     @MessageBody('score') score: ScoreDto,
   ) {
-    console.log('scoreUpdate');
-    console.log(`client: ${client.id} \n---`);
     client.to([bcast.room, bcast.watchers]).emit('scoreUpdate', score);
   }
 
@@ -212,8 +204,6 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
     @MessageBody('powerup') powerup: PowerUpDto,
   ) {
-    console.log('powerUpUpdate');
-    console.log(`client: ${client.id} \n---`);
     client.to([bcast.room, bcast.watchers]).emit('powerUpUpdate', powerup);
   }
 
@@ -223,8 +213,6 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
     @MessageBody('ballpos') ballpos: BallPosDto,
   ) {
-    console.log('ballPosUpdate');
-    console.log(`client: ${client.id} \n---`);
     client.to([bcast.room, bcast.watchers]).emit('ballPosUpdate', ballpos);
   }
 
@@ -235,8 +223,6 @@ export class GameGateway
     @MessageBody('gamePlayer') gamePlayer: GamePlayerDto,
     @MessageBody('playerNb') playerNb: number,
   ) {
-    console.log('playerUpdate');
-    console.log(`client: ${client.id} \n---`);
     client
       .to([bcast.room, bcast.watchers])
       .emit('playerUpdate', gamePlayer, playerNb);

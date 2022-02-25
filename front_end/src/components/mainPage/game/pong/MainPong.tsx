@@ -98,10 +98,15 @@ export default function MainPong() {
 			setRoomId(room);
 		});
 
+		gameWs?.on('getMap', (map: null | 'one' | 'two' | 'three') => {
+			console.log(`💌  Event: getMap -> ${map}`);
+			setMap(map);
+		});
+
 		return () => {
 			setLeaveGame(false);
 		};
-	}, [gameWs, count, map]);
+	}, [gameWs, count]);
 
 	useEffect(() => {
 		if (map !== null) {
@@ -148,7 +153,7 @@ export default function MainPong() {
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
-					{roomId !== '' ? (
+					{roomId !== '' && map !== null ? (
 						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
 					) : (
 						<div className="mainPongGame">

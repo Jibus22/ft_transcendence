@@ -256,14 +256,6 @@ class PongGame extends React.Component<MyProps> {
 				gamePlayer: this._playerOne,
 				playerNb: 1,
 			});
-
-			this.props.socket?.emit('scoreUpdate', {
-				bcast: this.broadcast,
-				score: {
-					score1: this.scoreP1,
-					score2: this.scoreP2,
-				},
-			});
 		}
 		if (this._P2) {
 			this._playerTwo._update(this._keystate, this.height, this._ball);
@@ -361,11 +353,12 @@ class PongGame extends React.Component<MyProps> {
 			evt.preventDefault();
 			delete keystate[evt.key];
 		});
-		this.props.socket?.emit('ready', { bcast: this.broadcast });
 		setInterval(() => {
 			if (this.gamerunning) this._update();
-			if (this.gamerunning) this._draw();
 		}, 10);
+		setInterval(() => {
+			if (this.gamerunning) this._draw();
+		}, 30);
 	}
 
 	componentDidMount() {
@@ -373,19 +366,16 @@ class PongGame extends React.Component<MyProps> {
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
 		this.props.socket?.on('playerUpdate', (player: Player, nb: number) => {
-			console.log('playerUpdate');
 			if (nb === 1) this._playerOne = player;
 			else if (nb === 2) this._playerTwo = player;
 		});
 
 		this.props.socket?.on('ballPosUpdate', (ballPos: BallPos) => {
-			console.log('ballPosUpdate');
 			this._ball.x = ballPos.x;
 			this._ball.y = ballPos.y;
 		});
 
 		this.props.socket?.on('scoreUpdate', (score: Score) => {
-			console.log('scoreUpdate');
 			const p1Score = score.score1 > this.scoreP1;
 			this.scoreP1 = score.score1;
 			this.scoreP2 = score.score2;
@@ -410,17 +400,12 @@ class PongGame extends React.Component<MyProps> {
 		});
 
 		this.props.socket?.on('powerUpUpdate', (powerUp: PowerUp) => {
-			console.log('powerUpUpdate');
 			if (powerUp.effect === 'inverted Control' && powerUp.playerNb === 2 && this._P2) this._playerTwo._invertControlTemporarily();
 			if (powerUp.effect === 'large Paddle' && powerUp.playerNb === 2 && this._P2) this._playerTwo._largePaddle(this.height);
 			let message = 'Player ';
 			if (powerUp.playerNb === 1) message += 'One ';
 			else message += 'Two ';
 			this._printPowerUp(message + powerUp.effect);
-		});
-
-		this.props.socket?.on('ready', () => {
-			this.gamerunning = true;
 		});
 
 		setTimeout(() => this._startGame(), 1000);
