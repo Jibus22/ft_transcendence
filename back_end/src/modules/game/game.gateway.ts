@@ -18,7 +18,7 @@ import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
-import { myPtoUserDto } from './utils/utils';
+import { myPtoOnlineGameDto, myPtoUserDto } from './utils/utils';
 import {
   BallPosDto,
   BroadcastDto,
@@ -80,8 +80,6 @@ export class GameGateway
     const game = await this.gameService.findOne(game_id, {
       relations: ['players', 'players.user'],
     });
-    this.logger.log(`game_id: ${game.id}  -- game.players:`);
-    this.logger.log(game.players);
     const ws_ids = [game.players[0].user.game_ws, game.players[1].user.game_ws];
     this.server
       .to(ws_ids[0])
@@ -91,18 +89,9 @@ export class GameGateway
   }
 
   async gameInvitation(challenger: User, opponent: User) {
-    const opponent_sock = await this.server.in(opponent.game_ws).fetchSockets();
-    const challenger_sock = await this.server
-      .in(challenger.game_ws)
-      .fetchSockets();
-
-    if (!opponent_sock || !challenger_sock) return;
-
-    opponent_sock[0].emit(
-      'gameInvitation',
-      myPtoUserDto(challenger),
-      challenger_sock[0].id,
-    );
+    this.server
+      .to(opponent.game_ws)
+      .emit('gameInvitation', myPtoUserDto(challenger), challenger.game_ws);
   }
 
   @UseFilters(WsErrorFilter)
@@ -175,8 +164,17 @@ export class GameGateway
   }
 
   @SubscribeMessage('watchGame')
-  watchGame(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
+  async watchGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    const [game] = await this.gameService.findGameWithAnyParam(
+      [{ watch: room }],
+      { relations: ['players', 'players.user', 'players.user.local_photo'] },
+    );
+    if (!game) return 'game not found';
     client.join(room);
+    return myPtoOnlineGameDto(game);
   }
 
   @SubscribeMessage('leaveWatchGame')
