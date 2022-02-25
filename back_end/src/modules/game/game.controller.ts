@@ -69,7 +69,8 @@ export class GameController {
   @Get('history')
   @ApiOperation({ summary: 'get a list of all HistoryGameDto' })
   async history() {
-    return await this.gameService.history();
+    const history = await this.gameService.history();
+    return history.filter((elem: Game) => elem.players.length > 1);
   }
 
   @ApiResponse({ type: LeaderBoardDto, isArray: true })
