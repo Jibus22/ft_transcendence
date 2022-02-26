@@ -1,9 +1,9 @@
-import { UsersService } from 'src/modules/users/service-users/users.service';
-import { Server } from 'socket.io';
-import { User } from 'src/modules/users/entities/users.entity';
 import { Injectable, Logger } from '@nestjs/common';
-import { GameService } from './game.service';
 import { myPtoOnlineGameDto, sleep } from '../utils/utils';
+import { Server } from 'socket.io';
+import { User } from '../../users/entities/users.entity';
+import { UsersService } from '../../users/service-users/users.service';
+import { GameService } from './game.service';
 
 @Injectable()
 export class WsGameService {

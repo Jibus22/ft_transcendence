@@ -1,28 +1,28 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseUUIDPipe,
+  Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { GameService } from './services/game.service';
 import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { UserDto } from '../users/dtos/user.dto';
-import { GameGateway } from './game.gateway';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../users/entities/users.entity';
 import { OnlineGameDto } from './dto/online-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
+import { GameGateway } from './game.gateway';
+import { GameService } from './services/game.service';
 
 @ApiTags('game')
 @UseGuards(AuthGuard)
