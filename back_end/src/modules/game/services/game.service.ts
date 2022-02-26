@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateGameDto } from '../dto/update-game.dto';
 import { Game } from '../entities/game.entity';
 import { Player } from '../entities/player.entity';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../../users/service-users/users.service';
 import {
@@ -13,6 +13,7 @@ import { User } from '../../users/entities/users.entity';
 import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { IPlayerError, PlayerHttpError, PlayerWsError } from '../utils/error';
+import { UpdatePlayerDto } from '../dto/update-player.dto';
 
 @Injectable()
 export class GameService {
@@ -69,7 +70,6 @@ export class GameService {
       opponent.login,
       err,
       err.errorPlayerNotInGame,
-      // null,
     );
     return await this.createGameTable(challenger, opponent);
   }
@@ -91,41 +91,34 @@ export class GameService {
 
   ////////////////
 
-  private async updatePlayernGame(player1: Player, waiting_games: Game[]) {
+  async joinGame(userId: string) {
     let game: Game;
-    if (waiting_games.length > 0) {
-      game = waiting_games[0];
-      player1.game = game;
-      game.players.push(player1);
-    } else {
+    let player1: Player;
+    const user = await this.usersService.findOne(userId);
+    const waiting_game: { gameId: string; total: number } =
+      await this.player_repo
+        .createQueryBuilder('player')
+        .select('player.game')
+        .groupBy('player.game')
+        .addSelect('COUNT(player.game)', 'total')
+        .having('total = :tot', { tot: 1 })
+        .where('player.game is not null')
+        .getRawOne();
+
+    if (!waiting_game) {
       game = this.game_repo.create();
-      await this.game_repo.save(game);
-      player1.game = game;
-      game.players = [player1];
-    }
-    await this.player_repo.save(player1);
-    return await this.game_repo.save(game);
-  }
+      game = await this.game_repo.save(game);
+    } else game = await this.game_repo.findOne(waiting_game.gameId);
+    player1 = this.player_repo.create({ user: user, game: game });
+    player1 = await this.player_repo.save(player1);
+    this.game_repo
+      .createQueryBuilder()
+      .relation(Game, 'players')
+      .of(game)
+      .add(player1);
 
-  async joinGame(user: User) {
-    let waiting_games: Game[] = [];
-
-    const player1 = this.player_repo.create({ user: user });
-
-    const games = await this.game_repo.find({
-      relations: ['players', 'players.user'],
-    });
-    if (games) {
-      waiting_games = games.filter((elem) => {
-        return elem.players.length === 1 && elem.players[0].user.id !== user.id;
-      });
-    }
-
-    let game = await this.updatePlayernGame(player1, waiting_games);
-    game = await this.game_repo.findOne(game.id, {
-      relations: ['players', 'players.user'],
-    });
-    return game;
+    this.usersService.updateUser(user, { is_in_game: true });
+    return { game_id: game.id, joining: !!waiting_game };
   }
 
   ////////////////
@@ -149,10 +142,31 @@ export class GameService {
     return game;
   }
 
+  async findGameWithAnyParam(
+    param: Partial<Game>[],
+    relations: { relations: string[] },
+  ) {
+    let games: Game[] = [];
+    for (let elem of param) {
+      let game: Game;
+      if (!relations) game = await this.game_repo.findOne(elem);
+      else game = await this.game_repo.findOne(elem, relations);
+      if (game) games.push(game);
+    }
+    return games;
+  }
+
   //update a game targeted by its uuid
   async updateGame(uuid: string, patchedGame: Partial<UpdateGameDto>) {
     await this.game_repo.update(uuid, patchedGame);
     return await this.findOne(uuid, null);
+  }
+
+  //update a player
+  async updatePlayers(objs: { id: string; patch: Partial<UpdatePlayerDto> }[]) {
+    for (let elem of objs) {
+      await this.player_repo.update(elem.id, elem.patch);
+    }
   }
 
   async remove(uuid: string) {

@@ -7,4 +7,5 @@ export class UpdateGameDto extends PartialType(CreateGameDto) {
   map: string;
   @IsUUID()
   watch: string;
+  updatedAt: number;
 }

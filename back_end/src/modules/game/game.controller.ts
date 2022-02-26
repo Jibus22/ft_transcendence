@@ -1,16 +1,23 @@
 import {
-  Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '../../guards/auth.guard';
-import { Serialize } from '../../interceptors/serialize.interceptor';
-import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { UserDto } from '../users/dtos/user.dto';
-import { User } from '../users/entities/users.entity';
 import { CreateGameDto } from './dto/create-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
-import { NewGameDto } from './dto/new-game.dto';
+import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { UserDto } from '../users/dtos/user.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { User } from '../users/entities/users.entity';
 import { OnlineGameDto } from './dto/online-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
@@ -42,20 +49,13 @@ export class GameController {
     return opponent;
   }
 
-  /// ---------------- TEST --------------------
-  @Post('test')
-  test(@CurrentUser() user: User) {
-    console.log('TEST route');
-    this.gameGateway.serverToClient(user.game_ws, 'This is a test from SERVER');
-  }
-  /// ---------------- TEST END ----------------
-
-  @ApiResponse({ type: NewGameDto, isArray: false })
+  @ApiResponse({ type: UserDto, isArray: false })
   @ApiOperation({ summary: 'join a random game' })
-  @Serialize(NewGameDto)
   @Post('join')
   async playnow(@CurrentUser() user: User) {
-    return await this.gameService.joinGame(user);
+    const ret: { game_id: string; joining: boolean } =
+      await this.gameService.joinGame(user.id);
+    return await this.gameGateway.joinGame(ret.game_id, ret.joining);
   }
 
   @Get()
@@ -69,7 +69,8 @@ export class GameController {
   @Get('history')
   @ApiOperation({ summary: 'get a list of all HistoryGameDto' })
   async history() {
-    return await this.gameService.history();
+    const history = await this.gameService.history();
+    return history.filter((elem: Game) => elem.players.length > 1);
   }
 
   @ApiResponse({ type: LeaderBoardDto, isArray: true })

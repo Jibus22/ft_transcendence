@@ -1,15 +1,12 @@
-import { Backdrop, CircularProgress } from '@mui/material';
-import { useMount, useSafeState } from 'ahooks';
-import axios, { AxiosError } from 'axios';
-import { generatePrimeSync } from 'crypto';
+import { Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
+import { useMount } from 'ahooks';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
 import { useMainPage } from '../../MainPageContext';
 import './mainPage.scss';
-
-import { User, Rank } from '../type';
 
 const MainPage = () => {
 	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueLoading, disconectAuth } = useMainPage();
@@ -42,6 +39,7 @@ const MainPage = () => {
 			setTimeout(function () {
 				setOpenDIalog(false);
 				disconectAuth();
+				navigate('/');
 			}, 3000);
 		}
 	};
@@ -179,28 +177,30 @@ const MainPage = () => {
 		// 	// c'est good.
 		// });
 
-		socket.on('newOnlineGame', (obj: any) => {
-			console.log(`💌  Event: newOnlineGame -> `, obj);
-			//Afficher l'objet au dessus de la liste des onlineGame
-		});
+		// socket.on('newOnlineGame', (obj: any) => {
+		// 	console.log(`💌  Event: newOnlineGame -> `, obj);
+		// 	//Afficher l'objet au dessus de la liste des onlineGame
+		// });
 
 		socket.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
+		socket.on('newPlayerJoined', (obj: any) => {
+			console.log(`💌  Event: newPlayerJoined -> `, obj);
+			//Dans la page d'attente du joueur 1, afficher le userdto obj
+			//du type qui vient de rejoindre le jeu
+		});
+
+		// socket.emit('watchGame', 'fake_watch', (response: any) => {
+		// 	console.log(`CLIENT: response from server -> ${response}`);
+		// });
+
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);
 			//catch error
 		});
-
-		/// ---------------- TEST --------------------
-
-		socket.on('serverToClient', async (data: string) => {
-			console.log(`💌  Event: serverToClient ->`, data);
-			socket.emit('clientToServer', 'This is a message from Client');
-		});
-		/// ---------------- TEST END ----------------
 	};
 
 	/* -----------------------

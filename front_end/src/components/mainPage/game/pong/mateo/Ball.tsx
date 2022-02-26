@@ -3,8 +3,8 @@ import { Player } from './Player';
 export class Ball {
 	x: number;
 	y: number;
-	x_dir: number = -1;
-	y_dir: number = -1;
+	x_dir: number = -1.5;
+	y_dir: number = -1.5;
 	size: number = 5;
 
 	constructor(public windowWidth: number, public windowHeigth: number) {
