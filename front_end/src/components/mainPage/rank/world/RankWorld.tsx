@@ -39,7 +39,7 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 			photo_url: '',
 		};
 		try {
-			const response = await axios.post('http://localhost:3000/game', game, {
+			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 				withCredentials: true,
 			});
 			setDataUserChallenge([response.data]);

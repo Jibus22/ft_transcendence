@@ -1,6 +1,7 @@
 version: '3.8'
 
 volumes:
+  users_photos_prod:
   dist_guest_back:
   database_storage:
   node_modules_guest_back:
@@ -31,9 +32,7 @@ services:
       - dist_guest_back:/usr/src/app/dist
       - node_modules_guest_back:/usr/src/app/node_modules
       - ./back_end:/usr/src/app
-      - type: bind
-        source: ./data/users_photos_prod
-        target: ${USERS_PHOTOS_STORAGE_PATH}
+      - users_photos_prod:${USERS_PHOTOS_STORAGE_PATH}
     ports:
       - 3000:3000
       - 9229:9229

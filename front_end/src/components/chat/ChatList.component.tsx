@@ -37,7 +37,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	const [friends, setFriends] = useState<any[]>([]);
 
 	const getChats = async () => {
-		const { data } = await axios.get("http://localhost:3000/me/rooms", {
+		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms`, {
 			withCredentials: true
 		});
 		setChats(data);
@@ -45,7 +45,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 
 	const getPublicRooms = async () => {
 		window.roomsLoading = true;
-		const { data } = await axios.get("http://localhost:3000/room/publics", {
+		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/publics`, {
 			withCredentials: true
 		});
 		setPublicChats(data);
@@ -53,7 +53,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	}
 
 	const getUsers = async () => {
-		const result = await axios.get("http://localhost:3000/users", { withCredentials: true }).catch(console.error);
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users`, { withCredentials: true }).catch(console.error);
 		setUsers(result?.data || []);
 	};
 
@@ -61,7 +61,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		if (window.friendsLoading)
 			return;
 		window.friendsLoading = true;
-		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
 		window.friendsLoading = false;
 	};
@@ -89,13 +89,13 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			setSearch("");
 			return openChat(existingChats[0]);
 		}
-		const { data }: any = await axios.post("http://localhost:3000/room", {
+		const { data }: any = await axios.post(`${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
 			participants: [ ],
 			is_private: true
 		}, { withCredentials: true });
 		const { id } = data;
-		await axios.post(`http://localhost:3000/room/${id}/participant`, { id: userId }, { withCredentials: true });
-		const data2 = (await axios.get(`http://localhost:3000/room/${id}/infos`, { withCredentials: true })).data;
+		await axios.post(`${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/participant`, { id: userId }, { withCredentials: true });
+		const data2 = (await axios.get(`${process.env.REACT_APP_BASE_URL || 'localhost:3000'}room/${id}/infos`, { withCredentials: true })).data;
 		console.log("DATA", data, data2)
 		setSearchResults([]);
 		setSearch("");
@@ -103,7 +103,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const createChat = async () => {
-		const { data }: any = await axios.post("http://localhost:3000/room", {
+		const { data }: any = await axios.post(`${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
 			participants: [ ],
 			is_private: false
 		}, { withCredentials: true });
@@ -111,7 +111,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openPublicRoom = async (roomId: any) => {
-		const { data }: any = await axios.get(`http://localhost:3000/room/${roomId}/infos`, { withCredentials: true });
+		const { data }: any = await axios.post(`${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
 		openChat(data);
 	};
 
@@ -125,7 +125,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			if (!password)
 				return;
 		}
-		axios.patch(`http://localhost:3000/me/rooms/${room.id}`, { password }, { withCredentials: true })
+		axios.patch(`${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms/${room.id}`, { password }, { withCredentials: true })
 		.then(data => {
 			console.log("Joined public", data);
 			openPublicRoom(room.id);

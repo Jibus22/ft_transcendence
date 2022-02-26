@@ -16,13 +16,13 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const getFriends = async () => {
 		setFriendsLoading(true);
-		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
 	};
 
 	const getBlocks = async () => {
-		const result = await axios.get("http://localhost:3000/users/block", { withCredentials: true }).catch(console.error);
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true }).catch(console.error);
 		setBlocked(result?.data || []);
 		console.log("REOADING BLOCKS", result?.data);
 	};
@@ -39,7 +39,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const addFriend = async (id: any) => {
 		setFriendsLoading(true);
-		await axios.post(`http://localhost:3000/users/friend`, {
+		await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 			id
 		}, { withCredentials: true });
 		window.dispatchEvent(new CustomEvent("friendsUpdated", { detail: {} }));
@@ -48,7 +48,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const removeFriend = async (id: any) => {
 		setFriendsLoading(true);
-		await axios.delete(`http://localhost:3000/users/friend`, {
+		await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 			withCredentials: true,
 			data: {
 				id
@@ -63,14 +63,14 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const blockUser = async (id: any) => {
-		await axios.post(`http://localhost:3000/users/block`, {
+		await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, {
 			id
 		}, { withCredentials: true });
 		getBlocks();
 	};
 
 	const unblockUser = async (id: any) => {
-		await axios.delete(`http://localhost:3000/users/block`, { withCredentials: true, data: { id } });
+		await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true, data: { id } });
 		getBlocks();
 		console.log("DELETING", id)
 	};
