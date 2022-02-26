@@ -82,7 +82,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	return (<MessagesPaneWrapper>
 		{!detailsOpen && (<ChatHeader>
 			{(<>
-				{room.participants.map((user: any) => <img key={user.id} src={user.user.photo_url} alt={user.user.login} />)}
+				{room.participants.slice(0, 3).map((user: any) => <img key={user.id} src={user.user.photo_url} alt={user.user.login} />)}
 				<div>
 					<h4>{ getNameIfDM() ? getNameIfDM() : chatName(room.participants) }</h4>
 				</div>
