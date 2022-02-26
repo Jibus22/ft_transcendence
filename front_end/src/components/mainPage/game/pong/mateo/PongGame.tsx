@@ -156,7 +156,7 @@ class PongGame extends React.Component<MyProps> {
 			},
 		});
 
-		if (this.scoreP1 === 10 || this.scoreP2 === 10) {
+		if (this.scoreP1 === 2 || this.scoreP2 === 2) {
 			let winner: string;
 			this.gamerunning = false;
 			if (this.scoreP1 === 10) winner = 'One';
@@ -385,7 +385,7 @@ class PongGame extends React.Component<MyProps> {
 			this.scoreP2 = score.score2;
 
 			//Affichage du gagnant
-			if (this.scoreP1 === 10 || this.scoreP2 === 10) {
+			if (this.scoreP1 === 2 || this.scoreP2 === 2) {
 				let winner: string;
 				this.gamerunning = false;
 				if (this.scoreP1 === 10) winner = 'One';

@@ -54,7 +54,11 @@ export class WsGameService {
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
-    this.usersService.updateUser(player, patch);
+    await this.usersService.updateUser(player, patch);
+  }
+
+  async updatePlayerStatus2(player_id: string, patch: { is_in_game: boolean }) {
+    await this.usersService.update(player_id, patch);
   }
 
   async getUserFromParam(param: Partial<User>[]): Promise<User[]> {
