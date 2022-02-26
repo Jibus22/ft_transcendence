@@ -87,8 +87,8 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				<h3>{ user?.user.login }</h3>
 			</DetailsView>
 			{ currentUser && user && currentUser.id !== user.user.id && (<ButtonRow>
-				{!friendsLoading && !isFriend() && <Tooltip title="Add as friend"><button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button></Tooltip>}
-				{!friendsLoading && isFriend() && <Tooltip title="Remove friend"><button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button></Tooltip>}
+				{!isFriend() && <Tooltip title="Add as friend"><button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button></Tooltip>}
+				{isFriend() && <Tooltip title="Remove friend"><button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button></Tooltip>}
 				<Tooltip title="Send game request"><button onClick={ () => askGame(user.user.id) }><SportsEsportsIcon /></button></Tooltip>
 				{!isBlocked() && <Tooltip title="Block user"><button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button></Tooltip>}
 				{isBlocked() && <Tooltip title="Unblock user"><button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button></Tooltip>}

@@ -23,7 +23,7 @@ const chatName = (chat: any, currentUser: any) => {
 	} catch {}
 	let name = "";
 	chat.participants.forEach((p: any) => name += p.user.login[0]);
-	return name;
+	return name.slice(0, 8);
 }
 
 const ChatList = ({ openChat, currentUser }: any) => {

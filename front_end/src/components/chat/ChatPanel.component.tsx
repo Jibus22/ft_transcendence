@@ -4,7 +4,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import { useEffect, useState } from "react";
-import ChatParticipant from "./ChatParticipant.component";
 import RoomSettings from "./RoomSettings.component";
 
 const chatName = (participants: any) => {
@@ -112,10 +111,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		</ChatField>
 		</>)}
 		{detailsOpen && (
-			<>
-				{/* { !isGroup() && <ChatParticipant user={getUser()} currentUser={currentUser} /> } */}
-				<RoomSettings room={room} currentUser={currentUser} />
-			</>
+			<RoomSettings room={room} currentUser={currentUser} />
 		)}
 	</MessagesPaneWrapper>);
 };
