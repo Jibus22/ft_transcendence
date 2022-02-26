@@ -127,9 +127,9 @@ export default function MainPong() {
 		// 	});
 		// }, [gameWs, count, dataGameRandomSocket]);
 
-		gameWs?.on('getMap', (map: null | 'one' | 'two' | 'three') => {
-			console.log(`💌  Event: getMap -> ${map}`);
-			setMap(map);
+		gameWs?.on('newPlayerJoined', (obj: User) => {
+			console.log(`💌  Event: newPlayerJoined -> `, obj);
+			setDataGameRandomSocket(obj);
 			setAcceptGame(true);
 			setOpacity(false);
 		});
@@ -140,6 +140,11 @@ export default function MainPong() {
 	}, [gameWs, count, dataGameRandomSocket]);
 
 	useEffect(() => {
+		gameWs?.on('getMap', (map: null | 'one' | 'two' | 'three') => {
+			console.log(`💌  Event: getMap -> ${map}`);
+			setMap(map);
+		});
+
 		if (map !== null) {
 			console.log('map =====', map);
 
