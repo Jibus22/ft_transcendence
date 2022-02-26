@@ -49,6 +49,7 @@ export default function MainPong() {
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [roomId, setRoomId] = useState('');
+	const [watchId, setWatchId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
 
 	const [dataGameRandomSocket, setDataGameRandomSocket] = useState<User>();
@@ -117,13 +118,25 @@ export default function MainPong() {
 			setRoomId(room);
 		});
 
-		gameWs?.on('newPlayerJoined', (obj: User) => {
-			console.log(`💌  Event: newPlayerJoined -> `, obj);
-			setDataGameRandomSocket(obj);
+		// 	//gameWs?.on('newPlayerJoined', (obj: User) => {
+		// 		console.log(`💌  Event: newPlayerJoined -> `, obj);
+		// 		setDataGameRandomSocket(obj);
+		// 		setAcceptGame(true);
+		// 		setOpacity(false);
+		// 		// setLoadingNewGamePlayer(true);
+		// 	});
+		// }, [gameWs, count, dataGameRandomSocket]);
+
+		gameWs?.on('getMap', (map: null | 'one' | 'two' | 'three') => {
+			console.log(`💌  Event: getMap -> ${map}`);
+			setMap(map);
 			setAcceptGame(true);
 			setOpacity(false);
-			// setLoadingNewGamePlayer(true);
 		});
+
+		return () => {
+			setLeaveGame(false);
+		};
 	}, [gameWs, count, dataGameRandomSocket]);
 
 	useEffect(() => {
@@ -193,8 +206,8 @@ export default function MainPong() {
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
-					{count === 0 ? (
-						<PongGame />
+					{roomId !== '' && map !== null ? (
+						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">

@@ -58,14 +58,6 @@ export class GameController {
     return await this.gameGateway.joinGame(ret.game_id, ret.joining);
   }
 
-  /// ---------------- TEST --------------------
-  @Post('test')
-  test(@CurrentUser() user: User) {
-    console.log('TEST route');
-    this.gameGateway.serverToClient(user.game_ws, 'This is a test from SERVER');
-  }
-  /// ---------------- TEST END ----------------
-
   @Get()
   @ApiOperation({ summary: 'returns all games' })
   async findAll() {
@@ -77,7 +69,8 @@ export class GameController {
   @Get('history')
   @ApiOperation({ summary: 'get a list of all HistoryGameDto' })
   async history() {
-    return await this.gameService.history();
+    const history = await this.gameService.history();
+    return history.filter((elem: Game) => elem.players.length > 1);
   }
 
   @ApiResponse({ type: LeaderBoardDto, isArray: true })

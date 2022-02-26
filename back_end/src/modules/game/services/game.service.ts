@@ -141,6 +141,20 @@ export class GameService {
     return game;
   }
 
+  async findGameWithAnyParam(
+    param: Partial<Game>[],
+    relations: { relations: string[] },
+  ) {
+    let games: Game[] = [];
+    for (let elem of param) {
+      let game: Game;
+      if (!relations) await this.game_repo.findOne(elem);
+      else await this.game_repo.findOne(elem, relations);
+      if (game) games.push(game);
+    }
+    return games;
+  }
+
   //update a game targeted by its uuid
   async updateGame(uuid: string, patchedGame: Partial<UpdateGameDto>) {
     await this.game_repo.update(uuid, patchedGame);

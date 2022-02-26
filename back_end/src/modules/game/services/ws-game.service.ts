@@ -17,7 +17,7 @@ export class WsGameService {
   private async countdown(server: Server, ch_id: string, room: string) {
     this.logger.log('countDown');
 
-    for (let count = 10; count >= 0; count--) {
+    for (let count = 3; count >= 0; count--) {
       server.to(room).emit('countDown', count);
       if (!count) {
         server.to(ch_id).emit('setMap', room);

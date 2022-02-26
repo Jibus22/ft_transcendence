@@ -187,18 +187,20 @@ const MainPage = () => {
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
+		socket.on('newPlayerJoined', (obj: any) => {
+			console.log(`💌  Event: newPlayerJoined -> `, obj);
+			//Dans la page d'attente du joueur 1, afficher le userdto obj
+			//du type qui vient de rejoindre le jeu
+		});
+
+		socket.emit('watchGame', 'fake_watch', (response: any) => {
+			console.log(`CLIENT: response from server -> ${response}`);
+		});
+
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);
 			//catch error
 		});
-
-		/// ---------------- TEST --------------------
-
-		socket.on('serverToClient', async (data: string) => {
-			console.log(`💌  Event: serverToClient ->`, data);
-			socket.emit('clientToServer', 'This is a message from Client');
-		});
-		/// ---------------- TEST END ----------------
 	};
 
 	/* -----------------------
