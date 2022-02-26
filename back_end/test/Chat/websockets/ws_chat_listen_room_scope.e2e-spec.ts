@@ -542,7 +542,7 @@ describe('WebSockets CHAT: listen to ROOM SCOPE events', () => {
       expect(token.length).toBeGreaterThan(1);
     });
 
-    const newConn = io(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}`, { auth: { key: token } });
+    const newConn = io(`ws://localhost:3000`, { auth: { key: token } });
     newConn.on('connect_error', () => {
       throw new Error('Should not fail');
     });
