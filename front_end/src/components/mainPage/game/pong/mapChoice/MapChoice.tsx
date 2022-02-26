@@ -49,7 +49,7 @@ export default function MapChoice({ disableMap, setDisableMap, isChoiceMap, setI
 			randMap(1, 3);
 			return;
 		}
-	}, [map, count]);
+	}, [count]);
 
 	return (
 		<>

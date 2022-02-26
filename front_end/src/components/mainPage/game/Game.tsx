@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { OnlineGame, Play } from '../..';
 // import { Play, OnlineGame } from '../..';
@@ -7,15 +7,21 @@ import { useMainPage } from '../../../MainPageContext';
 import './game.scss';
 import MainPong from './pong/MainPong';
 
+import { configResponsive, useResponsive } from 'ahooks';
+
 interface Props {
 	chatWs: Socket | undefined;
 }
+
+configResponsive({
+	small: 1060,
+});
 
 export default function Game({ chatWs }: Props) {
 	const { setTimeSnack, loading, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
 
 	// const { selectNav, setStartGame, startGame } = useMainPage();
-
+	const responsive = useResponsive();
 	const query = useMediaQuery('(max-width:1060px)');
 	function handleClick() {
 		/*
@@ -41,18 +47,20 @@ export default function Game({ chatWs }: Props) {
 	}
 
 	const selectGame = () => {
-		if (!query) {
+		if (responsive.small) {
 			if (!startGame) {
 				return (
 					<div className="h-100 w-100 d-flex">
 						<Play Loadingclick={handleClick} />
+
 						<OnlineGame Loadingclick={handleClick} />
 					</div>
 				);
 			} else {
 				return <MainPong />;
 			}
-		} else {
+		}
+		if (!responsive.small) {
 			if (selectNav) {
 				return <OnlineGame Loadingclick={handleClick} />;
 			}

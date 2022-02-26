@@ -12,14 +12,20 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { User } from '../users/entities/users.entity';
-import { plainToClass } from 'class-transformer';
-import { UserDto } from '../users/dtos/user.dto';
 import { WsGameService } from './services/ws-game.service';
 import { Logger, UseFilters } from '@nestjs/common';
 import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
+import { myPtoOnlineGameDto, myPtoUserDto } from './utils/utils';
+import {
+  BallPosDto,
+  BroadcastDto,
+  GamePlayerDto,
+  PowerUpDto,
+  ScoreDto,
+} from './dto/gameplay.dto';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -49,33 +55,43 @@ export class GameGateway
 
   private readonly logger = new Logger('GameGateway');
 
+  //------------------------- LIFECYCLE EVENTS -------------------------------//
+
   afterInit() {
-    // console.debug('ws game 🎲  afterInit');
+    this.logger.debug('ws game 🎲  afterInit');
   }
 
   async handleConnection(client: Socket) {
-    console.debug('ws game 🎲  connect -> ', client.id);
+    this.logger.debug('ws game 🎲  connect -> ', client.id);
     await this.wsConnectionService.doHandleConnection(client);
   }
 
   async handleDisconnect(client: Socket) {
-    console.debug('ws game 🎲  disconnected -> ', client.id);
+    this.logger.debug('ws game 🎲  disconnected -> ', client.id);
     await this.wsConnectionService.doHandleDisconnect(client);
   }
 
+  //---------------------- GAME SUBSCRIPTION EVENTS --------------------------//
+
+  async joinGame(game_id: string, joining: boolean) {
+    this.logger.log('joinGame');
+    if (!joining) return null;
+
+    const game = await this.gameService.findOne(game_id, {
+      relations: ['players', 'players.user'],
+    });
+    const ws_ids = [game.players[0].user.game_ws, game.players[1].user.game_ws];
+    this.server
+      .to(ws_ids[0])
+      .emit('newPlayerJoined', myPtoUserDto(game.players[1].user));
+    this.wsGameService.startGame(ws_ids, game.id, this.server);
+    return myPtoUserDto(game.players[0].user);
+  }
+
   async gameInvitation(challenger: User, opponent: User) {
-    const opponent_sock = await this.server.in(opponent.game_ws).fetchSockets();
-    const challenger_sock = await this.server
-      .in(challenger.game_ws)
-      .fetchSockets();
-
-    if (!opponent_sock || !challenger_sock) return;
-
-    opponent_sock[0].emit(
-      'gameInvitation',
-      plainToClass(UserDto, challenger),
-      challenger_sock[0].id,
-    );
+    this.server
+      .to(opponent.game_ws)
+      .emit('gameInvitation', myPtoUserDto(challenger), challenger.game_ws);
   }
 
   @UseFilters(WsErrorFilter)
@@ -98,9 +114,7 @@ export class GameGateway
     if (reply.response === 'OK') {
       this.logger.log(`gameInvitation accepted: ${reply.response}`);
       this.wsGameService.updatePlayerStatus(opponent, { is_in_game: true });
-      this.server
-        .to(reply.to)
-        .emit('gameAccepted', plainToClass(UserDto, opponent));
+      this.server.to(reply.to).emit('gameAccepted', myPtoUserDto(opponent));
       this.wsGameService
         .createGame([challenger, opponent], [reply.to, client.id], this.server)
         .catch((e) => {
@@ -113,27 +127,29 @@ export class GameGateway
       this.wsGameService.updatePlayerStatus(challenger, {
         is_in_game: false,
       });
-      this.server
-        .to(reply.to)
-        .emit('gameDenied', plainToClass(UserDto, opponent));
+      this.server.to(reply.to).emit('gameDenied', myPtoUserDto(opponent));
     }
   }
 
   @SubscribeMessage('setMap')
   async setMap(
     @ConnectedSocket() client: Socket,
-    @MessageBody() obj: { room: string; map: string },
+    @MessageBody('room') room: string,
+    @MessageBody('map') map: string,
   ) {
-    await this.gameService.updateGame(obj.room, {
-      map: obj.map,
-      watch: randomUUID(),
-    });
+    console.log('map:', map);
+    const gameData = { map: map, watch: randomUUID() };
+    await this.gameService.updateGame(room, gameData);
+
+    client.to(room).emit('getGameData', gameData);
 
     ///// TEST // TODO: delete test below
+    console.log(`client id: ${client.id}`);
     console.log(
       'countdown finished, game: ',
-      await this.gameService.findOne(obj.room, null),
+      await this.gameService.findOne(room, null),
     );
+    return gameData.watch;
   }
 
   //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs
@@ -151,35 +167,92 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
+    const [game] = await this.gameService.findGameWithAnyParam(
+      [{ watch: room }],
+      { relations: ['players', 'players.user', 'players.user.local_photo'] },
+    );
+    if (!game) return 'game not found';
     client.join(room);
+    return myPtoOnlineGameDto(game);
   }
 
   @SubscribeMessage('leaveWatchGame')
-  async leaveWatchGame(
+  leaveWatchGame(
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
     client.leave(room);
   }
 
-  /////////////////////////////////////////////////
-  /// ---------------- TEST --------------------///
-  /////////////////////////////////////////////////
-  async serverToClient(id: string, data: string) {
-    console.log('gateway: serverToClient');
-    const client = await this.server.in(id).fetchSockets();
-    if (!client) console.log('no client');
-    else if (client.length > 1) console.log('strange: client > 1');
-    else client[0].emit('serverToClient', data);
+  //------------------------- END GAME ---------------------------------------//
+
+  @SubscribeMessage('endGame')
+  async endGame(
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('score') score: ScoreDto,
+  ) {
+    this.logger.log(`endGame `);
+    console.log(bcast, score);
+
+    let ret = await this.gameService.updateGame(bcast.room, {
+      watch: null,
+      updatedAt: Date.now(),
+    });
+    if (!ret) return;
+    ret = await this.gameService.findOne(ret.id, {
+      relations: ['players', 'players.user'],
+    });
+    await this.gameService.updatePlayers([
+      { id: ret.players[0].id, patch: { score: score.score1 } },
+      { id: ret.players[1].id, patch: { score: score.score2 } },
+    ]);
+    await this.wsGameService.updatePlayerStatus2(ret.players[0].user.id, {
+      is_in_game: false,
+    });
+    await this.wsGameService.updatePlayerStatus2(ret.players[1].user.id, {
+      is_in_game: false,
+    });
+    this.server.socketsLeave([bcast.room, bcast.watchers]);
   }
 
-  @SubscribeMessage('clientToServer')
-  clientToServer(
+  //------------------------- GAMEPLAY EVENTS --------------------------------//
+
+  @SubscribeMessage('scoreUpdate')
+  scoreUpdate(
     @ConnectedSocket() client: Socket,
-    @MessageBody() voila: string,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('score') score: ScoreDto,
   ) {
-    console.log('clientToServer');
-    console.log(`------test here------ ${voila} --- client.id: ${client.id}`);
+    client.to([bcast.room, bcast.watchers]).emit('scoreUpdate', score);
   }
-  /// ---------------- TEST END ----------------///
+
+  @SubscribeMessage('powerUpUpdate')
+  powerUpUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('powerup') powerup: PowerUpDto,
+  ) {
+    client.to([bcast.room, bcast.watchers]).emit('powerUpUpdate', powerup);
+  }
+
+  @SubscribeMessage('ballPosUpdate')
+  ballPosUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('ballpos') ballpos: BallPosDto,
+  ) {
+    client.to([bcast.room, bcast.watchers]).emit('ballPosUpdate', ballpos);
+  }
+
+  @SubscribeMessage('playerUpdate')
+  playerUpdate(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('gamePlayer') gamePlayer: GamePlayerDto,
+    @MessageBody('playerNb') playerNb: number,
+  ) {
+    client
+      .to([bcast.room, bcast.watchers])
+      .emit('playerUpdate', gamePlayer, playerNb);
+  }
 }

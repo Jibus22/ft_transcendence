@@ -1,5 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import { Button, CircularProgress } from '@mui/material';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
@@ -23,13 +24,45 @@ export default function Play({ Loadingclick }: Props) {
 		},
 	});
 
-	const { isDisable, loading, setSelectQuery, setIsGameRandom, setStartGame } = useMainPage();
+	const {
+		isDisable,
+		loading,
+		setSelectQuery,
+		setIsGameRandom,
+		setStartGame,
+		setPlayerNewGameInvit,
+		setIsOpponant,
+		setPlayerNewGameJoin,
+		setDataPlayerNewGameJoin,
+	} = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
 
 	function handleChangeWindow() {
 		setIsForm(!isForm);
 	}
+
+	const fetchDataGameRandom = async () => {
+		await axios({
+			url: `http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/join`,
+			method: 'POST',
+			withCredentials: true,
+		})
+			.then((response) => {
+				console.log(response);
+				if (response.data === '') {
+					setPlayerNewGameInvit(true);
+					setIsOpponant(true);
+				} else {
+					setDataPlayerNewGameJoin(response.data);
+					setIsOpponant(false);
+					setPlayerNewGameJoin(true);
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
 
 	useEffect(() => {
 		setSelectQuery(true);
@@ -41,6 +74,7 @@ export default function Play({ Loadingclick }: Props) {
 
 	const getGame = () => {
 		setIsGameRandom(true);
+		fetchDataGameRandom();
 		// setStartGame(true);
 		Loadingclick();
 	};
