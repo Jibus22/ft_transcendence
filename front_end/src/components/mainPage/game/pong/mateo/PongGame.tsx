@@ -156,14 +156,19 @@ class PongGame extends React.Component<MyProps> {
 			},
 		});
 
-		if (this.scoreP1 >= 10) {
+		if (this.scoreP1 === 10 || this.scoreP2 === 10) {
+			let winner: string;
 			this.gamerunning = false;
-			this._printText('Player One win');
-			return;
-		}
-		if (this.scoreP2 >= 10) {
-			this.gamerunning = false;
-			this._printText('Player Two win');
+			if (this.scoreP1 === 10) winner = 'One';
+			else winner = 'Two';
+			this._printText(`Player ${winner} win`);
+			this.props.socket?.emit('endGame', {
+				bcast: this.broadcast,
+				score: {
+					score1: this.scoreP1,
+					score2: this.scoreP2,
+				},
+			});
 			return;
 		}
 
@@ -248,16 +253,13 @@ class PongGame extends React.Component<MyProps> {
 					y: this._ball.y,
 				},
 			});
-		}
-		if (this._P1) {
 			this._playerOne._update(this._keystate, this.height, this._ball);
 			this.props.socket?.emit('playerUpdate', {
 				bcast: this.broadcast,
 				gamePlayer: this._playerOne,
 				playerNb: 1,
 			});
-		}
-		if (this._P2) {
+		} else if (this._P2) {
 			this._playerTwo._update(this._keystate, this.height, this._ball);
 			this.props.socket?.emit('playerUpdate', {
 				bcast: this.broadcast,
@@ -353,9 +355,11 @@ class PongGame extends React.Component<MyProps> {
 			evt.preventDefault();
 			delete keystate[evt.key];
 		});
-		setInterval(() => {
-			if (this.gamerunning) this._update();
-		}, 10);
+		if (this._P1 || this._P2) {
+			setInterval(() => {
+				if (this.gamerunning) this._update();
+			}, 10);
+		}
 		setInterval(() => {
 			if (this.gamerunning) this._draw();
 		}, 30);
@@ -381,14 +385,12 @@ class PongGame extends React.Component<MyProps> {
 			this.scoreP2 = score.score2;
 
 			//Affichage du gagnant
-			if (this.scoreP1 >= 10) {
+			if (this.scoreP1 === 10 || this.scoreP2 === 10) {
+				let winner: string;
 				this.gamerunning = false;
-				this._printText('Player One win');
-				return;
-			}
-			if (this.scoreP2 >= 10) {
-				this.gamerunning = false;
-				this._printText('Player Two win');
+				if (this.scoreP1 === 10) winner = 'One';
+				else winner = 'Two';
+				this._printText(`Player ${winner} win`);
 				return;
 			}
 

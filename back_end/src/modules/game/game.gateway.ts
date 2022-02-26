@@ -185,6 +185,31 @@ export class GameGateway
     client.leave(room);
   }
 
+  //------------------------- END GAME ---------------------------------------//
+
+  @SubscribeMessage('endGame')
+  async endGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('score') score: ScoreDto,
+  ) {
+    let ret = await this.gameService.updateGame(bcast.room, {
+      watch: null,
+      updatedAt: Date.now(),
+    });
+    if (!ret) return;
+    ret = await this.gameService.findOne(ret.id, {
+      relations: ['players', 'players.user'],
+    });
+    this.gameService.updatePlayers([
+      { id: ret.players[0].id, patch: { score: score.score1 } },
+      { id: ret.players[1].id, patch: { score: score.score2 } },
+    ]);
+    // mettre les scores dans la table + watch = null
+    // faire leave tt le monde.
+    // update le status des joueurs
+  }
+
   //------------------------- GAMEPLAY EVENTS --------------------------------//
 
   @SubscribeMessage('scoreUpdate')
