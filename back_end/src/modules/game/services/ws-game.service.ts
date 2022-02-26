@@ -1,11 +1,10 @@
-import { UsersService } from 'src/modules/users/service-users/users.service';
-import { Server } from 'socket.io';
-import { User } from 'src/modules/users/entities/users.entity';
 import { Injectable, Logger } from '@nestjs/common';
-import { GameService } from './game.service';
-import { randomUUID } from 'crypto';
 import { plainToClass } from 'class-transformer';
+import { Server } from 'socket.io';
+import { User } from '../../users/entities/users.entity';
+import { UsersService } from '../../users/service-users/users.service';
 import { OnlineGameDto } from '../dto/online-game.dto';
+import { GameService } from './game.service';
 
 @Injectable()
 export class WsGameService {

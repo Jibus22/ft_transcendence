@@ -81,15 +81,6 @@ export class ChatGateway
     await this.doHandleDisconnect(client);
   }
 
-  // @UsePipes(new ValidationPipe({
-  //   whitelist: true
-  // }))
-  // @SubscribeMessage('ingame')
-  // async updateIngane(client: Socket, data: { value: 'in' | 'out' }) {
-  //   this.logger.debug('get ingame');
-  //   return await this.chatGatewayService.setUserIngame(client, data);
-  // }
-
   /*
 	===================================================================
 	-------------------------------------------------------------------
