@@ -39,6 +39,7 @@ const MainPage = () => {
 			setTimeout(function () {
 				setOpenDIalog(false);
 				disconectAuth();
+				navigate('/');
 			}, 3000);
 		}
 	};
@@ -192,9 +193,9 @@ const MainPage = () => {
 			//du type qui vient de rejoindre le jeu
 		});
 
-		socket.emit('watchGame', 'fake_watch', (response: any) => {
-			console.log(`CLIENT: response from server -> ${response}`);
-		});
+		// socket.emit('watchGame', 'fake_watch', (response: any) => {
+		// 	console.log(`CLIENT: response from server -> ${response}`);
+		// });
 
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);

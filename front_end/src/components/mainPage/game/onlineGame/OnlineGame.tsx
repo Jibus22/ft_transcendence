@@ -16,16 +16,25 @@ interface Props {
 
 interface MapProps {
 	data: OnlineGameType;
-	time: boolean;
+
 	loading: boolean;
-	handleClick: () => void;
+
 	gameWs: Socket | undefined;
 }
 
-const ListGame: FC<MapProps> = ({ data, time, loading, handleClick, gameWs }) => {
-	useEffect(() => {
-		console.log('list item data set');
-	}, []);
+const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
+	const [time, setTime] = useState(false);
+
+	const handleClick = (watch: string) => {
+		console.log(watch);
+		gameWs?.emit('watchGame', watch, (response: any) => {
+			console.log(`CLIENT: response from server -> ${response}`);
+		});
+		setTime(true);
+		setTimeout(function () {
+			setTime(false);
+		}, 2000);
+	};
 
 	return (
 		<div className="partyOnline d-flex ">
@@ -67,7 +76,7 @@ const ListGame: FC<MapProps> = ({ data, time, loading, handleClick, gameWs }) =>
 			<div className="userWatch d-flex  ">
 				<LoadingButton
 					className="muiButton"
-					onClick={handleClick}
+					onClick={() => handleClick(data.watch)}
 					disabled={loading || time}
 					variant="contained"
 					sx={{
@@ -120,8 +129,6 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		gameWs?.on('newOnlineGame', (obj) => {
 			console.log(`💌  Event: newOnlineGame -> `, obj);
 
-			// data.push(obj);
-
 			setData((s) => [obj, ...s]);
 		});
 
@@ -131,13 +138,16 @@ export default function OnlineGame({ Loadingclick }: Props) {
 	}, [gameWs]);
 
 	const { loading } = useMainPage();
-	const [time, setTime] = useState(false);
-	function handleClick() {
-		setTime(true);
-		setTimeout(function () {
-			setTime(false);
-		}, 2000);
-	}
+
+	// const  handleClick = ()  => {
+	// 	gameWs?.emit('watchGame', 'fake_watch', (response: any) => {
+	// 		console.log(`CLIENT: response from server -> ${response}`);
+	// 	});
+	// 	setTime(true);
+	// 	setTimeout(function () {
+	// 		setTime(false);
+	// 	}, 2000);
+	// }
 
 	return (
 		<animated.div style={props} className="w-100">
@@ -150,7 +160,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 						{data &&
 							data.map((data, index: number) => (
 								<React.Fragment key={index}>
-									<ListGame data={data} handleClick={handleClick} time={time} loading={loading} gameWs={gameWs} />
+									<ListGame data={data} loading={loading} gameWs={gameWs} />
 								</React.Fragment>
 							))}
 					</div>
