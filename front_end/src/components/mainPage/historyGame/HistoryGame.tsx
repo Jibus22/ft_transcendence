@@ -40,6 +40,7 @@ const HistoryGame = () => {
 			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/history`, {
 				withCredentials: true,
 			});
+			console.log(data);
 			setDataGame(data);
 		} catch (error) {
 			const err = error as AxiosError;

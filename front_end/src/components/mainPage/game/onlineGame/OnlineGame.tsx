@@ -23,10 +23,6 @@ interface MapProps {
 }
 
 const ListGame: FC<MapProps> = ({ data, time, loading, handleClick, gameWs }) => {
-	useEffect(() => {
-		console.log('list item data set');
-	}, []);
-
 	return (
 		<div className="partyOnline d-flex ">
 			<div className="userImg d-flex">
@@ -119,8 +115,6 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		setIsPrintData(true);
 		gameWs?.on('newOnlineGame', (obj) => {
 			console.log(`💌  Event: newOnlineGame -> `, obj);
-
-			// data.push(obj);
 
 			setData((s) => [obj, ...s]);
 		});

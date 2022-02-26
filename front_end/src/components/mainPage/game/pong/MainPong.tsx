@@ -31,10 +31,16 @@ export default function MainPong() {
 		challengData,
 		dialogueLoading,
 		dataUserChallenge,
+		setPlayerNewGameInvit,
+		playerNewGameInvit,
+		setIsGameRandom,
 		gameWs,
 		isOpponant,
 		opacity,
 		setOpacity,
+		setIsOpponant,
+		playerNewGameJoin,
+		dataPlayerNewGameJoin,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -44,6 +50,10 @@ export default function MainPong() {
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [roomId, setRoomId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
+
+	const [dataGameRandomSocket, setDataGameRandomSocket] = useState<User>();
+
+	const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
 
 	const closeGame = () => {
 		setOpen(false);
@@ -61,17 +71,27 @@ export default function MainPong() {
 
 		if (!isOpponant) {
 			setData(challengData);
-			//console.log('exterieur');]
+			console.log('exterieur');
+
 			setNbPlayer(2);
 		} else {
 			setData(dataUserChallenge);
-			//console.log('domicile');
+			console.log('domicile');
 			setNbPlayer(1);
 			if (acceptGame === false) {
 				setOpacity(true);
 			}
 		}
 
+		return () => {
+			setIsGameRandom(false);
+			setLeaveGame(false);
+			setPlayerNewGameInvit(false);
+			// setIsOpponant(false);
+		};
+	}, [isOpponant]);
+
+	useEffect(() => {
 		gameWs?.on('gameAccepted', (opponentData) => {
 			console.log(`💌  Event: gameAccepted -> ${opponentData}`);
 			setAcceptGame(true);
@@ -88,7 +108,7 @@ export default function MainPong() {
 		});
 
 		gameWs?.on('countDown', (count: number) => {
-			// console.log(`count: ${count}`);
+			console.log(`count: ${count}`);
 			setCount(count);
 		});
 
@@ -97,17 +117,23 @@ export default function MainPong() {
 			setRoomId(room);
 		});
 
-		return () => {
-			setLeaveGame(false);
-		};
-	}, [gameWs, count, map]);
+		gameWs?.on('newPlayerJoined', (obj: User) => {
+			console.log(`💌  Event: newPlayerJoined -> `, obj);
+			setDataGameRandomSocket(obj);
+			setAcceptGame(true);
+			setOpacity(false);
+			// setLoadingNewGamePlayer(true);
+		});
+	}, [gameWs, count, dataGameRandomSocket]);
 
 	useEffect(() => {
 		if (map !== null) {
+			console.log('map =====', map);
+
 			gameWs?.on('setMap', (room: string) => {
 				// console.log(`💌  Event: setMap -> ${cb}`);
 				gameWs?.emit('setMap', { room: room, map: map });
-				console.log('map is ==== ', map);
+				// console.log('map is ==== ', map);
 			});
 		}
 	}, [map]);
@@ -130,8 +156,28 @@ export default function MainPong() {
 					</div>
 				</>
 			);
+		}
+		if (playerNewGameInvit && acceptGame) {
+			return (
+				<>
+					<Avatar alt="userImg" src={dataGameRandomSocket?.photo_url} />
+					<div>
+						<h1>{dataGameRandomSocket?.login}</h1>
+					</div>
+				</>
+			);
+		}
+
+		if (playerNewGameJoin) {
+			return (
+				<>
+					<Avatar alt="userImg" src={dataPlayerNewGameJoin?.photo_url} />
+					<div>
+						<h1>{dataPlayerNewGameJoin?.login}</h1>
+					</div>
+				</>
+			);
 		} else {
-			console.log('fdwsfdfsdfsgsdgdsfdssdf');
 			return (
 				<>
 					<Avatar alt="userImg" />
@@ -142,8 +188,6 @@ export default function MainPong() {
 			);
 		}
 	};
-
-	// <PongGame map={map} roomId={roomId} joueur={nbPlayer} socket={gameWs} />
 
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
@@ -157,7 +201,7 @@ export default function MainPong() {
 								{acceptGame || !isOpponant ? <span className="counterOutput">{count}</span> : titlePrint()}
 							</div>
 
-							<div className={clsx('infoUser', !isOpponant && 'infoUserReverse')}>
+							<div className={clsx('infoUser', !isOpponant && !isGameRandom && 'infoUserReverse')}>
 								<div className="photoUser">
 									<Avatar alt="userImg" src={userImg} />
 									<div>
@@ -169,7 +213,7 @@ export default function MainPong() {
 								<div className={`${!opacity ? '' : 'photoOp'} photoUser `}>{infoOpponent()}</div>
 							</div>
 							<div className="titleMap">
-								{isOpponant ? <h1>Choose the map</h1> : null}
+								{isOpponant && !acceptGame ? <h1>Choose the map</h1> : null}
 
 								{isOpponant && (
 									<div className="selectMap">

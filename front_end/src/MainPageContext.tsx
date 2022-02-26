@@ -5,12 +5,15 @@ import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserMe, LoginGame, User, UserChallenge } from './components/type';
+import { boolean } from 'yup';
 
 interface IMainPageContext {
 	data: Array<UserMe>;
 
 	dataUserGame: Array<LoginGame>;
 	dataUserChallenge: Array<UserChallenge>;
+
+	dataPlayerNewGameJoin: User;
 
 	challengData: Array<User>;
 	timeSnack: boolean;
@@ -34,6 +37,7 @@ interface IMainPageContext {
 	setData: Dispatch<SetStateAction<never[]>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
 	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
+	setDataPlayerNewGameJoin: Dispatch<SetStateAction<User>>;
 
 	setChallengData: Dispatch<SetStateAction<User[]>>;
 
@@ -78,6 +82,12 @@ interface IMainPageContext {
 
 	opacity: boolean;
 	setOpacity: Dispatch<SetStateAction<boolean>>;
+
+	playerNewGameInvit: boolean;
+	setPlayerNewGameInvit: Dispatch<SetStateAction<boolean>>;
+
+	playerNewGameJoin: boolean;
+	setPlayerNewGameJoin: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -85,6 +95,8 @@ const MainPageContext = React.createContext({} as IMainPageContext);
 const MainPageProvider = (props: any) => {
 	const [data, setData] = useState([]);
 	const [dataUserGame, setDataUserGame] = useState([]);
+
+	const [dataPlayerNewGameJoin, setDataPlayerNewGameJoin] = useState();
 
 	const [dataUserChallenge, setDataUserChallenge] = useState([]);
 
@@ -117,6 +129,10 @@ const MainPageProvider = (props: any) => {
 	const [opacity, setOpacity] = useState(false);
 
 	const navigate = useNavigate();
+
+	const [playerNewGameInvit, setPlayerNewGameInvit] = useState(false);
+
+	const [playerNewGameJoin, setPlayerNewGameJoin] = useState(false);
 
 	// const [dataHistory, setDataHistory] = useState([]);
 
@@ -321,6 +337,13 @@ const MainPageProvider = (props: any) => {
 
 		opacity,
 		setOpacity,
+		playerNewGameInvit,
+		setPlayerNewGameInvit,
+
+		playerNewGameJoin,
+		setPlayerNewGameJoin,
+		dataPlayerNewGameJoin,
+		setDataPlayerNewGameJoin,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
