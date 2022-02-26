@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { UserDto } from 'src/modules/users/dtos/user.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { OnlineGameDto } from '../dto/online-game.dto';
 
 const myPtC = (dto: any) => (plain: any) =>
