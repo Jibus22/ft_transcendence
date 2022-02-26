@@ -148,8 +148,8 @@ export class GameService {
     let games: Game[] = [];
     for (let elem of param) {
       let game: Game;
-      if (!relations) await this.game_repo.findOne(elem);
-      else await this.game_repo.findOne(elem, relations);
+      if (!relations) game = await this.game_repo.findOne(elem);
+      else game = await this.game_repo.findOne(elem, relations);
       if (game) games.push(game);
     }
     return games;
