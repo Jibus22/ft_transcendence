@@ -23,13 +23,13 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const getMessages = async () => {
-		const { data } = await axios.get(`http://localhost:3000/room/${room.id}/message`, { withCredentials: true });
+		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
 		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
 		setMessages(sortedMessages);
 	};
 
 	const sendMessage = async () => {
-		axios.post(`http://localhost:3000/room/${room.id}/message`,
+		axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
 		{ body: message },
 		{ withCredentials: true });
 		setMessage("");
@@ -236,7 +236,7 @@ const Message = styled.div<{self: boolean}>`
 			transform: scaleX(-1);
 			right: -4px;
 			left: inherit;
-	
+
 			path {
 				fill: #E69C6A;
 			}

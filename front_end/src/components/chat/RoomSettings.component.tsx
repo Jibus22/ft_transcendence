@@ -35,10 +35,10 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		});
 		return owner;
 	};
-	
+
 	const changePassword = async () => {
 		const newPassword = prompt("New password (empty for no password)");
-		axios.patch(`http://localhost:3000/room/${room.id}/password`, {
+		axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/password`, {
 			password: newPassword
 		}, { withCredentials: true })
 		.then(() => alert("Password successfully set"))
@@ -50,9 +50,9 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		if (!login)
 			return;
 		try {
-			const { data } = await axios.get(`http://localhost:3000/users/profile/${login}`, { withCredentials: true });
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${login}`, { withCredentials: true });
 			const { id } = data;
-			await axios.post(`http://localhost:3000/room/${room.id}/participant`, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/participant`, {
 				id
 			}, { withCredentials: true });
 		} catch {
@@ -63,7 +63,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const toggleModerator = async (user: any) => {
-		await axios.patch(`http://localhost:3000/room/${room.id}/moderator`, {
+		await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/moderator`, {
 			participant_id: user.id,
 			is_moderator: !user.is_moderator
 		}, { withCredentials: true });
@@ -71,7 +71,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const makePublic = async () => {
-		
+
 	};
 
 	const makePrivate = async () => {
@@ -81,7 +81,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	const mute = async (user: any) => {
 		const duration = prompt("Mute duration, in minutes");
 		if (duration) {
-			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 				participant_id: user.id,
 				user_id: user.user.id,
 				restriction_type: "mute",
@@ -93,7 +93,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	const ban = async (user: any) => {
 		const duration = prompt("Ban duration, in minutes");
 		if (duration) {
-			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 				participant_id: user.id,
 				user_id: user.user.id,
 				restriction_type: "ban",
