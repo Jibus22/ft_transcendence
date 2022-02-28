@@ -30,7 +30,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	const sendMessage = async () => {
 		axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
-		{ body: message },
+		{ body: message.slice(0, 10000) },
 		{ withCredentials: true });
 		setMessage("");
 	}
