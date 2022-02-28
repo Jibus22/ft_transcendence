@@ -1,12 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Exclude, Expose, plainToClass } from 'class-transformer';
-import { UserDto } from 'src/modules/users/dtos/user.dto';
+import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
+import { UserDto } from '../../users/dtos/user.dto';
 
 @Exclude()
 export class OnlineGameDto {
   @ApiProperty()
   @Expose()
   watch: string;
+
+  @ApiProperty()
+  @Expose()
+  map: string;
 
   @ApiProperty()
   @Expose()

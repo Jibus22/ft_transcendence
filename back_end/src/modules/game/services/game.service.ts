@@ -13,6 +13,7 @@ import { User } from '../../users/entities/users.entity';
 import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { IPlayerError, PlayerHttpError, PlayerWsError } from '../utils/error';
+import { UpdatePlayerDto } from '../dto/update-player.dto';
 
 @Injectable()
 export class GameService {
@@ -148,8 +149,8 @@ export class GameService {
     let games: Game[] = [];
     for (let elem of param) {
       let game: Game;
-      if (!relations) await this.game_repo.findOne(elem);
-      else await this.game_repo.findOne(elem, relations);
+      if (!relations) game = await this.game_repo.findOne(elem);
+      else game = await this.game_repo.findOne(elem, relations);
       if (game) games.push(game);
     }
     return games;
@@ -159,6 +160,13 @@ export class GameService {
   async updateGame(uuid: string, patchedGame: Partial<UpdateGameDto>) {
     await this.game_repo.update(uuid, patchedGame);
     return await this.findOne(uuid, null);
+  }
+
+  //update a player
+  async updatePlayers(objs: { id: string; patch: Partial<UpdatePlayerDto> }[]) {
+    for (let elem of objs) {
+      await this.player_repo.update(elem.id, elem.patch);
+    }
   }
 
   async remove(uuid: string) {

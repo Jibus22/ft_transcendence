@@ -6,6 +6,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import RemoveModeratorIcon from '@mui/icons-material/RemoveModerator';
+import Tooltip from "@mui/material/Tooltip";
 
 const RoomSettings = ({ room, currentUser }: any) => {
 
@@ -34,10 +35,10 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		});
 		return owner;
 	};
-	
+
 	const changePassword = async () => {
 		const newPassword = prompt("New password (empty for no password)");
-		axios.patch(`http://localhost:3000/room/${room.id}/password`, {
+		axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/password`, {
 			password: newPassword
 		}, { withCredentials: true })
 		.then(() => alert("Password successfully set"))
@@ -46,11 +47,12 @@ const RoomSettings = ({ room, currentUser }: any) => {
 
 	const addParticipant = async () => {
 		const login = prompt("Enter the login of the participant");
-		
+		if (!login)
+			return;
 		try {
-			const { data } = await axios.get(`http://localhost:3000/users/profile/${login}`, { withCredentials: true });
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${login}`, { withCredentials: true });
 			const { id } = data;
-			await axios.post(`http://localhost:3000/room/${room.id}/participant`, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/participant`, {
 				id
 			}, { withCredentials: true });
 		} catch {
@@ -61,17 +63,25 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const toggleModerator = async (user: any) => {
-		await axios.patch(`http://localhost:3000/room/${room.id}/moderator`, {
+		await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/moderator`, {
 			participant_id: user.id,
 			is_moderator: !user.is_moderator
 		}, { withCredentials: true });
 		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
 
+	const makePublic = async () => {
+
+	};
+
+	const makePrivate = async () => {
+
+	};
+
 	const mute = async (user: any) => {
 		const duration = prompt("Mute duration, in minutes");
 		if (duration) {
-			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 				participant_id: user.id,
 				user_id: user.user.id,
 				restriction_type: "mute",
@@ -83,7 +93,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	const ban = async (user: any) => {
 		const duration = prompt("Ban duration, in minutes");
 		if (duration) {
-			await axios.post(`http://localhost:3000/room/${room.id}/restriction`, {
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 				participant_id: user.id,
 				user_id: user.user.id,
 				restriction_type: "ban",
@@ -102,6 +112,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				<h3>Chat settings</h3>
 				<SettingsWrapper>
 					<Button onClick={() => changePassword()}>Change/Set password</Button>
+					{room.is_private && <Button onClick={() => makePublic()}>Set room as public</Button>}
+					{!room.is_private && <Button onClick={() => makePrivate()}>Set room as private</Button>}
 				</SettingsWrapper>
 			</>
 		)}
@@ -112,16 +124,16 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
 				{isModerator() && user.user.id !== currentUser.id && (
 					<ActionButtons>
-						<button onClick={() => ban(user)}>
+						<Tooltip title="Ban user"><button onClick={() => ban(user)}>
 							<BlockIcon />
-						</button>
-						<button onClick={() => mute(user)}>
+						</button></Tooltip>
+						<Tooltip title="Mute user"><button onClick={() => mute(user)}>
 							<VolumeOffIcon />
-						</button>
-						<button onClick={() => toggleModerator(user)}>
+						</button></Tooltip>
+						<Tooltip title={user.is_moderator ? "Remove moderator rights" : "Add moderator rights"}><button onClick={() => toggleModerator(user)}>
 							{!user.is_moderator && (<AddModeratorIcon />)}
 							{user.is_moderator && (<RemoveModeratorIcon />)}
-						</button>
+						</button></Tooltip>
 					</ActionButtons>
 				)}
 			</User>))

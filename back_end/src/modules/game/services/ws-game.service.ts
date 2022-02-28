@@ -1,9 +1,9 @@
-import { UsersService } from 'src/modules/users/service-users/users.service';
-import { Server } from 'socket.io';
-import { User } from 'src/modules/users/entities/users.entity';
 import { Injectable, Logger } from '@nestjs/common';
-import { GameService } from './game.service';
 import { myPtoOnlineGameDto, sleep } from '../utils/utils';
+import { Server } from 'socket.io';
+import { User } from '../../users/entities/users.entity';
+import { UsersService } from '../../users/service-users/users.service';
+import { GameService } from './game.service';
 
 @Injectable()
 export class WsGameService {
@@ -54,7 +54,11 @@ export class WsGameService {
   }
 
   async updatePlayerStatus(player: User, patch: { is_in_game: boolean }) {
-    this.usersService.updateUser(player, patch);
+    await this.usersService.updateUser(player, patch);
+  }
+
+  async updatePlayerStatus2(player_id: string, patch: { is_in_game: boolean }) {
+    await this.usersService.update(player_id, patch);
   }
 
   async getUserFromParam(param: Partial<User>[]): Promise<User[]> {

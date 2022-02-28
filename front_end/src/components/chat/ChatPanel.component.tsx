@@ -4,7 +4,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import { useEffect, useState } from "react";
-import ChatParticipant from "./ChatParticipant.component";
 import RoomSettings from "./RoomSettings.component";
 
 const chatName = (participants: any) => {
@@ -24,31 +23,33 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const getMessages = async () => {
-		const { data } = await axios.get(`http://localhost:3000/room/${room.id}/message`, { withCredentials: true });
+		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
 		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
 		setMessages(sortedMessages);
 	};
 
 	const sendMessage = async () => {
-		await axios.post(`http://localhost:3000/room/${room.id}/message`,
+		axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
 		{ body: message },
 		{ withCredentials: true });
 		setMessage("");
 	}
 
-	const getUser = () => {
-		if (room.participants.length === 1)
-			return room.participants[0];
-		if (room.participants.length > 2)
+	const getNameIfDM = () => {
+		if (room.participants.length === 1 && room.participants[0].user.id === currentUser.id) {
+			return room.participants[0].user.login;
+		}
+		const isDM =
+				room.participants.length === 2
+				&& room.participants.filter((participant: any) => participant.user.id === currentUser.id).length > 0;
+		if (!isDM)
 			return null;
-		if (!room.is_private)
-			return null;
-		return room.participants.filter((user: any) => user.user.id !== currentUser.id)[0];
-	};
-
-	const isGroup = () => {
-		return !room.is_private;
-	};
+		const name =
+			room.participants[0].user.login === currentUser.login
+			? room.participants[1].user.login
+			: room.participants[0].user.login
+		return name;
+	}
 
 	const scrollChatDown = () => {
 		try {
@@ -79,23 +80,10 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	return (<MessagesPaneWrapper>
 		{!detailsOpen && (<ChatHeader>
-			{/* {room.participants.length <= 2 && <img src={getUser()?.user.photo_url} alt={room.participants[0].user.login}/>}
-			<div>
-				{getUser() !== null && (<h4>{ getUser().user.login }</h4>)}
-				{getUser() === null && (<h4>{ chatName(room.participants) }</h4>)}
-				<span>{ getUser()?.user.status }</span>
-			</div> */}
-			{!isGroup() && (
-			<>
-				<img src={getUser()?.user.photo_url} alt={getUser()?.user.login}/>
+			{(<>
+				{room.participants.slice(0, 3).map((user: any) => <img key={user.id} src={user.user.photo_url} alt={user.user.login} />)}
 				<div>
-					<h4>{ getUser()?.user.login }</h4>
-					<span>{ getUser()?.user.status }</span>
-				</div>
-			</>)}
-			{isGroup() && (<>
-				<div>
-					<h4>{ chatName(room.participants) }</h4>
+					<h4>{ getNameIfDM() ? getNameIfDM() : chatName(room.participants) }</h4>
 				</div>
 			</>)}
 			<button><NavigateNextIcon style={{color: "#444444"}} onClick={() => setDetailsOpen(true)} /></button>
@@ -116,17 +104,14 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			))}
 		</ChatMessages>
 		<ChatField>
-			<input type="text" placeholder="Type here" value={message} onChange={onMessage}/>
+			<input type="text" placeholder="Type here" value={message} onChange={onMessage} onKeyPress={(e: any) => e.key === "Enter" && sendMessage()}/>
 			<button onClick={sendMessage}>
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>
 		</ChatField>
 		</>)}
 		{detailsOpen && (
-			<>
-				{ !isGroup() && <ChatParticipant user={getUser()} currentUser={currentUser} /> }
-				{ isGroup() && <RoomSettings room={room} currentUser={currentUser} /> }
-			</>
+			<RoomSettings room={room} currentUser={currentUser} />
 		)}
 	</MessagesPaneWrapper>);
 };
@@ -144,12 +129,18 @@ const ChatHeader = styled.div`
 	flex-direction: row;
 	align-items: center;
 
-	img:nth-child(1) {
+	img {
 		height: 35px;
 		width: 35px;
 		margin: 10px;
 		margin-right: 0px;
 		border-radius: 100%;
+		margin-left: -10px;
+		background-color: white;
+	}
+
+	img:nth-child(1) {
+		margin-left: 10px;
 	}
 
 	> div {
@@ -245,7 +236,7 @@ const Message = styled.div<{self: boolean}>`
 			transform: scaleX(-1);
 			right: -4px;
 			left: inherit;
-	
+
 			path {
 				fill: #E69C6A;
 			}

@@ -138,12 +138,10 @@ export class GameGateway
     @MessageBody('map') map: string,
   ) {
     console.log('map:', map);
-    await this.gameService.updateGame(room, {
-      map: map,
-      watch: randomUUID(),
-    });
+    const gameData = { map: map, watch: randomUUID() };
+    await this.gameService.updateGame(room, gameData);
 
-    client.to(room).emit('getMap', map);
+    client.to(room).emit('getGameData', gameData);
 
     ///// TEST // TODO: delete test below
     console.log(`client id: ${client.id}`);
@@ -151,6 +149,7 @@ export class GameGateway
       'countdown finished, game: ',
       await this.gameService.findOne(room, null),
     );
+    return gameData.watch;
   }
 
   //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs
@@ -183,6 +182,37 @@ export class GameGateway
     @MessageBody() room: string,
   ) {
     client.leave(room);
+  }
+
+  //------------------------- END GAME ---------------------------------------//
+
+  @SubscribeMessage('endGame')
+  async endGame(
+    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody('score') score: ScoreDto,
+  ) {
+    this.logger.log(`endGame `);
+    console.log(bcast, score);
+
+    let ret = await this.gameService.updateGame(bcast.room, {
+      watch: null,
+      updatedAt: Date.now(),
+    });
+    if (!ret) return;
+    ret = await this.gameService.findOne(ret.id, {
+      relations: ['players', 'players.user'],
+    });
+    await this.gameService.updatePlayers([
+      { id: ret.players[0].id, patch: { score: score.score1 } },
+      { id: ret.players[1].id, patch: { score: score.score2 } },
+    ]);
+    await this.wsGameService.updatePlayerStatus2(ret.players[0].user.id, {
+      is_in_game: false,
+    });
+    await this.wsGameService.updatePlayerStatus2(ret.players[1].user.id, {
+      is_in_game: false,
+    });
+    this.server.socketsLeave([bcast.room, bcast.watchers]);
   }
 
   //------------------------- GAMEPLAY EVENTS --------------------------------//
