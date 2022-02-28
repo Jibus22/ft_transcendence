@@ -17,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '../../guards/auth.guard';
 import { Serialize } from '../../interceptors/serialize.interceptor';
+import { LeaderBoardDto } from '../game/dto/leaderboard.dto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { editRelationDto } from './dtos/edit-relation.dto';
 import { UserDto } from './dtos/user.dto';
@@ -34,7 +35,6 @@ import { UsersService } from './service-users/users.service';
   description: 'User not logged',
 })
 @UseGuards(AuthGuard)
-@Serialize(UserDto)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -43,6 +43,7 @@ export class UsersController {
   ) {}
 
   @Get('/')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Get every users in the database',
   })
@@ -54,6 +55,7 @@ export class UsersController {
   }
 
   @Get('/profile/:login')
+  @Serialize(LeaderBoardDto)
   @ApiOperation({
     summary: 'Get public infos of user :login',
   })
@@ -61,12 +63,14 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.OK, description: "User's public data" })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No user' })
   async getUserById(@Param('login') login: string) {
-    return await this.usersService.find({ login }).then((users) => {
-      if (!users[0]) {
-        throw new NotFoundException('user not found');
-      }
-      return users[0];
-    });
+    return await this.usersService
+      .findUserWithGamesData({ login })
+      .then((users) => {
+        if (!users[0]) {
+          throw new NotFoundException('user not found');
+        }
+        return users[0];
+      });
   }
 
   /*
@@ -78,6 +82,7 @@ export class UsersController {
   */
 
   @Get('/friend')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Get list of friends of the currently logger user',
   })
@@ -94,6 +99,7 @@ export class UsersController {
   }
 
   @Post('/friend')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Add one friend to the currently logger user',
   })
@@ -114,6 +120,7 @@ export class UsersController {
   }
 
   @Delete('/friend')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Remove one friend to the currently logger user',
   })
@@ -139,6 +146,7 @@ export class UsersController {
   */
 
   @Get('/block')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Get list of blocked accounts of the currently logger user',
   })
@@ -155,6 +163,7 @@ export class UsersController {
   }
 
   @Post('/block')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Add one blocked account to the currently logger user',
   })
@@ -175,6 +184,7 @@ export class UsersController {
   }
 
   @Delete('/block')
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Remove one blocked account to the currently logger user',
   })
