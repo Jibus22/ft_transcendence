@@ -198,7 +198,8 @@ const MainPage = () => {
 		// });
 
 		socket.on('goBackInGame', (obj: any) => {
-			console.log(`💌  Event: goBackInGame -> ${obj}`);
+			console.log(`💌  Event: goBackInGame ->`);
+			console.log(obj);
 			//Server detected the client was playing before disconnecting so it gives
 			//thru this event an OnlineGameDto so that we can call the game component
 			//and go back to the game.

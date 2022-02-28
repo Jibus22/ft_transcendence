@@ -191,7 +191,8 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
-    let score: ScoreDto;
+    this.logger.log(`giveUpGame`);
+    let score = new ScoreDto();
     const [user] = await this.wsGameService.getUserFromParam(
       [{ game_ws: client.id }],
       { relations: ['players'] },

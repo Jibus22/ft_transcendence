@@ -80,34 +80,40 @@ export class WsConnectionService {
     server
       .to([game.id, game.watch])
       .emit('playerDisconnection', myPtoUserDto(user));
-    await sleep(5000);
-    [user] = await this.usersService.findOneWithAnyParam(
-      [{ id: user.id }],
-      null,
-    );
-    if (user.game_ws) {
-      server.to(user.game_ws).emit('goBackInGame', myPtoOnlineGameDto(game));
-      server
-        .to([game.id, game.watch])
-        .except(user.game_ws)
-        .emit('playerCameBack', myPtoUserDto(user));
-    } else {
-      let score: ScoreDto;
-      if (game.players.length < 2) {
-        this.gameService.remove(game.id);
-        return;
-      }
-      score.score1 = game.players[0].score;
-      score.score2 = game.players[1].score;
-      if (game.players[0].user.id === user.id) score.score2 = 10;
-      else score.score1 = 10;
-      await this.gameService.updateScores(game.id, score);
-      await this.wsGameService.updatePlayerStatus2(
-        [game.players[0].user.id, game.players[1].user.id],
-        { is_in_game: false },
+    for (let i = 8; i >= 0; i--) {
+      await sleep(1000);
+      [user] = await this.usersService.findOneWithAnyParam(
+        [{ id: user.id }],
+        null,
       );
-      server.to([game.id, game.watch]).emit('playerGiveUp', myPtoUserDto(user));
-      server.socketsLeave([game.id, game.watch]);
+      if (user.game_ws) {
+        await this.usersService.updateUser(user, { is_in_game: true });
+        server.to(user.game_ws).emit('goBackInGame', myPtoOnlineGameDto(game));
+        server
+          .to([game.id, game.watch])
+          .except(user.game_ws)
+          .emit('playerCameBack', myPtoUserDto(user));
+        break;
+      } else if (!user.game_ws && i == 0) {
+        let score = new ScoreDto();
+        if (game.players.length < 2) {
+          this.gameService.remove(game.id);
+          return;
+        }
+        score.score1 = game.players[0].score;
+        score.score2 = game.players[1].score;
+        if (game.players[0].user.id === user.id) score.score2 = 10;
+        else score.score1 = 10;
+        await this.gameService.updateScores(game.id, score);
+        await this.wsGameService.updatePlayerStatus2(
+          [game.players[0].user.id, game.players[1].user.id],
+          { is_in_game: false },
+        );
+        server
+          .to([game.id, game.watch])
+          .emit('playerGiveUp', myPtoUserDto(user));
+        server.socketsLeave([game.id, game.watch]);
+      }
     }
   }
 
@@ -118,6 +124,7 @@ export class WsConnectionService {
       [{ game_ws: client.id }],
       { relations: ['players', 'players.game'] },
     );
+
     if (user.is_in_game) this.handleGameDisconnection(server, user);
     await this.updateUser(client, {
       game_ws: null,
