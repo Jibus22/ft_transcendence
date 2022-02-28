@@ -201,6 +201,9 @@ export class GameGateway
     });
     if (game.players.length < 2) {
       this.gameService.remove(game.id);
+      await this.wsGameService.updatePlayerStatus2([game.players[0].user.id], {
+        is_in_game: false,
+      });
       return;
     }
     score.score1 = game.players[0].score;
