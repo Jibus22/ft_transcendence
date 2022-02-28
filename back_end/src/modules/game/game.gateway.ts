@@ -101,10 +101,10 @@ export class GameGateway
     @MessageBody() reply: { response: string; to: string },
   ) {
     this.logger.log('gameInvitResponse: ', reply);
-    const [challenger, opponent] = await this.wsGameService.getUserFromParam([
-      { game_ws: reply.to },
-      { game_ws: client.id },
-    ]);
+    const [challenger, opponent] = await this.wsGameService.getUserFromParam(
+      [{ game_ws: reply.to }, { game_ws: client.id }],
+      null,
+    );
 
     if (!opponent || !challenger) {
       this.wsGameService.cancelPanicGame([challenger, opponent]);
@@ -186,6 +186,38 @@ export class GameGateway
 
   //------------------------- END GAME ---------------------------------------//
 
+  @SubscribeMessage('giveUpGame')
+  async giveUpGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+  ) {
+    let score: ScoreDto;
+    const [user] = await this.wsGameService.getUserFromParam(
+      [{ game_ws: client.id }],
+      { relations: ['players'] },
+    );
+    const game = await this.gameService.findOne(bcast.room, {
+      relations: ['players', 'players.user'],
+    });
+    if (game.players.length < 2) {
+      this.gameService.remove(game.id);
+      return;
+    }
+    score.score1 = game.players[0].score;
+    score.score2 = game.players[1].score;
+    if (game.players[0].user.id === user.id) score.score2 = 10;
+    else score.score1 = 10;
+    this.gameService.updateScores(game.id, score);
+    await this.wsGameService.updatePlayerStatus2(
+      [game.players[0].user.id, game.players[1].user.id],
+      { is_in_game: false },
+    );
+    this.server
+      .to([bcast.room, bcast.watchers])
+      .emit('playerGiveUp', myPtoUserDto(user));
+    this.server.socketsLeave([bcast.room, bcast.watchers]);
+  }
+
   @SubscribeMessage('endGame')
   async endGame(
     @MessageBody('bcast') bcast: BroadcastDto,
@@ -199,19 +231,11 @@ export class GameGateway
       updatedAt: Date.now(),
     });
     if (!ret) return;
-    ret = await this.gameService.findOne(ret.id, {
-      relations: ['players', 'players.user'],
-    });
-    await this.gameService.updatePlayers([
-      { id: ret.players[0].id, patch: { score: score.score1 } },
-      { id: ret.players[1].id, patch: { score: score.score2 } },
-    ]);
-    await this.wsGameService.updatePlayerStatus2(ret.players[0].user.id, {
-      is_in_game: false,
-    });
-    await this.wsGameService.updatePlayerStatus2(ret.players[1].user.id, {
-      is_in_game: false,
-    });
+    ret = await this.gameService.updateScores(ret.id, score);
+    await this.wsGameService.updatePlayerStatus2(
+      [ret.players[0].user.id, ret.players[1].user.id],
+      { is_in_game: false },
+    );
     this.server.socketsLeave([bcast.room, bcast.watchers]);
   }
 
@@ -223,6 +247,7 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
     @MessageBody('score') score: ScoreDto,
   ) {
+    this.gameService.updateScores(bcast.room, score);
     client.to([bcast.room, bcast.watchers]).emit('scoreUpdate', score);
   }
 

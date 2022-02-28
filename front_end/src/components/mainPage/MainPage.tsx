@@ -197,6 +197,14 @@ const MainPage = () => {
 		// 	console.log(`CLIENT: response from server -> ${response}`);
 		// });
 
+		socket.on('playerGiveUp', (obj: any) => {
+			console.log(`💌  Event: playerGiveUp -> `, obj);
+			//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers
+			//reçoivent cet event.
+			//dans 'obj' c'est un UserDto qui permet d'afficher qui a abandonné.
+			//Ensuite faut retourner à la page d'accueil
+		});
+
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);
 			//catch error

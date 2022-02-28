@@ -14,6 +14,7 @@ import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { IPlayerError, PlayerHttpError, PlayerWsError } from '../utils/error';
 import { UpdatePlayerDto } from '../dto/update-player.dto';
+import { ScoreDto } from '../dto/gameplay.dto';
 
 @Injectable()
 export class GameService {
@@ -167,6 +168,17 @@ export class GameService {
     for (let elem of objs) {
       await this.player_repo.update(elem.id, elem.patch);
     }
+  }
+
+  async updateScores(game_id: string, score: ScoreDto) {
+    const ret = await this.findOne(game_id, {
+      relations: ['players', 'players.user'],
+    });
+    await this.updatePlayers([
+      { id: ret.players[0].id, patch: { score: score.score1 } },
+      { id: ret.players[1].id, patch: { score: score.score2 } },
+    ]);
+    return ret;
   }
 
   async remove(uuid: string) {

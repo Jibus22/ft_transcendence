@@ -57,12 +57,18 @@ export class WsGameService {
     await this.usersService.updateUser(player, patch);
   }
 
-  async updatePlayerStatus2(player_id: string, patch: { is_in_game: boolean }) {
-    await this.usersService.update(player_id, patch);
+  async updatePlayerStatus2(
+    player_id: string[],
+    patch: { is_in_game: boolean },
+  ) {
+    for (let elem of player_id) await this.usersService.update(elem, patch);
   }
 
-  async getUserFromParam(param: Partial<User>[]): Promise<User[]> {
-    return await this.usersService.findOneWithAnyParam(param);
+  async getUserFromParam(
+    param: Partial<User>[],
+    relations: { relations: string[] },
+  ): Promise<User[]> {
+    return await this.usersService.findOneWithAnyParam(param, relations);
   }
 
   async cancelPanicGame(users: User[]) {
