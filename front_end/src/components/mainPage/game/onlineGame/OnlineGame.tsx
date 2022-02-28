@@ -25,6 +25,8 @@ interface MapProps {
 const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 	const [time, setTime] = useState(false);
 
+	const { setWatchGameScore } = useMainPage();
+
 	const handleClick = (watch: string) => {
 		console.log(watch);
 		gameWs?.emit('watchGame', watch, (response: any) => {

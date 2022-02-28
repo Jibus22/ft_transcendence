@@ -49,7 +49,7 @@ export interface UserChallenge {
 	photo_url: string;
 }
 
-interface UserOnlineGame {
+export interface UserOnlineGame {
 	login: string;
 	photo_url: string;
 	status: string;
