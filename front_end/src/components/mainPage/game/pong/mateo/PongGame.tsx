@@ -369,6 +369,15 @@ class PongGame extends React.Component<MyProps> {
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
+
+		this.props.socket?.on('playerGiveUp', (obj: any) => {
+			console.log(`💌  Event: playerGiveUp -> `, obj);
+			//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers
+			//reçoivent cet event.
+			//dans 'obj' c'est un UserDto qui permet d'afficher qui a abandonné.
+			//Ensuite faut retourner à la page d'accueil
+		});
+
 		this.props.socket?.on('playerUpdate', (player: Player, nb: number) => {
 			if (nb === 1) this._playerOne = player;
 			else if (nb === 2) this._playerTwo = player;
