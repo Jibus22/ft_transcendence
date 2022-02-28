@@ -14,7 +14,7 @@ const ChatContainer = ({ open }: any) => {
 	};
 
 	const getCurrentUser = async () => {
-		const { data } = await axios.get("http://localhost:3000/me", { withCredentials: true });
+		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, { withCredentials: true });
 		setCurrentUser(data);
 	};
 
@@ -34,8 +34,8 @@ const ChatContainerWrapper = styled.div<{open: boolean}>`
 	position: fixed;
 	right: 10px;
 	bottom: 100px;
-	width: 500px;
-	height: 400px;
+	width: 600px;
+	height: 500px;
 	background-color: white;
 	border-radius: 10px;
 	overflow: hidden;
@@ -47,6 +47,11 @@ const ChatContainerWrapper = styled.div<{open: boolean}>`
 	opacity: 0;
 	transition: .2s ease all;
 	pointer-events: none;
+
+	@media (min-width: 1600px) {
+		width: 800px;
+		height: 700px;
+	}
 
 	${({ open }: any) => open && `
 		opacity: 1;

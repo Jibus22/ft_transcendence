@@ -6,6 +6,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Tooltip from '@mui/material/Tooltip';
 
 const ChatParticipant = ({ user, currentUser }: any) => {
 
@@ -15,13 +16,13 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const getFriends = async () => {
 		setFriendsLoading(true);
-		const result = await axios.get("http://localhost:3000/users/friend", { withCredentials: true }).catch(console.error);
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
 	};
 
 	const getBlocks = async () => {
-		const result = await axios.get("http://localhost:3000/users/block", { withCredentials: true }).catch(console.error);
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true }).catch(console.error);
 		setBlocked(result?.data || []);
 		console.log("REOADING BLOCKS", result?.data);
 	};
@@ -38,7 +39,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const addFriend = async (id: any) => {
 		setFriendsLoading(true);
-		await axios.post(`http://localhost:3000/users/friend`, {
+		await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 			id
 		}, { withCredentials: true });
 		window.dispatchEvent(new CustomEvent("friendsUpdated", { detail: {} }));
@@ -47,7 +48,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const removeFriend = async (id: any) => {
 		setFriendsLoading(true);
-		await axios.delete(`http://localhost:3000/users/friend`, {
+		await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
 			withCredentials: true,
 			data: {
 				id
@@ -62,14 +63,14 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const blockUser = async (id: any) => {
-		await axios.post(`http://localhost:3000/users/block`, {
+		await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, {
 			id
 		}, { withCredentials: true });
 		getBlocks();
 	};
 
 	const unblockUser = async (id: any) => {
-		await axios.delete(`http://localhost:3000/users/block`, { withCredentials: true, data: { id } });
+		await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true, data: { id } });
 		getBlocks();
 		console.log("DELETING", id)
 	};
@@ -82,15 +83,15 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	return (
 		<>
 			<DetailsView>
-				<img src={user.user.photo_url} alt={user.user.login} />
-				<h3>{ user.user.login }</h3>
+				<img src={user?.user.photo_url} alt={user?.user.login} />
+				<h3>{ user?.user.login }</h3>
 			</DetailsView>
-			{ currentUser.id !== user.user.id && (<ButtonRow>
-				{!friendsLoading && !isFriend() && <button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button>}
-				{!friendsLoading && isFriend() && <button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button>}
-				<button onClick={ () => askGame(user.user.id) }><SportsEsportsIcon /></button>
-				{!isBlocked() && <button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button>}
-				{isBlocked() && <button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button>}
+			{ currentUser && user && currentUser.id !== user.user.id && (<ButtonRow>
+				{!isFriend() && <Tooltip title="Add as friend"><button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button></Tooltip>}
+				{isFriend() && <Tooltip title="Remove friend"><button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button></Tooltip>}
+				<Tooltip title="Send game request"><button onClick={ () => askGame(user.user.id) }><SportsEsportsIcon /></button></Tooltip>
+				{!isBlocked() && <Tooltip title="Block user"><button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button></Tooltip>}
+				{isBlocked() && <Tooltip title="Unblock user"><button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button></Tooltip>}
 			</ButtonRow>) }
 		</>
 	);

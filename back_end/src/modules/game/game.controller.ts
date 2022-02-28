@@ -7,17 +7,17 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '../../guards/auth.guard';
+import { Serialize } from '../../interceptors/serialize.interceptor';
+import { CurrentUser } from '../users/decorators/current-user.decorator';
+import { UserDto } from '../users/dtos/user.dto';
+import { User } from '../users/entities/users.entity';
 import { CreateGameDto } from './dto/create-game.dto';
 import { HistoryGameDto } from './dto/history-game.dto';
 import { LeaderBoardDto } from './dto/leaderboard.dto';
-import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
-import { UserDto } from '../users/dtos/user.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
-import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { User } from '../users/entities/users.entity';
 import { OnlineGameDto } from './dto/online-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';

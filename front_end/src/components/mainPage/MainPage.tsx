@@ -61,7 +61,7 @@ const MainPage = () => {
 
 		socket.on('connect_error', async (err) => {
 			console.log('[CHAT SOCKET 🍄 ] connect_error', err);
-			connectWs('ws://localhost:3000/chat', setWsCallbacks, stateSetter);
+			connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, stateSetter);
 		});
 
 		socket.io.on('error', (error) => {
@@ -122,7 +122,7 @@ const MainPage = () => {
 
 		socket.on('connect_error', async (err) => {
 			console.log('[GAME SOCKET 🎲 ] connect_error', err);
-			connectWs('ws://localhost:3000/game', gameCallbacks, stateSetter);
+			connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, stateSetter);
 		});
 
 		socket.io.on('error', (error) => {
