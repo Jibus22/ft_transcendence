@@ -18,7 +18,7 @@ configResponsive({
 });
 
 export default function Game({ chatWs }: Props) {
-	const { setTimeSnack, loading, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
+	const { setTimeSnack, isWatchGame, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
 
 	// const { selectNav, setStartGame, startGame } = useMainPage();
 	const responsive = useResponsive();
@@ -46,9 +46,11 @@ export default function Game({ chatWs }: Props) {
 		}, 1500);
 	}
 
+	console.log(isWatchGame);
+
 	const selectGame = () => {
 		if (responsive.small) {
-			if (!startGame) {
+			if (!startGame || !isWatchGame) {
 				return (
 					<div className="h-100 w-100 d-flex">
 						<Play Loadingclick={handleClick} />
@@ -64,7 +66,7 @@ export default function Game({ chatWs }: Props) {
 			if (selectNav) {
 				return <OnlineGame Loadingclick={handleClick} />;
 			}
-			if (startGame) {
+			if (startGame || isWatchGame) {
 				return <MainPong />;
 			} else {
 				return <Play Loadingclick={handleClick} />;

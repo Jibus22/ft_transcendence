@@ -9,6 +9,7 @@ import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
 import { OnlineGameType } from '../../../type';
 import { io, Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
 	Loadingclick: () => void;
@@ -24,17 +25,21 @@ interface MapProps {
 
 const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 	const [time, setTime] = useState(false);
-
-	const { setWatchGameScore } = useMainPage();
+	let navigate = useNavigate();
+	const { setWatchGameScore, setStartGame, setSelectNav, setIsWatchGame } = useMainPage();
 
 	const handleClick = (watch: string) => {
-		console.log(watch);
-		gameWs?.emit('watchGame', watch, (response: any) => {
+		gameWs?.emit('watchGame', watch, (response: OnlineGameType) => {
 			console.log(`CLIENT: response from server -> ${response}`);
+			setWatchGameScore(response);
 		});
 		setTime(true);
 		setTimeout(function () {
 			setTime(false);
+			setIsWatchGame(true);
+			setStartGame(true);
+			setSelectNav(false);
+			navigate('/Mainpage');
 		}, 2000);
 	};
 
@@ -98,7 +103,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 };
 
 export default function OnlineGame({ Loadingclick }: Props) {
-	const { setSelectQuery, gameWs } = useMainPage();
+	const { setSelectQuery, gameWs, loading } = useMainPage();
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -139,23 +144,11 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		};
 	}, [gameWs]);
 
-	const { loading } = useMainPage();
-
-	// const  handleClick = ()  => {
-	// 	gameWs?.emit('watchGame', 'fake_watch', (response: any) => {
-	// 		console.log(`CLIENT: response from server -> ${response}`);
-	// 	});
-	// 	setTime(true);
-	// 	setTimeout(function () {
-	// 		setTime(false);
-	// 	}, 2000);
-	// }
-
 	return (
 		<animated.div style={props} className="w-100">
 			<div className="mainOnlineGame d-flex flex-column ">
 				<div className="title">
-					<h1>Onlines game</h1>
+					<h1>Online game</h1>
 				</div>
 				<div className="pageOverflow">
 					<div className="onlineDiv">

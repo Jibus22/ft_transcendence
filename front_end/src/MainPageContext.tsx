@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserMe, LoginGame, User, UserChallenge, UserOnlineGame } from './components/type';
+import { UserMe, LoginGame, User, UserChallenge, UserOnlineGame, OnlineGameType } from './components/type';
 import { boolean } from 'yup';
 
 interface IMainPageContext {
@@ -41,8 +41,8 @@ interface IMainPageContext {
 
 	setChallengData: Dispatch<SetStateAction<User[]>>;
 
-	watchGameScore: UserOnlineGame;
-	setWatchGameScore: Dispatch<SetStateAction<UserOnlineGame>>;
+	watchGameScore: OnlineGameType;
+	setWatchGameScore: Dispatch<SetStateAction<OnlineGameType>>;
 
 	setTimeSnack: Dispatch<SetStateAction<boolean>>;
 	setIsDisable: Dispatch<SetStateAction<boolean>>;
@@ -91,6 +91,9 @@ interface IMainPageContext {
 
 	playerNewGameJoin: boolean;
 	setPlayerNewGameJoin: Dispatch<SetStateAction<boolean>>;
+
+	isWatchGame: boolean;
+	setIsWatchGame: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -140,6 +143,8 @@ const MainPageProvider = (props: any) => {
 	const [playerNewGameJoin, setPlayerNewGameJoin] = useState(false);
 
 	// const [dataHistory, setDataHistory] = useState([]);
+
+	const [isWatchGame, setIsWatchGame] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -352,6 +357,9 @@ const MainPageProvider = (props: any) => {
 
 		watchGameScore,
 		setWatchGameScore,
+
+		isWatchGame,
+		setIsWatchGame,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

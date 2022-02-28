@@ -41,6 +41,9 @@ export default function MainPong() {
 		setIsOpponant,
 		playerNewGameJoin,
 		dataPlayerNewGameJoin,
+		watchGameScore,
+		isWatchGame,
+		setIsWatchGame,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -118,15 +121,6 @@ export default function MainPong() {
 			setRoomId(room);
 		});
 
-		// 	//gameWs?.on('newPlayerJoined', (obj: User) => {
-		// 		console.log(`💌  Event: newPlayerJoined -> `, obj);
-		// 		setDataGameRandomSocket(obj);
-		// 		setAcceptGame(true);
-		// 		setOpacity(false);
-		// 		// setLoadingNewGamePlayer(true);
-		// 	});
-		// }, [gameWs, count, dataGameRandomSocket]);
-
 		gameWs?.on('newPlayerJoined', (obj: User) => {
 			console.log(`💌  Event: newPlayerJoined -> `, obj);
 			setDataGameRandomSocket(obj);
@@ -146,15 +140,22 @@ export default function MainPong() {
 		});
 
 		if (map !== null) {
-			console.log('map =====', map);
-
 			gameWs?.on('setMap', (room: string) => {
 				// console.log(`💌  Event: setMap -> ${cb}`);
 				gameWs?.emit('setMap', { room: room, map: map });
-				// console.log('map is ==== ', map);
 			});
 		}
 	}, [map]);
+
+	useEffect(() => {
+		if (isWatchGame) {
+			console.log('ici');
+			setNbPlayer(0);
+		}
+		// return () => {
+		// 	setIsWatchGame(false);
+		// };
+	}, [isWatchGame]);
 
 	const titlePrint = () => {
 		if (!isGameRandom) {
@@ -207,11 +208,13 @@ export default function MainPong() {
 		}
 	};
 
+	console.log(isWatchGame);
+
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
-					{roomId !== '' && map !== null ? (
+					{(roomId !== '' && map !== null) || isWatchGame ? (
 						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
 					) : (
 						<div className="mainPongGame">
