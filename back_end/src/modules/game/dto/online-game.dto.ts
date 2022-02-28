@@ -10,6 +10,10 @@ export class OnlineGameDto {
 
   @ApiProperty()
   @Expose()
+  map: string;
+
+  @ApiProperty()
+  @Expose()
   @Transform((value) => {
     let usr = plainToClass(UserDto, value.obj.players[0].user, {
       excludeExtraneousValues: true,
