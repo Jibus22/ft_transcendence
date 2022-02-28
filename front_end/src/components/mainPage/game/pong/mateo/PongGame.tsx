@@ -370,6 +370,21 @@ class PongGame extends React.Component<MyProps> {
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
 
+		this.props.socket?.on('playerDisconnection', (obj: any) => {
+			console.log(`💌  Event: playerDisconnection -> `, obj);
+			//Un des 2 joueurs subit une déconnection. Son UserDto est récéptionné
+			//dans 'obj' et permet de l'afficher. Il faut mettre le jeu en pause à
+			//ce moment là.
+			//Un décompte de 5s est lancé côté server. Si il ne se reconnecte pas
+			//dans les 5 secondes, 'playerGiveUp' est émit, autrement 'playerCameBack'
+			//est émit
+		});
+
+		this.props.socket?.on('playerCameBack', (obj: any) => {
+			console.log(`💌  Event: playerCameBack -> `, obj);
+			//le joueur représenté par 'obj' est revenu: on peut reprendre le jeu
+		});
+
 		this.props.socket?.on('playerGiveUp', (obj: any) => {
 			console.log(`💌  Event: playerGiveUp -> `, obj);
 			//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers

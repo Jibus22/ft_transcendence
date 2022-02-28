@@ -68,7 +68,7 @@ export class GameGateway
 
   async handleDisconnect(client: Socket) {
     this.logger.debug('ws game 🎲  disconnected -> ', client.id);
-    await this.wsConnectionService.doHandleDisconnect(client);
+    await this.wsConnectionService.doHandleDisconnect(client, this.server);
   }
 
   //---------------------- GAME SUBSCRIPTION EVENTS --------------------------//
