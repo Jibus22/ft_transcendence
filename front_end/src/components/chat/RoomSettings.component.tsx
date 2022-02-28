@@ -144,6 +144,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 
 const Wrapper = styled.div`
 	width: 100%;
+	overflow-y: auto;
 	h3 {
 		width: 100%;
 		margin: 0;

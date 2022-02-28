@@ -12,15 +12,19 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const [friends, setFriends] = useState<any[]>([]);
 	const [blocked, setBlocked] = useState<any[]>([]);
+	const [profile, setProfile] = useState<any | null>(null);
 	const [friendsLoading, setFriendsLoading] = useState<boolean>(false);
-
-	console.log("USER", user);
 
 	const getFriends = async () => {
 		setFriendsLoading(true);
 		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
+	};
+
+	const getProfile = async () => {
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${user.user.login}`, { withCredentials: true });
+		setProfile(result?.data);
 	};
 
 	const getBlocks = async () => {
@@ -80,6 +84,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	useEffect(() => {
 		getFriends();
 		getBlocks();
+		getProfile();
 	}, []);
 
 	return (
@@ -95,6 +100,24 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				{!isBlocked() && <Tooltip title="Block user"><button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button></Tooltip>}
 				{isBlocked() && <Tooltip title="Unblock user"><button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button></Tooltip>}
 			</ButtonRow>) }
+			{
+				profile && (
+					<ProfileView>
+						<div>
+							<span>{ profile.games_won }</span>
+							<span>Wins</span>
+						</div>
+						<div>
+							<span>{ profile.games_lost }</span>
+							<span>Losses</span>
+						</div>
+						<div>
+							<span>{ profile.games_count }</span>
+							<span>Games</span>
+						</div>
+					</ProfileView>
+				)
+			}
 		</>
 	);
 };
@@ -132,6 +155,22 @@ const ButtonRow = styled.div`
 		align-items: center;
 		justify-content: center;
 		margin: 5px;
+	}
+`;
+
+const ProfileView = styled.div`
+	display: flex;
+	justify-content: space-evenly;
+	margin-top: 20px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		span:nth-child(1) {
+			font-size: 20px;
+		}
 	}
 `;
 
