@@ -46,6 +46,12 @@ export default function Game({ chatWs }: Props) {
 		}, 1500);
 	}
 
+	useEffect(() => {
+		window.addEventListener("gameStartedFromChat", () => {
+			handleClick();
+		});
+	}, []);
+
 	const selectGame = () => {
 		if (responsive.small) {
 			if (!startGame) {

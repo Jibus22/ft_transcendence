@@ -7,6 +7,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Tooltip from '@mui/material/Tooltip';
+import { useMainPage } from "../../MainPageContext";
 
 const ChatParticipant = ({ user, currentUser }: any) => {
 
@@ -64,8 +65,25 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		getFriends();
 	};
 
-	const askGame = async (id: any) => {
-		// ?
+	const { setIsGameRandom, setDataUserChallenge, setIsOpponant } = useMainPage();
+	const askGame = async (login: any) => {
+		const game = {
+			login_opponent: login,
+			login: '',
+			photo_url: '',
+		};
+		try {
+			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
+				withCredentials: true,
+			});
+			setDataUserChallenge([response.data]);
+			setIsOpponant(true);
+			setIsGameRandom(false);
+			window.dispatchEvent(new CustomEvent('gameStartedFromChat', {detail: { login }}));
+		} catch (e) {
+			alert(`Cannot start the game, make sure ${login} is online`);
+			console.error(`Cannot start game: ${e}`);
+		}
 	};
 
 	const blockUser = async (id: any) => {
@@ -96,7 +114,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			{ currentUser && user && currentUser.id !== user.user.id && (<ButtonRow>
 				{!isFriend() && <Tooltip title="Add as friend"><button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button></Tooltip>}
 				{isFriend() && <Tooltip title="Remove friend"><button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button></Tooltip>}
-				<Tooltip title="Send game request"><button onClick={ () => askGame(user.user.id) }><SportsEsportsIcon /></button></Tooltip>
+				<Tooltip title="Send game request"><button onClick={ () => askGame(user.user.login) }><SportsEsportsIcon /></button></Tooltip>
 				{!isBlocked() && <Tooltip title="Block user"><button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button></Tooltip>}
 				{isBlocked() && <Tooltip title="Unblock user"><button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button></Tooltip>}
 			</ButtonRow>) }
