@@ -154,7 +154,6 @@ export default function MainPong() {
 
 	useEffect(() => {
 		if (isWatchGame) {
-			console.log('ici');
 			setNbPlayer(0);
 		}
 		// return () => {
@@ -213,13 +212,11 @@ export default function MainPong() {
 		}
 	};
 
-	console.log(isWatchGame);
-
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame ">
 				<div className="w-100 h-100">
-					{roomId !== '' && watchId !== '' && map !== null ? (
+					{(roomId !== '' && watchId !== '' && map !== null) || isWatchGame ? (
 						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
 					) : (
 						<div className="mainPongGame">

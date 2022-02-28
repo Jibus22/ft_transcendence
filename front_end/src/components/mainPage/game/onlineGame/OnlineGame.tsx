@@ -32,6 +32,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 		gameWs?.emit('watchGame', watch, (response: OnlineGameType) => {
 			console.log(`CLIENT: response from server -> ${response}`);
 			setWatchGameScore(response);
+			console.log('ici===========', response);
 		});
 		setTime(true);
 		setTimeout(function () {
