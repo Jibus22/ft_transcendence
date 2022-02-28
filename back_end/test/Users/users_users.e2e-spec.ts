@@ -83,9 +83,13 @@ describe('user controller: users infos routes (e2e)', () => {
       .get('/users/profile/' + users[i].login)
       .set('Cookie', cookies)
       .then((resp) => {
-        expect(resp.body).toHaveProperty('id');
-        expect(resp.body).toHaveProperty('login');
-        expect(resp.body).toHaveProperty('photo_url');
+        expect(resp.body).toHaveProperty('user.id');
+        expect(resp.body).toHaveProperty('user.login');
+        expect(resp.body).toHaveProperty('user.photo_url');
+        expect(resp.body).toHaveProperty('user.status');
+        expect(resp.body).toHaveProperty('games_count');
+        expect(resp.body).toHaveProperty('games_won');
+        expect(resp.body).toHaveProperty('games_lost');
         expect(resp.body).not.toHaveProperty('photo_url_42');
         expect(resp.body).not.toHaveProperty('photo_url_local');
         expect(resp.body).not.toHaveProperty('use_local_photo');

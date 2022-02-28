@@ -84,6 +84,13 @@ export class UsersService {
     });
   }
 
+  async findUserWithGamesData(user: Partial<User>) {
+    return await this.repoUser.find({
+      where: user,
+      relations: ['local_photo', 'players'],
+    });
+  }
+
   async update(id: string, attrs: UpdateUserDto) {
     const user = await this.findOne(id);
     if (!user) {
