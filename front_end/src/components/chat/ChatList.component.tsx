@@ -95,7 +95,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		}, { withCredentials: true });
 		const { id } = data;
 		await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/participant`, { id: userId }, { withCredentials: true });
-		const data2 = (await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}room/${id}/infos`, { withCredentials: true }))?.data;
+		const data2 = (await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/infos`, { withCredentials: true }))?.data;
 		console.log("DATA", data, data2)
 		setSearchResults([]);
 		setSearch("");

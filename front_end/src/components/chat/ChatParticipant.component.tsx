@@ -14,6 +14,8 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	const [blocked, setBlocked] = useState<any[]>([]);
 	const [friendsLoading, setFriendsLoading] = useState<boolean>(false);
 
+	console.log("USER", user);
+
 	const getFriends = async () => {
 		setFriendsLoading(true);
 		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
