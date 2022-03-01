@@ -61,3 +61,10 @@ export interface OnlineGameType {
 	opponent: UserOnlineGame;
 	watch: string;
 }
+
+export interface OnlineGameAndMapType {
+	challenger: UserOnlineGame;
+	opponent: UserOnlineGame;
+	watch: string;
+	map: null | 'one' | 'two' | 'three';
+}

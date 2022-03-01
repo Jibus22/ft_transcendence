@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserMe, LoginGame, User, UserChallenge, UserOnlineGame, OnlineGameType } from './components/type';
+import { UserMe, LoginGame, User, UserChallenge, UserOnlineGame, OnlineGameType, OnlineGameAndMapType } from './components/type';
 import { boolean } from 'yup';
 
 interface IMainPageContext {
@@ -41,8 +41,8 @@ interface IMainPageContext {
 
 	setChallengData: Dispatch<SetStateAction<User[]>>;
 
-	watchGameScore: OnlineGameType;
-	setWatchGameScore: Dispatch<SetStateAction<OnlineGameType>>;
+	watchGameScore: OnlineGameAndMapType;
+	setWatchGameScore: Dispatch<SetStateAction<OnlineGameAndMapType>>;
 
 	setTimeSnack: Dispatch<SetStateAction<boolean>>;
 	setIsDisable: Dispatch<SetStateAction<boolean>>;

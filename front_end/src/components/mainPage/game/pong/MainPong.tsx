@@ -59,25 +59,30 @@ export default function MainPong() {
 
 	const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
 
+	const [load, setLoad] = useState(false);
+
+	const [pauseGame, setPauseGame] = useState(false);
+
 	const closeGame = () => {
 		// setOpen(false);
 		// setStartGame(false);
 		// setLeaveGame(false);
 
 		if (isWatchGame) {
-			console.log('WATCHER');
-			gameWs?.emit('leaveWatchGame', watchId);
+			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
 			setOpen(false);
 			setStartGame(false);
 			setLeaveGame(false);
 			setIsWatchGame(false);
 		} else {
-			console.log('NOT WATCHER');
-			gameWs?.emit('giveUpGame', { room: roomId, watchers: watchId });
+			gameWs?.emit('giveUpGame', { bcast: { room: roomId, watchers: watchId } });
 			setOpen(false);
 			setStartGame(false);
 			setLeaveGame(false);
 			setIsWatchGame(false);
+			setMap(null);
+			setWatchId('');
+			setRoomId('');
 		}
 	};
 
@@ -85,6 +90,19 @@ export default function MainPong() {
 	const [nbPlayer, setNbPlayer] = useState(0);
 
 	const [disableMap, setDisableMap] = useState<boolean>(false);
+
+	const [scoreJ1, setScoreJ1] = useState(0);
+	const [scoreJ2, setScoreJ2] = useState(0);
+
+	useEffect(() => {
+		if (isWatchGame) {
+			setScoreJ1(watchGameScore.challenger.score);
+			setScoreJ2(watchGameScore.opponent.score);
+
+			// console.log('dsdsdsdsdsdd', scoreJ1);
+			// console.log('dsdsdsdsdsdsdsds', scoreJ1);
+		}
+	}, [isWatchGame, watchGameScore]);
 
 	useEffect(() => {
 		setLeaveGame(true);
@@ -132,11 +150,6 @@ export default function MainPong() {
 			setCount(count);
 		});
 
-		gameWs?.on('startGame', (room: string) => {
-			console.log(`💌  Event: startGame -> ${room}`);
-			setRoomId(room);
-		});
-
 		gameWs?.on('newPlayerJoined', (obj: User) => {
 			console.log(`💌  Event: newPlayerJoined -> `, obj);
 			setDataGameRandomSocket(obj);
@@ -150,32 +163,58 @@ export default function MainPong() {
 	}, [gameWs, count, dataGameRandomSocket]);
 
 	useEffect(() => {
+		gameWs?.on('startGame', (room: string) => {
+			console.log(`💌  Event: startGame -> ${room}`);
+			setRoomId(room);
+		});
+	}, [gameWs]);
+
+	useEffect(() => {
+		console.log('USEEFFFECTTTTTT');
+		gameWs?.on('setMap', (room: string) => {
+			console.log('joueur 1 ===== map', map);
+
+			// console.log(`💌  Event: setMap -> ${cb}`);
+			gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
+				console.log('P1 callback watch return: ', watch);
+				setWatchId(watch);
+			});
+			// console.log('map is ==== ', map);
+		});
+
 		gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
 			console.log(`💌  Event: getMap ->`, gameData);
 			setMap(gameData.map);
 			setWatchId(gameData.watch);
-		});
 
-		if (map !== null) {
-			gameWs?.on('setMap', (room: string) => {
-				// console.log(`💌  Event: setMap -> ${cb}`);
-				gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
-					console.log('P1 callback watch return: ', watch);
-					setWatchId(watch);
-				});
-				// console.log('map is ==== ', map);
-			});
-		}
+			console.log('joueur 2 ===== map', map);
+		});
 	}, [map]);
+
+	// useEffect(() => {
+	// 	gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
+	// 		console.log(`💌  Event: getMap ->`, gameData);
+	// 		setMap(gameData.map);
+	// 		setWatchId(gameData.watch);
+
+	// 		console.log('joueur 2 ===== map', map);
+	// 	});
+	// }, [map]);
 
 	useEffect(() => {
 		if (isWatchGame) {
+			// setLoad(true);
+			console.log(isWatchGame);
 			setNbPlayer(0);
+			console.log('tab ======', watchGameScore.map);
+			setMap(watchGameScore.map);
+
+			console.log('vieewww ===== map', map);
 		}
 		// return () => {
 		// 	setIsWatchGame(false);
 		// };
-	}, [isWatchGame]);
+	}, [isWatchGame, watchGameScore, map]);
 
 	const titlePrint = () => {
 		if (!isGameRandom) {
@@ -228,13 +267,24 @@ export default function MainPong() {
 		}
 	};
 
+	console.log('map rand =====', map);
+
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
-			<div className={clsx((roomId !== '' && watchId !== '' && map !== null) || isWatchGame ? 'divMainPongGame' : 'divMainPongGame')}>
+			<div className="divMainPongGame">
 				<div className="w-100 h-100 ">
 					{(roomId !== '' && watchId !== '' && map !== null) || isWatchGame ? (
 						<div className="container__MapGame">
-							<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
+							<PongGame
+								map={map}
+								room={roomId}
+								watch={watchId}
+								joueur={nbPlayer}
+								socket={gameWs}
+								setPauseGame={setPauseGame}
+								scoreJ1={scoreJ1}
+								scoreJ2={scoreJ2}
+							/>
 						</div>
 					) : (
 						<div className="mainPongGame">

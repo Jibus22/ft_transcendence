@@ -7,7 +7,7 @@ import JB from '../../../homePage/section/photos/JB.png';
 import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
-import { OnlineGameType } from '../../../type';
+import { OnlineGameType, OnlineGameAndMapType } from '../../../type';
 import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,9 +29,10 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 	const { setWatchGameScore, setStartGame, setSelectNav, setIsWatchGame } = useMainPage();
 
 	const handleClick = (watch: string) => {
-		gameWs?.emit('watchGame', watch, (response: OnlineGameType) => {
+		gameWs?.emit('watchGame', watch, (response: OnlineGameAndMapType) => {
 			console.log(`CLIENT: response from server -> ${response}`);
 			setWatchGameScore(response);
+			console.log('ici=========', response);
 		});
 		setTime(true);
 		setTimeout(function () {
@@ -143,6 +144,10 @@ export default function OnlineGame({ Loadingclick }: Props) {
 			setSelectQuery(false);
 		};
 	}, [gameWs]);
+
+	const scoreSort = (a: OnlineGameType, b: OnlineGameType) => {
+		return b;
+	};
 
 	return (
 		<animated.div style={props} className="w-100">
