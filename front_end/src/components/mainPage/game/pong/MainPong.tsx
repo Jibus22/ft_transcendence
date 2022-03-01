@@ -60,9 +60,17 @@ export default function MainPong() {
 	const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
 
 	const closeGame = () => {
-		setOpen(false);
-		setStartGame(false);
-		setLeaveGame(false);
+		// setOpen(false);
+		// setStartGame(false);
+		// setLeaveGame(false);
+
+		if (isWatchGame) {
+			gameWs?.emit('leaveWatchGame', watchId);
+			setOpen(false);
+			setStartGame(false);
+			setLeaveGame(false);
+			setIsWatchGame(false);
+		}
 	};
 
 	const [data, setData] = useState<User[] | UserChallenge[]>([]);
@@ -75,12 +83,12 @@ export default function MainPong() {
 
 		if (!isOpponant) {
 			setData(challengData);
-			console.log('exterieur');
+			// console.log('exterieur');
 
 			setNbPlayer(2);
 		} else {
 			setData(dataUserChallenge);
-			console.log('domicile');
+			// console.log('domicile');
 			setNbPlayer(1);
 			if (acceptGame === false) {
 				setOpacity(true);
@@ -214,10 +222,12 @@ export default function MainPong() {
 
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
-			<div className="divMainPongGame ">
-				<div className="w-100 h-100">
+			<div className={clsx((roomId !== '' && watchId !== '' && map !== null) || isWatchGame ? 'divMainPongGame' : 'divMainPongGame')}>
+				<div className="w-100 h-100 ">
 					{(roomId !== '' && watchId !== '' && map !== null) || isWatchGame ? (
-						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
+						<div className="container__MapGame">
+							<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
+						</div>
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">

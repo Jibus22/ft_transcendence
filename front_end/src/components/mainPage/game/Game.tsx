@@ -46,11 +46,9 @@ export default function Game({ chatWs }: Props) {
 		}, 1500);
 	}
 
-	console.log(isWatchGame);
-
 	const selectGame = () => {
 		if (responsive.small) {
-			if (!startGame || !isWatchGame) {
+			if (!startGame) {
 				return (
 					<div className="h-100 w-100 d-flex">
 						<Play Loadingclick={handleClick} />
