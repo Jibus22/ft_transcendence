@@ -65,7 +65,15 @@ export default function MainPong() {
 		// setLeaveGame(false);
 
 		if (isWatchGame) {
+			console.log('WATCHER');
 			gameWs?.emit('leaveWatchGame', watchId);
+			setOpen(false);
+			setStartGame(false);
+			setLeaveGame(false);
+			setIsWatchGame(false);
+		} else {
+			console.log('NOT WATCHER');
+			gameWs?.emit('giveUpGame', { room: roomId, watchers: watchId });
 			setOpen(false);
 			setStartGame(false);
 			setLeaveGame(false);
