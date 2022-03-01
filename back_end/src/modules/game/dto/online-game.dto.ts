@@ -14,6 +14,10 @@ export class OnlineGameDto {
 
   @ApiProperty()
   @Expose()
+  createdAt: number;
+
+  @ApiProperty()
+  @Expose()
   @Transform((value) => {
     if (value.obj.players.length === 0) return null;
     let usr = plainToClass(UserDto, value.obj.players[0].user, {
