@@ -97,7 +97,7 @@ class PongGame extends React.Component<MyProps> {
 				'Orbitron',
 				'url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)',
 			);
-			this.fillStyle = '38FC25';
+			this.fillStyle = '#38FC25';
 			this._ctx!.fillStyle = this.fillStyle;
 			this._ctx!.shadowColor = '#38FC25';
 			this._ctx!.shadowBlur = 30;
@@ -368,11 +368,12 @@ class PongGame extends React.Component<MyProps> {
 				object: 'Ready',
 			}),
 		);
-		//let _loop =
-		setInterval(() => {
+		let loop = () => {
 			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
-		}, 10);
+			window.requestAnimationFrame(loop);
+		};
+		window.requestAnimationFrame(loop);
 	}
 
 	componentDidMount() {
