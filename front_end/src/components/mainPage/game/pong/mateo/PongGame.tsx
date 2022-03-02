@@ -143,7 +143,8 @@ class PongGame extends React.Component<MyProps> {
 				this._ctx!.font = this.font;
 			});
 		}
-		this._printText('Starting Game');
+		if (this._P1 || this._P2) this._printText('Starting Game');
+		else this._printText('watch Game');
 	}
 
 	private _score(ret: number) {
@@ -369,9 +370,6 @@ class PongGame extends React.Component<MyProps> {
 	}
 
 	componentDidMount() {
-		console.log('score j1', this.props.scoreJ1);
-		console.log('score j2', this.props.scoreJ2);
-
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();

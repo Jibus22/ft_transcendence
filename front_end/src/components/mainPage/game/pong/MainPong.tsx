@@ -38,7 +38,7 @@ export default function MainPong() {
 		isOpponant,
 		opacity,
 		setOpacity,
-		setIsOpponant,
+		leaveGame,
 		playerNewGameJoin,
 		dataPlayerNewGameJoin,
 		watchGameScore,
@@ -98,25 +98,25 @@ export default function MainPong() {
 		if (isWatchGame) {
 			setScoreJ1(watchGameScore.challenger.score);
 			setScoreJ2(watchGameScore.opponent.score);
-
-			// console.log('dsdsdsdsdsdd', scoreJ1);
-			// console.log('dsdsdsdsdsdsdsds', scoreJ1);
 		}
 	}, [isWatchGame, watchGameScore]);
 
 	useEffect(() => {
-		setLeaveGame(true);
+		// setLeaveGame(true);
 
 		if (!isOpponant) {
+			setLeaveGame(true);
 			setData(challengData);
-			console.log('exterieur');
+			// console.log('exterieur');
 			setScoreJ2(0);
 			setScoreJ1(0);
 
 			setNbPlayer(2);
 		} else {
+			setLeaveGame(true);
 			setData(dataUserChallenge);
-			console.log('domicile');
+			// console.log('domicile');
+
 			setNbPlayer(1);
 			setScoreJ1(0);
 			setScoreJ2(0);
@@ -126,12 +126,12 @@ export default function MainPong() {
 		}
 
 		return () => {
-			setIsGameRandom(false);
-			setLeaveGame(false);
-			setPlayerNewGameInvit(false);
+			// setIsGameRandom(false);
+			// setLeaveGame(false);
+			// setPlayerNewGameInvit(false);
 			// setIsOpponant(false);
 		};
-	}, [isOpponant]);
+	}, [isOpponant, leaveGame, dataUserChallenge]);
 
 	useEffect(() => {
 		gameWs?.on('gameAccepted', (opponentData) => {
@@ -150,7 +150,7 @@ export default function MainPong() {
 		});
 
 		gameWs?.on('countDown', (count: number) => {
-			console.log(`count: ${count}`);
+			// console.log(`count: ${count}`);
 			setCount(count);
 		});
 
@@ -174,13 +174,15 @@ export default function MainPong() {
 	}, [gameWs]);
 
 	useEffect(() => {
-		console.log('USEEFFFECTTTTTT');
 		gameWs?.on('setMap', (room: string) => {
 			// console.log(`💌  Event: setMap -> ${cb}`);
-			gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
-				console.log('P1 callback watch return: ', watch);
-				setWatchId(watch);
-			});
+
+			if (map !== null) {
+				gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
+					console.log('P1 callback watch return: ', watch);
+					setWatchId(watch);
+				});
+			}
 			// console.log('map is ==== ', map);
 		});
 
@@ -269,9 +271,6 @@ export default function MainPong() {
 		}
 	};
 
-	console.log('score1111===', scoreJ1);
-	console.log('score22222===', scoreJ2);
-
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame">
@@ -295,7 +294,7 @@ export default function MainPong() {
 								{acceptGame || !isOpponant ? <span className="counterOutput">{count}</span> : titlePrint()}
 							</div>
 
-							<div className={clsx('infoUser', !isOpponant && !isGameRandom && 'infoUserReverse')}>
+							<div className={clsx('infoUser', !isOpponant && 'infoUserReverse')}>
 								<div className="photoUser">
 									<Avatar alt="userImg" src={userImg} />
 									<div>

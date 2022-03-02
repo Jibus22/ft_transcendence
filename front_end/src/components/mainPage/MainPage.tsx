@@ -133,69 +133,10 @@ const MainPage = () => {
 		 ** Game events
 		 * -----------------------*/
 
-		// This is for test
-		// const wait = (timeToDelay: number) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
-
-		//Cet event devrait être mis 'off' quand on est sur la page d'attente d'un
-		//jeu/en train de jouer.
-
-		// socket.on('gameInvitation', async (challengerData, challengerWsId) => {
-		// 	console.log(`💌  Event: gameInvitation ->`, challengerData, ` -- id: ${challengerWsId}`);
-		// 	// Afficher une notification avec challengerData (userDto) et créer
-		// 	// un onClick event qui reste 10sec à l'écran
-		// 	// Si dans les 10 secondes
-		// 	//
-		// 	// Si c'est OK, afficher la page d'attente du jeu (sans avoir la possibilité
-		// 	// de choisir la map, puisqu'on est l'invité)
-		// 	// Sinon, virer la notif
-		// 	// setTest(challengerData);
-
-		// 	test = 'coucou';
-
-		// 	// setWsId(challengerWsId);
-
-		// 	// socket.emit('gameInvitResponse', { response: 'OK', to: challengerWsId });
-		// 	// socket.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
-		// });
-
-		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
-
-		// socket.on('gameDenied', (opponentData) => {
-		// 	console.log(`💌  Event: gameDenied -> ${opponentData}`);
-		// 	// Afficher une notif ou whatever qui dit que l'opposant n'a pas accepté
-		// 	// de jouer avec lui, et retourner sur la page d'accueil. (Parce que si cet
-		// 	// event est trigger c'est que le user se trouve sur la page d'attente
-		// 	// du jeu)
-		// });
-
-		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
-
-		// socket.on('gameAccepted', (opponentData) => {
-		// 	console.log(`💌  Event: gameAccepted -> ${opponentData}`);
-		// 	// quand on en est là c'est qu'on est sur la page d'attente du jeu.
-		// 	// enlever le voile gris sur la photo de l'opponent pour montrer que
-		// 	// c'est good.
-		// });
-
-		// socket.on('newOnlineGame', (obj: any) => {
-		// 	console.log(`💌  Event: newOnlineGame -> `, obj);
-		// 	//Afficher l'objet au dessus de la liste des onlineGame
-		// });
-
 		socket.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
-
-		socket.on('newPlayerJoined', (obj: any) => {
-			console.log(`💌  Event: newPlayerJoined -> `, obj);
-			//Dans la page d'attente du joueur 1, afficher le userdto obj
-			//du type qui vient de rejoindre le jeu
-		});
-
-		// socket.emit('watchGame', 'fake_watch', (response: any) => {
-		// 	console.log(`CLIENT: response from server -> ${response}`);
-		// });
 
 		socket.on('goBackInGame', (obj: any) => {
 			console.log(`💌  Event: goBackInGame ->`);
