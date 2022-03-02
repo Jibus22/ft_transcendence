@@ -60,13 +60,13 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 			<div className="userStat d-flex flex-column ">
 				<div className="player d-flex ">
 					<div className="user challenger ">
-						<p>{data.challenger.login}</p> //j1
+						<p>{data.challenger.login}</p>
 					</div>
 					<div className="vs">
 						<p>vs</p>
 					</div>
 					<div className="user opponant">
-						<p>{data.opponent.login}</p> // j2
+						<p>{data.opponent.login}</p>
 					</div>
 				</div>
 				<div className="score d-flex">
