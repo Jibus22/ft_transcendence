@@ -49,7 +49,7 @@ export default function Play({ Loadingclick }: Props) {
 			withCredentials: true,
 		})
 			.then((response) => {
-				console.log(response);
+				// console.log(response);
 				if (response.data === '') {
 					setPlayerNewGameInvit(true);
 					setIsOpponant(true);

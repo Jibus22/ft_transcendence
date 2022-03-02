@@ -63,7 +63,7 @@ export default function Header() {
 											<MenuItem onClick={isGame}>New Game</MenuItem>
 										</Link>
 										<Link to="/MainPage">
-											<MenuItem onClick={isOnlineGame}>Onlines game</MenuItem>
+											<MenuItem onClick={isOnlineGame}>Online game</MenuItem>
 										</Link>
 									</Menu>
 								</li>
