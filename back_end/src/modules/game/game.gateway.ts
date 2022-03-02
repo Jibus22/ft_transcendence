@@ -26,6 +26,7 @@ import {
   PowerUpDto,
   ScoreDto,
 } from './dto/gameplay.dto';
+import { Game } from './entities/game.entity';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -138,7 +139,13 @@ export class GameGateway
     @MessageBody('map') map: string,
   ) {
     console.log('map:', map);
-    const gameData = { map: map, watch: randomUUID() };
+    let gameData: Partial<Game>;
+    const [game] = await this.gameService.findGameWithAnyParam(
+      [{ id: room }],
+      null,
+    );
+    if (game.watch === null) gameData = { map: map, watch: randomUUID() };
+    else gameData = { map: map };
     await this.gameService.updateGame(room, gameData);
 
     client.to(room).emit('getGameData', gameData);
