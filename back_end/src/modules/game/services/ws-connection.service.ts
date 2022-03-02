@@ -19,7 +19,7 @@ export class WsConnectionService {
   ) {}
 
   private readonly logger = new Logger('WsGameService');
-    
+
   private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
       .find({ game_ws: client.id })
@@ -74,6 +74,7 @@ export class WsConnectionService {
   }
 
   async handleGameDisconnection(server: Server, user: User) {
+    if (!user.players || !user.players[user.players.length - 1].game) return;
     const [game] = await this.gameService.findGameWithAnyParam(
       [{ id: user.players[user.players.length - 1].game.id }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },

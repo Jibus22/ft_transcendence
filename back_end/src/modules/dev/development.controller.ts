@@ -18,7 +18,7 @@ import { DevelopmentService } from './development.service';
 
 @ApiTags('DevTools')
 @Serialize(privateUserDto)
-@UseGuards(DevGuard)
+// @UseGuards(DevGuard)
 @Controller('dev')
 export class DevelopmentController {
   constructor(private developmentService: DevelopmentService) {}

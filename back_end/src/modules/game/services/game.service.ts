@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateGameDto } from '../dto/update-game.dto';
 import { Game } from '../entities/game.entity';
 import { Player } from '../entities/player.entity';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../../users/service-users/users.service';
 import {
@@ -96,15 +96,18 @@ export class GameService {
     let game: Game;
     let player1: Player;
     const user = await this.usersService.findOne(userId);
-    const waiting_game: { gameId: string; total: number } =
-      await this.player_repo
+    const query_games: { gameId: string; total: string }[] =
+      await getRepository(Player)
         .createQueryBuilder('player')
         .select('player.game')
         .groupBy('player.game')
         .addSelect('COUNT(player.game)', 'total')
-        .having('total = :tot', { tot: 1 })
         .where('player.game is not null')
-        .getRawOne();
+        .getRawMany();
+
+    const [waiting_game] = query_games.filter((elem) => {
+      if (elem.total === '1') return elem;
+    });
 
     if (!waiting_game) {
       game = this.game_repo.create();
