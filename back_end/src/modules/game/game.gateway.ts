@@ -189,7 +189,7 @@ export class GameGateway
   @SubscribeMessage('giveUpGame')
   async giveUpGame(
     @ConnectedSocket() client: Socket,
-    @MessageBody('bcast') bcast: BroadcastDto,
+    @MessageBody() bcast: any,
   ) {
     this.logger.log(`giveUpGame`);
     let score = new ScoreDto();
