@@ -95,8 +95,9 @@ export class GameService {
   async joinGame(userId: string) {
     let game: Game;
     let player1: Player;
+    let waiting_game: { gameId: string; total: string | number };
     const user = await this.usersService.findOne(userId);
-    const query_games: { gameId: string; total: string }[] =
+    const query_games: { gameId: string; total: string | number }[] =
       await getRepository(Player)
         .createQueryBuilder('player')
         .select('player.game')
@@ -105,9 +106,15 @@ export class GameService {
         .where('player.game is not null')
         .getRawMany();
 
-    const [waiting_game] = query_games.filter((elem) => {
-      if (elem.total === '1') return elem;
-    });
+    if (process.env.NODE_ENV === 'production') {
+      [waiting_game] = query_games.filter((elem) => {
+        if (elem.total === '1') return elem;
+      });
+    } else {
+      [waiting_game] = query_games.filter((elem) => {
+        if (elem.total === 1) return elem;
+      });
+    }
 
     if (!waiting_game) {
       game = this.game_repo.create();
