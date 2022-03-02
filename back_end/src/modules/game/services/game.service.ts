@@ -180,14 +180,20 @@ export class GameService {
     }
   }
 
-  async updateScores(game_id: string, score: ScoreDto) {
+  async updateScores(
+    game_id: string,
+    score: ScoreDto,
+    patchedGame: Partial<UpdateGameDto>,
+  ) {
     const ret = await this.findOne(game_id, {
       relations: ['players', 'players.user'],
     });
+    if (!ret) return ret;
     await this.updatePlayers([
       { id: ret.players[0].id, patch: { score: score.score1 } },
       { id: ret.players[1].id, patch: { score: score.score2 } },
     ]);
+    if (patchedGame) this.updateGame(game_id, patchedGame);
     return ret;
   }
 

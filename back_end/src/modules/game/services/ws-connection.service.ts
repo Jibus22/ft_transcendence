@@ -106,7 +106,7 @@ export class WsConnectionService {
         score.score2 = game.players[1].score;
         if (game.players[0].user.id === user.id) score.score2 = 10;
         else score.score1 = 10;
-        await this.gameService.updateScores(game.id, score);
+        await this.gameService.updateScores(game.id, score, null);
         await this.wsGameService.updatePlayerStatus2(
           [game.players[0].user.id, game.players[1].user.id],
           { is_in_game: false },
