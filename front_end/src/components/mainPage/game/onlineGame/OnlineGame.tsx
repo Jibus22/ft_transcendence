@@ -32,7 +32,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 		gameWs?.emit('watchGame', watch, (response: OnlineGameAndMapType) => {
 			console.log(`CLIENT: response from server -> ${response}`);
 			setWatchGameScore(response);
-			console.log('ici=========', response);
+			// console.log('ici=========', response);
 		});
 		setTime(true);
 		setTimeout(function () {
@@ -59,14 +59,14 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 
 			<div className="userStat d-flex flex-column ">
 				<div className="player d-flex ">
-					<div className="user challenger">
-						<p>{data.challenger.login}</p>
+					<div className="user challenger ">
+						<p>{data.challenger.login}</p> //j1
 					</div>
 					<div className="vs">
 						<p>vs</p>
 					</div>
 					<div className="user opponant">
-						<p>{data.opponent.login}</p>
+						<p>{data.opponent.login}</p> // j2
 					</div>
 				</div>
 				<div className="score d-flex">
@@ -146,7 +146,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 	}, [gameWs]);
 
 	const scoreSort = (a: OnlineGameType, b: OnlineGameType) => {
-		return b;
+		return b.createdAt - a.createdAt;
 	};
 
 	return (
@@ -158,7 +158,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 				<div className="pageOverflow">
 					<div className="onlineDiv">
 						{data &&
-							data.map((data, index: number) => (
+							data.sort(scoreSort).map((data, index: number) => (
 								<React.Fragment key={index}>
 									<ListGame data={data} loading={loading} gameWs={gameWs} />
 								</React.Fragment>

@@ -73,8 +73,8 @@ class PongGame extends React.Component<MyProps> {
 	_ctx: CanvasRenderingContext2D | undefined = undefined;
 	_P1: boolean = false;
 	_P2: boolean = false;
-	scoreP1: number = 0;
-	scoreP2: number = 0;
+	scoreP1: number = this.props.scoreJ1;
+	scoreP2: number = this.props.scoreJ2;
 	gamerunning = true;
 	powerUp = true;
 	imgBackground = new Image();
@@ -369,8 +369,8 @@ class PongGame extends React.Component<MyProps> {
 	}
 
 	componentDidMount() {
-		console.log('score j1', this.scoreP1);
-		console.log('score j2', this.scoreP2);
+		console.log('score j1', this.props.scoreJ1);
+		console.log('score j2', this.props.scoreJ2);
 
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;

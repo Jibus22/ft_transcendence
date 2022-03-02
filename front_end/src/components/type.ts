@@ -60,6 +60,7 @@ export interface OnlineGameType {
 	challenger: UserOnlineGame;
 	opponent: UserOnlineGame;
 	watch: string;
+	createdAt: number;
 }
 
 export interface OnlineGameAndMapType {

@@ -91,8 +91,8 @@ export default function MainPong() {
 
 	const [disableMap, setDisableMap] = useState<boolean>(false);
 
-	const [scoreJ1, setScoreJ1] = useState(0);
-	const [scoreJ2, setScoreJ2] = useState(0);
+	const [scoreJ1, setScoreJ1] = useState(-1);
+	const [scoreJ2, setScoreJ2] = useState(-1);
 
 	useEffect(() => {
 		if (isWatchGame) {
@@ -109,13 +109,17 @@ export default function MainPong() {
 
 		if (!isOpponant) {
 			setData(challengData);
-			// console.log('exterieur');
+			console.log('exterieur');
+			setScoreJ2(0);
+			setScoreJ1(0);
 
 			setNbPlayer(2);
 		} else {
 			setData(dataUserChallenge);
-			// console.log('domicile');
+			console.log('domicile');
 			setNbPlayer(1);
+			setScoreJ1(0);
+			setScoreJ2(0);
 			if (acceptGame === false) {
 				setOpacity(true);
 			}
@@ -172,8 +176,6 @@ export default function MainPong() {
 	useEffect(() => {
 		console.log('USEEFFFECTTTTTT');
 		gameWs?.on('setMap', (room: string) => {
-			console.log('joueur 1 ===== map', map);
-
 			// console.log(`💌  Event: setMap -> ${cb}`);
 			gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
 				console.log('P1 callback watch return: ', watch);
@@ -204,17 +206,17 @@ export default function MainPong() {
 	useEffect(() => {
 		if (isWatchGame) {
 			// setLoad(true);
-			console.log(isWatchGame);
-			setNbPlayer(0);
-			console.log('tab ======', watchGameScore.map);
-			setMap(watchGameScore.map);
 
-			console.log('vieewww ===== map', map);
+			setNbPlayer(0);
+			setScoreJ1(watchGameScore.challenger.score);
+			setScoreJ2(watchGameScore.opponent.score);
+
+			setMap(watchGameScore.map);
 		}
 		// return () => {
 		// 	setIsWatchGame(false);
 		// };
-	}, [isWatchGame, watchGameScore, map]);
+	}, [isWatchGame, watchGameScore, map, scoreJ1, scoreJ2]);
 
 	const titlePrint = () => {
 		if (!isGameRandom) {
@@ -267,13 +269,14 @@ export default function MainPong() {
 		}
 	};
 
-	console.log('map rand =====', map);
+	console.log('score1111===', scoreJ1);
+	console.log('score22222===', scoreJ2);
 
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame">
 				<div className="w-100 h-100 ">
-					{(roomId !== '' && watchId !== '' && map !== null) || isWatchGame ? (
+					{((roomId !== '' && watchId !== '' && map !== null) || (isWatchGame && map !== null)) && scoreJ1 !== -1 && scoreJ2 !== -1 ? (
 						<div className="container__MapGame">
 							<PongGame
 								map={map}
