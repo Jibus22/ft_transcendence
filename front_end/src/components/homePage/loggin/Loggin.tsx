@@ -66,7 +66,9 @@ export default function Loggin() {
 			<div className="buttonConnect d-flex">
 				<Bounce delay={1000} className="w-100 h1-100">
 					<form className="TextLog w-100 h-100">
-						<a href={`https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_AUTH_CALLBACK_URL}&response_type=code&scope=public&state=${process.env.REACT_APP_AUTH_CLIENT_STATE}`}>
+						<a
+							href={`https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_AUTH_CALLBACK_URL}&response_type=code&scope=public&state=${process.env.REACT_APP_AUTH_CLIENT_STATE}`}
+						>
 							<Button className="buttonMuiConnect " variant="contained" sx={{ borderRadius: 2, textTransform: 'none' }}>
 								Connect
 							</Button>
@@ -77,10 +79,6 @@ export default function Loggin() {
 		</div>
 	);
 
-	////////////////////////////////////////
-	//CHANGER ACOUNT
-
-	////////////////////////////
 	const logInKey = (
 		<div className="w-100 loginInput ">
 			<div className="welcome ">

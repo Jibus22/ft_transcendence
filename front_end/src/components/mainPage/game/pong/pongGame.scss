@@ -288,8 +288,8 @@
 
 @media screen and (max-width: 750px) {
 	.divMainPongGame {
-		// margin: 19% auto;
 		margin-bottom: -15px;
+		height: 55vw !important;
 		.mainPongGame {
 			border-radius: 24px;
 			.titlePongGame {
@@ -369,7 +369,9 @@
 
 @media screen and (max-width: 670px) {
 	.divMainPongGame {
-		height: 440px;
+		// height: 440px;
+
+		// height: 40vw !important;
 		.titleMap {
 			.countMap {
 				top: 50% !important;

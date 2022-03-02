@@ -49,7 +49,7 @@ export interface UserChallenge {
 	photo_url: string;
 }
 
-interface UserOnlineGame {
+export interface UserOnlineGame {
 	login: string;
 	photo_url: string;
 	status: string;
@@ -60,4 +60,12 @@ export interface OnlineGameType {
 	challenger: UserOnlineGame;
 	opponent: UserOnlineGame;
 	watch: string;
+	createdAt: number;
+}
+
+export interface OnlineGameAndMapType {
+	challenger: UserOnlineGame;
+	opponent: UserOnlineGame;
+	watch: string;
+	map: null | 'one' | 'two' | 'three';
 }

@@ -139,23 +139,12 @@
 			font-size: 23px !important;
 		}
 
-		.MuiInputLabel-root:not(.MuiInputLabel-shrink) {
-			// left: 1.8vw;
-			// position: absolute;
-			// left: 15%;
-			// top: 50%;
-			// transform: translate(-50%, -50%);
-		}
-
 		& .MuiInputLabel-shrink,
 		& fieldset {
 			font-size: 28px !important;
 		}
 		.Mui-focused {
 			color: black;
-			// font-size: 1.3vw;
-			// font-size: 30px !important;
-			// border: 1px solid red !important;
 		}
 
 		.MuiOutlinedInput-input {

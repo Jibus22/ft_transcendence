@@ -19,7 +19,7 @@ export class WsConnectionService {
   ) {}
 
   private readonly logger = new Logger('WsGameService');
-
+    
   private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
       .find({ game_ws: client.id })
@@ -64,6 +64,7 @@ export class WsConnectionService {
     await this.usersService
       .update(userId, {
         game_ws: client.id,
+        is_in_game: false,
       })
       .catch((error) => {
         this.doHandleConnectionFailure(client, error.message);
@@ -125,7 +126,9 @@ export class WsConnectionService {
       { relations: ['players', 'players.game'] },
     );
 
-    if (user.is_in_game) this.handleGameDisconnection(server, user);
+    if (user) {
+      if (user.is_in_game) this.handleGameDisconnection(server, user);
+    }
     await this.updateUser(client, {
       game_ws: null,
       is_in_game: false,
