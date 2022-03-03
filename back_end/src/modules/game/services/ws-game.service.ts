@@ -84,7 +84,12 @@ export class WsGameService {
     });
   }
 
-  async handleGameEnd(game: Game, server: Server, user: User) {
+  async handleGameEnd(
+    client_id: string,
+    game: Game,
+    server: Server,
+    user: User,
+  ) {
     this.logger.log(`handleGameEnd: ${user.login} - ${game.id}`);
     let score = new ScoreDto();
     if (game.players.length < 2) {
@@ -103,7 +108,10 @@ export class WsGameService {
       [game.players[0].user.id, game.players[1].user.id],
       { is_in_game: false },
     );
-    server.to([game.id, game.watch]).emit('playerGiveUp', myPtoUserDto(user));
+    server
+      .to([game.id, game.watch])
+      .except(client_id)
+      .emit('playerGiveUp', myPtoUserDto(user));
     server.socketsLeave([game.id, game.watch]);
   }
 

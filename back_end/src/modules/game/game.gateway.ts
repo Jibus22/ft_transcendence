@@ -206,7 +206,7 @@ export class GameGateway
     const game = await this.gameService.findOne(bcast.room, {
       relations: ['players', 'players.user'],
     });
-    await this.wsGameService.handleGameEnd(game, this.server, user);
+    await this.wsGameService.handleGameEnd(client.id, game, this.server, user);
   }
 
   @SubscribeMessage('endGame')

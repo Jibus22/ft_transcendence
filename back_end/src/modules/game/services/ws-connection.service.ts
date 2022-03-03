@@ -19,7 +19,7 @@ export class WsConnectionService {
     private readonly wsGameService: WsGameService,
   ) {}
 
-  private readonly logger = new Logger('WsGameService');
+  private readonly logger = new Logger('WsConnectionService');
 
   private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
@@ -76,28 +76,29 @@ export class WsConnectionService {
 
   private async waitReconnection(server: Server, user: User, game: Game) {
     this.logger.log(`waitReconnection: ${user.login} - ${game.id}`);
-    for (let i = 8; i >= 0; i--) {
+    let usr: User;
+    for (let i = 5; i >= 0; i--) {
       await sleep(1000);
-      [user] = await this.usersService.findOneWithAnyParam(
+      [usr] = await this.usersService.findOneWithAnyParam(
         [{ id: user.id }],
         null,
       );
-      if (user.game_ws) {
+      if (usr.game_ws) {
         const [updatedGame] = await this.gameService.findGameWithAnyParam(
           [{ id: game.id }],
           null,
         );
         if (!updatedGame.watch) return;
-        await this.usersService.updateUser(user, { is_in_game: true });
+        await this.usersService.updateUser(usr, { is_in_game: true });
         server.to(user.game_ws).emit('goBackInGame', myPtoOnlineGameDto(game));
         server
           .to([game.id, game.watch])
-          .except(user.game_ws)
-          .emit('playerCameBack', myPtoUserDto(user));
+          .except(usr.game_ws)
+          .emit('playerCameBack', myPtoUserDto(usr));
         return;
       }
     }
-    await this.wsGameService.handleGameEnd(game, server, user);
+    await this.wsGameService.handleGameEnd(usr.game_ws, game, server, user);
   }
 
   private async handleGameDisconnection(server: Server, user: User) {
@@ -120,6 +121,7 @@ export class WsConnectionService {
       { relations: ['players', 'players.game'] },
     );
 
+    console.log('ussssser ---- ', user);
     if (user && user.is_in_game && user.players && user.players.length > 0)
       this.handleGameDisconnection(server, user);
     await this.updateUser(client, {
