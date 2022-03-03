@@ -44,6 +44,7 @@ export default function MainPong() {
 		watchGameScore,
 		isWatchGame,
 		setIsWatchGame,
+		backInGame,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -207,6 +208,11 @@ export default function MainPong() {
 			console.log('joueur 2 ===== map', map);
 		});
 	}, [map]);
+
+	useEffect(() => {
+		if (backInGame) {
+		}
+	}, [backInGame]);
 
 	// useEffect(() => {
 	// 	gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {

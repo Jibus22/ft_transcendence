@@ -100,6 +100,9 @@ interface IMainPageContext {
 
 	countInvit: number;
 	setCountInvit: Dispatch<SetStateAction<number>>;
+
+	backInGame: boolean;
+	setBackInGame: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -155,6 +158,8 @@ const MainPageProvider = (props: any) => {
 	const [isWatchGame, setIsWatchGame] = useState(false);
 
 	const [countInvit, setCountInvit] = useState(0);
+
+	const [backInGame, setBackInGame] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -376,6 +381,9 @@ const MainPageProvider = (props: any) => {
 
 		countInvit,
 		setCountInvit,
+
+		backInGame,
+		setBackInGame,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

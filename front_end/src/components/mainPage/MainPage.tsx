@@ -20,6 +20,10 @@ const MainPage = () => {
 		disconectAuth,
 		setLoadingSocket,
 		setIsGameRandom,
+		setPlayerNewGameInvit,
+		setIsOpponant,
+		setStartGame,
+		setBackInGame,
 	} = useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
@@ -156,7 +160,11 @@ const MainPage = () => {
 			//Server detected the client was playing before disconnecting so it gives
 			//thru this event an OnlineGameDto so that we can call the game component
 			//and go back to the game.
+			setBackInGame(true);
 			setIsGameRandom(true);
+			setPlayerNewGameInvit(true);
+			setIsOpponant(true);
+			setStartGame(true);
 		});
 
 		socket.on('myerror', (message: string) => {
