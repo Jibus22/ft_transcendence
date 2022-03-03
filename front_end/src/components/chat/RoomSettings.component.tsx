@@ -51,7 +51,11 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			return;
 		try {
 			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${login}`, { withCredentials: true });
-			const { id } = data;
+			console.log("DATA", data);
+			const id = (data as any).user.id;
+			if (!id) {
+				alert(`Cannot find user '${login}'.`);
+			}
 			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/participant`, {
 				id
 			}, { withCredentials: true });
