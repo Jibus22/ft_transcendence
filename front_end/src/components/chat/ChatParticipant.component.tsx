@@ -8,6 +8,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Tooltip from '@mui/material/Tooltip';
 import { useMainPage } from "../../MainPageContext";
+import { useNavigate } from 'react-router-dom';
 
 const ChatParticipant = ({ user, currentUser }: any) => {
 
@@ -15,6 +16,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	const [blocked, setBlocked] = useState<any[]>([]);
 	const [profile, setProfile] = useState<any | null>(null);
 	const [friendsLoading, setFriendsLoading] = useState<boolean>(false);
+	let navigate = useNavigate();
 
 	const getFriends = async () => {
 		setFriendsLoading(true);
@@ -65,7 +67,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		getFriends();
 	};
 
-	const { setIsGameRandom, setDataUserChallenge, setIsOpponant } = useMainPage();
+	const { setIsGameRandom, setDataUserChallenge, setIsOpponant, setStartGame, setSelectNav } = useMainPage();
 	const askGame = async (login: any) => {
 		const game = {
 			login_opponent: login,
@@ -73,6 +75,9 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			photo_url: '',
 		};
 		try {
+			setStartGame(true);
+			setSelectNav(false);
+			navigate("/Mainpage");
 			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 				withCredentials: true,
 			});

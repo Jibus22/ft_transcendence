@@ -71,11 +71,17 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const makePublic = async () => {
-
+		await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/privateStatus`, {
+			is_private: false
+		}, { withCredentials: true }).catch(err => console.log(`Cannot make public: ${err}`));
+		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
 
 	const makePrivate = async () => {
-
+		await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/privateStatus`, {
+			is_private: true
+		}, { withCredentials: true }).catch(err => console.log(`Cannot make public: ${err}`));
+		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
 	};
 
 	const mute = async (user: any) => {
