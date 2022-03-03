@@ -9,7 +9,8 @@ import { useMainPage } from '../../MainPageContext';
 import './mainPage.scss';
 
 const MainPage = () => {
-	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueLoading, disconectAuth } = useMainPage();
+	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueLoading, disconectAuth, setLoadingSocket } =
+		useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
@@ -113,6 +114,7 @@ const MainPage = () => {
 
 		socket.on('connect', () => {
 			console.log(`[GAME SOCKET 🎲 ] WS CONNECT`);
+			setLoadingSocket(true);
 		});
 
 		socket.on('disconnect', () => {
@@ -226,14 +228,24 @@ const MainPage = () => {
 			});
 	});
 
+	const [countInvit, setCountInvit] = useState(0);
+
 	useEffect(() => {
 		gameWs?.on('gameInvitation', async (challengerData, challengerWsId) => {
-			setChallengData([challengerData]);
+			setCountInvit(countInvit + 1);
 
-			setWsId(challengerWsId);
+			console.log(countInvit);
+
+			if (countInvit < 1) {
+				console.log('ici');
+				setChallengData([challengerData]);
+				setWsId(challengerWsId);
+			} else {
+				console.log('ELSEEEEEEE');
+			}
 			setTimeSnack(true);
 		});
-	}, [gameWs, challengData, wsId]);
+	}, [gameWs, countInvit]);
 
 	function disconnectGameWs() {
 		console.log('Click disconnect Chat ', gameWs?.id);
@@ -260,7 +272,7 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre wsId={wsId} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
+			{timeSnack && <SnackBarre wsId={wsId} countInvit={countInvit} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
 
 			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>

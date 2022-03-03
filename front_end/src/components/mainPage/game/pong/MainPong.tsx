@@ -164,7 +164,7 @@ export default function MainPong() {
 		return () => {
 			setLeaveGame(false);
 		};
-	}, [gameWs, count, dataGameRandomSocket]);
+	}, [gameWs, count, dataGameRandomSocket, openDialogLoading]);
 
 	useEffect(() => {
 		gameWs?.on('startGame', (room: string) => {

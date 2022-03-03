@@ -29,7 +29,7 @@ export default function Play({ Loadingclick }: Props) {
 		loading,
 		setSelectQuery,
 		setIsGameRandom,
-		setStartGame,
+		loadingSocket,
 		setPlayerNewGameInvit,
 		setIsOpponant,
 		setPlayerNewGameJoin,
@@ -86,7 +86,7 @@ export default function Play({ Loadingclick }: Props) {
 				<Button
 					className="buttonMui buttonMuiFriend"
 					variant="contained"
-					disabled={!isDisable}
+					disabled={!isDisable || !loadingSocket}
 					onClick={handleChangeWindow}
 					sx={{
 						borderRadius: 3,
@@ -115,7 +115,7 @@ export default function Play({ Loadingclick }: Props) {
 					<LoadingButton
 						className="buttonMui"
 						onClick={getGame}
-						disabled={loading}
+						disabled={loading || !loadingSocket}
 						variant="contained"
 						sx={{
 							width: 2 / 2,

@@ -27,7 +27,8 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor, setIsGameRandom, setStartGame, setSelectNav, setDataUserChallenge, setIsOpponant, userName } = useMainPage();
+	const { setStatusColor, setIsGameRandom, setStartGame, setSelectNav, setDataUserChallenge, setIsOpponant, userName, countInvit } =
+		useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);

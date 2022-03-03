@@ -94,6 +94,12 @@ interface IMainPageContext {
 
 	isWatchGame: boolean;
 	setIsWatchGame: Dispatch<SetStateAction<boolean>>;
+
+	loadingSocket: boolean;
+	setLoadingSocket: Dispatch<SetStateAction<boolean>>;
+
+	countInvit: number;
+	setCountInvit: Dispatch<SetStateAction<number>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -144,7 +150,11 @@ const MainPageProvider = (props: any) => {
 
 	// const [dataHistory, setDataHistory] = useState([]);
 
+	const [loadingSocket, setLoadingSocket] = useState(false);
+
 	const [isWatchGame, setIsWatchGame] = useState(false);
+
+	const [countInvit, setCountInvit] = useState(0);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -360,6 +370,12 @@ const MainPageProvider = (props: any) => {
 
 		isWatchGame,
 		setIsWatchGame,
+
+		loadingSocket,
+		setLoadingSocket,
+
+		countInvit,
+		setCountInvit,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

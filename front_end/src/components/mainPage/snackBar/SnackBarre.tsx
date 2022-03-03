@@ -11,14 +11,18 @@ interface Props {
 	wsId: string;
 	timeSnack: boolean;
 	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
+	countInvit: number;
 }
 
-export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
+export default function SnackBarre({ wsId, timeSnack, setTimeSnack, countInvit }: Props) {
 	const { isFriends, gameWs, invitName, challengData, setStartGame } = useMainPage();
 
 	const [progress, setProgress] = React.useState(0);
 
 	const [userName, setUserName] = useState('');
+
+	// const [countInvit, setCountInvit] = useState(1);
+	// setCountInvit(countInvit + 1);
 
 	const navigate = useNavigate();
 
@@ -36,6 +40,10 @@ export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
 	};
 
 	useEffect(() => {
+		// setCountInvit(countInvit + 1);
+
+		// console.log(countInvit);
+
 		const timer = setInterval(() => {
 			setProgress((oldProgress) => {
 				if (oldProgress === 102) {
@@ -51,6 +59,13 @@ export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
 			clearInterval(timer);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (countInvit > 1) {
+			console.log('DENIEEEEEED');
+			gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
+		}
+	}, [countInvit]);
 
 	const action = (
 		<>
