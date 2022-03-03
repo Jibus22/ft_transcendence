@@ -161,9 +161,9 @@ export default function MainPong() {
 			setOpacity(false);
 		});
 
-		return () => {
-			setLeaveGame(false);
-		};
+		// return () => {
+		// 	setLeaveGame(false);
+		// };
 	}, [gameWs, count, dataGameRandomSocket, openDialogLoading]);
 
 	useEffect(() => {
