@@ -115,6 +115,9 @@ export default function MainPong() {
 			if (backInGame) {
 				setScoreJ1(dataUserBack.challenger.score);
 				setScoreJ2(dataUserBack.opponent.score);
+				setMap(dataUserBack.map);
+				setRoomId(dataUserBack.id);
+				setWatchId(dataUserBack.watch);
 			} else {
 				setScoreJ1(0);
 				setScoreJ2(0);
@@ -129,7 +132,9 @@ export default function MainPong() {
 			if (backInGame) {
 				setScoreJ1(dataUserBack.challenger.score);
 				setScoreJ2(dataUserBack.opponent.score);
-				// setMap(dataUserBack.)
+				setMap(dataUserBack.map);
+				setRoomId(dataUserBack.id);
+				setWatchId(dataUserBack.watch);
 			} else {
 				setScoreJ1(0);
 				setScoreJ2(0);
