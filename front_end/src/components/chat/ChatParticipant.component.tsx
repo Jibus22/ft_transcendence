@@ -90,9 +90,12 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			setIsOpponant(true);
 			setIsGameRandom(false);
 			window.dispatchEvent(new CustomEvent('gameStartedFromChat', {detail: { login }}));
-		} catch (e) {
-			alert(`Cannot start the game, make sure ${login} is online`);
-			console.error(`Cannot start game: ${e}`);
+		} catch (e: any) {
+			if (e.response.data) {
+				alert(e.response.data.message);
+			} else {
+				alert(`Cannot start the game, make sure ${login} is online`);
+			}
 		}
 	};
 
