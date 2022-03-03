@@ -81,11 +81,11 @@ export default function MainPong() {
 			setOpen(false);
 			setStartGame(false);
 			setLeaveGame(false);
-			// setIsWatchGame(false);
-			// setMap(null);
-			// setWatchId('');
-			// setRoomId('');
-			// setAcceptGame(false);
+			setIsWatchGame(false);
+			setMap(null);
+			setWatchId('');
+			setRoomId('');
+			setAcceptGame(false);
 		}
 	};
 
@@ -167,6 +167,7 @@ export default function MainPong() {
 
 		// return () => {
 		// 	setLeaveGame(false);
+		// 	console.log('QUITTTTTTTEEEEEEEE');
 		// };
 	}, [gameWs, count, dataGameRandomSocket, openDialogLoading]);
 
@@ -181,13 +182,25 @@ export default function MainPong() {
 			console.log(obj);
 
 			// setOpen(false);
-			// setStartGame(false);
+			setStartGame(false);
 			// setLeaveGame(false);
 			// setIsWatchGame(false);
 			// setMap(null);
 			// setWatchId('');
 			// setRoomId('');
 		});
+
+		return () => {
+			setLeaveGame(false);
+			gameWs?.off('startGame');
+			gameWs?.off('playerGiveUp');
+			gameWs?.off('setMap');
+			gameWs?.off('getGameData');
+			gameWs?.off('gameAccepted');
+			gameWs?.off('gameDenied');
+			gameWs?.off('countDown');
+			gameWs?.off('newPlayerJoined');
+		};
 	}, [gameWs]);
 
 	useEffect(() => {
@@ -204,7 +217,7 @@ export default function MainPong() {
 		});
 
 		gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
-			console.log(`💌  Event: getMap ->`, gameData);
+			console.log(`💌  Event: GameData ->`, gameData);
 			setMap(gameData.map);
 			setWatchId(gameData.watch);
 		});

@@ -468,6 +468,12 @@ class PongGame extends React.Component<MyProps> {
 		//if (client) client.close();
 
 		this.gamerunning = false;
+		this.props.socket?.off('playerDisconnection');
+		this.props.socket?.off('playerCameBack');
+		this.props.socket?.off('playerUpdate');
+		this.props.socket?.off('ballPosUpdate');
+		this.props.socket?.off('scoreUpdate');
+		this.props.socket?.off('powerUpUpdate');
 	}
 
 	private _touch(e: any) {
