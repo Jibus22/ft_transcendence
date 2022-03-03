@@ -34,6 +34,9 @@ interface IMainPageContext {
 	userImg: string;
 	pathPop: string;
 
+	dataUserBack: OnlineGameType;
+	setDataUserBack: Dispatch<SetStateAction<OnlineGameType>>;
+
 	setData: Dispatch<SetStateAction<never[]>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
 	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
@@ -100,6 +103,9 @@ interface IMainPageContext {
 
 	countInvit: number;
 	setCountInvit: Dispatch<SetStateAction<number>>;
+
+	backInGame: boolean;
+	setBackInGame: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -111,6 +117,8 @@ const MainPageProvider = (props: any) => {
 	const [dataPlayerNewGameJoin, setDataPlayerNewGameJoin] = useState();
 
 	const [dataUserChallenge, setDataUserChallenge] = useState([]);
+
+	const [dataUserBack, setDataUserBack] = useState();
 
 	const [watchGameScore, setWatchGameScore] = useState([]);
 
@@ -155,6 +163,8 @@ const MainPageProvider = (props: any) => {
 	const [isWatchGame, setIsWatchGame] = useState(false);
 
 	const [countInvit, setCountInvit] = useState(0);
+
+	const [backInGame, setBackInGame] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -376,6 +386,12 @@ const MainPageProvider = (props: any) => {
 
 		countInvit,
 		setCountInvit,
+
+		backInGame,
+		setBackInGame,
+
+		dataUserBack,
+		setDataUserBack,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

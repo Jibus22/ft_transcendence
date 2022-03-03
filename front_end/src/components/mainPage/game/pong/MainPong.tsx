@@ -44,6 +44,8 @@ export default function MainPong() {
 		watchGameScore,
 		isWatchGame,
 		setIsWatchGame,
+		backInGame,
+		dataUserBack,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -83,6 +85,7 @@ export default function MainPong() {
 			setMap(null);
 			setWatchId('');
 			setRoomId('');
+			setAcceptGame(false);
 		}
 	};
 
@@ -143,6 +146,7 @@ export default function MainPong() {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
 			setOpenDialogLoading(true);
+
 			setTimeout(function () {
 				setOpenDialogLoading(false);
 				closeGame();
@@ -163,6 +167,7 @@ export default function MainPong() {
 
 		// return () => {
 		// 	setLeaveGame(false);
+		// 	console.log('QUITTTTTTTEEEEEEEE');
 		// };
 	}, [gameWs, count, dataGameRandomSocket, openDialogLoading]);
 
@@ -176,14 +181,26 @@ export default function MainPong() {
 			console.log(`💌  Event: playerGiveUp -> `);
 			console.log(obj);
 
-			setOpen(false);
+			// setOpen(false);
 			setStartGame(false);
-			setLeaveGame(false);
-			setIsWatchGame(false);
-			setMap(null);
-			setWatchId('');
-			setRoomId('');
+			// setLeaveGame(false);
+			// setIsWatchGame(false);
+			// setMap(null);
+			// setWatchId('');
+			// setRoomId('');
 		});
+
+		return () => {
+			setLeaveGame(false);
+			gameWs?.off('startGame');
+			gameWs?.off('playerGiveUp');
+			gameWs?.off('setMap');
+			gameWs?.off('getGameData');
+			gameWs?.off('gameAccepted');
+			gameWs?.off('gameDenied');
+			gameWs?.off('countDown');
+			gameWs?.off('newPlayerJoined');
+		};
 	}, [gameWs]);
 
 	useEffect(() => {
@@ -200,13 +217,26 @@ export default function MainPong() {
 		});
 
 		gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
-			console.log(`💌  Event: getMap ->`, gameData);
+			console.log(`💌  Event: GameData ->`, gameData);
 			setMap(gameData.map);
 			setWatchId(gameData.watch);
-
-			console.log('joueur 2 ===== map', map);
 		});
 	}, [map]);
+
+	// useEffect(() => {
+	// 	if (backInGame) {
+	// 		setOpen(false);
+	// 		setStartGame(false);
+	// 		setLeaveGame(false);
+	// 		setIsWatchGame(false);
+
+	// 		if (userName === dataUserBack.challenger.login) {
+	// 			setNbPlayer(1);
+	// 		} else {
+	// 			setNbPlayer(2);
+	// 		}
+	// 	}
+	// }, [backInGame, dataUserBack]);
 
 	// useEffect(() => {
 	// 	gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
@@ -225,7 +255,6 @@ export default function MainPong() {
 			setNbPlayer(0);
 			setScoreJ1(watchGameScore.challenger.score);
 			setScoreJ2(watchGameScore.opponent.score);
-
 			setMap(watchGameScore.map);
 		}
 		// return () => {
