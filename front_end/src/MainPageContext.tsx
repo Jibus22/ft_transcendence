@@ -4,7 +4,16 @@ import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserMe, LoginGame, User, UserChallenge, UserOnlineGame, OnlineGameType, OnlineGameAndMapType } from './components/type';
+import {
+	UserMe,
+	LoginGame,
+	User,
+	UserChallenge,
+	UserOnlineGame,
+	OnlineGameType,
+	OnlineGameAndMapType,
+	OnlineGameRemooveType,
+} from './components/type';
 import { boolean } from 'yup';
 
 interface IMainPageContext {
@@ -34,8 +43,8 @@ interface IMainPageContext {
 	userImg: string;
 	pathPop: string;
 
-	dataUserBack: OnlineGameType;
-	setDataUserBack: Dispatch<SetStateAction<OnlineGameType>>;
+	dataUserBack: OnlineGameRemooveType;
+	setDataUserBack: Dispatch<SetStateAction<OnlineGameRemooveType>>;
 
 	setData: Dispatch<SetStateAction<never[]>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;

@@ -6,7 +6,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
 import { useMainPage } from '../../MainPageContext';
-import { OnlineGameType } from '../type';
+import { OnlineGameRemooveType, OnlineGameType } from '../type';
 import './mainPage.scss';
 
 const MainPage = () => {
@@ -26,6 +26,7 @@ const MainPage = () => {
 		setStartGame,
 		setBackInGame,
 		setDataUserBack,
+		userName,
 	} = useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
@@ -156,19 +157,23 @@ const MainPage = () => {
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
-		socket.on('goBackInGame', (obj: OnlineGameType) => {
+		socket.on('goBackInGame', (obj: OnlineGameRemooveType) => {
 			console.log(`💌  Event: goBackInGame ->`);
 			console.log(obj);
 			//Server detected the client was playing before disconnecting so it gives
 			//thru this event an OnlineGameDto so that we can call the game component
 			//and go back to the game.
 
-			// setDataUserBack(obj);
-			// setBackInGame(true);
-			// setIsGameRandom(true);
-			// setPlayerNewGameInvit(true);
-			// setIsOpponant(true);
-			// setStartGame(true);
+			setDataUserBack(obj);
+			setBackInGame(true);
+			setIsGameRandom(true);
+			setPlayerNewGameInvit(true);
+			if (userName === obj.challenger.login) {
+				setIsOpponant(false);
+			} else {
+				setIsOpponant(true);
+			}
+			setStartGame(true);
 		});
 
 		socket.on('myerror', (message: string) => {

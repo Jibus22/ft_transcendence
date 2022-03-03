@@ -111,18 +111,30 @@ export default function MainPong() {
 			setLeaveGame(true);
 			setData(challengData);
 			// console.log('exterieur');
-			setScoreJ2(0);
-			setScoreJ1(0);
-
 			setNbPlayer(2);
+			if (backInGame) {
+				setScoreJ1(dataUserBack.challenger.score);
+				setScoreJ2(dataUserBack.opponent.score);
+			} else {
+				setScoreJ1(0);
+				setScoreJ2(0);
+			}
 		} else {
 			setLeaveGame(true);
 			setData(dataUserChallenge);
-			// console.log('domicile');
+			console.log('domicile');
 
 			setNbPlayer(1);
-			setScoreJ1(0);
-			setScoreJ2(0);
+
+			if (backInGame) {
+				setScoreJ1(dataUserBack.challenger.score);
+				setScoreJ2(dataUserBack.opponent.score);
+				// setMap(dataUserBack.)
+			} else {
+				setScoreJ1(0);
+				setScoreJ2(0);
+			}
+
 			if (acceptGame === false) {
 				setOpacity(true);
 			}

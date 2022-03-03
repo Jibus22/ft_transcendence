@@ -69,3 +69,12 @@ export interface OnlineGameAndMapType {
 	watch: string;
 	map: null | 'one' | 'two' | 'three';
 }
+
+export interface OnlineGameRemooveType {
+	challenger: UserOnlineGame;
+	opponent: UserOnlineGame;
+	watch: string;
+	map: null | 'one' | 'two' | 'three';
+	createdAt: number;
+	id: string;
+}
