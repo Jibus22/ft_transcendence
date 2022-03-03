@@ -145,7 +145,7 @@ export class GameGateway
       null,
     );
     if (game.watch === null) gameData = { map: map, watch: randomUUID() };
-    else gameData = { map: map };
+    else gameData = { map: map, watch: game.watch };
     await this.gameService.updateGame(room, gameData);
 
     client.to(room).emit('getGameData', gameData);
