@@ -19,7 +19,7 @@ export class WsConnectionService {
   ) {}
 
   private readonly logger = new Logger('WsGameService');
-    
+
   private async updateUser(client: Socket, userData: UpdateUserDto) {
     await this.usersService
       .find({ game_ws: client.id })
@@ -74,6 +74,7 @@ export class WsConnectionService {
   }
 
   async handleGameDisconnection(server: Server, user: User) {
+    if (!user.players || !user.players[user.players.length - 1].game) return;
     const [game] = await this.gameService.findGameWithAnyParam(
       [{ id: user.players[user.players.length - 1].game.id }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },
@@ -105,7 +106,7 @@ export class WsConnectionService {
         score.score2 = game.players[1].score;
         if (game.players[0].user.id === user.id) score.score2 = 10;
         else score.score1 = 10;
-        await this.gameService.updateScores(game.id, score);
+        await this.gameService.updateScores(game.id, score, null);
         await this.wsGameService.updatePlayerStatus2(
           [game.players[0].user.id, game.players[1].user.id],
           { is_in_game: false },

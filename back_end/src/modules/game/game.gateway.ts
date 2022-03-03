@@ -18,7 +18,7 @@ import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
-import { myPtoOnlineGameDto, myPtoUserDto } from './utils/utils';
+import { myPtoOnlineGameDto, myPtoUserDto, sleep } from './utils/utils';
 import {
   BallPosDto,
   BroadcastDto,
@@ -193,10 +193,17 @@ export class GameGateway
 
   //------------------------- END GAME ---------------------------------------//
 
+  private async updateEndGame(game: Game, score: ScoreDto) {
+    await sleep(1000);
+    await this.gameService.updateScores(game.id, score, {
+      updatedAt: Date.now(),
+    });
+  }
+
   @SubscribeMessage('giveUpGame')
   async giveUpGame(
     @ConnectedSocket() client: Socket,
-    @MessageBody() bcast: any,
+    @MessageBody('bcast') bcast: BroadcastDto,
   ) {
     this.logger.log(`giveUpGame`);
     let score = new ScoreDto();
@@ -218,7 +225,7 @@ export class GameGateway
     score.score2 = game.players[1].score;
     if (game.players[0].user.id === user.id) score.score2 = 10;
     else score.score1 = 10;
-    this.gameService.updateScores(game.id, score);
+    this.updateEndGame(game, score);
     await this.wsGameService.updatePlayerStatus2(
       [game.players[0].user.id, game.players[1].user.id],
       { is_in_game: false },
@@ -237,12 +244,11 @@ export class GameGateway
     this.logger.log(`endGame `);
     console.log(bcast, score);
 
-    let ret = await this.gameService.updateGame(bcast.room, {
+    const ret = await this.gameService.updateScores(bcast.room, score, {
       watch: null,
       updatedAt: Date.now(),
     });
     if (!ret) return;
-    ret = await this.gameService.updateScores(ret.id, score);
     await this.wsGameService.updatePlayerStatus2(
       [ret.players[0].user.id, ret.players[1].user.id],
       { is_in_game: false },
@@ -258,7 +264,9 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
     @MessageBody('score') score: ScoreDto,
   ) {
-    this.gameService.updateScores(bcast.room, score);
+    this.gameService.updateScores(bcast.room, score, {
+      updatedAt: Date.now(),
+    });
     client.to([bcast.room, bcast.watchers]).emit('scoreUpdate', score);
   }
 

@@ -119,7 +119,7 @@ class PongGame extends React.Component<MyProps> {
 				'Orbitron',
 				'url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)',
 			);
-			this.fillStyle = '38FC25';
+			this.fillStyle = '#38FC25';
 			this._ctx!.fillStyle = this.fillStyle;
 			this._ctx!.shadowColor = '#38FC25';
 			this._ctx!.shadowBlur = 30;
@@ -359,14 +359,32 @@ class PongGame extends React.Component<MyProps> {
 			evt.preventDefault();
 			delete keystate[evt.key];
 		});
-		if (this._P1 || this._P2) {
-			setInterval(() => {
-				if (this.gamerunning) this._update();
-			}, 10);
-		}
-		setInterval(() => {
+		document.addEventListener(
+			'ontouchstart',
+			function (e) {
+				e.preventDefault();
+			},
+			false,
+		);
+		document.addEventListener(
+			'ontouchmove',
+			function (e) {
+				e.preventDefault();
+			},
+			false,
+		);
+		this.props.socket!.send(
+			JSON.stringify({
+				type: 'message',
+				object: 'Ready',
+			}),
+		);
+		let loop = () => {
+			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
-		}, 30);
+			window.requestAnimationFrame(loop);
+		};
+		window.requestAnimationFrame(loop);
 	}
 
 	componentDidMount() {
