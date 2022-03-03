@@ -5,6 +5,7 @@ import { User } from 'src/modules/users/entities/users.entity';
 import { UpdateUserDto } from '../../users/dtos/update-users.dto';
 import { UsersService } from '../../users/service-users/users.service';
 import { ScoreDto } from '../dto/gameplay.dto';
+import { Game } from '../entities/game.entity';
 import { myPtoOnlineGameDto, myPtoUserDto, sleep } from '../utils/utils';
 import { GameService } from './game.service';
 import { WsGameService } from './ws-game.service';
@@ -73,52 +74,42 @@ export class WsConnectionService {
     this.logger.log(`handleConnection: Client connected ! ✅`);
   }
 
-  async handleGameDisconnection(server: Server, user: User) {
-    if (!user.players || !user.players[user.players.length - 1].game) return;
-    const [game] = await this.gameService.findGameWithAnyParam(
-      [{ id: user.players[user.players.length - 1].game.id }],
-      { relations: ['players', 'players.user', 'players.user.local_photo'] },
-    );
-
-    server
-      .to([game.id, game.watch])
-      .emit('playerDisconnection', myPtoUserDto(user));
+  private async waitReconnection(server: Server, user: User, game: Game) {
+    this.logger.log(`waitReconnection: ${user.login} - ${game.id}`);
     for (let i = 8; i >= 0; i--) {
       await sleep(1000);
       [user] = await this.usersService.findOneWithAnyParam(
         [{ id: user.id }],
         null,
       );
-
       if (user.game_ws) {
+        const [updatedGame] = await this.gameService.findGameWithAnyParam(
+          [{ id: game.id }],
+          null,
+        );
+        if (!updatedGame.watch) return;
         await this.usersService.updateUser(user, { is_in_game: true });
         server.to(user.game_ws).emit('goBackInGame', myPtoOnlineGameDto(game));
         server
           .to([game.id, game.watch])
           .except(user.game_ws)
           .emit('playerCameBack', myPtoUserDto(user));
-        break;
-      } else if (!user.game_ws && i == 0) {
-        let score = new ScoreDto();
-        if (game.players.length < 2) {
-          this.gameService.remove(game.id);
-          return;
-        }
-        score.score1 = game.players[0].score;
-        score.score2 = game.players[1].score;
-        if (game.players[0].user.id === user.id) score.score2 = 10;
-        else score.score1 = 10;
-        await this.gameService.updateScores(game.id, score, null);
-        await this.wsGameService.updatePlayerStatus2(
-          [game.players[0].user.id, game.players[1].user.id],
-          { is_in_game: false },
-        );
-        server
-          .to([game.id, game.watch])
-          .emit('playerGiveUp', myPtoUserDto(user));
-        server.socketsLeave([game.id, game.watch]);
+        return;
       }
     }
+    await this.wsGameService.handleGameEnd(game, server, user);
+  }
+
+  private async handleGameDisconnection(server: Server, user: User) {
+    this.logger.log(`handleGameDisconnection: ${user.login}`);
+    const [game] = await this.gameService.findGameWithAnyParam(
+      [{ id: user.players[user.players.length - 1].game.id }],
+      { relations: ['players', 'players.user', 'players.user.local_photo'] },
+    );
+    server
+      .to([game.id, game.watch])
+      .emit('playerDisconnection', myPtoUserDto(user));
+    this.waitReconnection(server, user, game);
   }
 
   async doHandleDisconnect(client: Socket, server: Server) {
@@ -129,9 +120,8 @@ export class WsConnectionService {
       { relations: ['players', 'players.game'] },
     );
 
-    if (user) {
-      if (user.is_in_game) this.handleGameDisconnection(server, user);
-    }
+    if (user && user.is_in_game && user.players && user.players.length > 0)
+      this.handleGameDisconnection(server, user);
     await this.updateUser(client, {
       game_ws: null,
       is_in_game: false,
