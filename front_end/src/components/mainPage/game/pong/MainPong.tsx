@@ -45,6 +45,7 @@ export default function MainPong() {
 		isWatchGame,
 		setIsWatchGame,
 		backInGame,
+		dataUserBack,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -80,10 +81,11 @@ export default function MainPong() {
 			setOpen(false);
 			setStartGame(false);
 			setLeaveGame(false);
-			setIsWatchGame(false);
-			setMap(null);
-			setWatchId('');
-			setRoomId('');
+			// setIsWatchGame(false);
+			// setMap(null);
+			// setWatchId('');
+			// setRoomId('');
+			// setAcceptGame(false);
 		}
 	};
 
@@ -144,6 +146,7 @@ export default function MainPong() {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
 			setOpenDialogLoading(true);
+
 			setTimeout(function () {
 				setOpenDialogLoading(false);
 				closeGame();
@@ -177,13 +180,13 @@ export default function MainPong() {
 			console.log(`💌  Event: playerGiveUp -> `);
 			console.log(obj);
 
-			setOpen(false);
-			setStartGame(false);
-			setLeaveGame(false);
-			setIsWatchGame(false);
-			setMap(null);
-			setWatchId('');
-			setRoomId('');
+			// setOpen(false);
+			// setStartGame(false);
+			// setLeaveGame(false);
+			// setIsWatchGame(false);
+			// setMap(null);
+			// setWatchId('');
+			// setRoomId('');
 		});
 	}, [gameWs]);
 
@@ -204,15 +207,23 @@ export default function MainPong() {
 			console.log(`💌  Event: getMap ->`, gameData);
 			setMap(gameData.map);
 			setWatchId(gameData.watch);
-
-			console.log('joueur 2 ===== map', map);
 		});
 	}, [map]);
 
-	useEffect(() => {
-		if (backInGame) {
-		}
-	}, [backInGame]);
+	// useEffect(() => {
+	// 	if (backInGame) {
+	// 		setOpen(false);
+	// 		setStartGame(false);
+	// 		setLeaveGame(false);
+	// 		setIsWatchGame(false);
+
+	// 		if (userName === dataUserBack.challenger.login) {
+	// 			setNbPlayer(1);
+	// 		} else {
+	// 			setNbPlayer(2);
+	// 		}
+	// 	}
+	// }, [backInGame, dataUserBack]);
 
 	// useEffect(() => {
 	// 	gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
@@ -231,7 +242,6 @@ export default function MainPong() {
 			setNbPlayer(0);
 			setScoreJ1(watchGameScore.challenger.score);
 			setScoreJ2(watchGameScore.opponent.score);
-
 			setMap(watchGameScore.map);
 		}
 		// return () => {

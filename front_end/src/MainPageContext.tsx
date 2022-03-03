@@ -34,6 +34,9 @@ interface IMainPageContext {
 	userImg: string;
 	pathPop: string;
 
+	dataUserBack: OnlineGameType;
+	setDataUserBack: Dispatch<SetStateAction<OnlineGameType>>;
+
 	setData: Dispatch<SetStateAction<never[]>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
 	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
@@ -114,6 +117,8 @@ const MainPageProvider = (props: any) => {
 	const [dataPlayerNewGameJoin, setDataPlayerNewGameJoin] = useState();
 
 	const [dataUserChallenge, setDataUserChallenge] = useState([]);
+
+	const [dataUserBack, setDataUserBack] = useState();
 
 	const [watchGameScore, setWatchGameScore] = useState([]);
 
@@ -384,6 +389,9 @@ const MainPageProvider = (props: any) => {
 
 		backInGame,
 		setBackInGame,
+
+		dataUserBack,
+		setDataUserBack,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
