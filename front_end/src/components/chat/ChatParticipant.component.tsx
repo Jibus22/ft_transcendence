@@ -7,11 +7,13 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Tooltip from '@mui/material/Tooltip';
+import { useMainPage } from "../../MainPageContext";
 
 const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const [friends, setFriends] = useState<any[]>([]);
 	const [blocked, setBlocked] = useState<any[]>([]);
+	const [profile, setProfile] = useState<any | null>(null);
 	const [friendsLoading, setFriendsLoading] = useState<boolean>(false);
 
 	const getFriends = async () => {
@@ -19,6 +21,11 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
+	};
+
+	const getProfile = async () => {
+		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${user.user.login}`, { withCredentials: true });
+		setProfile(result?.data);
 	};
 
 	const getBlocks = async () => {
@@ -58,8 +65,25 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		getFriends();
 	};
 
-	const askGame = async (id: any) => {
-		// ?
+	const { setIsGameRandom, setDataUserChallenge, setIsOpponant } = useMainPage();
+	const askGame = async (login: any) => {
+		const game = {
+			login_opponent: login,
+			login: '',
+			photo_url: '',
+		};
+		try {
+			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
+				withCredentials: true,
+			});
+			setDataUserChallenge([response.data]);
+			setIsOpponant(true);
+			setIsGameRandom(false);
+			window.dispatchEvent(new CustomEvent('gameStartedFromChat', {detail: { login }}));
+		} catch (e) {
+			alert(`Cannot start the game, make sure ${login} is online`);
+			console.error(`Cannot start game: ${e}`);
+		}
 	};
 
 	const blockUser = async (id: any) => {
@@ -78,6 +102,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	useEffect(() => {
 		getFriends();
 		getBlocks();
+		getProfile();
 	}, []);
 
 	return (
@@ -89,10 +114,28 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			{ currentUser && user && currentUser.id !== user.user.id && (<ButtonRow>
 				{!isFriend() && <Tooltip title="Add as friend"><button onClick={ () => addFriend(user.user.id) }><PersonAddIcon /></button></Tooltip>}
 				{isFriend() && <Tooltip title="Remove friend"><button onClick={ () => removeFriend(user.user.id) }><PersonOffIcon /></button></Tooltip>}
-				<Tooltip title="Send game request"><button onClick={ () => askGame(user.user.id) }><SportsEsportsIcon /></button></Tooltip>
+				<Tooltip title="Send game request"><button onClick={ () => askGame(user.user.login) }><SportsEsportsIcon /></button></Tooltip>
 				{!isBlocked() && <Tooltip title="Block user"><button onClick={ () => blockUser(user.user.id) }><VisibilityOffIcon /></button></Tooltip>}
 				{isBlocked() && <Tooltip title="Unblock user"><button onClick={ () => unblockUser(user.user.id) }><VisibilityIcon /></button></Tooltip>}
 			</ButtonRow>) }
+			{
+				profile && (
+					<ProfileView>
+						<div>
+							<span>{ profile.games_won }</span>
+							<span>Wins</span>
+						</div>
+						<div>
+							<span>{ profile.games_lost }</span>
+							<span>Losses</span>
+						</div>
+						<div>
+							<span>{ profile.games_count }</span>
+							<span>Games</span>
+						</div>
+					</ProfileView>
+				)
+			}
 		</>
 	);
 };
@@ -130,6 +173,22 @@ const ButtonRow = styled.div`
 		align-items: center;
 		justify-content: center;
 		margin: 5px;
+	}
+`;
+
+const ProfileView = styled.div`
+	display: flex;
+	justify-content: space-evenly;
+	margin-top: 20px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		span:nth-child(1) {
+			font-size: 20px;
+		}
 	}
 `;
 
