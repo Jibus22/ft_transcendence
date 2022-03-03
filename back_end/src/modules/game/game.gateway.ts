@@ -193,20 +193,12 @@ export class GameGateway
 
   //------------------------- END GAME ---------------------------------------//
 
-  private async updateEndGame(game: Game, score: ScoreDto) {
-    await sleep(1000);
-    await this.gameService.updateScores(game.id, score, {
-      updatedAt: Date.now(),
-    });
-  }
-
   @SubscribeMessage('giveUpGame')
   async giveUpGame(
     @ConnectedSocket() client: Socket,
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
     this.logger.log(`giveUpGame`);
-    let score = new ScoreDto();
     const [user] = await this.wsGameService.getUserFromParam(
       [{ game_ws: client.id }],
       { relations: ['players'] },
@@ -214,26 +206,7 @@ export class GameGateway
     const game = await this.gameService.findOne(bcast.room, {
       relations: ['players', 'players.user'],
     });
-    if (game.players.length < 2) {
-      this.gameService.remove(game.id);
-      await this.wsGameService.updatePlayerStatus2([game.players[0].user.id], {
-        is_in_game: false,
-      });
-      return;
-    }
-    score.score1 = game.players[0].score;
-    score.score2 = game.players[1].score;
-    if (game.players[0].user.id === user.id) score.score2 = 10;
-    else score.score1 = 10;
-    this.updateEndGame(game, score);
-    await this.wsGameService.updatePlayerStatus2(
-      [game.players[0].user.id, game.players[1].user.id],
-      { is_in_game: false },
-    );
-    this.server
-      .to([bcast.room, bcast.watchers])
-      .emit('playerGiveUp', myPtoUserDto(user));
-    this.server.socketsLeave([bcast.room, bcast.watchers]);
+    await this.wsGameService.handleGameEnd(game, this.server, user);
   }
 
   @SubscribeMessage('endGame')
