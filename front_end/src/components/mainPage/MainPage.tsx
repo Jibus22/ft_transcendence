@@ -9,8 +9,18 @@ import { useMainPage } from '../../MainPageContext';
 import './mainPage.scss';
 
 const MainPage = () => {
-	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueLoading, disconectAuth, setLoadingSocket } =
-		useMainPage();
+	const {
+		gameWs,
+		challengData,
+		setGameWs,
+		setData,
+		setChallengData,
+		leaveGame,
+		dialogueLoading,
+		disconectAuth,
+		setLoadingSocket,
+		setIsGameRandom,
+	} = useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
@@ -146,6 +156,7 @@ const MainPage = () => {
 			//Server detected the client was playing before disconnecting so it gives
 			//thru this event an OnlineGameDto so that we can call the game component
 			//and go back to the game.
+			setIsGameRandom(true);
 		});
 
 		socket.on('myerror', (message: string) => {

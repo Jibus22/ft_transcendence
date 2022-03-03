@@ -171,6 +171,19 @@ export default function MainPong() {
 			console.log(`💌  Event: startGame -> ${room}`);
 			setRoomId(room);
 		});
+
+		gameWs?.on('playerGiveUp', (obj: any) => {
+			console.log(`💌  Event: playerGiveUp -> `);
+			console.log(obj);
+
+			setOpen(false);
+			setStartGame(false);
+			setLeaveGame(false);
+			setIsWatchGame(false);
+			setMap(null);
+			setWatchId('');
+			setRoomId('');
+		});
 	}, [gameWs]);
 
 	useEffect(() => {
@@ -332,7 +345,8 @@ export default function MainPong() {
 					</Button>
 				</div>
 				{dialogMui(open, () => setOpen(false), closeGame, 'Warning !', 'Are you sure you want to quit the game ?')}
-				{dialogueLoading(openDialogLoading, 'Warning', 'your opponant did not accept the invitation', 'You will return to the home page')}
+				{dialogueLoading(openDialogLoading, 'Warning', 'your opponent did not accept the invitation', 'You will return to the home page')}
+				{dialogueLoading(pauseGame, 'Warning', 'Your opponent has disconnected', '')}
 			</div>
 		</animated.div>
 	);

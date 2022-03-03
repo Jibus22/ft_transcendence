@@ -395,28 +395,30 @@ class PongGame extends React.Component<MyProps> {
 		this.props.socket?.on('playerDisconnection', (obj: any) => {
 			console.log(`💌  Event: playerDisconnection -> `);
 			console.log(obj);
-			//Un des 2 joueurs subit une déconnection. Son UserDto est récéptionné
-			//dans 'obj' et permet de l'afficher. Il faut mettre le jeu en pause à
-			//ce moment là.
-			//Un décompte de 5s est lancé côté server. Si il ne se reconnecte pas
-			//dans les 5 secondes, 'playerGiveUp' est émit, autrement 'playerCameBack'
-			//est émit
+
+			this.gamerunning = false;
+			this.props.setPauseGame(true);
 		});
 
 		this.props.socket?.on('playerCameBack', (obj: any) => {
 			console.log(`💌  Event: playerCameBack -> `);
 			console.log(obj);
+
+			this.gamerunning = true;
+			this.props.setPauseGame(false);
+
 			//le joueur représenté par 'obj' est revenu: on peut reprendre le jeu
 		});
 
-		this.props.socket?.on('playerGiveUp', (obj: any) => {
-			console.log(`💌  Event: playerGiveUp -> `);
-			console.log(obj);
-			//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers
-			//reçoivent cet event.
-			//dans 'obj' c'est un UserDto qui permet d'afficher qui a abandonné.
-			//Ensuite faut retourner à la page d'accueil
-		});
+		// this.props.socket?.on('playerGiveUp', (obj: any) => {
+		// 	console.log(`💌  Event: playerGiveUp -> `);
+		// 	console.log(obj);
+		// 	//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers
+		// 	//reçoivent cet event.
+		// 	//dans 'obj' c'est un UserDto qui permet d'afficher qui a abandonné.
+		// 	//Ensuite faut retourner à la page d'accueil
+		// 	false;
+		// });
 
 		this.props.socket?.on('playerUpdate', (player: Player, nb: number) => {
 			if (nb === 1) this._playerOne = player;
@@ -464,6 +466,8 @@ class PongGame extends React.Component<MyProps> {
 
 	componentWillUnmount() {
 		//if (client) client.close();
+
+		this.gamerunning = false;
 	}
 
 	private _touch(e: any) {

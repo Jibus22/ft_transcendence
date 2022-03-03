@@ -79,6 +79,7 @@ export class WsConnectionService {
       [{ id: user.players[user.players.length - 1].game.id }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },
     );
+
     server
       .to([game.id, game.watch])
       .emit('playerDisconnection', myPtoUserDto(user));
@@ -88,6 +89,7 @@ export class WsConnectionService {
         [{ id: user.id }],
         null,
       );
+
       if (user.game_ws) {
         await this.usersService.updateUser(user, { is_in_game: true });
         server.to(user.game_ws).emit('goBackInGame', myPtoOnlineGameDto(game));
