@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateGameDto } from '../dto/update-game.dto';
 import { Game } from '../entities/game.entity';
 import { Player } from '../entities/player.entity';
-import { getConnection, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../../users/service-users/users.service';
 import {
@@ -14,6 +14,7 @@ import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClass } from 'class-transformer';
 import { IPlayerError, PlayerHttpError, PlayerWsError } from '../utils/error';
 import { UpdatePlayerDto } from '../dto/update-player.dto';
+import { ScoreDto } from '../dto/gameplay.dto';
 
 @Injectable()
 export class GameService {
@@ -76,8 +77,6 @@ export class GameService {
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
     const opponent = await this.usersService.findLogin(login_opponent);
-    this.usersService.updateUser(user, { is_in_game: false }); //TODO: delete
-    this.usersService.updateUser(opponent, { is_in_game: false }); //TODO: delete
     const err = new PlayerHttpError();
     await this.checkErrors(
       [user, opponent],
@@ -85,7 +84,7 @@ export class GameService {
       err,
       err.errorPlayerNotOnline,
     );
-    this.usersService.updateUser(user, { is_in_game: true }); //TODO: uncomment
+    await this.usersService.update(user.id, { is_in_game: true }); //TODO: uncomment
     return opponent;
   }
 
@@ -94,16 +93,26 @@ export class GameService {
   async joinGame(userId: string) {
     let game: Game;
     let player1: Player;
+    let waiting_game: { gameId: string; total: string | number };
     const user = await this.usersService.findOne(userId);
-    const waiting_game: { gameId: string; total: number } =
-      await this.player_repo
+    const query_games: { gameId: string; total: string | number }[] =
+      await getRepository(Player)
         .createQueryBuilder('player')
         .select('player.game')
         .groupBy('player.game')
         .addSelect('COUNT(player.game)', 'total')
-        .having('total = :tot', { tot: 1 })
         .where('player.game is not null')
-        .getRawOne();
+        .getRawMany();
+
+    if (process.env.NODE_ENV === 'production') {
+      [waiting_game] = query_games.filter((elem) => {
+        if (elem.total === '1') return elem;
+      });
+    } else {
+      [waiting_game] = query_games.filter((elem) => {
+        if (elem.total === 1) return elem;
+      });
+    }
 
     if (!waiting_game) {
       game = this.game_repo.create();
@@ -117,7 +126,7 @@ export class GameService {
       .of(game)
       .add(player1);
 
-    this.usersService.updateUser(user, { is_in_game: true });
+    await this.usersService.updateUser(user, { is_in_game: true });
     return { game_id: game.id, joining: !!waiting_game };
   }
 
@@ -167,6 +176,23 @@ export class GameService {
     for (let elem of objs) {
       await this.player_repo.update(elem.id, elem.patch);
     }
+  }
+
+  async updateScores(
+    game_id: string,
+    score: ScoreDto,
+    patchedGame: Partial<UpdateGameDto>,
+  ) {
+    const ret = await this.findOne(game_id, {
+      relations: ['players', 'players.user'],
+    });
+    if (!ret) return ret;
+    await this.updatePlayers([
+      { id: ret.players[0].id, patch: { score: score.score1 } },
+      { id: ret.players[1].id, patch: { score: score.score2 } },
+    ]);
+    if (patchedGame) this.updateGame(game_id, patchedGame);
+    return ret;
   }
 
   async remove(uuid: string) {

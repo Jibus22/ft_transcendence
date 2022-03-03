@@ -39,11 +39,16 @@ export class UsersService {
     return await this.repoUser.findOne(id);
   }
 
-  async findOneWithAnyParam(param: Partial<User>[]) {
+  async findOneWithAnyParam(
+    param: Partial<User>[],
+    relations: { relations: string[] },
+  ) {
     let users: User[] = [];
     for (let elem of param) {
-      let user = await this.repoUser.findOne(elem);
-      users.push(user);
+      let user: User;
+      if (relations) user = await this.repoUser.findOne(elem, relations);
+      else user = await this.repoUser.findOne(elem);
+      if (user) users.push(user);
     }
     return users;
   }

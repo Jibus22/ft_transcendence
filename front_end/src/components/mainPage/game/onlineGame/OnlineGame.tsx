@@ -7,8 +7,9 @@ import JB from '../../../homePage/section/photos/JB.png';
 import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
-import { OnlineGameType } from '../../../type';
+import { OnlineGameType, OnlineGameAndMapType } from '../../../type';
 import { io, Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
 	Loadingclick: () => void;
@@ -24,15 +25,22 @@ interface MapProps {
 
 const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 	const [time, setTime] = useState(false);
+	let navigate = useNavigate();
+	const { setWatchGameScore, setStartGame, setSelectNav, setIsWatchGame } = useMainPage();
 
 	const handleClick = (watch: string) => {
-		console.log(watch);
-		gameWs?.emit('watchGame', watch, (response: any) => {
+		gameWs?.emit('watchGame', watch, (response: OnlineGameAndMapType) => {
 			console.log(`CLIENT: response from server -> ${response}`);
+			setWatchGameScore(response);
+			// console.log('ici=========', response);
 		});
 		setTime(true);
 		setTimeout(function () {
 			setTime(false);
+			setIsWatchGame(true);
+			setStartGame(true);
+			setSelectNav(false);
+			navigate('/Mainpage');
 		}, 2000);
 	};
 
@@ -51,7 +59,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 
 			<div className="userStat d-flex flex-column ">
 				<div className="player d-flex ">
-					<div className="user challenger">
+					<div className="user challenger ">
 						<p>{data.challenger.login}</p>
 					</div>
 					<div className="vs">
@@ -96,7 +104,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 };
 
 export default function OnlineGame({ Loadingclick }: Props) {
-	const { setSelectQuery, gameWs } = useMainPage();
+	const { setSelectQuery, gameWs, loading } = useMainPage();
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -137,28 +145,20 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		};
 	}, [gameWs]);
 
-	const { loading } = useMainPage();
-
-	// const  handleClick = ()  => {
-	// 	gameWs?.emit('watchGame', 'fake_watch', (response: any) => {
-	// 		console.log(`CLIENT: response from server -> ${response}`);
-	// 	});
-	// 	setTime(true);
-	// 	setTimeout(function () {
-	// 		setTime(false);
-	// 	}, 2000);
-	// }
+	const scoreSort = (a: OnlineGameType, b: OnlineGameType) => {
+		return b.createdAt - a.createdAt;
+	};
 
 	return (
 		<animated.div style={props} className="w-100">
 			<div className="mainOnlineGame d-flex flex-column ">
 				<div className="title">
-					<h1>Onlines game</h1>
+					<h1>Online game</h1>
 				</div>
 				<div className="pageOverflow">
 					<div className="onlineDiv">
 						{data &&
-							data.map((data, index: number) => (
+							data.sort(scoreSort).map((data, index: number) => (
 								<React.Fragment key={index}>
 									<ListGame data={data} loading={loading} gameWs={gameWs} />
 								</React.Fragment>

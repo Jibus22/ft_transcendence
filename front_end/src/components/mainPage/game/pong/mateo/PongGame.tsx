@@ -45,6 +45,9 @@ type MyProps = {
 	socket: Socket | undefined;
 	room: string;
 	watch: string;
+	setPauseGame: React.Dispatch<React.SetStateAction<boolean>>;
+	scoreJ1: number;
+	scoreJ2: number;
 };
 
 class PongGame extends React.Component<MyProps> {
@@ -70,8 +73,8 @@ class PongGame extends React.Component<MyProps> {
 	_ctx: CanvasRenderingContext2D | undefined = undefined;
 	_P1: boolean = false;
 	_P2: boolean = false;
-	scoreP1: number = 0;
-	scoreP2: number = 0;
+	scoreP1: number = this.props.scoreJ1;
+	scoreP2: number = this.props.scoreJ2;
 	gamerunning = true;
 	powerUp = true;
 	imgBackground = new Image();
@@ -116,7 +119,7 @@ class PongGame extends React.Component<MyProps> {
 				'Orbitron',
 				'url(https://fonts.gstatic.com/s/orbitron/v19/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWg1fDAlp7lk.woff)',
 			);
-			this.fillStyle = '38FC25';
+			this.fillStyle = '#38FC25';
 			this._ctx!.fillStyle = this.fillStyle;
 			this._ctx!.shadowColor = '#38FC25';
 			this._ctx!.shadowBlur = 30;
@@ -140,7 +143,8 @@ class PongGame extends React.Component<MyProps> {
 				this._ctx!.font = this.font;
 			});
 		}
-		this._printText('Starting Game');
+		if (this._P1 || this._P2) this._printText('Starting Game');
+		else this._printText('watch Game');
 	}
 
 	private _score(ret: number) {
@@ -156,7 +160,7 @@ class PongGame extends React.Component<MyProps> {
 			},
 		});
 
-		if (this.scoreP1 === 2 || this.scoreP2 === 2) {
+		if (this.scoreP1 === 100 || this.scoreP2 === 100) {
 			let winner: string;
 			this.gamerunning = false;
 			if (this.scoreP1 === 10) winner = 'One';
@@ -355,20 +359,70 @@ class PongGame extends React.Component<MyProps> {
 			evt.preventDefault();
 			delete keystate[evt.key];
 		});
-		if (this._P1 || this._P2) {
-			setInterval(() => {
-				if (this.gamerunning) this._update();
-			}, 10);
-		}
-		setInterval(() => {
+		document.addEventListener(
+			'ontouchstart',
+			function (e) {
+				e.preventDefault();
+			},
+			false,
+		);
+		document.addEventListener(
+			'ontouchmove',
+			function (e) {
+				e.preventDefault();
+			},
+			false,
+		);
+		this.props.socket!.send(
+			JSON.stringify({
+				type: 'message',
+				object: 'Ready',
+			}),
+		);
+		let loop = () => {
+			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
-		}, 30);
+			window.requestAnimationFrame(loop);
+		};
+		window.requestAnimationFrame(loop);
 	}
 
 	componentDidMount() {
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
+
+		console.log('SUISJEPLAYER1', this._P1);
+		console.log('SUISJEPLAYER2', this._P2);
+
+		this.props.socket?.on('playerDisconnection', (obj: any) => {
+			console.log(`💌  Event: playerDisconnection -> `);
+			console.log(obj);
+
+			this.gamerunning = false;
+			this.props.setPauseGame(true);
+		});
+
+		this.props.socket?.on('playerCameBack', (obj: any) => {
+			console.log(`💌  Event: playerCameBack -> `);
+			console.log(obj);
+
+			this.gamerunning = true;
+			this.props.setPauseGame(false);
+
+			//le joueur représenté par 'obj' est revenu: on peut reprendre le jeu
+		});
+
+		// this.props.socket?.on('playerGiveUp', (obj: any) => {
+		// 	console.log(`💌  Event: playerGiveUp -> `);
+		// 	console.log(obj);
+		// 	//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers
+		// 	//reçoivent cet event.
+		// 	//dans 'obj' c'est un UserDto qui permet d'afficher qui a abandonné.
+		// 	//Ensuite faut retourner à la page d'accueil
+		// 	false;
+		// });
+
 		this.props.socket?.on('playerUpdate', (player: Player, nb: number) => {
 			if (nb === 1) this._playerOne = player;
 			else if (nb === 2) this._playerTwo = player;
@@ -385,7 +439,7 @@ class PongGame extends React.Component<MyProps> {
 			this.scoreP2 = score.score2;
 
 			//Affichage du gagnant
-			if (this.scoreP1 === 2 || this.scoreP2 === 2) {
+			if (this.scoreP1 === 100 || this.scoreP2 === 100) {
 				let winner: string;
 				this.gamerunning = false;
 				if (this.scoreP1 === 10) winner = 'One';
@@ -415,6 +469,14 @@ class PongGame extends React.Component<MyProps> {
 
 	componentWillUnmount() {
 		//if (client) client.close();
+
+		this.gamerunning = false;
+		this.props.socket?.off('playerDisconnection');
+		this.props.socket?.off('playerCameBack');
+		this.props.socket?.off('playerUpdate');
+		this.props.socket?.off('ballPosUpdate');
+		this.props.socket?.off('scoreUpdate');
+		this.props.socket?.off('powerUpUpdate');
 	}
 
 	private _touch(e: any) {

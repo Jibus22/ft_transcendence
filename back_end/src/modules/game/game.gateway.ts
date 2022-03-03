@@ -18,7 +18,7 @@ import { WsConnectionService } from './services/ws-connection.service';
 import { WsErrorFilter } from './filters/ws-error.filter';
 import { randomUUID } from 'crypto';
 import { GameService } from './services/game.service';
-import { myPtoOnlineGameDto, myPtoUserDto } from './utils/utils';
+import { myPtoOnlineGameDto, myPtoUserDto, sleep } from './utils/utils';
 import {
   BallPosDto,
   BroadcastDto,
@@ -26,6 +26,7 @@ import {
   PowerUpDto,
   ScoreDto,
 } from './dto/gameplay.dto';
+import { Game } from './entities/game.entity';
 
 const options_game: GatewayMetadata = {
   namespace: 'game',
@@ -68,7 +69,7 @@ export class GameGateway
 
   async handleDisconnect(client: Socket) {
     this.logger.debug('ws game 🎲  disconnected -> ', client.id);
-    await this.wsConnectionService.doHandleDisconnect(client);
+    await this.wsConnectionService.doHandleDisconnect(client, this.server);
   }
 
   //---------------------- GAME SUBSCRIPTION EVENTS --------------------------//
@@ -101,10 +102,10 @@ export class GameGateway
     @MessageBody() reply: { response: string; to: string },
   ) {
     this.logger.log('gameInvitResponse: ', reply);
-    const [challenger, opponent] = await this.wsGameService.getUserFromParam([
-      { game_ws: reply.to },
-      { game_ws: client.id },
-    ]);
+    const [challenger, opponent] = await this.wsGameService.getUserFromParam(
+      [{ game_ws: reply.to }, { game_ws: client.id }],
+      null,
+    );
 
     if (!opponent || !challenger) {
       this.wsGameService.cancelPanicGame([challenger, opponent]);
@@ -138,7 +139,13 @@ export class GameGateway
     @MessageBody('map') map: string,
   ) {
     console.log('map:', map);
-    const gameData = { map: map, watch: randomUUID() };
+    let gameData: Partial<Game>;
+    const [game] = await this.gameService.findGameWithAnyParam(
+      [{ id: room }],
+      null,
+    );
+    if (game.watch === null) gameData = { map: map, watch: randomUUID() };
+    else gameData = { map: map, watch: game.watch };
     await this.gameService.updateGame(room, gameData);
 
     client.to(room).emit('getGameData', gameData);
@@ -186,6 +193,22 @@ export class GameGateway
 
   //------------------------- END GAME ---------------------------------------//
 
+  @SubscribeMessage('giveUpGame')
+  async giveUpGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('bcast') bcast: BroadcastDto,
+  ) {
+    this.logger.log(`giveUpGame`);
+    const [user] = await this.wsGameService.getUserFromParam(
+      [{ game_ws: client.id }],
+      { relations: ['players'] },
+    );
+    const game = await this.gameService.findOne(bcast.room, {
+      relations: ['players', 'players.user'],
+    });
+    await this.wsGameService.handleGameEnd(client.id, game, this.server, user);
+  }
+
   @SubscribeMessage('endGame')
   async endGame(
     @MessageBody('bcast') bcast: BroadcastDto,
@@ -194,24 +217,15 @@ export class GameGateway
     this.logger.log(`endGame `);
     console.log(bcast, score);
 
-    let ret = await this.gameService.updateGame(bcast.room, {
+    const ret = await this.gameService.updateScores(bcast.room, score, {
       watch: null,
       updatedAt: Date.now(),
     });
     if (!ret) return;
-    ret = await this.gameService.findOne(ret.id, {
-      relations: ['players', 'players.user'],
-    });
-    await this.gameService.updatePlayers([
-      { id: ret.players[0].id, patch: { score: score.score1 } },
-      { id: ret.players[1].id, patch: { score: score.score2 } },
-    ]);
-    await this.wsGameService.updatePlayerStatus2(ret.players[0].user.id, {
-      is_in_game: false,
-    });
-    await this.wsGameService.updatePlayerStatus2(ret.players[1].user.id, {
-      is_in_game: false,
-    });
+    await this.wsGameService.updatePlayerStatus2(
+      [ret.players[0].user.id, ret.players[1].user.id],
+      { is_in_game: false },
+    );
     this.server.socketsLeave([bcast.room, bcast.watchers]);
   }
 
@@ -223,6 +237,9 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
     @MessageBody('score') score: ScoreDto,
   ) {
+    this.gameService.updateScores(bcast.room, score, {
+      updatedAt: Date.now(),
+    });
     client.to([bcast.room, bcast.watchers]).emit('scoreUpdate', score);
   }
 

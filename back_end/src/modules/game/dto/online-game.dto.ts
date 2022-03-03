@@ -6,11 +6,24 @@ import { UserDto } from '../../users/dtos/user.dto';
 export class OnlineGameDto {
   @ApiProperty()
   @Expose()
+  id: string;
+
+  @ApiProperty()
+  @Expose()
   watch: string;
 
   @ApiProperty()
   @Expose()
+  map: string;
+
+  @ApiProperty()
+  @Expose()
+  createdAt: number;
+
+  @ApiProperty()
+  @Expose()
   @Transform((value) => {
+    if (value.obj.players.length === 0) return null;
     let usr = plainToClass(UserDto, value.obj.players[0].user, {
       excludeExtraneousValues: true,
     });
@@ -23,6 +36,7 @@ export class OnlineGameDto {
   @ApiProperty()
   @Expose()
   @Transform((value) => {
+    if (value.obj.players.length === 1) return null;
     let usr = plainToClass(UserDto, value.obj.players[1].user, {
       excludeExtraneousValues: true,
     });
