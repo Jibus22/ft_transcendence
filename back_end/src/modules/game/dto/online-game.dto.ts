@@ -6,6 +6,10 @@ import { UserDto } from '../../users/dtos/user.dto';
 export class OnlineGameDto {
   @ApiProperty()
   @Expose()
+  id: string;
+
+  @ApiProperty()
+  @Expose()
   watch: string;
 
   @ApiProperty()
