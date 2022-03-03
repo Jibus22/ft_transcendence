@@ -83,18 +83,21 @@ export class WsConnectionService {
         [{ id: user.id }],
         null,
       );
-      if (usr.game_ws) {
+      if (usr.game_ws && usr.ws_id) {
         const [updatedGame] = await this.gameService.findGameWithAnyParam(
           [{ id: game.id }],
           {
             relations: ['players', 'players.user', 'players.user.local_photo'],
           },
         );
+        console.log('1 - usr... ', usr);
+        console.log('updatedgame', updatedGame);
         if (!updatedGame.watch) return;
         await this.usersService.updateUser(usr, { is_in_game: true });
         server
           .to(usr.game_ws)
           .emit('goBackInGame', myPtoOnlineGameDto(updatedGame));
+        server.in(usr.game_ws).socketsJoin([game.id, game.watch]);
         server
           .to([game.id, game.watch])
           .except(usr.game_ws)
@@ -102,6 +105,7 @@ export class WsConnectionService {
         return;
       }
     }
+    console.log('2 - usr... ', usr);
     await this.wsGameService.handleGameEnd(usr.game_ws, game, server, user);
   }
 
@@ -123,6 +127,7 @@ export class WsConnectionService {
       [{ game_ws: client.id }],
       { relations: ['players', 'players.game'] },
     );
+    console.log('user is in game ? -> -> ->', user);
     if (user && user.is_in_game && user.players && user.players.length > 0)
       this.handleGameDisconnection(server, user);
     await this.updateUser(client, {

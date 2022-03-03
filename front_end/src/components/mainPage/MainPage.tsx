@@ -168,10 +168,13 @@ const MainPage = () => {
 			setBackInGame(true);
 			setIsGameRandom(true);
 			setPlayerNewGameInvit(true);
+			console.log('username, obj.challen.login', userName, ' - ', obj.challenger.login);
 			if (userName === obj.challenger.login) {
-				setIsOpponant(false);
-			} else {
+				console.log('isoppoantn true');
 				setIsOpponant(true);
+			} else {
+				console.log('isoppoantn false');
+				setIsOpponant(false);
 			}
 			setStartGame(true);
 		});

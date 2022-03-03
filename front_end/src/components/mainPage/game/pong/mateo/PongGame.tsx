@@ -392,6 +392,9 @@ class PongGame extends React.Component<MyProps> {
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
 
+		console.log('SUISJEPLAYER1', this._P1);
+		console.log('SUISJEPLAYER2', this._P2);
+
 		this.props.socket?.on('playerDisconnection', (obj: any) => {
 			console.log(`💌  Event: playerDisconnection -> `);
 			console.log(obj);

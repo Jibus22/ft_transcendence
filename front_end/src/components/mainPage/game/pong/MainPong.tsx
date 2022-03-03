@@ -107,11 +107,13 @@ export default function MainPong() {
 	useEffect(() => {
 		// setLeaveGame(true);
 
+		console.log('NBPLAYER ---- before', nbPlayer);
 		if (!isOpponant) {
+			setNbPlayer(2);
 			setLeaveGame(true);
 			setData(challengData);
-			// console.log('exterieur');
-			setNbPlayer(2);
+			console.log('exterieur');
+			console.log('NBPLAYER ----inside ', nbPlayer);
 			if (backInGame) {
 				setScoreJ1(dataUserBack.challenger.score);
 				setScoreJ2(dataUserBack.opponent.score);
@@ -123,12 +125,12 @@ export default function MainPong() {
 				setScoreJ2(0);
 			}
 		} else {
+			setNbPlayer(1);
 			setLeaveGame(true);
 			setData(dataUserChallenge);
 			console.log('domicile');
 
-			setNbPlayer(1);
-
+			console.log('NBPLAYER ----inside ', nbPlayer);
 			if (backInGame) {
 				setScoreJ1(dataUserBack.challenger.score);
 				setScoreJ2(dataUserBack.opponent.score);
@@ -151,7 +153,7 @@ export default function MainPong() {
 			// setPlayerNewGameInvit(false);
 			// setIsOpponant(false);
 		};
-	}, [isOpponant, leaveGame, dataUserChallenge]);
+	}, [isOpponant, leaveGame, dataUserChallenge, nbPlayer]);
 
 	useEffect(() => {
 		gameWs?.on('gameAccepted', (opponentData) => {

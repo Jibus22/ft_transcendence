@@ -77,8 +77,6 @@ export class GameService {
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
     const opponent = await this.usersService.findLogin(login_opponent);
-    this.usersService.update(user.id, { is_in_game: false }); //TODO: delete
-    this.usersService.updateUser(opponent, { is_in_game: false }); //TODO: delete
     const err = new PlayerHttpError();
     await this.checkErrors(
       [user, opponent],
@@ -86,7 +84,7 @@ export class GameService {
       err,
       err.errorPlayerNotOnline,
     );
-    this.usersService.update(user.id, { is_in_game: true }); //TODO: uncomment
+    await this.usersService.update(user.id, { is_in_game: true }); //TODO: uncomment
     return opponent;
   }
 
@@ -128,7 +126,7 @@ export class GameService {
       .of(game)
       .add(player1);
 
-    this.usersService.updateUser(user, { is_in_game: true });
+    await this.usersService.updateUser(user, { is_in_game: true });
     return { game_id: game.id, joining: !!waiting_game };
   }
 
