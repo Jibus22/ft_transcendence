@@ -16,6 +16,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	const [blocked, setBlocked] = useState<any[]>([]);
 	const [profile, setProfile] = useState<any | null>(null);
 	const [friendsLoading, setFriendsLoading] = useState<boolean>(false);
+	const [playButtonVisible, setPlayButtonVisible] = useState<boolean>(true);
 	let navigate = useNavigate();
 
 	const getFriends = async () => {
@@ -75,12 +76,16 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			photo_url: '',
 		};
 		try {
+			if (!playButtonVisible)
+				return;
 			setStartGame(true);
 			setSelectNav(false);
 			navigate("/Mainpage");
 			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 				withCredentials: true,
 			});
+			setPlayButtonVisible(false);
+			setTimeout(() => setPlayButtonVisible(true), 15000);
 			setDataUserChallenge([response.data]);
 			setIsOpponant(true);
 			setIsGameRandom(false);

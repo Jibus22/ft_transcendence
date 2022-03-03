@@ -111,9 +111,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openPublicRoom = async (roomId: any) => {
-		console.log("OPEN ROOM");
+		if (window.roomsLoading)
+			return;
+		window.roomsLoading = true;
 		const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
 		openChat(data);
+		window.roomsLoading = false;
 	};
 
 	const joinPublicChatRoom = async (room: any) => {
