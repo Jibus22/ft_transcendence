@@ -104,6 +104,10 @@ const MainPage = () => {
 		socket.on('userBanned', (message) => {
 			console.log(`💌  Event: userBanned ->`, message);
 		});
+		socket.on('publicUserInfosUpdated', (message) => {
+			console.log(`💌  Event: publicUserInfosUpdated ->`, message);
+			window.dispatchEvent(new CustomEvent('publicRoomUpdated', { detail: message }));
+		});
 	};
 
 	const gameCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {

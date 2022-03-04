@@ -165,43 +165,44 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		getChats();
 		getFriends();
 		getPublicRooms();
+
+		window.addEventListener("publicRoomCreated", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+		})
+	
+		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+			getChats();
+		})
+	
+		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+		})
+	
+		window.addEventListener("userAdded", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+			getChats();
+		})
+	
+		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
+			openPublicRoom(detail.id);
+			getChats();
+		})
+	
+		window.addEventListener("friendsUpdated", ({ detail }: any) => {
+			if (window.friendsLoading)
+				return;
+			getFriends();
+		})
 	}, []);
-
-	window.addEventListener("publicRoomCreated", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-	})
-
-	window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-	})
-
-	window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-	})
-
-	window.addEventListener("userAdded", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-		getChats();
-	})
-
-	window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-		openPublicRoom(detail.id);
-		getChats();
-	})
-
-	window.addEventListener("friendsUpdated", ({ detail }: any) => {
-		if (window.friendsLoading)
-			return;
-		getFriends();
-	})
 
 	return (
 	<ChatListWrapper>

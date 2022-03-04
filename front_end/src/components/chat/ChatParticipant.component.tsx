@@ -118,7 +118,6 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		try {
 			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true, data: { id } });
 			getBlocks();
-			console.log("DELETING", id)
 		} catch (e: any) { console.log(e) };
 	};
 
@@ -127,8 +126,6 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		getBlocks();
 		getProfile();
 	}, []);
-
-	console.log("USER", user);
 
 	return (
 		<>
