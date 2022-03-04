@@ -67,11 +67,13 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const toggleModerator = async (user: any) => {
-		await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/moderator`, {
-			participant_id: user.id,
-			is_moderator: !user.is_moderator
-		}, { withCredentials: true });
-		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
+		try {
+			await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/moderator`, {
+				participant_id: user.id,
+				is_moderator: !user.is_moderator
+			}, { withCredentials: true });
+			window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
+		} catch (e: any) { console.log(e) };
 	};
 
 	const makePublic = async () => {
@@ -89,27 +91,31 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const mute = async (user: any) => {
-		const duration = prompt("Mute duration, in minutes");
-		if (duration && parseInt(duration)) {
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-				participant_id: user.id,
-				user_id: user.user.id,
-				restriction_type: "mute",
-				duration: parseInt(duration)
-			}, { withCredentials: true });
-		}
+		try {
+			const duration = prompt("Mute duration, in minutes");
+			if (duration && parseInt(duration)) {
+				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
+					participant_id: user.id,
+					user_id: user.user.id,
+					restriction_type: "mute",
+					duration: parseInt(duration)
+				}, { withCredentials: true });
+			}
+		} catch (e: any) { console.log(e) };
 	}
 
 	const ban = async (user: any) => {
-		const duration = prompt("Ban duration, in minutes");
-		if (duration && parseInt(duration)) {
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-				participant_id: user.id,
-				user_id: user.user.id,
-				restriction_type: "ban",
-				duration: parseInt(duration)
-			}, { withCredentials: true });
-		}
+		try {
+			const duration = prompt("Ban duration, in minutes");
+			if (duration && parseInt(duration)) {
+				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
+					participant_id: user.id,
+					user_id: user.user.id,
+					restriction_type: "ban",
+					duration: parseInt(duration)
+				}, { withCredentials: true });
+			}
+		} catch (e: any) { console.log(e) };
 	}
 
 	if (userDetail) {

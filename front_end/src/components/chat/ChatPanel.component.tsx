@@ -23,16 +23,20 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const getMessages = async () => {
-		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
-		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
-		setMessages(sortedMessages);
+		try {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
+			const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
+			setMessages(sortedMessages);
+		} catch (e: any) { console.log(e) };
 	};
 
 	const sendMessage = async () => {
-		axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
-		{ body: message.slice(0, 10000) },
-		{ withCredentials: true });
-		setMessage("");
+		try {
+			axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
+			{ body: message.slice(0, 10000) },
+			{ withCredentials: true });
+			setMessage("");
+		} catch (e: any) { console.log(e) };
 	}
 
 	const getNameIfDM = () => {
