@@ -115,6 +115,15 @@ interface IMainPageContext {
 
 	backInGame: boolean;
 	setBackInGame: Dispatch<SetStateAction<boolean>>;
+
+	disableInvitOther: boolean;
+	setDisableInvitOther: Dispatch<SetStateAction<boolean>>;
+
+	testLol: boolean;
+	setTestLol: Dispatch<SetStateAction<boolean>>;
+
+	open: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -174,6 +183,12 @@ const MainPageProvider = (props: any) => {
 	const [countInvit, setCountInvit] = useState(0);
 
 	const [backInGame, setBackInGame] = useState(false);
+
+	const [disableInvitOther, setDisableInvitOther] = useState(false);
+
+	const [testLol, setTestLol] = useState(false);
+
+	const [open, setOpen] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -401,6 +416,15 @@ const MainPageProvider = (props: any) => {
 
 		dataUserBack,
 		setDataUserBack,
+
+		disableInvitOther,
+		setDisableInvitOther,
+
+		testLol,
+		setTestLol,
+
+		open,
+		setOpen,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;

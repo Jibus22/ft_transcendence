@@ -27,8 +27,17 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	});
 
 	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const { setStatusColor, setIsGameRandom, setStartGame, setSelectNav, setDataUserChallenge, setIsOpponant, userName, countInvit } =
-		useMainPage();
+	const {
+		setStatusColor,
+		setIsGameRandom,
+		setStartGame,
+		setSelectNav,
+		setDataUserChallenge,
+		setIsOpponant,
+		userName,
+		countInvit,
+		disableInvitOther,
+	} = useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
@@ -50,27 +59,15 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 		}
 	};
 
+	// console.log('disableInbitother rank', disableInvitOther);
+
 	const getGame = (data: User) => () => {
 		// setIsGameRandom(false);
+
 		fetchDataChallenge(data);
-
-		// setTimeSnack(true);
-		// console.log('hihihihiih');
-		// gameWs?.on('gameInvitation', async (challengerData, cb) => {
-		// 	console.log('111111')
-		// });
-		// fetchDataChallenge(data);
-
 		setStartGame(true);
 		setSelectNav(false);
 		navigate('/Mainpage');
-
-		// setTime(true);
-		// setTimeout(() => {
-		// 	setTime(false);
-		// 	setStartGame(true);
-		// 	navigate('/Mainpage');
-		// }, 2000);
 	};
 
 	const userSortRank = (a: Rank, b: Rank) => {

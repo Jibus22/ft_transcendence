@@ -6,7 +6,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
 import { useMainPage } from '../../MainPageContext';
-import { OnlineGameRemooveType, OnlineGameType } from '../type';
+import { OnlineGameRemooveType, OnlineGameType, UserMe } from '../type';
 import './mainPage.scss';
 
 const MainPage = () => {
@@ -26,6 +26,10 @@ const MainPage = () => {
 		setStartGame,
 		setBackInGame,
 		setDataUserBack,
+		setUserName,
+		setDisableInvitOther,
+		disableInvitOther,
+		data,
 		userName,
 	} = useMainPage();
 
@@ -46,12 +50,22 @@ const MainPage = () => {
 
 	const [timeSnack, setTimeSnack] = useState(false);
 
+	const [load, setLoad] = useState(false);
+
+	let lol: string;
+
 	const fetchDataUserMe = async () => {
 		try {
 			const response = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
 				withCredentials: true,
 			});
+			const user: UserMe = response.data;
+
 			setData([response.data]);
+
+			// console.log(response.data[0]['login']);
+
+			return user.login;
 		} catch (error) {
 			setOpenDIalog(true);
 			setTimeout(function () {
@@ -62,7 +76,11 @@ const MainPage = () => {
 		}
 	};
 
-	const setWsCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
+	const setWsCallbacks = (
+		socket: Socket,
+		stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
+		login: string | undefined,
+	) => {
 		/* -----------------------
 		 ** Connection
 		 * -----------------------*/
@@ -79,7 +97,7 @@ const MainPage = () => {
 
 		socket.on('connect_error', async (err) => {
 			console.log('[CHAT SOCKET 🍄 ] connect_error', err);
-			connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, stateSetter);
+			connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, stateSetter, login);
 		});
 
 		socket.io.on('error', (error) => {
@@ -124,7 +142,11 @@ const MainPage = () => {
 		});
 	};
 
-	const gameCallbacks = (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
+	const gameCallbacks = (
+		socket: Socket,
+		stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
+		login: string | undefined,
+	) => {
 		/* -----------------------
 		 ** Connection
 		 * -----------------------*/
@@ -141,7 +163,7 @@ const MainPage = () => {
 
 		socket.on('connect_error', async (err) => {
 			console.log('[GAME SOCKET 🎲 ] connect_error', err);
-			connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, stateSetter);
+			connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, stateSetter, login);
 		});
 
 		socket.io.on('error', (error) => {
@@ -159,23 +181,21 @@ const MainPage = () => {
 
 		socket.on('goBackInGame', (obj: OnlineGameRemooveType) => {
 			console.log(`💌  Event: goBackInGame ->`);
-			console.log(obj);
+			// console.log('ici ====', obj);
 			//Server detected the client was playing before disconnecting so it gives
 			//thru this event an OnlineGameDto so that we can call the game component
 			//and go back to the game.
 
 			setDataUserBack(obj);
+
+			if (login === obj.challenger.login) {
+				setIsOpponant(true);
+			} else {
+				setIsOpponant(false);
+			}
 			setBackInGame(true);
 			setIsGameRandom(true);
 			setPlayerNewGameInvit(true);
-			console.log('username, obj.challen.login', userName, ' - ', obj.challenger.login);
-			if (userName === obj.challenger.login) {
-				console.log('isoppoantn true');
-				setIsOpponant(true);
-			} else {
-				console.log('isoppoantn false');
-				setIsOpponant(false);
-			}
 			setStartGame(true);
 		});
 
@@ -230,8 +250,10 @@ const MainPage = () => {
 
 	const connectWs = async (
 		uri: string,
-		cbSetter: (socket: Socket, stateSetter: React.Dispatch<React.SetStateAction<Socket | undefined>>) => void,
+		cbSetter: (socket: Socket, stateSetter: React.Dispatch<React.SetStateAction<Socket | undefined>>, pouet: string | undefined) => void,
+
 		stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
+		login: string | undefined,
 	) => {
 		await new Promise((res) => {
 			setTimeout(() => {
@@ -240,7 +262,7 @@ const MainPage = () => {
 					reconnection: false,
 					forceNew: true,
 				});
-				cbSetter(socket, stateSetter);
+				cbSetter(socket, stateSetter, login);
 				stateSetter(socket);
 				doConnect(socket, stateSetter);
 				res('');
@@ -250,33 +272,46 @@ const MainPage = () => {
 
 	useMount(async () => {
 		await fetchDataUserMe()
-			.then(async () => {
-				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, setGameWs);
-				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, setChatWs);
+			.then(async (login: string | undefined) => {
+				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, setGameWs, login);
+				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, setChatWs, login);
 			})
 			.catch((err) => {
 				navigate('/');
 			});
 	});
 
-	const [countInvit, setCountInvit] = useState(0);
+	let i = 0;
 
 	useEffect(() => {
 		gameWs?.on('gameInvitation', async (challengerData, challengerWsId) => {
-			setCountInvit(countInvit + 1);
+			i = i + 1;
 
-			console.log(countInvit);
-
-			if (countInvit < 1) {
-				console.log('ici');
+			// console.log('count__invit ==', countInvit);
+			console.log('int i  ==', i);
+			if (i > 1) {
+				console.log('au dessus de 1');
+				setDisableInvitOther(false);
+				gameWs?.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
+			} else {
+				console.log('is good');
 				setChallengData([challengerData]);
 				setWsId(challengerWsId);
-			} else {
-				console.log('ELSEEEEEEE');
+				setTimeSnack(true);
+				setDisableInvitOther(true);
 			}
-			setTimeSnack(true);
+
+			// if (countInvit < 1) {
+			// 	console.log('ici');
+			// 	setChallengData([challengerData]);
+			// 	setWsId(challengerWsId);
+			// } else {
+			// 	console.log('ELSEEEEEEE');
+			// }
 		});
-	}, [gameWs, countInvit]);
+	}, [gameWs]);
+
+	// console.log('disableother main ====', disableInvitOther);
 
 	function disconnectGameWs() {
 		console.log('Click disconnect Chat ', gameWs?.id);
@@ -303,7 +338,7 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre wsId={wsId} countInvit={countInvit} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
+			{timeSnack && <SnackBarre wsId={wsId} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
 
 			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>

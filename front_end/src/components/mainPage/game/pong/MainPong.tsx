@@ -46,8 +46,10 @@ export default function MainPong() {
 		setIsWatchGame,
 		backInGame,
 		dataUserBack,
+		open,
+		setOpen,
 	} = useMainPage();
-	const [open, setOpen] = useState(false);
+
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
 	const [count, setCount] = useState<number | undefined>();
 
@@ -79,13 +81,15 @@ export default function MainPong() {
 		} else {
 			gameWs?.emit('giveUpGame', { bcast: { room: roomId, watchers: watchId } });
 			setOpen(false);
-			setStartGame(false);
-			setLeaveGame(false);
-			setIsWatchGame(false);
-			setMap(null);
-			setWatchId('');
-			setRoomId('');
-			setAcceptGame(false);
+			setTimeout(function () {
+				setStartGame(false);
+				setLeaveGame(false);
+				setIsWatchGame(false);
+				setMap(null);
+				setWatchId('');
+				setRoomId('');
+				setAcceptGame(false);
+			}, 1500);
 		}
 	};
 
@@ -107,13 +111,11 @@ export default function MainPong() {
 	useEffect(() => {
 		// setLeaveGame(true);
 
-		console.log('NBPLAYER ---- before', nbPlayer);
 		if (!isOpponant) {
 			setNbPlayer(2);
 			setLeaveGame(true);
 			setData(challengData);
-			console.log('exterieur');
-			console.log('NBPLAYER ----inside ', nbPlayer);
+
 			if (backInGame) {
 				setScoreJ1(dataUserBack.challenger.score);
 				setScoreJ2(dataUserBack.opponent.score);
@@ -128,9 +130,7 @@ export default function MainPong() {
 			setNbPlayer(1);
 			setLeaveGame(true);
 			setData(dataUserChallenge);
-			console.log('domicile');
 
-			console.log('NBPLAYER ----inside ', nbPlayer);
 			if (backInGame) {
 				setScoreJ1(dataUserBack.challenger.score);
 				setScoreJ2(dataUserBack.opponent.score);
