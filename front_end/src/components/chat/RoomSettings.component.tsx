@@ -102,6 +102,10 @@ const RoomSettings = ({ room, currentUser }: any) => {
 					restriction_type: "mute",
 					duration: parseInt(duration)
 				}, { withCredentials: true });
+				setTimeout(
+					() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
+					500
+				);
 			} else {
 				alert("Invalid input: only number accepted");
 			}
@@ -121,6 +125,10 @@ const RoomSettings = ({ room, currentUser }: any) => {
 					restriction_type: "ban",
 					duration: parseInt(duration)
 				}, { withCredentials: true });
+				setTimeout(
+					() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
+					500
+				);
 			} else {
 				alert("Invalid input: only number accepted");
 			}
