@@ -3,6 +3,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
+import ShieldIcon from '@mui/icons-material/Shield';
+import LockIcon from '@mui/icons-material/Lock';
 import axios from "axios";
 import { useEffect, useState }  from 'react'
 
@@ -38,10 +40,14 @@ const ChatList = ({ openChat, currentUser }: any) => {
 
 	const getChats = async () => {
 		try {
+			if (window.chatLoading)
+				return;
+			window.chatLoading = true;
 			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms`, {
 				withCredentials: true
 			});
 			setChats(data);
+			window.chatLoading = false;
 		} catch (e: any) { console.log(e) };
 	};
 
@@ -188,6 +194,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 
 	window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
 		openPublicRoom(detail.id);
+		getChats();
 	})
 
 	window.addEventListener("friendsUpdated", ({ detail }: any) => {
@@ -207,6 +214,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 				<div>
 					<h4>{chatName(chat, currentUser)}</h4>
+					{chat.is_private && <span><ShieldIcon sx={{ fontSize: 14 }} />Private</span>}
 				</div>
 			</Preview>))}
 			{!chats.length && <span className="empty-message">No chat yet</span>}
@@ -227,7 +235,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 						{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 						<div>
 							<h4>{chatName(chat, currentUser)}</h4>
-							<span>{chat.is_password_protected ? "locked" : ""}</span>
+							{chat.is_password_protected && <span><LockIcon sx={{ fontSize: 14 }}/>Locked</span>}
 						</div>
 					</Preview>))}
 					{!publicChats.length && <span className="empty-message">No chat yet</span>}
@@ -337,6 +345,11 @@ const Preview = styled.div`
 			overflow: hidden;
 			text-overflow: ellipsis;
 			width: 90px;
+		}
+		span {
+			color: #888888;
+			display: flex;
+			align-items: center;
 		}
 	}
 `;
