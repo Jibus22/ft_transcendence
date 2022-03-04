@@ -76,7 +76,10 @@ export class GameService {
   }
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
-    const opponent = await this.usersService.findLogin(login_opponent);
+    const [opponent] = await this.usersService.findOneWithAnyParam(
+      [{ login: login_opponent }],
+      { relations: ['local_photo', 'players'] },
+    );
     const err = new PlayerHttpError();
     await this.checkErrors(
       [user, opponent],
@@ -84,7 +87,7 @@ export class GameService {
       err,
       err.errorPlayerNotOnline,
     );
-    await this.usersService.update(user.id, { is_in_game: true }); //TODO: uncomment
+    await this.usersService.update(user.id, { is_in_game: true });
     return opponent;
   }
 

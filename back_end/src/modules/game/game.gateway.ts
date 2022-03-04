@@ -79,7 +79,7 @@ export class GameGateway
     if (!joining) return null;
 
     const game = await this.gameService.findOne(game_id, {
-      relations: ['players', 'players.user'],
+      relations: ['players', 'players.user', 'players.user.local_photo'],
     });
     const ws_ids = [game.players[0].user.game_ws, game.players[1].user.game_ws];
     this.server
@@ -178,7 +178,7 @@ export class GameGateway
       [{ watch: room }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },
     );
-    if (!game) return 'game not found';
+    if (!game || !game.watch) return 'cant watch game';
     client.join(room);
     return myPtoOnlineGameDto(game);
   }

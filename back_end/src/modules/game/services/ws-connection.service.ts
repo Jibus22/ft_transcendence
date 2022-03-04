@@ -78,12 +78,12 @@ export class WsConnectionService {
     this.logger.log(`waitReconnection: ${user.login} - ${game.id}`);
     let usr: User;
     for (let i = 5; i >= 0; i--) {
-      await sleep(1000);
       [usr] = await this.usersService.findOneWithAnyParam(
         [{ id: user.id }],
         null,
       );
       if (usr.game_ws && usr.ws_id) {
+        await sleep(1000);
         const [updatedGame] = await this.gameService.findGameWithAnyParam(
           [{ id: game.id }],
           {
@@ -129,7 +129,7 @@ export class WsConnectionService {
     );
     console.log('user is in game ? -> -> ->', user);
     if (user && user.is_in_game && user.players && user.players.length > 0)
-      this.handleGameDisconnection(server, user);
+      await this.handleGameDisconnection(server, user);
     await this.updateUser(client, {
       game_ws: null,
       is_in_game: false,
