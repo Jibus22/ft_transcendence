@@ -31,6 +31,9 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const sendMessage = async () => {
+		if (!message.length) {
+			return;
+		}
 		try {
 			axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
 			{ body: message.slice(0, 10000) },
@@ -109,7 +112,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		</ChatMessages>
 		<ChatField>
 			<input type="text" placeholder="Type here" value={message} onChange={onMessage} onKeyPress={(e: any) => e.key === "Enter" && sendMessage()}/>
-			<button onClick={sendMessage}>
+			<button onClick={sendMessage} disabled={!message.length}>
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>
 		</ChatField>
@@ -202,6 +205,12 @@ const ChatField = styled.div`
 		display: flex;
 		align-items: center;
 		border-radius: 5px 0 0 5px;
+		transition: background-color .3s ease;
+	}
+
+	button[disabled] {
+		background-color: #F1F1F1;
+		cursor: disabled;
 	}
 `;
 
