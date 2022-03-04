@@ -93,13 +93,17 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	const mute = async (user: any) => {
 		try {
 			const duration = prompt("Mute duration, in minutes");
-			if (duration && parseInt(duration)) {
+			if (duration !== "" && !duration)
+				return;
+			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 					participant_id: user.id,
 					user_id: user.user.id,
 					restriction_type: "mute",
 					duration: parseInt(duration)
 				}, { withCredentials: true });
+			} else {
+				alert("Invalid input: only number accepted");
 			}
 		} catch (e: any) { console.log(e) };
 	}
@@ -107,13 +111,18 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	const ban = async (user: any) => {
 		try {
 			const duration = prompt("Ban duration, in minutes");
-			if (duration && parseInt(duration)) {
+			if (duration !== "" && !duration) {
+				return;
+			}
+			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 					participant_id: user.id,
 					user_id: user.user.id,
 					restriction_type: "ban",
 					duration: parseInt(duration)
 				}, { withCredentials: true });
+			} else {
+				alert("Invalid input: only number accepted");
 			}
 		} catch (e: any) { console.log(e) };
 	}
