@@ -119,9 +119,13 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const createChat = async () => {
+		const login = prompt("Who would you like to chat with?");
+		if (!login) {
+			return;
+		}
 		try {
 			const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
-				participants: [ ],
+				participants: [ login ],
 				is_private: false
 			}, { withCredentials: true });
 			openChat(data);
@@ -241,7 +245,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 					</Preview>))}
 					{!publicChats.length && <span className="empty-message">No chat yet</span>}
 				</List>
-				<LargeButton onClick={() => createChat()}>+ Create chat</LargeButton>
+				<LargeButton onClick={() => createChat()}>+ Create group</LargeButton>
 			</>
 		)}
 		{ search.length > 0 && (<List>

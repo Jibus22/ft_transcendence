@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ChatParticipant from "./ChatParticipant.component";
 import BlockIcon from '@mui/icons-material/Block';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import RemoveModeratorIcon from '@mui/icons-material/RemoveModerator';
 import Tooltip from "@mui/material/Tooltip";
@@ -34,6 +35,13 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				owner = true;
 		});
 		return owner;
+	};
+
+	const isUserMuted = (user_id: any) => {
+		if (!room.mutes) {
+			return false;
+		}
+		return !!room.mutes.find((x: any) => x.id === user_id);
 	};
 
 	const changePassword = async () => {
@@ -139,6 +147,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 		return (<ChatParticipant user={userDetail} currentUser={currentUser} />);
 	}
 
+	console.log("ROOM", room);
+
 	return <Wrapper>
 		{isOwner() && (
 			<>
@@ -160,9 +170,12 @@ const RoomSettings = ({ room, currentUser }: any) => {
 						<Tooltip title="Ban user"><button onClick={() => ban(user)}>
 							<BlockIcon />
 						</button></Tooltip>
-						<Tooltip title="Mute user"><button onClick={() => mute(user)}>
+						{!isUserMuted(user.user.id) && <Tooltip title="Mute user"><button onClick={() => mute(user)}>
+							<VolumeUpIcon />
+						</button></Tooltip>}
+						{isUserMuted(user.user.id) && <Tooltip title="User muted"><button>
 							<VolumeOffIcon />
-						</button></Tooltip>
+						</button></Tooltip>}
 						<Tooltip title={user.is_moderator ? "Remove moderator rights" : "Add moderator rights"}><button onClick={() => toggleModerator(user)}>
 							{!user.is_moderator && (<AddModeratorIcon />)}
 							{user.is_moderator && (<RemoveModeratorIcon />)}
