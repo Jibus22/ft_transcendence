@@ -123,9 +123,15 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		if (!login) {
 			return;
 		}
+		console.log("USERS", users);
+		const user = users.find((user: any) => user.login === login);
+		if (!user) {
+			alert(`User '${login}' not found`);
+			return
+		}
 		try {
 			const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
-				participants: [ login ],
+				participants: [ { id: user.id } ],
 				is_private: false
 			}, { withCredentials: true });
 			openChat(data);
