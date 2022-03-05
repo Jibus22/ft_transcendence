@@ -105,16 +105,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				return openChat(existingChats[0]);
 			}
 			const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
-				participants: [ ],
+				participants: [ { id: userId } ],
 				is_private: true
 			}, { withCredentials: true });
-			const { id } = data;
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/participant`, { id: userId }, { withCredentials: true });
-			const data2 = (await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/infos`, { withCredentials: true }))?.data;
-			console.log("DATA", data, data2)
 			setSearchResults([]);
 			setSearch("");
-			openChat(data2);
+			openChat(data);
 		} catch (e: any) { console.log(e) };
 	};
 
@@ -123,7 +119,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		if (!login) {
 			return;
 		}
-		console.log("USERS", users);
 		const user = users.find((user: any) => user.login === login);
 		if (!user) {
 			alert(`User '${login}' not found`);
