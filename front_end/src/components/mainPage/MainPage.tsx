@@ -6,10 +6,28 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
 import { useMainPage } from '../../MainPageContext';
+import { OnlineGameRemooveType, OnlineGameType } from '../type';
 import './mainPage.scss';
 
 const MainPage = () => {
-	const { gameWs, challengData, setGameWs, setData, setChallengData, leaveGame, dialogueLoading, disconectAuth } = useMainPage();
+	const {
+		gameWs,
+		challengData,
+		setGameWs,
+		setData,
+		setChallengData,
+		leaveGame,
+		dialogueLoading,
+		disconectAuth,
+		setLoadingSocket,
+		setIsGameRandom,
+		setPlayerNewGameInvit,
+		setIsOpponant,
+		setStartGame,
+		setBackInGame,
+		setDataUserBack,
+		userName,
+	} = useMainPage();
 
 	// const [chatWs, setChatWs] = useSafeState<Socket | undefined>(undefined);
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
@@ -117,6 +135,7 @@ const MainPage = () => {
 
 		socket.on('connect', () => {
 			console.log(`[GAME SOCKET 🎲 ] WS CONNECT`);
+			setLoadingSocket(true);
 		});
 
 		socket.on('disconnect', () => {
@@ -137,69 +156,32 @@ const MainPage = () => {
 		 ** Game events
 		 * -----------------------*/
 
-		// This is for test
-		// const wait = (timeToDelay: number) => new Promise((resolve) => setTimeout(resolve, timeToDelay));
-
-		//Cet event devrait être mis 'off' quand on est sur la page d'attente d'un
-		//jeu/en train de jouer.
-
-		// socket.on('gameInvitation', async (challengerData, challengerWsId) => {
-		// 	console.log(`💌  Event: gameInvitation ->`, challengerData, ` -- id: ${challengerWsId}`);
-		// 	// Afficher une notification avec challengerData (userDto) et créer
-		// 	// un onClick event qui reste 10sec à l'écran
-		// 	// Si dans les 10 secondes
-		// 	//
-		// 	// Si c'est OK, afficher la page d'attente du jeu (sans avoir la possibilité
-		// 	// de choisir la map, puisqu'on est l'invité)
-		// 	// Sinon, virer la notif
-		// 	// setTest(challengerData);
-
-		// 	test = 'coucou';
-
-		// 	// setWsId(challengerWsId);
-
-		// 	// socket.emit('gameInvitResponse', { response: 'OK', to: challengerWsId });
-		// 	// socket.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
-		// });
-
-		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
-
-		// socket.on('gameDenied', (opponentData) => {
-		// 	console.log(`💌  Event: gameDenied -> ${opponentData}`);
-		// 	// Afficher une notif ou whatever qui dit que l'opposant n'a pas accepté
-		// 	// de jouer avec lui, et retourner sur la page d'accueil. (Parce que si cet
-		// 	// event est trigger c'est que le user se trouve sur la page d'attente
-		// 	// du jeu)
-		// });
-
-		//Cet event devrait être mis 'on' que sur la page d'attente du jeu
-
-		// socket.on('gameAccepted', (opponentData) => {
-		// 	console.log(`💌  Event: gameAccepted -> ${opponentData}`);
-		// 	// quand on en est là c'est qu'on est sur la page d'attente du jeu.
-		// 	// enlever le voile gris sur la photo de l'opponent pour montrer que
-		// 	// c'est good.
-		// });
-
-		// socket.on('newOnlineGame', (obj: any) => {
-		// 	console.log(`💌  Event: newOnlineGame -> `, obj);
-		// 	//Afficher l'objet au dessus de la liste des onlineGame
-		// });
-
 		socket.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
-		socket.on('newPlayerJoined', (obj: any) => {
-			console.log(`💌  Event: newPlayerJoined -> `, obj);
-			//Dans la page d'attente du joueur 1, afficher le userdto obj
-			//du type qui vient de rejoindre le jeu
-		});
+		socket.on('goBackInGame', (obj: OnlineGameRemooveType) => {
+			console.log(`💌  Event: goBackInGame ->`);
+			console.log(obj);
+			//Server detected the client was playing before disconnecting so it gives
+			//thru this event an OnlineGameDto so that we can call the game component
+			//and go back to the game.
 
-		// socket.emit('watchGame', 'fake_watch', (response: any) => {
-		// 	console.log(`CLIENT: response from server -> ${response}`);
-		// });
+			setDataUserBack(obj);
+			setBackInGame(true);
+			setIsGameRandom(true);
+			setPlayerNewGameInvit(true);
+			console.log('username, obj.challen.login', userName, ' - ', obj.challenger.login);
+			if (userName === obj.challenger.login) {
+				console.log('isoppoantn true');
+				setIsOpponant(true);
+			} else {
+				console.log('isoppoantn false');
+				setIsOpponant(false);
+			}
+			setStartGame(true);
+		});
 
 		socket.on('myerror', (message: string) => {
 			console.log(`💌  Event: myerror -> ${message}`);
@@ -281,14 +263,24 @@ const MainPage = () => {
 			});
 	});
 
+	const [countInvit, setCountInvit] = useState(0);
+
 	useEffect(() => {
 		gameWs?.on('gameInvitation', async (challengerData, challengerWsId) => {
-			setChallengData([challengerData]);
+			setCountInvit(countInvit + 1);
 
-			setWsId(challengerWsId);
+			console.log(countInvit);
+
+			if (countInvit < 1) {
+				console.log('ici');
+				setChallengData([challengerData]);
+				setWsId(challengerWsId);
+			} else {
+				console.log('ELSEEEEEEE');
+			}
 			setTimeSnack(true);
 		});
-	}, [gameWs, challengData, wsId]);
+	}, [gameWs, countInvit]);
 
 	function disconnectGameWs() {
 		console.log('Click disconnect Chat ', gameWs?.id);
@@ -315,7 +307,7 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre wsId={wsId} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
+			{timeSnack && <SnackBarre wsId={wsId} countInvit={countInvit} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
 
 			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>

@@ -143,7 +143,7 @@ export class ChatController {
   })
   @UseGuards(RoomParticipantGuard)
   @Get(':room_id/infos')
-  @Serialize(RoomDto)
+  @Serialize(RoomWithRestrictionsDto)
   async getSingleRoom(@TargetedRoom() targetedRoom: Room) {
     return targetedRoom;
   }

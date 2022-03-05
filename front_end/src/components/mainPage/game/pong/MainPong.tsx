@@ -38,9 +38,14 @@ export default function MainPong() {
 		isOpponant,
 		opacity,
 		setOpacity,
-		setIsOpponant,
+		leaveGame,
 		playerNewGameJoin,
 		dataPlayerNewGameJoin,
+		watchGameScore,
+		isWatchGame,
+		setIsWatchGame,
+		backInGame,
+		dataUserBack,
 	} = useMainPage();
 	const [open, setOpen] = useState(false);
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
@@ -56,10 +61,32 @@ export default function MainPong() {
 
 	const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
 
+	const [load, setLoad] = useState(false);
+
+	const [pauseGame, setPauseGame] = useState(false);
+
 	const closeGame = () => {
-		setOpen(false);
-		setStartGame(false);
-		setLeaveGame(false);
+		// setOpen(false);
+		// setStartGame(false);
+		// setLeaveGame(false);
+
+		if (isWatchGame) {
+			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
+			setOpen(false);
+			setStartGame(false);
+			setLeaveGame(false);
+			setIsWatchGame(false);
+		} else {
+			gameWs?.emit('giveUpGame', { bcast: { room: roomId, watchers: watchId } });
+			setOpen(false);
+			setStartGame(false);
+			setLeaveGame(false);
+			setIsWatchGame(false);
+			setMap(null);
+			setWatchId('');
+			setRoomId('');
+			setAcceptGame(false);
+		}
 	};
 
 	const [data, setData] = useState<User[] | UserChallenge[]>([]);
@@ -67,30 +94,66 @@ export default function MainPong() {
 
 	const [disableMap, setDisableMap] = useState<boolean>(false);
 
-	useEffect(() => {
-		setLeaveGame(true);
+	const [scoreJ1, setScoreJ1] = useState(-1);
+	const [scoreJ2, setScoreJ2] = useState(-1);
 
+	useEffect(() => {
+		if (isWatchGame) {
+			setScoreJ1(watchGameScore.challenger.score);
+			setScoreJ2(watchGameScore.opponent.score);
+		}
+	}, [isWatchGame, watchGameScore]);
+
+	useEffect(() => {
+		// setLeaveGame(true);
+
+		console.log('NBPLAYER ---- before', nbPlayer);
 		if (!isOpponant) {
+			setNbPlayer(2);
+			setLeaveGame(true);
 			setData(challengData);
 			console.log('exterieur');
-
-			setNbPlayer(2);
+			console.log('NBPLAYER ----inside ', nbPlayer);
+			if (backInGame) {
+				setScoreJ1(dataUserBack.challenger.score);
+				setScoreJ2(dataUserBack.opponent.score);
+				setMap(dataUserBack.map);
+				setRoomId(dataUserBack.id);
+				setWatchId(dataUserBack.watch);
+			} else {
+				setScoreJ1(0);
+				setScoreJ2(0);
+			}
 		} else {
+			setNbPlayer(1);
+			setLeaveGame(true);
 			setData(dataUserChallenge);
 			console.log('domicile');
-			setNbPlayer(1);
+
+			console.log('NBPLAYER ----inside ', nbPlayer);
+			if (backInGame) {
+				setScoreJ1(dataUserBack.challenger.score);
+				setScoreJ2(dataUserBack.opponent.score);
+				setMap(dataUserBack.map);
+				setRoomId(dataUserBack.id);
+				setWatchId(dataUserBack.watch);
+			} else {
+				setScoreJ1(0);
+				setScoreJ2(0);
+			}
+
 			if (acceptGame === false) {
 				setOpacity(true);
 			}
 		}
 
 		return () => {
-			setIsGameRandom(false);
-			setLeaveGame(false);
-			setPlayerNewGameInvit(false);
+			// setIsGameRandom(false);
+			// setLeaveGame(false);
+			// setPlayerNewGameInvit(false);
 			// setIsOpponant(false);
 		};
-	}, [isOpponant]);
+	}, [isOpponant, leaveGame, dataUserChallenge, nbPlayer]);
 
 	useEffect(() => {
 		gameWs?.on('gameAccepted', (opponentData) => {
@@ -102,6 +165,7 @@ export default function MainPong() {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
 			setOpenDialogLoading(true);
+
 			setTimeout(function () {
 				setOpenDialogLoading(false);
 				closeGame();
@@ -109,23 +173,9 @@ export default function MainPong() {
 		});
 
 		gameWs?.on('countDown', (count: number) => {
-			console.log(`count: ${count}`);
+			// console.log(`count: ${count}`);
 			setCount(count);
 		});
-
-		gameWs?.on('startGame', (room: string) => {
-			console.log(`💌  Event: startGame -> ${room}`);
-			setRoomId(room);
-		});
-
-		// 	//gameWs?.on('newPlayerJoined', (obj: User) => {
-		// 		console.log(`💌  Event: newPlayerJoined -> `, obj);
-		// 		setDataGameRandomSocket(obj);
-		// 		setAcceptGame(true);
-		// 		setOpacity(false);
-		// 		// setLoadingNewGamePlayer(true);
-		// 	});
-		// }, [gameWs, count, dataGameRandomSocket]);
 
 		gameWs?.on('newPlayerJoined', (obj: User) => {
 			console.log(`💌  Event: newPlayerJoined -> `, obj);
@@ -134,31 +184,102 @@ export default function MainPong() {
 			setOpacity(false);
 		});
 
-		return () => {
-			setLeaveGame(false);
-		};
-	}, [gameWs, count, dataGameRandomSocket]);
+		// return () => {
+		// 	setLeaveGame(false);
+		// 	console.log('QUITTTTTTTEEEEEEEE');
+		// };
+	}, [gameWs, count, dataGameRandomSocket, openDialogLoading]);
 
 	useEffect(() => {
-		gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
-			console.log(`💌  Event: getMap ->`, gameData);
-			setMap(gameData.map);
-			setWatchId(gameData.watch);
+		gameWs?.on('startGame', (room: string) => {
+			console.log(`💌  Event: startGame -> ${room}`);
+			setRoomId(room);
 		});
 
-		if (map !== null) {
-			console.log('map =====', map);
+		gameWs?.on('playerGiveUp', (obj: any) => {
+			console.log(`💌  Event: playerGiveUp -> `);
+			console.log(obj);
 
-			gameWs?.on('setMap', (room: string) => {
-				// console.log(`💌  Event: setMap -> ${cb}`);
+			// setOpen(false);
+			setStartGame(false);
+			// setLeaveGame(false);
+			// setIsWatchGame(false);
+			// setMap(null);
+			// setWatchId('');
+			// setRoomId('');
+		});
+
+		return () => {
+			setLeaveGame(false);
+			gameWs?.off('startGame');
+			gameWs?.off('playerGiveUp');
+			gameWs?.off('setMap');
+			gameWs?.off('getGameData');
+			gameWs?.off('gameAccepted');
+			gameWs?.off('gameDenied');
+			gameWs?.off('countDown');
+			gameWs?.off('newPlayerJoined');
+		};
+	}, [gameWs]);
+
+	useEffect(() => {
+		gameWs?.on('setMap', (room: string) => {
+			// console.log(`💌  Event: setMap -> ${cb}`);
+
+			if (map !== null) {
 				gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
 					console.log('P1 callback watch return: ', watch);
 					setWatchId(watch);
 				});
-				// console.log('map is ==== ', map);
-			});
-		}
+			}
+			// console.log('map is ==== ', map);
+		});
+
+		gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
+			console.log(`💌  Event: GameData ->`, gameData);
+			setMap(gameData.map);
+			setWatchId(gameData.watch);
+		});
 	}, [map]);
+
+	// useEffect(() => {
+	// 	if (backInGame) {
+	// 		setOpen(false);
+	// 		setStartGame(false);
+	// 		setLeaveGame(false);
+	// 		setIsWatchGame(false);
+
+	// 		if (userName === dataUserBack.challenger.login) {
+	// 			setNbPlayer(1);
+	// 		} else {
+	// 			setNbPlayer(2);
+	// 		}
+	// 	}
+	// }, [backInGame, dataUserBack]);
+
+	// useEffect(() => {
+	// 	gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
+	// 		console.log(`💌  Event: getMap ->`, gameData);
+	// 		setMap(gameData.map);
+	// 		setWatchId(gameData.watch);
+
+	// 		console.log('joueur 2 ===== map', map);
+	// 	});
+	// }, [map]);
+
+	useEffect(() => {
+		if (isWatchGame) {
+			// setLoad(true);
+
+			setNbPlayer(0);
+			setScoreJ1(watchGameScore.challenger.score);
+			setScoreJ2(watchGameScore.opponent.score);
+			setMap(watchGameScore.map);
+		}
+		// return () => {
+		// 	setIsWatchGame(false);
+		// };
+	}, [isWatchGame, watchGameScore, map, scoreJ1, scoreJ2]);
 
 	const titlePrint = () => {
 		if (!isGameRandom) {
@@ -213,17 +334,28 @@ export default function MainPong() {
 
 	return (
 		<animated.div style={props} className="w-100  animatedGamePong ">
-			<div className="divMainPongGame ">
-				<div className="w-100 h-100">
-					{roomId !== '' && watchId !== '' && map !== null ? (
-						<PongGame map={map} room={roomId} watch={watchId} joueur={nbPlayer} socket={gameWs} />
+			<div className="divMainPongGame">
+				<div className="w-100 h-100 ">
+					{((roomId !== '' && watchId !== '' && map !== null) || (isWatchGame && map !== null)) && scoreJ1 !== -1 && scoreJ2 !== -1 ? (
+						<div className="container__MapGame">
+							<PongGame
+								map={map}
+								room={roomId}
+								watch={watchId}
+								joueur={nbPlayer}
+								socket={gameWs}
+								setPauseGame={setPauseGame}
+								scoreJ1={scoreJ1}
+								scoreJ2={scoreJ2}
+							/>
+						</div>
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
 								{acceptGame || !isOpponant ? <span className="counterOutput">{count}</span> : titlePrint()}
 							</div>
 
-							<div className={clsx('infoUser', !isOpponant && !isGameRandom && 'infoUserReverse')}>
+							<div className={clsx('infoUser', !isOpponant && 'infoUserReverse')}>
 								<div className="photoUser">
 									<Avatar alt="userImg" src={userImg} />
 									<div>
@@ -261,7 +393,8 @@ export default function MainPong() {
 					</Button>
 				</div>
 				{dialogMui(open, () => setOpen(false), closeGame, 'Warning !', 'Are you sure you want to quit the game ?')}
-				{dialogueLoading(openDialogLoading, 'Warning', 'your opponant did not accept the invitation', 'You will return to the home page')}
+				{dialogueLoading(openDialogLoading, 'Warning', 'your opponent did not accept the invitation', 'You will return to the home page')}
+				{dialogueLoading(pauseGame, 'Warning', 'Your opponent has disconnected', '')}
 			</div>
 		</animated.div>
 	);

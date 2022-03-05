@@ -4,7 +4,16 @@ import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserMe, LoginGame, User, UserChallenge } from './components/type';
+import {
+	UserMe,
+	LoginGame,
+	User,
+	UserChallenge,
+	UserOnlineGame,
+	OnlineGameType,
+	OnlineGameAndMapType,
+	OnlineGameRemooveType,
+} from './components/type';
 import { boolean } from 'yup';
 
 interface IMainPageContext {
@@ -34,12 +43,18 @@ interface IMainPageContext {
 	userImg: string;
 	pathPop: string;
 
+	dataUserBack: OnlineGameRemooveType;
+	setDataUserBack: Dispatch<SetStateAction<OnlineGameRemooveType>>;
+
 	setData: Dispatch<SetStateAction<never[]>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
 	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
 	setDataPlayerNewGameJoin: Dispatch<SetStateAction<User>>;
 
 	setChallengData: Dispatch<SetStateAction<User[]>>;
+
+	watchGameScore: OnlineGameAndMapType;
+	setWatchGameScore: Dispatch<SetStateAction<OnlineGameAndMapType>>;
 
 	setTimeSnack: Dispatch<SetStateAction<boolean>>;
 	setIsDisable: Dispatch<SetStateAction<boolean>>;
@@ -88,6 +103,18 @@ interface IMainPageContext {
 
 	playerNewGameJoin: boolean;
 	setPlayerNewGameJoin: Dispatch<SetStateAction<boolean>>;
+
+	isWatchGame: boolean;
+	setIsWatchGame: Dispatch<SetStateAction<boolean>>;
+
+	loadingSocket: boolean;
+	setLoadingSocket: Dispatch<SetStateAction<boolean>>;
+
+	countInvit: number;
+	setCountInvit: Dispatch<SetStateAction<number>>;
+
+	backInGame: boolean;
+	setBackInGame: Dispatch<SetStateAction<boolean>>;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -99,6 +126,10 @@ const MainPageProvider = (props: any) => {
 	const [dataPlayerNewGameJoin, setDataPlayerNewGameJoin] = useState();
 
 	const [dataUserChallenge, setDataUserChallenge] = useState([]);
+
+	const [dataUserBack, setDataUserBack] = useState();
+
+	const [watchGameScore, setWatchGameScore] = useState([]);
 
 	const [challengData, setChallengData] = useState([]);
 
@@ -135,6 +166,14 @@ const MainPageProvider = (props: any) => {
 	const [playerNewGameJoin, setPlayerNewGameJoin] = useState(false);
 
 	// const [dataHistory, setDataHistory] = useState([]);
+
+	const [loadingSocket, setLoadingSocket] = useState(false);
+
+	const [isWatchGame, setIsWatchGame] = useState(false);
+
+	const [countInvit, setCountInvit] = useState(0);
+
+	const [backInGame, setBackInGame] = useState(false);
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -344,6 +383,24 @@ const MainPageProvider = (props: any) => {
 		setPlayerNewGameJoin,
 		dataPlayerNewGameJoin,
 		setDataPlayerNewGameJoin,
+
+		watchGameScore,
+		setWatchGameScore,
+
+		isWatchGame,
+		setIsWatchGame,
+
+		loadingSocket,
+		setLoadingSocket,
+
+		countInvit,
+		setCountInvit,
+
+		backInGame,
+		setBackInGame,
+
+		dataUserBack,
+		setDataUserBack,
 	};
 
 	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
