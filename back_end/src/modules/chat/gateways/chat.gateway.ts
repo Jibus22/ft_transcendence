@@ -166,7 +166,6 @@ export class ChatGateway
     this.logger.log(`Client disconnected: ${client.id}`);
     await this.updateUser(client, {
       ws_id: null,
-      is_in_game: false,
     });
   }
 
@@ -185,7 +184,7 @@ export class ChatGateway
     this.logger.debug(`Add client ${user?.login} to room ${room.id}`);
     const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
-      await clientSocket.join(room.id);
+      clientSocket.join(room.id);
     }
   }
 
@@ -193,7 +192,7 @@ export class ChatGateway
     this.logger.debug(`Remove client ${user?.login} from room ${room.id}`);
     const clientSocket = await this.getClientSocket(user.ws_id);
     if (clientSocket) {
-      await clientSocket.leave(room.id);
+      clientSocket.leave(room.id);
     }
   }
 

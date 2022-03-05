@@ -77,13 +77,13 @@ export class WsConnectionService {
   private async waitReconnection(server: Server, user: User, game: Game) {
     this.logger.log(`waitReconnection: ${user.login} - ${game.id}`);
     let usr: User;
-    for (let i = 5; i >= 0; i--) {
+    await sleep(1500);
+    for (let i = 4; i >= 0; i--) {
       [usr] = await this.usersService.findOneWithAnyParam(
         [{ id: user.id }],
         null,
       );
       if (usr.game_ws && usr.ws_id) {
-        await sleep(1000);
         const [updatedGame] = await this.gameService.findGameWithAnyParam(
           [{ id: game.id }],
           {
@@ -104,6 +104,7 @@ export class WsConnectionService {
           .emit('playerCameBack', myPtoUserDto(usr));
         return;
       }
+      await sleep(1000);
     }
     console.log('2 - usr... ', usr);
     await this.wsGameService.handleGameEnd(usr.game_ws, game, server, user);

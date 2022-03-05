@@ -178,7 +178,7 @@ export class GameGateway
       [{ watch: room }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },
     );
-    if (!game || !game.watch) return 'cant watch game';
+    if (!game || !game.watch) return null;
     client.join(room);
     return myPtoOnlineGameDto(game);
   }
