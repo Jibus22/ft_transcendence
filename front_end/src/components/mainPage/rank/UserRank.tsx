@@ -78,7 +78,7 @@ const UserRank = () => {
 					<h3 className="nbUser">User</h3>
 					<h3 className="nbGame">Game</h3>
 					<h3 className="nbWin">Win</h3>
-					<h3 className="nbLoose">Looses</h3>
+					<h3 className="nbLoose">Losses</h3>
 				</div>
 
 				<div className="userPrintDIv">

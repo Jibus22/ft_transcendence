@@ -11,11 +11,10 @@ interface Props {
 	wsId: string;
 	timeSnack: boolean;
 	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
-	countInvit: number;
 }
 
-export default function SnackBarre({ wsId, timeSnack, setTimeSnack, countInvit }: Props) {
-	const { isFriends, gameWs, invitName, challengData, setStartGame } = useMainPage();
+export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
+	const { isFriends, gameWs, invitName, challengData, setStartGame, disableInvitOther } = useMainPage();
 
 	const [progress, setProgress] = React.useState(0);
 
@@ -60,12 +59,12 @@ export default function SnackBarre({ wsId, timeSnack, setTimeSnack, countInvit }
 		};
 	}, []);
 
-	useEffect(() => {
-		if (countInvit > 1) {
-			console.log('DENIEEEEEED');
-			gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
-		}
-	}, [countInvit]);
+	// useEffect(() => {
+	// 	if (countInvit > 1) {
+	// 		console.log('DENIEEEEEED');
+	// 		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
+	// 	}
+	// }, [countInvit]);
 
 	const action = (
 		<>

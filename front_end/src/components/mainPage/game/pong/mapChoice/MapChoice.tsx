@@ -1,9 +1,9 @@
 import clsx from 'clsx';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import '../pongGame.scss';
-import PB from './img/Pong-basic.png';
-import PC from './img/Pong.classic.png';
-import PD from './img/pong_design.png';
+import PB from './img/MapTwo.png';
+import PC from './img/MapOne.png';
+import PD from './img/MapThree.png';
 
 interface Props {
 	disableMap: boolean;

@@ -352,24 +352,24 @@ class PongGame extends React.Component<MyProps> {
 	_startGame() {
 		const keystate = this._keystate;
 		document.addEventListener('keydown', function (evt) {
-			evt.preventDefault();
+			// evt.preventDefault();
 			keystate[evt.key] = true;
 		});
 		document.addEventListener('keyup', function (evt) {
-			evt.preventDefault();
+			// evt.preventDefault();
 			delete keystate[evt.key];
 		});
 		document.addEventListener(
 			'ontouchstart',
 			function (e) {
-				e.preventDefault();
+				// e.preventDefault();
 			},
 			false,
 		);
 		document.addEventListener(
 			'ontouchmove',
 			function (e) {
-				e.preventDefault();
+				// e.preventDefault();
 			},
 			false,
 		);
@@ -391,9 +391,6 @@ class PongGame extends React.Component<MyProps> {
 		if (this.props.joueur === 1) this._P1 = true;
 		else if (this.props.joueur === 2) this._P2 = true;
 		this._initPongGame();
-
-		console.log('SUISJEPLAYER1', this._P1);
-		console.log('SUISJEPLAYER2', this._P2);
 
 		this.props.socket?.on('playerDisconnection', (obj: any) => {
 			console.log(`💌  Event: playerDisconnection -> `);
@@ -471,6 +468,7 @@ class PongGame extends React.Component<MyProps> {
 		//if (client) client.close();
 
 		this.gamerunning = false;
+		// this._keystate = null;
 		this.props.socket?.off('playerDisconnection');
 		this.props.socket?.off('playerCameBack');
 		this.props.socket?.off('playerUpdate');
@@ -489,16 +487,14 @@ class PongGame extends React.Component<MyProps> {
 	render() {
 		return (
 			<div className="pongGame">
-				{
-					<canvas
-						className="h-100 w-100 canvasGame"
-						onTouchStart={(e) => this._touch(e)}
-						onTouchMove={(e) => this._touch(e)}
-						style={this._canvasStyle}
-						width={this.width}
-						height={this.height}
-					/>
-				}
+				<canvas
+					className="h-100 w-100 canvasGame"
+					onTouchStart={(e) => this._touch(e)}
+					onTouchMove={(e) => this._touch(e)}
+					style={this._canvasStyle}
+					width={this.width}
+					height={this.height}
+				/>
 			</div>
 		);
 	}

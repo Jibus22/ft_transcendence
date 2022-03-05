@@ -104,7 +104,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 };
 
 export default function OnlineGame({ Loadingclick }: Props) {
-	const { setSelectQuery, gameWs, loading } = useMainPage();
+	const { setSelectQuery, gameWs, loading, startGame, open } = useMainPage();
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -133,6 +133,10 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		setSelectQuery(true);
 
 		fetchDataOnLineGame();
+		if (open) {
+			fetchDataOnLineGame();
+		}
+
 		setIsPrintData(true);
 		gameWs?.on('newOnlineGame', (obj) => {
 			console.log(`💌  Event: newOnlineGame -> `, obj);
@@ -143,7 +147,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 		return () => {
 			setSelectQuery(false);
 		};
-	}, [gameWs]);
+	}, [gameWs, open]);
 
 	const scoreSort = (a: OnlineGameType, b: OnlineGameType) => {
 		return b.createdAt - a.createdAt;
