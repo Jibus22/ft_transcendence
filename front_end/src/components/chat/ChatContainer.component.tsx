@@ -14,6 +14,7 @@ const ChatContainer = ({ open }: any) => {
 	};
 
 	const getCurrentUser = async () => {
+		console.log("GETTING USER");
 		try {
 			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, { withCredentials: true });
 			setCurrentUser(data);

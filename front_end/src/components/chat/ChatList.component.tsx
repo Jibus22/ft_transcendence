@@ -197,6 +197,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 	
 		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
+			console.log("SHOULD REFRESH PUBLIC ROOM");
 			openPublicRoom(detail.id);
 			getChats();
 		})
@@ -205,6 +206,10 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			if (window.friendsLoading)
 				return;
 			getFriends();
+		})
+
+		window.addEventListener("quitRoom", () => {
+			openChat(null);
 		})
 	}, []);
 

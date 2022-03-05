@@ -81,7 +81,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				is_moderator: !user.is_moderator
 			}, { withCredentials: true });
 			window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { alert(e.response?.data?.error) };
 	};
 
 	const makePublic = async () => {
@@ -117,7 +117,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			} else {
 				alert("Invalid input: only number accepted");
 			}
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { alert(e.response?.data?.error) };
 	}
 
 	const ban = async (user: any) => {
@@ -140,7 +140,26 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			} else {
 				alert("Invalid input: only number accepted");
 			}
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { alert(e.response?.data?.error) };
+	}
+
+	const leaveRoom = async () => {
+		try {
+			window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } }))
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms/${room.id}`, { withCredentials: true });
+			setTimeout(
+				() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
+				1000
+			)
+			setTimeout(
+				() => window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } })),
+				1000
+			);
+			setTimeout(
+				() => window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } })),
+				2000
+			);
+		} catch (e: any) { alert(e.response?.data?.error) };
 	}
 
 	if (userDetail) {
@@ -185,6 +204,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			</User>))
 		}
 		<Button onClick={() => addParticipant()}>+ Add participant</Button>
+		<Button onClick={() => leaveRoom()}>Leave room</Button>
 	</Wrapper>;
 };
 

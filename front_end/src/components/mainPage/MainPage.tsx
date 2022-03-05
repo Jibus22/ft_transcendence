@@ -118,6 +118,7 @@ const MainPage = () => {
 		});
 		socket.on('userModeration', (message) => {
 			console.log(`💌  Event: userModeration ->`, message);
+			window.dispatchEvent(new CustomEvent('publicRoomUpdated', { detail: message }));
 		});
 		socket.on('userBanned', (message) => {
 			console.log(`💌  Event: userBanned ->`, message);
