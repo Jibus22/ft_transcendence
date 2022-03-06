@@ -54,7 +54,7 @@ export class ChatService {
     const user = await this.usersService.findOne(userId);
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
-      const isOwner = roomOwner.id === userId;
+      const isOwner = (roomOwner.id === userId || user.is_site_owner);
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       return await this.repoParticipants.save(newParticipant);
@@ -298,10 +298,10 @@ export class ChatService {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
       };
-    } else if (targetedParticipant.is_owner) {
+    } else if (targetedParticipant.is_owner || targetedParticipant.is_moderator || targetedParticipant.user.is_site_owner) {
       throw {
         status: HttpStatus.FORBIDDEN,
-        error: `owner of the room cannot be banned`,
+        error: `targeted user status prevents this restriction to apply`,
       };
     }
 
