@@ -29,6 +29,7 @@ export class RoomPublicGuard implements CanActivate {
       logger.debug(`PUBLIC ROOM ACCESS GRANTED !`);
       return true;
     }
+    logger.debug(`ROOM IS NOT PUBLIC 🚫 `);
     throw new UnauthorizedException(
       'User must be logged and target a Public Room',
     );

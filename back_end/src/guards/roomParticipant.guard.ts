@@ -32,6 +32,7 @@ export class RoomParticipantGuard implements CanActivate {
       logger.debug(`ROOM PARTICIPANT ACCESS GRANTED !`);
       return true;
     }
+    logger.debug(`USER IS NOT PARTICIPANT IN THIS ROOM 🚫 `);
     throw new UnauthorizedException(
       'User must be logged and be participant in the room',
     );
