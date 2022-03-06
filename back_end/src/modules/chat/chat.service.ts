@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { partition } from 'rxjs';
 import { FindManyOptions, Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
@@ -54,7 +55,7 @@ export class ChatService {
     const user = await this.usersService.findOne(userId);
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
-      const isOwner = roomOwner.id === userId;
+      const isOwner = (roomOwner.id === userId || user.is_site_owner);
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       return await this.repoParticipants.save(newParticipant);
@@ -266,11 +267,17 @@ export class ChatService {
   async updateParticipant(updateDto: UpdateParticipantDto) {
     const participant = await this.repoParticipants.findOne(
       updateDto.participant_id,
+      { relations: [ 'user' ]}
     );
     if (!participant) {
       throw {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
+      };
+    } else if (participant?.user.is_site_owner && updateDto.is_moderator === false) {
+      throw {
+        status: HttpStatus.FORBIDDEN,
+        error: `targeted user status prevents removing moderation rights`,
       };
     }
     participant.is_moderator = updateDto.is_moderator;
@@ -298,10 +305,10 @@ export class ChatService {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
       };
-    } else if (targetedParticipant.is_owner) {
+    } else if (targetedParticipant.is_owner || targetedParticipant.is_moderator || targetedParticipant.user.is_site_owner) {
       throw {
         status: HttpStatus.FORBIDDEN,
-        error: `owner of the room cannot be banned`,
+        error: `targeted user status prevents this restriction to apply`,
       };
     }
 
