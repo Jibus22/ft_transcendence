@@ -111,6 +111,7 @@ export class GameGateway
       this.wsGameService.cancelPanicGame([challenger, opponent]);
       throw new WsException('Wow shit');
     }
+    if (!challenger.is_in_game) return 1;
 
     if (reply.response === 'OK') {
       this.logger.log(`gameInvitation accepted: ${reply.response}`);
@@ -130,6 +131,7 @@ export class GameGateway
       });
       this.server.to(reply.to).emit('gameDenied', myPtoUserDto(opponent));
     }
+    return 0;
   }
 
   @SubscribeMessage('setMap')
@@ -199,19 +201,14 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
     this.logger.log(`giveUpGame`);
+    const [user] = await this.wsGameService.getUserFromParam(
+      [{ game_ws: client.id }],
+      { relations: ['players'] },
+    );
     try {
-      const [user] = await this.wsGameService.getUserFromParam(
-        [{ game_ws: client.id }],
-        { relations: ['players'] },
-      );
       const game = await this.gameService.findOne(bcast.room, {
         relations: ['players', 'players.user'],
       });
-
-      console.log('user');
-      console.log('game');
-      console.log(user);
-      console.log(game);
       await this.wsGameService.handleGameEnd(
         client.id,
         game,
@@ -219,6 +216,7 @@ export class GameGateway
         user,
       );
     } catch (e) {
+      this.wsGameService.updatePlayerStatus(user, { is_in_game: false });
       console.log('catch e.status: ', e.status);
       console.log('catch e.message: ', e.message);
     }
