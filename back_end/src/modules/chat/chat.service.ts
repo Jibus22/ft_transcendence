@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { partition } from 'rxjs';
 import { FindManyOptions, Repository } from 'typeorm';
 import { promisify } from 'util';
 import { User } from '../users/entities/users.entity';
@@ -266,11 +267,17 @@ export class ChatService {
   async updateParticipant(updateDto: UpdateParticipantDto) {
     const participant = await this.repoParticipants.findOne(
       updateDto.participant_id,
+      { relations: [ 'user' ]}
     );
     if (!participant) {
       throw {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
+      };
+    } else if (participant?.user.is_site_owner && updateDto.is_moderator === false) {
+      throw {
+        status: HttpStatus.FORBIDDEN,
+        error: `targeted user status prevents removing moderation rights`,
       };
     }
     participant.is_moderator = updateDto.is_moderator;
