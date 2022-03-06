@@ -33,6 +33,7 @@ export class RoomMuteGuard implements CanActivate {
       logger.debug(`MUTE ACCESS GRANTED, user is not mutted !`);
       return true;
     }
+    logger.debug(`USER IS MUTED 🚫 `);
     throw new UnauthorizedException('User is muted');
   }
 }

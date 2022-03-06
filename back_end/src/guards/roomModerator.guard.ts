@@ -33,6 +33,7 @@ export class RoomModeratorGuard implements CanActivate {
       logger.debug(`MODERATOR ACCESS GRANTED !`);
       return true;
     }
+    logger.debug(`USER IS NOT A MODERATOR 🚫 `);
     throw new UnauthorizedException('User must be logged and be moderator');
   }
 }

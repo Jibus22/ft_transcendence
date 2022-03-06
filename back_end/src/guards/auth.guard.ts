@@ -23,6 +23,7 @@ export class AuthGuard implements CanActivate {
       logger.debug(`User id: ${user.id}`);
       return true;
     }
+    logger.debug(`USER IS NOT LOGGED 🚫 `);
     throw new UnauthorizedException('user must be logged');
   }
 }

@@ -17,6 +17,7 @@ export class SiteOwnerGuard implements CanActivate {
       logger.debug(`SITE OWNER ACCESS GRANTED !`);
       return true;
     }
+    logger.debug(`USER IS NOT SITE OWNER 🚫 `);
     throw new ForbiddenException('User must be site owner');
   }
 }
