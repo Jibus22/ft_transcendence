@@ -76,6 +76,7 @@ export class GameService {
   }
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
+    this.logger.log('gameInvitation');
     const [opponent] = await this.usersService.findOneWithAnyParam(
       [{ login: login_opponent }],
       { relations: ['local_photo', 'players'] },
@@ -94,6 +95,7 @@ export class GameService {
   ////////////////
 
   async joinGame(userId: string) {
+    this.logger.log('joinGame');
     let game: Game;
     let player1: Player;
     let waiting_game: { gameId: string; total: string | number };
@@ -120,7 +122,18 @@ export class GameService {
     if (!waiting_game) {
       game = this.game_repo.create();
       game = await this.game_repo.save(game);
-    } else game = await this.game_repo.findOne(waiting_game.gameId);
+    } else {
+      const err = new PlayerHttpError();
+      game = await this.game_repo.findOne(waiting_game.gameId, {
+        relations: ['players', 'players.user'],
+      });
+      await this.checkErrors(
+        [user, game.players[0].user],
+        game.players[0].user.login,
+        err,
+        err.errorPlayerNotInGame,
+      );
+    }
     player1 = this.player_repo.create({ user: user, game: game });
     player1 = await this.player_repo.save(player1);
     this.game_repo

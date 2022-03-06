@@ -138,7 +138,7 @@ export class GameGateway
     @MessageBody('room') room: string,
     @MessageBody('map') map: string,
   ) {
-    console.log('map:', map);
+    this.logger.log(`setMap: ${map}`);
     let gameData: Partial<Game>;
     const [game] = await this.gameService.findGameWithAnyParam(
       [{ id: room }],
@@ -199,14 +199,29 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
     this.logger.log(`giveUpGame`);
-    const [user] = await this.wsGameService.getUserFromParam(
-      [{ game_ws: client.id }],
-      { relations: ['players'] },
-    );
-    const game = await this.gameService.findOne(bcast.room, {
-      relations: ['players', 'players.user'],
-    });
-    await this.wsGameService.handleGameEnd(client.id, game, this.server, user);
+    try {
+      const [user] = await this.wsGameService.getUserFromParam(
+        [{ game_ws: client.id }],
+        { relations: ['players'] },
+      );
+      const game = await this.gameService.findOne(bcast.room, {
+        relations: ['players', 'players.user'],
+      });
+
+      console.log('user');
+      console.log('game');
+      console.log(user);
+      console.log(game);
+      await this.wsGameService.handleGameEnd(
+        client.id,
+        game,
+        this.server,
+        user,
+      );
+    } catch (e) {
+      console.log('catch e.status: ', e.status);
+      console.log('catch e.message: ', e.message);
+    }
   }
 
   @SubscribeMessage('endGame')

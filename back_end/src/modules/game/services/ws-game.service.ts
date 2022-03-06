@@ -22,7 +22,6 @@ export class WsGameService {
     for (let count = 3; count >= 0; count--) {
       server.to(room).emit('countDown', count);
       if (!count) {
-        console.log('dsdsdsds');
         server.to(ch_id).emit('setMap', room);
         server.to(room).emit('startGame', room);
       }
