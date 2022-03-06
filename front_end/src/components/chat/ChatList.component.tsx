@@ -3,6 +3,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
+import ShieldIcon from '@mui/icons-material/Shield';
+import LockIcon from '@mui/icons-material/Lock';
 import axios from "axios";
 import { useEffect, useState }  from 'react'
 
@@ -37,32 +39,44 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	const [friends, setFriends] = useState<any[]>([]);
 
 	const getChats = async () => {
-		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms`, {
-			withCredentials: true
-		});
-		setChats(data);
+		try {
+			if (window.chatLoading)
+				return;
+			window.chatLoading = true;
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms`, {
+				withCredentials: true
+			});
+			setChats(data);
+			window.chatLoading = false;
+		} catch (e: any) { console.log(e) };
 	};
 
 	const getPublicRooms = async () => {
 		window.roomsLoading = true;
-		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/publics`, {
-			withCredentials: true
-		});
-		setPublicChats(data);
+		try {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/publics`, {
+				withCredentials: true
+			});
+			setPublicChats(data);
+		} catch (e: any) { console.log(e) };
 		window.roomsLoading = false;
 	}
 
 	const getUsers = async () => {
-		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users`, { withCredentials: true }).catch(console.error);
-		setUsers(result?.data || []);
+		try {
+			const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users`, { withCredentials: true }).catch(console.error);
+			setUsers(result?.data || []);
+		} catch (e: any) { console.log(e) };
 	};
 
 	const getFriends = async () => {
 		if (window.friendsLoading)
 			return;
 		window.friendsLoading = true;
-		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
-		setFriends(result?.data || []);
+		try {
+			const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
+			setFriends(result?.data || []);
+		} catch (e: any) { console.log(e) };
 		window.friendsLoading = false;
 	};
 
@@ -78,44 +92,55 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openChatHandler = async (userId: any) => {
-		const existingChats = chats.filter(
-			(chat: any) => chat.participants.length === 2
-				&& chat.participants.filter((participant: any) => participant.user.id === userId).length > 0
-				&& chat.participants.filter((participant: any) => participant.user.id === currentUser.id).length > 0
-		);
-		console.log("EXISTING CHATS", existingChats);
-		if (existingChats.length > 0) {
+		try {
+			const existingChats = chats.filter(
+				(chat: any) => chat.participants.length === 2
+					&& chat.participants.filter((participant: any) => participant.user.id === userId).length > 0
+					&& chat.participants.filter((participant: any) => participant.user.id === currentUser.id).length > 0
+			);
+			console.log("EXISTING CHATS", existingChats);
+			if (existingChats.length > 0) {
+				setSearchResults([]);
+				setSearch("");
+				return openChat(existingChats[0]);
+			}
+			const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
+				participants: [ { id: userId } ],
+				is_private: true
+			}, { withCredentials: true });
 			setSearchResults([]);
 			setSearch("");
-			return openChat(existingChats[0]);
-		}
-		const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
-			participants: [ ],
-			is_private: true
-		}, { withCredentials: true });
-		const { id } = data;
-		await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/participant`, { id: userId }, { withCredentials: true });
-		const data2 = (await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${id}/infos`, { withCredentials: true }))?.data;
-		console.log("DATA", data, data2)
-		setSearchResults([]);
-		setSearch("");
-		openChat(data2);
+			openChat(data);
+		} catch (e: any) { console.log(e) };
 	};
 
 	const createChat = async () => {
-		const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
-			participants: [ ],
-			is_private: false
-		}, { withCredentials: true });
-		openChat(data);
+		const login = prompt("Who would you like to chat with?");
+		if (!login) {
+			return;
+		}
+		const user = users.find((user: any) => user.login === login);
+		if (!user) {
+			alert(`User '${login}' not found`);
+			return
+		}
+		try {
+			const { data }: any = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room`, {
+				participants: [ { id: user.id } ],
+				is_private: false
+			}, { withCredentials: true });
+			openChat(data);
+		} catch (e: any) { console.log(e) };
 	};
 
 	const openPublicRoom = async (roomId: any) => {
 		if (window.roomsLoading)
 			return;
 		window.roomsLoading = true;
-		const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
-		openChat(data);
+		try {
+			const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
+			openChat(data);
+		} catch (e: any) { console.log(e) };
 		window.roomsLoading = false;
 	};
 
@@ -145,42 +170,49 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		getChats();
 		getFriends();
 		getPublicRooms();
+
+		window.addEventListener("publicRoomCreated", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+		})
+	
+		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+			getChats();
+		})
+	
+		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+		})
+	
+		window.addEventListener("userAdded", ({ detail }: any) => {
+			if (window.roomsLoading)
+				return;
+			getPublicRooms();
+			getChats();
+		})
+	
+		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
+			console.log("SHOULD REFRESH PUBLIC ROOM");
+			openPublicRoom(detail.id);
+			getChats();
+		})
+	
+		window.addEventListener("friendsUpdated", ({ detail }: any) => {
+			if (window.friendsLoading)
+				return;
+			getFriends();
+		})
+
+		window.addEventListener("quitRoom", () => {
+			openChat(null);
+		})
 	}, []);
-
-	window.addEventListener("publicRoomCreated", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-	})
-
-	window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-	})
-
-	window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-	})
-
-	window.addEventListener("userAdded", ({ detail }: any) => {
-		if (window.roomsLoading)
-			return;
-		getPublicRooms();
-		getChats();
-	})
-
-	window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-		openPublicRoom(detail.id);
-	})
-
-	window.addEventListener("friendsUpdated", ({ detail }: any) => {
-		if (window.friendsLoading)
-			return;
-		getFriends();
-	})
 
 	return (
 	<ChatListWrapper>
@@ -193,6 +225,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 				<div>
 					<h4>{chatName(chat, currentUser)}</h4>
+					{chat.is_private && <span><ShieldIcon sx={{ fontSize: 14 }} />Private</span>}
 				</div>
 			</Preview>))}
 			{!chats.length && <span className="empty-message">No chat yet</span>}
@@ -213,12 +246,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 						{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 						<div>
 							<h4>{chatName(chat, currentUser)}</h4>
-							<span>{chat.is_password_protected ? "locked" : ""}</span>
+							{chat.is_password_protected && <span><LockIcon sx={{ fontSize: 14 }}/>Locked</span>}
 						</div>
 					</Preview>))}
 					{!publicChats.length && <span className="empty-message">No chat yet</span>}
 				</List>
-				<LargeButton onClick={() => createChat()}>+ Create chat</LargeButton>
+				<LargeButton onClick={() => createChat()}>+ Create group</LargeButton>
 			</>
 		)}
 		{ search.length > 0 && (<List>
@@ -323,6 +356,11 @@ const Preview = styled.div`
 			overflow: hidden;
 			text-overflow: ellipsis;
 			width: 90px;
+		}
+		span {
+			color: #888888;
+			display: flex;
+			align-items: center;
 		}
 	}
 `;

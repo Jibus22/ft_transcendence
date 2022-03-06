@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ChatParticipant from "./ChatParticipant.component";
 import BlockIcon from '@mui/icons-material/Block';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import RemoveModeratorIcon from '@mui/icons-material/RemoveModerator';
 import Tooltip from "@mui/material/Tooltip";
@@ -34,6 +35,13 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				owner = true;
 		});
 		return owner;
+	};
+
+	const isUserMuted = (user_id: any) => {
+		if (!room.mutes) {
+			return false;
+		}
+		return !!room.mutes.find((x: any) => x.id === user_id);
 	};
 
 	const changePassword = async () => {
@@ -67,11 +75,13 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const toggleModerator = async (user: any) => {
-		await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/moderator`, {
-			participant_id: user.id,
-			is_moderator: !user.is_moderator
-		}, { withCredentials: true });
-		window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
+		try {
+			await axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/moderator`, {
+				participant_id: user.id,
+				is_moderator: !user.is_moderator
+			}, { withCredentials: true });
+			window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } }));
+		} catch (e: any) { alert(e.response?.data?.error) };
 	};
 
 	const makePublic = async () => {
@@ -89,32 +99,74 @@ const RoomSettings = ({ room, currentUser }: any) => {
 	};
 
 	const mute = async (user: any) => {
-		const duration = prompt("Mute duration, in minutes");
-		if (duration && parseInt(duration)) {
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-				participant_id: user.id,
-				user_id: user.user.id,
-				restriction_type: "mute",
-				duration: parseInt(duration)
-			}, { withCredentials: true });
-		}
+		try {
+			const duration = prompt("Mute duration, in minutes");
+			if (duration !== "" && !duration)
+				return;
+			if (parseInt(duration)) {
+				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
+					participant_id: user.id,
+					user_id: user.user.id,
+					restriction_type: "mute",
+					duration: parseInt(duration)
+				}, { withCredentials: true });
+				setTimeout(
+					() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
+					500
+				);
+			} else {
+				alert("Invalid input: only number accepted");
+			}
+		} catch (e: any) { alert(e.response?.data?.error) };
 	}
 
 	const ban = async (user: any) => {
-		const duration = prompt("Ban duration, in minutes");
-		if (duration && parseInt(duration)) {
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-				participant_id: user.id,
-				user_id: user.user.id,
-				restriction_type: "ban",
-				duration: parseInt(duration)
-			}, { withCredentials: true });
-		}
+		try {
+			const duration = prompt("Ban duration, in minutes");
+			if (duration !== "" && !duration) {
+				return;
+			}
+			if (parseInt(duration)) {
+				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
+					participant_id: user.id,
+					user_id: user.user.id,
+					restriction_type: "ban",
+					duration: parseInt(duration)
+				}, { withCredentials: true });
+				setTimeout(
+					() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
+					500
+				);
+			} else {
+				alert("Invalid input: only number accepted");
+			}
+		} catch (e: any) { alert(e.response?.data?.error) };
+	}
+
+	const leaveRoom = async () => {
+		try {
+			window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } }))
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms/${room.id}`, { withCredentials: true });
+			setTimeout(
+				() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
+				1000
+			)
+			setTimeout(
+				() => window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } })),
+				1000
+			);
+			setTimeout(
+				() => window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } })),
+				2000
+			);
+		} catch (e: any) { alert(e.response?.data?.error) };
 	}
 
 	if (userDetail) {
 		return (<ChatParticipant user={userDetail} currentUser={currentUser} />);
 	}
+
+	console.log("ROOM", room);
 
 	return <Wrapper>
 		{isOwner() && (
@@ -137,9 +189,12 @@ const RoomSettings = ({ room, currentUser }: any) => {
 						<Tooltip title="Ban user"><button onClick={() => ban(user)}>
 							<BlockIcon />
 						</button></Tooltip>
-						<Tooltip title="Mute user"><button onClick={() => mute(user)}>
+						{!isUserMuted(user.user.id) && <Tooltip title="Mute user"><button onClick={() => mute(user)}>
+							<VolumeUpIcon />
+						</button></Tooltip>}
+						{isUserMuted(user.user.id) && <Tooltip title="User muted"><button>
 							<VolumeOffIcon />
-						</button></Tooltip>
+						</button></Tooltip>}
 						<Tooltip title={user.is_moderator ? "Remove moderator rights" : "Add moderator rights"}><button onClick={() => toggleModerator(user)}>
 							{!user.is_moderator && (<AddModeratorIcon />)}
 							{user.is_moderator && (<RemoveModeratorIcon />)}
@@ -149,6 +204,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			</User>))
 		}
 		<Button onClick={() => addParticipant()}>+ Add participant</Button>
+		<Button onClick={() => leaveRoom()}>Leave room</Button>
 	</Wrapper>;
 };
 
