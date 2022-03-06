@@ -4,6 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
+import { UserMe } from '../../../type';
 import FormPlay from './FormPlay';
 import IconGame from './img/raquette.png';
 import './play.scss';
@@ -34,6 +35,8 @@ export default function Play({ Loadingclick }: Props) {
 		setIsOpponant,
 		setPlayerNewGameJoin,
 		setDataPlayerNewGameJoin,
+		roomId,
+		setRoomId,
 	} = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
@@ -49,11 +52,14 @@ export default function Play({ Loadingclick }: Props) {
 			withCredentials: true,
 		})
 			.then((response) => {
-				console.log(response);
-				if (response.data === '') {
+				const data: { game_id: string; P1: UserMe } = response.data;
+				console.log(data);
+				if (!data.P1) {
+					setRoomId(data.game_id);
 					setPlayerNewGameInvit(true);
 					setIsOpponant(true);
 				} else {
+					setRoomId(data.game_id);
 					setDataPlayerNewGameJoin(response.data);
 					setIsOpponant(false);
 					setPlayerNewGameJoin(true);

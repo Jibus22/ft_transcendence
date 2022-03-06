@@ -75,8 +75,8 @@ export class GameGateway
   //---------------------- GAME SUBSCRIPTION EVENTS --------------------------//
 
   async joinGame(game_id: string, joining: boolean) {
+    if (!joining) return { game_id: game_id, P1: null };
     this.logger.log('joinGame');
-    if (!joining) return null;
 
     const game = await this.gameService.findOne(game_id, {
       relations: ['players', 'players.user', 'players.user.local_photo'],
@@ -86,7 +86,7 @@ export class GameGateway
       .to(ws_ids[0])
       .emit('newPlayerJoined', myPtoUserDto(game.players[1].user));
     this.wsGameService.startGame(ws_ids, game.id, this.server);
-    return myPtoUserDto(game.players[0].user);
+    return { game_id: game_id, P1: myPtoUserDto(game.players[0].user) };
   }
 
   async gameInvitation(challenger: User, opponent: User) {
@@ -161,16 +161,6 @@ export class GameGateway
     return gameData.watch;
   }
 
-  //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs
-  //ou bien est-ce une methode a appeler differemment ? Genre qd l'update d'un
-  //game atteint un score de 10 ?
-  @SubscribeMessage('gameFinished')
-  async gameFinished(@MessageBody() room: string) {
-    this.server.of('game').except(room).emit('gameFinished', room);
-    // const watch = this.wsGameService.getWatchId(room);
-    // this.server.socketsLeave([room, watch]);//TODO uncomment
-  }
-
   @SubscribeMessage('watchGame')
   async watchGame(
     @ConnectedSocket() client: Socket,
@@ -200,7 +190,9 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
-    this.logger.log(`giveUpGame`);
+    this.logger.log(
+      `giveUpGame. room: ${bcast.room}, watchers: ${bcast.watchers}`,
+    );
     const [user] = await this.wsGameService.getUserFromParam(
       [{ game_ws: client.id }],
       { relations: ['players'] },

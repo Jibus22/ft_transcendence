@@ -33,6 +33,12 @@ export class PlayerHttpError implements IPlayerError {
     }
   }
 
+  errorPlayerOffline(elem: UserDto) {
+    if (elem.status === 'offline') {
+      throw new ForbiddenException(`${elem.login} is ${elem.status}, dumb`);
+    }
+  }
+
   errorPlayerNotInGame(elem: UserDto) {
     if (elem.status !== 'ingame') {
       throw new ForbiddenException(`${elem.login} is ${elem.status}`);

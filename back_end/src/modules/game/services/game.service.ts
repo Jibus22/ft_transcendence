@@ -98,7 +98,7 @@ export class GameService {
     this.logger.log('joinGame');
     let game: Game;
     let player1: Player;
-    let waiting_game: { gameId: string; total: string | number };
+    let waiting_game: Game;
     const user = await this.usersService.findOne(userId);
     const query_games: { gameId: string; total: string | number }[] =
       await getRepository(Player)
@@ -109,14 +109,19 @@ export class GameService {
         .where('player.game is not null')
         .getRawMany();
 
-    if (process.env.NODE_ENV === 'production') {
-      [waiting_game] = query_games.filter((elem) => {
-        if (elem.total === '1') return elem;
-      });
-    } else {
-      [waiting_game] = query_games.filter((elem) => {
-        if (elem.total === 1) return elem;
-      });
+    for (let elem of query_games) {
+      if (
+        (process.env.NODE_ENV === 'production' && elem.total === '1') ||
+        (process.env.NODE_ENV !== 'production' && elem.total === 1)
+      ) {
+        const check_game = await this.game_repo.findOne(elem.gameId, {
+          relations: ['players', 'players.user'],
+        });
+        if (check_game.players[0].user.id !== user.id) {
+          waiting_game = check_game;
+          break;
+        } else await this.game_repo.remove(check_game);
+      }
     }
 
     if (!waiting_game) {
@@ -124,14 +129,12 @@ export class GameService {
       game = await this.game_repo.save(game);
     } else {
       const err = new PlayerHttpError();
-      game = await this.game_repo.findOne(waiting_game.gameId, {
-        relations: ['players', 'players.user'],
-      });
+      game = waiting_game;
       await this.checkErrors(
         [user, game.players[0].user],
         game.players[0].user.login,
         err,
-        err.errorPlayerNotInGame,
+        err.errorPlayerOffline,
       );
     }
     player1 = this.player_repo.create({ user: user, game: game });

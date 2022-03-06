@@ -89,6 +89,9 @@ interface IMainPageContext {
 	gameWs: Socket | undefined;
 	setGameWs: Dispatch<SetStateAction<Socket | undefined>>;
 
+	roomId: string;
+	setRoomId: Dispatch<SetStateAction<string>>;
+
 	invitName: string;
 	setInvitName: Dispatch<SetStateAction<string>>;
 
@@ -177,6 +180,8 @@ const MainPageProvider = (props: any) => {
 	// const [dataHistory, setDataHistory] = useState([]);
 
 	const [loadingSocket, setLoadingSocket] = useState(false);
+
+	const [roomId, setRoomId] = useState('');
 
 	const [isWatchGame, setIsWatchGame] = useState(false);
 
@@ -384,11 +389,13 @@ const MainPageProvider = (props: any) => {
 		gameWs,
 		setGameWs,
 
+		roomId,
+		setRoomId,
+
 		invitName,
 		setInvitName,
 		isOpponant,
 		setIsOpponant,
-
 		opacity,
 		setOpacity,
 		playerNewGameInvit,

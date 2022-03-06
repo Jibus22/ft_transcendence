@@ -34,6 +34,8 @@ export default function MainPong() {
 		setPlayerNewGameInvit,
 		playerNewGameInvit,
 		setIsGameRandom,
+		roomId,
+		setRoomId,
 		gameWs,
 		isOpponant,
 		opacity,
@@ -55,7 +57,7 @@ export default function MainPong() {
 
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
-	const [roomId, setRoomId] = useState('');
+	// const [roomId, setRoomId] = useState('');
 	const [watchId, setWatchId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
 

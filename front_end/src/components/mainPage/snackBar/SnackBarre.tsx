@@ -26,16 +26,19 @@ export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
 	const navigate = useNavigate();
 
 	const handleClose = () => {
-		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
-		setTimeSnack(false);
+		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId }, (response: number) => {
+			if (response || !response) setTimeSnack(false);
+		});
 	};
 
 	const handleOk = () => {
-		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId });
-
-		setTimeSnack(false);
-		setStartGame(true);
-		navigate('/Mainpage');
+		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId }, (response: number) => {
+			if (!response) {
+				setTimeSnack(false);
+				setStartGame(true);
+				navigate('/Mainpage');
+			}
+		});
 	};
 
 	useEffect(() => {
