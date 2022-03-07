@@ -82,6 +82,7 @@ class PongGame extends React.Component<MyProps> {
 	fillStyle: string = 'white';
 	fontFace: FontFace = new FontFace('', '');
 	map: number = 0;
+	animationFrameId = 0;
 
 	broadcast = {
 		room: this.props.room,
@@ -382,9 +383,9 @@ class PongGame extends React.Component<MyProps> {
 		let loop = () => {
 			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
-			window.requestAnimationFrame(loop);
+			this.animationFrameId = window.requestAnimationFrame(loop);
 		};
-		window.requestAnimationFrame(loop);
+		this.animationFrameId = window.requestAnimationFrame(loop);
 	}
 
 	componentDidMount() {
@@ -477,6 +478,7 @@ class PongGame extends React.Component<MyProps> {
 		this.props.socket?.off('ballPosUpdate');
 		this.props.socket?.off('scoreUpdate');
 		this.props.socket?.off('powerUpUpdate');
+		cancelAnimationFrame(this.animationFrameId);
 	}
 
 	private _touch(e: any) {
