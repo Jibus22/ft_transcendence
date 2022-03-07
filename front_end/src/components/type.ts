@@ -3,6 +3,7 @@ export interface User {
 	login: string;
 	photo_url: string;
 	status: string;
+	game_ws?: string;
 }
 
 export interface Rank {
@@ -43,10 +44,26 @@ export interface LoginGame {
 	photo_url: string;
 }
 
-export interface UserChallenge {
+export interface IUserChallenge {
 	login_opponent: string;
 	login: string;
 	photo_url: string;
+	game_ws: string;
+}
+
+export class UserDto {
+	game_ws: string = '';
+	id: string = '';
+	login: string = '';
+	photo_url: string = '';
+	status: string = '';
+}
+
+export class UserChallenge {
+	login_opponent: string = '';
+	login: string = '';
+	photo_url: string = '';
+	game_ws: string = '';
 }
 
 export interface UserOnlineGame {
