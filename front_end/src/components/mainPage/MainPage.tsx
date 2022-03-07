@@ -264,24 +264,53 @@ const MainPage = () => {
 			});
 	});
 
-	const [countInvit, setCountInvit] = useState(0);
+	let countInvit = 0;
+	let timer:NodeJS.Timer;
+
+	const handleCloseTimeSnack = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
+		setTimeSnack(false);
+		countInvit--;
+		clearInterval(timer);
+	};
+
+	const handleOkTimeSnack = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId });
+		countInvit--;
+		setTimeSnack(false);
+		setStartGame(true);
+		clearInterval(timer);
+		//navigate('/Mainpage');
+	};
+
+	const [progress, setProgress] = React.useState(0);
 
 	useEffect(() => {
-		gameWs?.on('gameInvitation', async (challengerData, challengerWsId) => {
-			setCountInvit(countInvit + 1);
-
+		gameWs?.on('gameInvitation', (challengerData, challengerWsId) => {
+			console.log("invitation recu");
 			console.log(countInvit);
-
-			if (countInvit < 1) {
-				console.log('ici');
+			if (countInvit === 0) {
+				console.log('ici', countInvit);
+				countInvit++;
 				setChallengData([challengerData]);
 				setWsId(challengerWsId);
+				setTimeSnack(true);
+				timer = setInterval(() => {
+					setProgress((oldProgress) => {
+						if (oldProgress === 102) {
+							handleCloseTimeSnack();
+							return 0;
+						}
+						const diff = Math.random() * 0.4;
+						return Math.min(oldProgress + diff, 102);
+					});
+				}, 20);
 			} else {
-				console.log('ELSEEEEEEE');
+				console.log("Game Denied");
+				gameWs?.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
 			}
-			setTimeSnack(true);
 		});
-	}, [gameWs, countInvit]);
+	}, [gameWs]);
 
 	function disconnectGameWs() {
 		console.log('Click disconnect Chat ', gameWs?.id);
@@ -308,7 +337,7 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre wsId={wsId} countInvit={countInvit} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
+			{timeSnack && <SnackBarre timeSnack={timeSnack} handleOk={handleOkTimeSnack} handleClose={handleCloseTimeSnack} progress={progress} />}
 
 			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
