@@ -76,7 +76,11 @@ export class GameService {
   }
 
   async gameInvitation(login_opponent: string, user: User): Promise<User> {
-    const opponent = await this.usersService.findLogin(login_opponent);
+    this.logger.log('gameInvitation');
+    const [opponent] = await this.usersService.findOneWithAnyParam(
+      [{ login: login_opponent }],
+      { relations: ['local_photo', 'players'] },
+    );
     const err = new PlayerHttpError();
     await this.checkErrors(
       [user, opponent],
@@ -84,16 +88,17 @@ export class GameService {
       err,
       err.errorPlayerNotOnline,
     );
-    await this.usersService.update(user.id, { is_in_game: true }); //TODO: uncomment
+    await this.usersService.update(user.id, { is_in_game: true });
     return opponent;
   }
 
   ////////////////
 
   async joinGame(userId: string) {
+    this.logger.log('joinGame');
     let game: Game;
     let player1: Player;
-    let waiting_game: { gameId: string; total: string | number };
+    let waiting_game: Game;
     const user = await this.usersService.findOne(userId);
     const query_games: { gameId: string; total: string | number }[] =
       await getRepository(Player)
@@ -104,20 +109,34 @@ export class GameService {
         .where('player.game is not null')
         .getRawMany();
 
-    if (process.env.NODE_ENV === 'production') {
-      [waiting_game] = query_games.filter((elem) => {
-        if (elem.total === '1') return elem;
-      });
-    } else {
-      [waiting_game] = query_games.filter((elem) => {
-        if (elem.total === 1) return elem;
-      });
+    for (let elem of query_games) {
+      if (
+        (process.env.NODE_ENV === 'production' && elem.total === '1') ||
+        (process.env.NODE_ENV !== 'production' && elem.total === 1)
+      ) {
+        const check_game = await this.game_repo.findOne(elem.gameId, {
+          relations: ['players', 'players.user'],
+        });
+        if (check_game.players[0].user.id !== user.id) {
+          waiting_game = check_game;
+          break;
+        } else await this.game_repo.remove(check_game);
+      }
     }
 
     if (!waiting_game) {
       game = this.game_repo.create();
       game = await this.game_repo.save(game);
-    } else game = await this.game_repo.findOne(waiting_game.gameId);
+    } else {
+      const err = new PlayerHttpError();
+      game = waiting_game;
+      await this.checkErrors(
+        [user, game.players[0].user],
+        game.players[0].user.login,
+        err,
+        err.errorPlayerOffline,
+      );
+    }
     player1 = this.player_repo.create({ user: user, game: game });
     player1 = await this.player_repo.save(player1);
     this.game_repo

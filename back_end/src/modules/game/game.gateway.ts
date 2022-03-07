@@ -75,18 +75,18 @@ export class GameGateway
   //---------------------- GAME SUBSCRIPTION EVENTS --------------------------//
 
   async joinGame(game_id: string, joining: boolean) {
+    if (!joining) return { game_id: game_id, P1: null };
     this.logger.log('joinGame');
-    if (!joining) return null;
 
     const game = await this.gameService.findOne(game_id, {
-      relations: ['players', 'players.user'],
+      relations: ['players', 'players.user', 'players.user.local_photo'],
     });
     const ws_ids = [game.players[0].user.game_ws, game.players[1].user.game_ws];
     this.server
       .to(ws_ids[0])
       .emit('newPlayerJoined', myPtoUserDto(game.players[1].user));
     this.wsGameService.startGame(ws_ids, game.id, this.server);
-    return myPtoUserDto(game.players[0].user);
+    return { game_id: game_id, P1: myPtoUserDto(game.players[0].user) };
   }
 
   async gameInvitation(challenger: User, opponent: User) {
@@ -111,6 +111,7 @@ export class GameGateway
       this.wsGameService.cancelPanicGame([challenger, opponent]);
       throw new WsException('Wow shit');
     }
+    if (!challenger.is_in_game) return 1;
 
     if (reply.response === 'OK') {
       this.logger.log(`gameInvitation accepted: ${reply.response}`);
@@ -130,6 +131,7 @@ export class GameGateway
       });
       this.server.to(reply.to).emit('gameDenied', myPtoUserDto(opponent));
     }
+    return 0;
   }
 
   @SubscribeMessage('setMap')
@@ -138,7 +140,7 @@ export class GameGateway
     @MessageBody('room') room: string,
     @MessageBody('map') map: string,
   ) {
-    console.log('map:', map);
+    this.logger.log(`setMap: ${map}`);
     let gameData: Partial<Game>;
     const [game] = await this.gameService.findGameWithAnyParam(
       [{ id: room }],
@@ -159,16 +161,6 @@ export class GameGateway
     return gameData.watch;
   }
 
-  //Implémentation à voir: est ce que c'est un event envoyé depuis un des joueurs
-  //ou bien est-ce une methode a appeler differemment ? Genre qd l'update d'un
-  //game atteint un score de 10 ?
-  @SubscribeMessage('gameFinished')
-  async gameFinished(@MessageBody() room: string) {
-    this.server.of('game').except(room).emit('gameFinished', room);
-    // const watch = this.wsGameService.getWatchId(room);
-    // this.server.socketsLeave([room, watch]);//TODO uncomment
-  }
-
   @SubscribeMessage('watchGame')
   async watchGame(
     @ConnectedSocket() client: Socket,
@@ -178,7 +170,7 @@ export class GameGateway
       [{ watch: room }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },
     );
-    if (!game) return 'game not found';
+    if (!game || !game.watch) return null;
     client.join(room);
     return myPtoOnlineGameDto(game);
   }
@@ -198,15 +190,28 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
-    this.logger.log(`giveUpGame`);
+    this.logger.log(
+      `giveUpGame. room: ${bcast.room}, watchers: ${bcast.watchers}`,
+    );
     const [user] = await this.wsGameService.getUserFromParam(
       [{ game_ws: client.id }],
       { relations: ['players'] },
     );
-    const game = await this.gameService.findOne(bcast.room, {
-      relations: ['players', 'players.user'],
-    });
-    await this.wsGameService.handleGameEnd(client.id, game, this.server, user);
+    try {
+      const game = await this.gameService.findOne(bcast.room, {
+        relations: ['players', 'players.user'],
+      });
+      await this.wsGameService.handleGameEnd(
+        client.id,
+        game,
+        this.server,
+        user,
+      );
+    } catch (e) {
+      this.wsGameService.updatePlayerStatus(user, { is_in_game: false });
+      console.log('catch e.status: ', e.status);
+      console.log('catch e.message: ', e.message);
+    }
   }
 
   @SubscribeMessage('endGame')

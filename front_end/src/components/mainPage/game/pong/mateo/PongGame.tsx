@@ -83,6 +83,7 @@ class PongGame extends React.Component<MyProps> {
 	fillStyle: string = 'white';
 	fontFace: FontFace = new FontFace('', '');
 	map: number = 0;
+	animationFrameId = 0;
 
 	broadcast = {
 		room: this.props.room,
@@ -161,7 +162,7 @@ class PongGame extends React.Component<MyProps> {
 			},
 		});
 
-		if (this.scoreP1 === 100 || this.scoreP2 === 100) {
+		if (this.scoreP1 === 10 || this.scoreP2 === 10) {
 			let winner: string;
 			this.gamerunning = false;
 			if (this.scoreP1 === 10) winner = 'One';
@@ -386,9 +387,9 @@ class PongGame extends React.Component<MyProps> {
 		let loop = () => {
 			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
-			window.requestAnimationFrame(loop);
+			this.animationFrameId = window.requestAnimationFrame(loop);
 		};
-		window.requestAnimationFrame(loop);
+		this.animationFrameId = window.requestAnimationFrame(loop);
 	}
 
 	componentDidMount() {
@@ -443,7 +444,7 @@ class PongGame extends React.Component<MyProps> {
 			this.scoreP2 = score.score2;
 
 			//Affichage du gagnant
-			if (this.scoreP1 === 100 || this.scoreP2 === 100) {
+			if (this.scoreP1 === 10 || this.scoreP2 === 10) {
 				let winner: string;
 				this.gamerunning = false;
 				if (this.scoreP1 === 10) winner = 'One';
@@ -482,6 +483,7 @@ class PongGame extends React.Component<MyProps> {
 		this.props.socket?.off('scoreUpdate');
 		this.props.socket?.off('powerUpUpdate');
 		this._controller.abort();
+		cancelAnimationFrame(this.animationFrameId);
 	}
 
 	private _touch(e: any) {

@@ -77,8 +77,8 @@ export class WsConnectionService {
   private async waitReconnection(server: Server, user: User, game: Game) {
     this.logger.log(`waitReconnection: ${user.login} - ${game.id}`);
     let usr: User;
-    for (let i = 5; i >= 0; i--) {
-      await sleep(1000);
+    await sleep(1000);
+    for (let i = 8; i >= 0; i--) {
       [usr] = await this.usersService.findOneWithAnyParam(
         [{ id: user.id }],
         null,
@@ -90,8 +90,6 @@ export class WsConnectionService {
             relations: ['players', 'players.user', 'players.user.local_photo'],
           },
         );
-        console.log('1 - usr... ', usr);
-        console.log('updatedgame', updatedGame);
         if (!updatedGame.watch) return;
         await this.usersService.updateUser(usr, { is_in_game: true });
         server
@@ -104,8 +102,8 @@ export class WsConnectionService {
           .emit('playerCameBack', myPtoUserDto(usr));
         return;
       }
+      await sleep(500);
     }
-    console.log('2 - usr... ', usr);
     await this.wsGameService.handleGameEnd(usr.game_ws, game, server, user);
   }
 
@@ -127,9 +125,8 @@ export class WsConnectionService {
       [{ game_ws: client.id }],
       { relations: ['players', 'players.game'] },
     );
-    console.log('user is in game ? -> -> ->', user);
     if (user && user.is_in_game && user.players && user.players.length > 0)
-      this.handleGameDisconnection(server, user);
+      await this.handleGameDisconnection(server, user);
     await this.updateUser(client, {
       game_ws: null,
       is_in_game: false,

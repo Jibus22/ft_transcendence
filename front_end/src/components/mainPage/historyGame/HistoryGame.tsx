@@ -59,6 +59,27 @@ const HistoryGame = () => {
 		setIsActive(!isActive);
 	};
 
+	const formatDuration = (totalSeconds: number) => {
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = totalSeconds - hours * 3600 - minutes * 60;
+
+		let min;
+		let sec;
+		if (minutes <= 9) {
+			min = '0' + minutes;
+		} else {
+			min = minutes;
+		}
+		if (seconds <= 9) {
+			sec = '0' + seconds;
+		} else {
+			sec = seconds;
+		}
+
+		return [`${min}`, `:`, `${sec}`];
+	};
+
 	const convertTime = (int: number, option: number) => {
 		const date = new Date(int);
 		let time = '';
@@ -153,7 +174,7 @@ const HistoryGame = () => {
 						<p>{convertTime(data.createdAt, 1)}</p>
 					</div>
 					<div className="duration d-flex ">
-						<p>{convertTime(data.duration, 2)}</p>
+						<p>{formatDuration(data.duration)}</p>
 					</div>
 				</div>
 			</animated.div>

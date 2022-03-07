@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -33,6 +34,8 @@ export class GameController {
     private readonly gameGateway: GameGateway,
   ) {}
 
+  private readonly logger = new Logger('GameController');
+
   @ApiResponse({ type: UserDto, isArray: false })
   @ApiOperation({ summary: 'challenge anyone' })
   @Serialize(UserDto)
@@ -41,6 +44,7 @@ export class GameController {
     @CurrentUser() user: User,
     @Body() createGameDto: CreateGameDto,
   ) {
+    this.logger.log('gameInvitation');
     const opponent = await this.gameService.gameInvitation(
       createGameDto.login_opponent,
       user,
@@ -53,6 +57,7 @@ export class GameController {
   @ApiOperation({ summary: 'join a random game' })
   @Post('join')
   async playnow(@CurrentUser() user: User) {
+    this.logger.log('playnow');
     const ret: { game_id: string; joining: boolean } =
       await this.gameService.joinGame(user.id);
     return await this.gameGateway.joinGame(ret.game_id, ret.joining);
