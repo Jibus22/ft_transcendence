@@ -61,12 +61,17 @@ const HistoryGame = () => {
 
 	const convertTime = (int: number, option: number) => {
 		const date = new Date(int);
-		let time;
+		let time = '';
 		if (option === 1) {
 			time = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 		}
 		if (option === 2) {
-			time = date.getMinutes() + ':' + date.getSeconds();
+			if (date.getMinutes() < 10)
+				time += '0';
+			time += date.getMinutes() + ':' 
+			if (date.getSeconds() < 10)
+				time += '0';
+			time += date.getSeconds();
 		}
 
 		return time;
