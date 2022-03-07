@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
-import { UserMe } from '../../../type';
+import { User, UserMe } from '../../../type';
 import FormPlay from './FormPlay';
 import IconGame from './img/raquette.png';
 import './play.scss';
@@ -52,7 +52,7 @@ export default function Play({ Loadingclick }: Props) {
 			withCredentials: true,
 		})
 			.then((response) => {
-				const data: { game_id: string; P1: UserMe } = response.data;
+				const data: { game_id: string; P1: User } = response.data;
 				console.log(data);
 				if (!data.P1) {
 					setRoomId(data.game_id);
@@ -60,7 +60,7 @@ export default function Play({ Loadingclick }: Props) {
 					setIsOpponant(true);
 				} else {
 					setRoomId(data.game_id);
-					setDataPlayerNewGameJoin(response.data);
+					setDataPlayerNewGameJoin(data.P1);
 					setIsOpponant(false);
 					setPlayerNewGameJoin(true);
 				}

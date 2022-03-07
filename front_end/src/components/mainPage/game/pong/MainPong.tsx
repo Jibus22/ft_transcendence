@@ -8,7 +8,7 @@ import { useMainPage } from '../../../../MainPageContext';
 import MapChoice from './mapChoice/MapChoice';
 import PongGame from './mateo/PongGame';
 import './pongGame.scss';
-import { User, UserChallenge } from '../../../type';
+import { User, UserChallenge, UserDto } from '../../../type';
 
 export default function MainPong() {
 	const props = useSpring({
@@ -31,6 +31,7 @@ export default function MainPong() {
 		challengData,
 		dialogueLoading,
 		dataUserChallenge,
+		setDataUserChallenge,
 		setPlayerNewGameInvit,
 		playerNewGameInvit,
 		setIsGameRandom,
@@ -42,6 +43,7 @@ export default function MainPong() {
 		setOpacity,
 		leaveGame,
 		playerNewGameJoin,
+		setDataPlayerNewGameJoin,
 		dataPlayerNewGameJoin,
 		watchGameScore,
 		isWatchGame,
@@ -81,8 +83,20 @@ export default function MainPong() {
 			setLeaveGame(false);
 			setIsWatchGame(false);
 		} else {
-			gameWs?.emit('giveUpGame', { bcast: { room: roomId, watchers: watchId } });
+			let game_ws: string;
+			if (dataUserChallenge.length > 0) game_ws = dataUserChallenge[0].game_ws;
+			else if (dataGameRandomSocket?.game_ws) game_ws = dataGameRandomSocket.game_ws;
+			else if (dataPlayerNewGameJoin?.game_ws) game_ws = dataPlayerNewGameJoin.game_ws;
+			else game_ws = '';
+
+			gameWs?.emit('giveUpGame', {
+				bcast: { room: roomId, watchers: watchId, op: game_ws },
+			});
 			setOpen(false);
+
+			if (dataUserChallenge.length > 0) setDataUserChallenge([new UserChallenge()]);
+			else if (dataGameRandomSocket?.game_ws) setDataGameRandomSocket(new UserDto());
+			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
 			setTimeout(function () {
 				setStartGame(false);
 				setLeaveGame(false);
@@ -179,7 +193,7 @@ export default function MainPong() {
 			setCount(count);
 		});
 
-		gameWs?.on('newPlayerJoined', (obj: User) => {
+		gameWs?.on('newPlayerJoined', (obj: UserDto) => {
 			console.log(`💌  Event: newPlayerJoined -> `, obj);
 			setDataGameRandomSocket(obj);
 			setAcceptGame(true);
@@ -198,10 +212,22 @@ export default function MainPong() {
 			setRoomId(room);
 		});
 
-		gameWs?.on('playerGiveUp', (obj: any) => {
+		gameWs?.on('gaveUp', (usr: UserDto) => {
+			console.log(`💌  Event: gaveUp -> `);
+			console.log(usr);
+			setStartGame(false);
+			if (dataUserChallenge.length > 0) setDataUserChallenge([new UserChallenge()]);
+			else if (dataGameRandomSocket?.game_ws) setDataGameRandomSocket(new UserDto());
+			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
+		});
+
+		gameWs?.on('playerGiveUp', (obj: UserDto) => {
 			console.log(`💌  Event: playerGiveUp -> `);
 			console.log(obj);
 
+			if (dataUserChallenge.length > 0) setDataUserChallenge([new UserChallenge()]);
+			else if (dataGameRandomSocket?.game_ws) setDataGameRandomSocket(new UserDto());
+			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
 			// setOpen(false);
 			setStartGame(false);
 			// setLeaveGame(false);
@@ -221,6 +247,7 @@ export default function MainPong() {
 			gameWs?.off('gameDenied');
 			gameWs?.off('countDown');
 			gameWs?.off('newPlayerJoined');
+			gameWs?.off('gaveUp');
 		};
 	}, [gameWs]);
 

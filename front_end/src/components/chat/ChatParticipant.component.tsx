@@ -1,17 +1,17 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import axios from "axios";
-import { useEffect, useState } from "react";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import { useMainPage } from "../../MainPageContext";
+import { useMainPage } from '../../MainPageContext';
 import { useNavigate } from 'react-router-dom';
+import { UserChallenge } from '../type';
 
 const ChatParticipant = ({ user, currentUser }: any) => {
-
 	const [friends, setFriends] = useState<any[]>([]);
 	const [blocked, setBlocked] = useState<any[]>([]);
 	const [profile, setProfile] = useState<any | null>(null);
@@ -21,7 +21,9 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const getFriends = async () => {
 		setFriendsLoading(true);
-		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true }).catch(console.error);
+		const result = await axios
+			.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, { withCredentials: true })
+			.catch(console.error);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
 	};
@@ -34,9 +36,11 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const getBlocks = async () => {
-		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true }).catch(console.error);
+		const result = await axios
+			.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true })
+			.catch(console.error);
 		setBlocked(result?.data || []);
-		console.log("REOADING BLOCKS", result?.data);
+		console.log('REOADING BLOCKS', result?.data);
 	};
 
 	const isBlocked = () => {
@@ -76,17 +80,13 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const { setIsGameRandom, setDataUserChallenge, setIsOpponant, setStartGame, setSelectNav } = useMainPage();
 	const askGame = async (login: any) => {
-		const game = {
-			login_opponent: login,
-			login: '',
-			photo_url: '',
-		};
+		const game = new UserChallenge();
+		game['login_opponent'] = login;
 		try {
-			if (!playButtonVisible)
-				return;
+			if (!playButtonVisible) return;
 			setStartGame(true);
 			setSelectNav(false);
-			navigate("/Mainpage");
+			navigate('/Mainpage');
 			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 				withCredentials: true,
 			});
@@ -95,7 +95,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			setDataUserChallenge([response.data]);
 			setIsOpponant(true);
 			setIsGameRandom(false);
-			window.dispatchEvent(new CustomEvent('gameStartedFromChat', {detail: { login }}));
+			window.dispatchEvent(new CustomEvent('gameStartedFromChat', { detail: { login } }));
 		} catch (e: any) {
 			if (e.response.data) {
 				alert(e.response.data.message);
@@ -189,7 +189,7 @@ const ButtonRow = styled.div`
 	button {
 		width: 40px;
 		height: 40px;
-		background-color: #F1F1F1;
+		background-color: #f1f1f1;
 		border: none;
 		border-radius: 100%;
 		display: flex;

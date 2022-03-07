@@ -8,6 +8,7 @@ import { User, Rank } from '../../../type';
 import { useNavigate } from 'react-router-dom';
 import MainPong from '../../game/pong/MainPong';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { UserChallenge } from '../../../type';
 
 interface Props {
 	data: Array<Rank>;
@@ -43,11 +44,8 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	const [time, setTime] = useState(false);
 
 	const fetchDataChallenge = async (data: User) => {
-		const game = {
-			login_opponent: data.login,
-			login: '',
-			photo_url: '',
-		};
+		const game = new UserChallenge();
+		game['login_opponent'] = data.login;
 		try {
 			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 				withCredentials: true,

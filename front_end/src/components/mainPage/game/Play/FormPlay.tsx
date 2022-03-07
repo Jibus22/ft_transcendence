@@ -6,6 +6,7 @@ import { animated, useSpring } from 'react-spring';
 import * as yup from 'yup';
 import { string } from 'yup/lib/locale';
 import { useMainPage } from '../../../../MainPageContext';
+import { UserChallenge } from '../../../type';
 import IconMess from './img/carbon_send-alt-filled.png';
 
 interface Props {
@@ -37,12 +38,8 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values, { setErrors }) => {
-			const game = {
-				login_opponent: values.loggin,
-				login: '',
-				photo_url: '',
-			};
-
+			const game = new UserChallenge();
+			game['login_opponent'] = values.loggin;
 			try {
 				const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
 					withCredentials: true,

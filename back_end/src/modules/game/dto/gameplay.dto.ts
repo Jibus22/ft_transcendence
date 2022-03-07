@@ -1,6 +1,7 @@
 export class BroadcastDto {
   room: string;
   watchers: string;
+  op: string;
 }
 
 export class ScoreDto {

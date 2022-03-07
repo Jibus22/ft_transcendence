@@ -35,4 +35,8 @@ export class UserDto {
     }
   })
   status: string;
+
+  @ApiProperty()
+  @Expose()
+  game_ws: string;
 }

@@ -6,7 +6,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
 import { useMainPage } from '../../MainPageContext';
-import { OnlineGameRemooveType, OnlineGameType, UserMe } from '../type';
+import { OnlineGameRemooveType, OnlineGameType, UserDto, UserMe } from '../type';
 import './mainPage.scss';
 
 const MainPage = () => {
@@ -332,6 +332,12 @@ const MainPage = () => {
 				gameWs?.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
 			}
 		});
+
+		gameWs?.on('gaveUp', (usr: UserDto) => {
+			console.log(`💌  Event: gaveUp ->`);
+			console.log(usr);
+			setTimeSnack(false);
+		});
 	}, [gameWs]);
 
 	function disconnectGameWs() {
@@ -348,11 +354,6 @@ const MainPage = () => {
 			);
 		}
 	};
-
-	// const blabla = () => {
-	// 	console.log('test emit client- server');
-	// 	gameWs?.emit('testaccept', 'voila voila voila...');
-	// };
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>

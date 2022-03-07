@@ -191,12 +191,14 @@ export class GameGateway
     @MessageBody('bcast') bcast: BroadcastDto,
   ) {
     this.logger.log(
-      `giveUpGame. room: ${bcast.room}, watchers: ${bcast.watchers}`,
+      `giveUpGame. room: ${bcast.room},
+      watchers: ${bcast.watchers}, op: ${bcast.op}`,
     );
-    const [user] = await this.wsGameService.getUserFromParam(
-      [{ game_ws: client.id }],
+    const users = await this.wsGameService.getUserFromParam(
+      [{ game_ws: client.id }, { game_ws: bcast.op }],
       { relations: ['players'] },
     );
+    client.to(bcast.op).emit('gaveUp', myPtoUserDto(users[0]));
     try {
       const game = await this.gameService.findOne(bcast.room, {
         relations: ['players', 'players.user'],
@@ -205,10 +207,12 @@ export class GameGateway
         client.id,
         game,
         this.server,
-        user,
+        users[0],
       );
     } catch (e) {
-      this.wsGameService.updatePlayerStatus(user, { is_in_game: false });
+      this.wsGameService.updatePlayerStatus(users[0], { is_in_game: false });
+      if (users.length > 1)
+        this.wsGameService.updatePlayerStatus(users[1], { is_in_game: false });
       console.log('catch e.status: ', e.status);
       console.log('catch e.message: ', e.message);
     }
