@@ -193,7 +193,7 @@ export default function MainPong() {
 			setCount(count);
 		});
 
-		gameWs?.on('newPlayerJoined', (obj: User) => {
+		gameWs?.on('newPlayerJoined', (obj: UserDto) => {
 			console.log(`💌  Event: newPlayerJoined -> `, obj);
 			setDataGameRandomSocket(obj);
 			setAcceptGame(true);
@@ -221,7 +221,7 @@ export default function MainPong() {
 			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
 		});
 
-		gameWs?.on('playerGiveUp', (obj: any) => {
+		gameWs?.on('playerGiveUp', (obj: UserDto) => {
 			console.log(`💌  Event: playerGiveUp -> `);
 			console.log(obj);
 

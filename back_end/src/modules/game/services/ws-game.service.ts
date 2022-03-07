@@ -83,6 +83,12 @@ export class WsGameService {
     });
   }
 
+  // If only 1 player in game, delete game
+  // set score of player who didn't gave up to 10
+  // update game table so it has a end date and watch null
+  // update players status is_in_game: false
+  // notify the other of giving up
+  // leave rooms
   async handleGameEnd(
     client_id: string,
     game: Game,
