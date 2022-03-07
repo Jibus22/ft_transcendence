@@ -23,16 +23,23 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	};
 
 	const getMessages = async () => {
-		const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
-		const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
-		setMessages(sortedMessages);
+		try {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
+			const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
+			setMessages(sortedMessages);
+		} catch (e: any) { console.log(e) };
 	};
 
 	const sendMessage = async () => {
-		axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
-		{ body: message.slice(0, 10000) },
-		{ withCredentials: true });
-		setMessage("");
+		if (!message.length) {
+			return;
+		}
+		try {
+			axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
+			{ body: message.slice(0, 10000) },
+			{ withCredentials: true });
+			setMessage("");
+		} catch (e: any) { console.log(e) };
 	}
 
 	const getNameIfDM = () => {
@@ -105,7 +112,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		</ChatMessages>
 		<ChatField>
 			<input type="text" placeholder="Type here" value={message} onChange={onMessage} onKeyPress={(e: any) => e.key === "Enter" && sendMessage()}/>
-			<button onClick={sendMessage}>
+			<button onClick={sendMessage} disabled={!message.length}>
 				<SendIcon style={{color: "#ffffff"}} />
 			</button>
 		</ChatField>
@@ -198,6 +205,12 @@ const ChatField = styled.div`
 		display: flex;
 		align-items: center;
 		border-radius: 5px 0 0 5px;
+		transition: background-color .3s ease;
+	}
+
+	button[disabled] {
+		background-color: #F1F1F1;
+		cursor: disabled;
 	}
 `;
 

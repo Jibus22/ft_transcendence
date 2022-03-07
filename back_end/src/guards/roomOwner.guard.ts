@@ -33,6 +33,7 @@ export class RoomOwnerGuard implements CanActivate {
       logger.debug(`OWNER ACCESS GRANTED !`);
       return true;
     }
+    logger.debug(`USER IS NOT OWNER OF THE ROOM 🚫 `);
     throw new ForbiddenException('User must be logged and own the room');
   }
 }

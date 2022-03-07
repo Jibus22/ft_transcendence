@@ -29,6 +29,10 @@ seed-prod-data: ## Seed data when the production backend and database are runnin
 	@echo 'This recipe seeds all kind of data available for seeding !'
 	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:randomData'
 
+seed-prod-users: ## Seed users when the production backend and database are running
+	@echo 'This recipe seeds all kind of data available for seeding !'
+	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:randomUsers'
+
 seed-prod-getdata: ## Show data from database when the production backend and database are running
 	@echo 'This recipe seeds all kind of data available for seeding !'
 	docker exec -it $$(docker container ls --filter=label=service=backend --quiet) bash -c 'npm run seed:getData'

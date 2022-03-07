@@ -33,6 +33,7 @@ export class RoomBanGuard implements CanActivate {
       logger.debug(`BAN ACCESS GRANTED, user is not banned !`);
       return true;
     }
+    logger.debug(`USER IS BANNED 🚫 `);
     throw new UnauthorizedException('User is banned');
   }
 }

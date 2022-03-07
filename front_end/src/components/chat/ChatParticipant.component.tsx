@@ -29,10 +29,14 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const getProfile = async () => {
-		const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${user.user.login}`, {
-			withCredentials: true,
-		});
-		setProfile(result?.data);
+		try {
+			const result = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/profile/${user.user.login}`, {
+				withCredentials: true,
+			});
+			setProfile(result?.data);
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	const getBlocks = async () => {
@@ -54,28 +58,36 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const addFriend = async (id: any) => {
-		setFriendsLoading(true);
-		await axios.post(
-			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`,
-			{
-				id,
-			},
-			{ withCredentials: true },
-		);
-		window.dispatchEvent(new CustomEvent('friendsUpdated', { detail: {} }));
-		getFriends();
+		try {
+			setFriendsLoading(true);
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`,
+				{
+					id,
+				},
+				{ withCredentials: true },
+			);
+			window.dispatchEvent(new CustomEvent('friendsUpdated', { detail: {} }));
+			getFriends();
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	const removeFriend = async (id: any) => {
-		setFriendsLoading(true);
-		await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
-			withCredentials: true,
-			data: {
-				id,
-			},
-		});
-		window.dispatchEvent(new CustomEvent('friendsUpdated', { detail: {} }));
-		getFriends();
+		try {
+			setFriendsLoading(true);
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
+				withCredentials: true,
+				data: {
+					id,
+				},
+			});
+			window.dispatchEvent(new CustomEvent('friendsUpdated', { detail: {} }));
+			getFriends();
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	const { setIsGameRandom, setDataUserChallenge, setIsOpponant, setStartGame, setSelectNav } = useMainPage();
@@ -106,20 +118,30 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	};
 
 	const blockUser = async (id: any) => {
-		await axios.post(
-			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`,
-			{
-				id,
-			},
-			{ withCredentials: true },
-		);
-		getBlocks();
+		try {
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`,
+				{
+					id,
+				},
+				{ withCredentials: true },
+			);
+			getBlocks();
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	const unblockUser = async (id: any) => {
-		await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true, data: { id } });
-		getBlocks();
-		console.log('DELETING', id);
+		try {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, {
+				withCredentials: true,
+				data: { id },
+			});
+			getBlocks();
+		} catch (e: any) {
+			console.log(e);
+		}
 	};
 
 	useEffect(() => {
@@ -133,6 +155,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			<DetailsView>
 				<img src={user?.user.photo_url} alt={user?.user.login} />
 				<h3>{user?.user.login}</h3>
+				<span>{user?.user.status}</span>
 			</DetailsView>
 			{currentUser && user && currentUser.id !== user.user.id && (
 				<ButtonRow>
@@ -150,11 +173,13 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 							</button>
 						</Tooltip>
 					)}
-					<Tooltip title="Send game request">
-						<button onClick={() => askGame(user.user.login)}>
-							<SportsEsportsIcon />
-						</button>
-					</Tooltip>
+					{user?.user.status === 'online' && (
+						<Tooltip title="Send game request">
+							<button onClick={() => askGame(user.user.login)}>
+								<SportsEsportsIcon />
+							</button>
+						</Tooltip>
+					)}
 					{!isBlocked() && (
 						<Tooltip title="Block user">
 							<button onClick={() => blockUser(user.user.id)}>
