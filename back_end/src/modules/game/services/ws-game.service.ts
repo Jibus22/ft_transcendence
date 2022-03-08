@@ -76,7 +76,7 @@ export class WsGameService {
   //------------------------- END GAME ---------------------------------------//
 
   private async updateEndGame(game: Game, score: ScoreDto) {
-    await sleep(1000);
+    this.logger.log(`updateEndGame`);
     await this.gameService.updateScores(game.id, score, {
       watch: null,
       updatedAt: Date.now(),
@@ -108,7 +108,7 @@ export class WsGameService {
     score.score2 = game.players[1].score;
     if (game.players[0].user.id === user.id) score.score2 = 10;
     else score.score1 = 10;
-    this.updateEndGame(game, score);
+    await this.updateEndGame(game, score);
     await this.updatePlayerStatus2(
       [game.players[0].user.id, game.players[1].user.id],
       { is_in_game: false },

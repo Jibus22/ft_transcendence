@@ -244,6 +244,7 @@ const MainPage = () => {
 					console.log('DOCONNECT', socket);
 					socket.auth = { key: `${token}` };
 					socket.connect();
+					stateSetter(socket);
 				})
 				.catch((err) => {
 					console.log('DOCONNECT ERROR ->', err);
@@ -287,7 +288,7 @@ const MainPage = () => {
 	});
 
 	let countInvit = 0;
-	let timer:NodeJS.Timer;
+	let timer: NodeJS.Timer;
 	const [progress, setProgress] = React.useState(0);
 
 	const handleCloseTimeSnack = () => {
@@ -311,7 +312,6 @@ const MainPage = () => {
 		countInvit--;
 		clearInterval(timer);
 	};
-
 
 	useEffect(() => {
 		gameWs?.on('gameInvitation', async (challengerData, challengerWsId) => {
@@ -368,7 +368,9 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre timeSnack={timeSnack} handleOk={handleOkTimeSnack} handleClose ={handleCloseTimeSnack} progress={progress}/>}
+			{timeSnack && (
+				<SnackBarre timeSnack={timeSnack} handleOk={handleOkTimeSnack} handleClose={handleCloseTimeSnack} progress={progress} />
+			)}
 
 			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
