@@ -350,16 +350,20 @@ class PongGame extends React.Component<MyProps> {
 		else this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
 	}
 
+	_controller = new AbortController();
+
 	_startGame() {
 		const keystate = this._keystate;
 		document.addEventListener('keydown', function (evt) {
-			// evt.preventDefault();
+			evt.preventDefault();
 			keystate[evt.key] = true;
-		});
+		}, {signal: this._controller.signal});
 		document.addEventListener('keyup', function (evt) {
-			// evt.preventDefault();
+			evt.preventDefault();
 			delete keystate[evt.key];
-		});
+		}, {signal: this._controller.signal});
+		/*
+		//eventlistener mobile
 		document.addEventListener(
 			'ontouchstart',
 			function (e) {
@@ -373,7 +377,7 @@ class PongGame extends React.Component<MyProps> {
 				// e.preventDefault();
 			},
 			false,
-		);
+		);*/
 		this.props.socket!.send(
 			JSON.stringify({
 				type: 'message',
@@ -478,6 +482,7 @@ class PongGame extends React.Component<MyProps> {
 		this.props.socket?.off('ballPosUpdate');
 		this.props.socket?.off('scoreUpdate');
 		this.props.socket?.off('powerUpUpdate');
+		this._controller.abort();
 		cancelAnimationFrame(this.animationFrameId);
 	}
 
