@@ -286,33 +286,59 @@ const MainPage = () => {
 			});
 	});
 
-	let i = 0;
+	let countInvit = 0;
+	let timer:NodeJS.Timer;
+	const [progress, setProgress] = React.useState(0);
+
+	const handleCloseTimeSnack = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId }, (response: number) => {
+			if (response || !response) setTimeSnack(false);
+		});
+		setTimeSnack(false);
+		countInvit--;
+		clearInterval(timer);
+	};
+
+	const handleOkTimeSnack = () => {
+		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId }, (response: number) => {
+			if (!response) {
+				setTimeSnack(false);
+				setStartGame(true);
+				navigate('/Mainpage');
+			}
+		});
+		setTimeSnack(false);
+		countInvit--;
+		clearInterval(timer);
+	};
+
 
 	useEffect(() => {
 		gameWs?.on('gameInvitation', async (challengerData, challengerWsId) => {
-			i = i + 1;
+			countInvit++;
 
 			// console.log('count__invit ==', countInvit);
-			console.log('int i  ==', i);
-			if (i > 1) {
-				console.log('au dessus de 1');
+			//console.log('int i  ==', i);
+			if (countInvit > 1) {
 				setDisableInvitOther(false);
 				gameWs?.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
+				countInvit--;
 			} else {
-				console.log('is good');
 				setChallengData([challengerData]);
 				setWsId(challengerWsId);
 				setTimeSnack(true);
+				timer = setInterval(() => {
+					setProgress((oldProgress) => {
+						if (oldProgress === 102) {
+							handleCloseTimeSnack();
+							return 0;
+						}
+						const diff = Math.random() * 0.4;
+						return Math.min(oldProgress + diff, 102);
+					});
+				}, 20);
 				setDisableInvitOther(true);
 			}
-
-			// if (countInvit < 1) {
-			// 	console.log('ici');
-			// 	setChallengData([challengerData]);
-			// 	setWsId(challengerWsId);
-			// } else {
-			// 	console.log('ELSEEEEEEE');
-			// }
 		});
 
 		gameWs?.on('gaveUp', (usr: UserDto) => {
@@ -321,8 +347,6 @@ const MainPage = () => {
 			setTimeSnack(false);
 		});
 	}, [gameWs]);
-
-	// console.log('disableother main ====', disableInvitOther);
 
 	function disconnectGameWs() {
 		console.log('Click disconnect Chat ', gameWs?.id);
@@ -344,7 +368,7 @@ const MainPage = () => {
 			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
 				<CircularProgress color="inherit" />
 			</Backdrop>
-			{timeSnack && <SnackBarre wsId={wsId} setTimeSnack={setTimeSnack} timeSnack={timeSnack} />}
+			{timeSnack && <SnackBarre timeSnack={timeSnack} handleOk={handleOkTimeSnack} handleClose ={handleCloseTimeSnack} progress={progress}/>}
 
 			{/* <div>
 				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>

@@ -8,15 +8,14 @@ import './snackBarre.scss';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
-	wsId: string;
 	timeSnack: boolean;
-	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
+	handleOk: ()=>void;
+	handleClose: ()=>void;
+	progress:number
 }
 
-export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
+export default function SnackBarre({timeSnack, handleOk, handleClose, progress }: Props) {
 	const { isFriends, gameWs, invitName, challengData, setStartGame, disableInvitOther } = useMainPage();
-
-	const [progress, setProgress] = React.useState(0);
 
 	const [userName, setUserName] = useState('');
 
@@ -25,40 +24,12 @@ export default function SnackBarre({ wsId, timeSnack, setTimeSnack }: Props) {
 
 	const navigate = useNavigate();
 
-	const handleClose = () => {
-		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId }, (response: number) => {
-			if (response || !response) setTimeSnack(false);
-		});
-	};
-
-	const handleOk = () => {
-		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId }, (response: number) => {
-			if (!response) {
-				setTimeSnack(false);
-				setStartGame(true);
-				navigate('/Mainpage');
-			}
-		});
-	};
-
 	useEffect(() => {
 		// setCountInvit(countInvit + 1);
 
 		// console.log(countInvit);
 
-		const timer = setInterval(() => {
-			setProgress((oldProgress) => {
-				if (oldProgress === 102) {
-					handleClose();
-					return 0;
-				}
-				const diff = Math.random() * 0.4;
-				return Math.min(oldProgress + diff, 102);
-			});
-		}, 20);
-
 		return () => {
-			clearInterval(timer);
 		};
 	}, []);
 
