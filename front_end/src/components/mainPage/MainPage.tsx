@@ -346,6 +346,10 @@ const MainPage = () => {
 			console.log(usr);
 			setTimeSnack(false);
 		});
+		return () => {
+			gameWs?.off('gaveUp');
+			gameWs?.off('gameInvitation');
+		};
 	}, [gameWs]);
 
 	function disconnectGameWs() {
