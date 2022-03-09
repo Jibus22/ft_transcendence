@@ -59,6 +59,12 @@ export class UserDto {
 	status: string = '';
 }
 
+export class PlayerGameLogic {
+	opponent: Partial<UserDto> = new UserDto();
+	isP1: boolean = true;
+	isChallenge: boolean = true;
+}
+
 export class UserChallenge {
 	login_opponent: string = '';
 	login: string = '';
