@@ -1,23 +1,26 @@
 import { useMediaQuery } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, Dispatch } from 'react';
 import { Socket } from 'socket.io-client';
 import { OnlineGame, Play } from '../..';
 // import { Play, OnlineGame } from '../..';
 import { useMainPage } from '../../../MainPageContext';
+import { PlayerGameLogic } from '../../type';
 import './game.scss';
 import MainPong from './pong/MainPong';
 
 import { configResponsive, useResponsive } from 'ahooks';
 
-interface Props {
+interface IProps {
 	chatWs: Socket | undefined;
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
+	playerGameLogic: PlayerGameLogic;
 }
 
 configResponsive({
 	small: 1060,
 });
 
-export default function Game({ chatWs }: Props) {
+export default function Game({ chatWs, setPlayerGameLogic, playerGameLogic }: IProps) {
 	const { setTimeSnack, isWatchGame, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
 
 	// const { selectNav, setStartGame, startGame } = useMainPage();
@@ -47,7 +50,7 @@ export default function Game({ chatWs }: Props) {
 	}
 
 	useEffect(() => {
-		window.addEventListener("gameStartedFromChat", () => {
+		window.addEventListener('gameStartedFromChat', () => {
 			handleClick();
 		});
 	}, []);
@@ -57,13 +60,13 @@ export default function Game({ chatWs }: Props) {
 			if (!startGame) {
 				return (
 					<div className="h-100 w-100 d-flex">
-						<Play Loadingclick={handleClick} />
+						<Play Loadingclick={handleClick} setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />
 
 						<OnlineGame Loadingclick={handleClick} />
 					</div>
 				);
 			} else {
-				return <MainPong />;
+				return <MainPong setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />;
 			}
 		}
 		if (!responsive.small) {
@@ -71,9 +74,9 @@ export default function Game({ chatWs }: Props) {
 				return <OnlineGame Loadingclick={handleClick} />;
 			}
 			if (startGame || isWatchGame) {
-				return <MainPong />;
+				return <MainPong setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />;
 			} else {
-				return <Play Loadingclick={handleClick} />;
+				return <Play Loadingclick={handleClick} setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />;
 			}
 		}
 	};
