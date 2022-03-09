@@ -226,6 +226,7 @@ const Message = styled.div<{self: boolean}>`
 		background-color: #F1F1F1;
 		padding: 5px 7px;
 		position: relative;
+		word-break: break-all;
 
 		svg {
 			position: absolute;
