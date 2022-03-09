@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch } from 'react';
 import './userRank.scss';
 import { RankWorld } from '../..';
-import { User, Rank } from '../../type';
+import { User, Rank, PlayerGameLogic } from '../../type';
 import { useSpring, animated } from 'react-spring';
 import axios, { AxiosError } from 'axios';
 
-const UserRank = () => {
+interface IProps {
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
+}
+
+const UserRank = ({ setPlayerGameLogic }: IProps) => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -82,7 +86,7 @@ const UserRank = () => {
 				</div>
 
 				<div className="userPrintDIv">
-					<RankWorld data={data} dataFriends={dataFriends} isWorld={isWorld} />
+					<RankWorld setPlayerGameLogic={setPlayerGameLogic} data={data} dataFriends={dataFriends} isWorld={isWorld} />
 				</div>
 			</div>
 		</animated.div>

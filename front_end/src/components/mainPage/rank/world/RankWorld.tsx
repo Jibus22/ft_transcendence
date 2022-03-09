@@ -8,15 +8,16 @@ import { User, Rank } from '../../../type';
 import { useNavigate } from 'react-router-dom';
 import MainPong from '../../game/pong/MainPong';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { UserChallenge } from '../../../type';
+import { UserDto, UserChallenge, PlayerGameLogic } from '../../../type';
 
-interface Props {
+interface IProps {
 	data: Array<Rank>;
 	dataFriends: User[];
 	isWorld: boolean;
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
 }
 
-const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
+const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -44,14 +45,20 @@ const RankWorld = ({ data, dataFriends, isWorld }: Props) => {
 	const [time, setTime] = useState(false);
 
 	const fetchDataChallenge = async (data: User) => {
-		const game = new UserChallenge();
-		game['login_opponent'] = data.login;
 		try {
-			const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
-				withCredentials: true,
-			});
-			setDataUserChallenge([response.data]);
-			setIsOpponant(true);
+			const response = await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
+				{ login_opponent: data.login },
+				{
+					withCredentials: true,
+				},
+			);
+			const { login_opponent: string, ...userDto } = response.data;
+			const opponent: Partial<UserDto> = userDto;
+			setPlayerGameLogic({ isChallenge: true, isP1: true, opponent: opponent });
+
+			// setDataUserChallenge([response.data]);
+			// setIsOpponant(true);
 		} catch (error) {
 			console.error(error);
 		}
