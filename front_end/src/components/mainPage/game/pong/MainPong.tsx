@@ -1,16 +1,21 @@
 import { Avatar, Button, CircularProgress } from '@mui/material';
 import { useInterval } from 'ahooks';
 import clsx from 'clsx';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import MapChoice from './mapChoice/MapChoice';
 import PongGame from './mateo/PongGame';
 import './pongGame.scss';
-import { User, UserChallenge, UserDto } from '../../../type';
+import { User, UserChallenge, UserDto, PlayerGameLogic } from '../../../type';
 
-export default function MainPong() {
+interface IProps {
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
+	playerGameLogic: PlayerGameLogic;
+}
+
+export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -193,9 +198,10 @@ export default function MainPong() {
 			setCount(count);
 		});
 
-		gameWs?.on('newPlayerJoined', (obj: UserDto) => {
-			console.log(`💌  Event: newPlayerJoined -> `, obj);
-			setDataGameRandomSocket(obj);
+		gameWs?.on('newPlayerJoined', (opponent: UserDto) => {
+			console.log(`💌  Event: newPlayerJoined -> `, opponent);
+			// setDataGameRandomSocket(obj);
+			setPlayerGameLogic({ ...playerGameLogic, opponent: opponent });
 			setAcceptGame(true);
 			setOpacity(false);
 		});
