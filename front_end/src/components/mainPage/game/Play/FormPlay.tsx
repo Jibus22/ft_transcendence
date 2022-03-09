@@ -1,21 +1,22 @@
 import { CircularProgress, IconButton, TextField } from '@mui/material';
 import axios, { AxiosError } from 'axios';
 import { useFormik } from 'formik';
-import React, { useState } from 'react';
+import React, { useState, Dispatch } from 'react';
 import { animated, useSpring } from 'react-spring';
 import * as yup from 'yup';
 import { string } from 'yup/lib/locale';
 import { useMainPage } from '../../../../MainPageContext';
-import { UserChallenge } from '../../../type';
+import { UserChallenge, UserDto, PlayerGameLogic } from '../../../type';
 import IconMess from './img/carbon_send-alt-filled.png';
 
-interface Props {
+interface IProps {
 	Loadingclick: () => void;
 	disable: boolean;
 	loading: boolean;
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
 }
 
-export default function FormPlay({ Loadingclick, disable, loading }: Props) {
+export default function FormPlay({ Loadingclick, disable, loading, setPlayerGameLogic }: IProps) {
 	const anim = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -38,15 +39,21 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values, { setErrors }) => {
-			const game = new UserChallenge();
-			game['login_opponent'] = values.loggin;
 			try {
-				const response = await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, game, {
-					withCredentials: true,
-				});
-				setDataUserChallenge([response.data]);
-				setIsOpponant(true);
-				setIsGameRandom(false);
+				const response = await axios.post(
+					`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
+					{ login_opponent: values.loggin },
+					{
+						withCredentials: true,
+					},
+				);
+				const { login_opponent: string, ...userDto } = response.data;
+				const opponent: Partial<UserDto> = userDto;
+				setPlayerGameLogic({ isChallenge: true, isP1: true, opponent: opponent });
+
+				// setDataUserChallenge([response.data]);
+				// setIsOpponant(true);
+				// setIsGameRandom(false);
 				Loadingclick();
 			} catch (error) {
 				const err = error as AxiosError;

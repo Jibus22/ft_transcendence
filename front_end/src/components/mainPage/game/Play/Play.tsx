@@ -1,10 +1,10 @@
 import { LoadingButton } from '@mui/lab';
 import { Button, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
-import { User, UserMe } from '../../../type';
+import { User, UserDto, UserMe, PlayerGameLogic } from '../../../type';
 import FormPlay from './FormPlay';
 import IconGame from './img/raquette.png';
 import './play.scss';
@@ -12,9 +12,11 @@ import './safari.css';
 
 interface Props {
 	Loadingclick: () => void;
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
+	playerGameLogic: PlayerGameLogic;
 }
 
-export default function Play({ Loadingclick }: Props) {
+export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic }: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -52,17 +54,19 @@ export default function Play({ Loadingclick }: Props) {
 			withCredentials: true,
 		})
 			.then((response) => {
-				const data: { game_id: string; P1: User } = response.data;
+				const data: { game_id: string; P1: UserDto } = response.data;
 				console.log(data);
 				if (!data.P1) {
 					setRoomId(data.game_id);
-					setPlayerNewGameInvit(true);
-					setIsOpponant(true);
+					setPlayerGameLogic({ ...playerGameLogic, isChallenge: false, isP1: true });
+					// setPlayerNewGameInvit(true);
+					// setIsOpponant(true);
 				} else {
 					setRoomId(data.game_id);
-					setDataPlayerNewGameJoin(data.P1);
-					setIsOpponant(false);
-					setPlayerNewGameJoin(true);
+					setPlayerGameLogic({ isChallenge: false, isP1: false, opponent: data.P1 });
+					// setDataPlayerNewGameJoin(data.P1);
+					// setIsOpponant(false);
+					// setPlayerNewGameJoin(true);
 				}
 			})
 			.catch((err) => {
@@ -106,7 +110,7 @@ export default function Play({ Loadingclick }: Props) {
 			</div>
 		);
 	} else {
-		buttonFriends = <FormPlay Loadingclick={Loadingclick} disable={isDisable} loading={loading} />;
+		buttonFriends = <FormPlay Loadingclick={Loadingclick} disable={isDisable} loading={loading} setPlayerGameLogic={setPlayerGameLogic} />;
 	}
 
 	return (
