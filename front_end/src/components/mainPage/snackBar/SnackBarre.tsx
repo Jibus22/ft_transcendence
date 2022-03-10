@@ -3,18 +3,19 @@ import { LinearProgress } from '@mui/material';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import { useMainPage } from '../../../MainPageContext';
-import { User, Rank } from '../../type';
+import { User, Rank, PlayerGameLogic } from '../../type';
 import './snackBarre.scss';
 import { useNavigate } from 'react-router-dom';
 
-interface Props {
+interface IProps {
 	timeSnack: boolean;
-	handleOk: ()=>void;
-	handleClose: ()=>void;
-	progress:number
+	handleOk: () => void;
+	handleClose: () => void;
+	progress: number;
+	playerGameLogic: PlayerGameLogic;
 }
 
-export default function SnackBarre({timeSnack, handleOk, handleClose, progress }: Props) {
+export default function SnackBarre({ timeSnack, handleOk, handleClose, progress, playerGameLogic }: IProps) {
 	const { isFriends, gameWs, invitName, challengData, setStartGame, disableInvitOther } = useMainPage();
 
 	const [userName, setUserName] = useState('');
@@ -29,8 +30,7 @@ export default function SnackBarre({timeSnack, handleOk, handleClose, progress }
 
 		// console.log(countInvit);
 
-		return () => {
-		};
+		return () => {};
 	}, []);
 
 	// useEffect(() => {
@@ -64,7 +64,7 @@ export default function SnackBarre({timeSnack, handleOk, handleClose, progress }
 					vertical: 'top',
 					horizontal: 'right',
 				}}
-				message={`${challengData[0].login} Challenge you`}
+				message={`${playerGameLogic.opponent.login} Challenge you`}
 				action={action}
 			/>
 		</div>
