@@ -105,7 +105,6 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				return;
 			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-					participant_id: user.id,
 					user_id: user.user.id,
 					restriction_type: "mute",
 					duration: parseInt(duration)
@@ -128,7 +127,6 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			}
 			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-					participant_id: user.id,
 					user_id: user.user.id,
 					restriction_type: "ban",
 					duration: parseInt(duration)
