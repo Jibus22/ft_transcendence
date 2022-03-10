@@ -15,7 +15,7 @@ import {
 } from '..';
 import { useMainPage } from '../../MainPageContext';
 import {
-	OnlineGameRemooveType,
+	IOnlineGameRemove,
 	OnlineGameType,
 	PlayerGameLogic,
 	UserDto,
@@ -153,18 +153,30 @@ const MainPage = () => {
 			//enlever l'objet onlinegame de la liste des onlinegames
 		});
 
-		gameWs?.on('goBackInGame', (obj: OnlineGameRemooveType) => {
+		gameWs?.on('goBackInGame', (gameData: IOnlineGameRemove) => {
 			console.log(`💌  Event: goBackInGame ->`);
-			setDataUserBack(obj);
+			if (userName === gameData.challenger.login)
+				setPlayerGameLogic({
+					opponent: gameData.opponent,
+					isP1: true,
+					isChallenge: false,
+				});
+			else
+				setPlayerGameLogic({
+					opponent: gameData.challenger,
+					isP1: false,
+					isChallenge: false,
+				});
+			setDataUserBack(gameData);
 
-			if (userName === obj.challenger.login) {
-				setIsOpponant(true);
-			} else {
-				setIsOpponant(false);
-			}
+			// if (userName === gameData.challenger.login) {
+			// 	setIsOpponant(true);
+			// } else {
+			// 	setIsOpponant(false);
+			// }
 			setBackInGame(true);
-			setIsGameRandom(true);
-			setPlayerNewGameInvit(true);
+			// setIsGameRandom(true);
+			// setPlayerNewGameInvit(true);
 			setStartGame(true);
 		});
 

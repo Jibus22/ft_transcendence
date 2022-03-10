@@ -72,30 +72,31 @@ export class UserChallenge {
 	game_ws: string = '';
 }
 
-export interface UserOnlineGame {
+export interface IUserOnlineGame {
 	login: string;
 	photo_url: string;
 	status: string;
 	score: number;
+	game_ws: string;
 }
 
 export interface OnlineGameType {
-	challenger: UserOnlineGame;
-	opponent: UserOnlineGame;
+	challenger: IUserOnlineGame;
+	opponent: IUserOnlineGame;
 	watch: string;
 	createdAt: number;
 }
 
 export interface OnlineGameAndMapType {
-	challenger: UserOnlineGame;
-	opponent: UserOnlineGame;
+	challenger: IUserOnlineGame;
+	opponent: IUserOnlineGame;
 	watch: string;
 	map: null | 'one' | 'two' | 'three';
 }
 
-export interface OnlineGameRemooveType {
-	challenger: UserOnlineGame;
-	opponent: UserOnlineGame;
+export interface IOnlineGameRemove {
+	challenger: IUserOnlineGame;
+	opponent: IUserOnlineGame;
 	watch: string;
 	map: null | 'one' | 'two' | 'three';
 	createdAt: number;

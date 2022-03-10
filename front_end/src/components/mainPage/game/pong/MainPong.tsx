@@ -58,6 +58,7 @@ export default function MainPong({
 		setIsWatchGame,
 		backInGame,
 		dataUserBack,
+		setDataUserBack,
 		open,
 		setOpen,
 	} = useMainPage();

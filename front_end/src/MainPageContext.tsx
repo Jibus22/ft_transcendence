@@ -1,5 +1,13 @@
 import ErrorIcon from '@mui/icons-material/Error';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import {
+	Button,
+	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+} from '@mui/material';
 import { io, Socket } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
@@ -9,10 +17,10 @@ import {
 	LoginGame,
 	User,
 	UserChallenge,
-	UserOnlineGame,
+	IUserOnlineGame,
 	OnlineGameType,
 	OnlineGameAndMapType,
-	OnlineGameRemooveType,
+	IOnlineGameRemove,
 } from './components/type';
 import { boolean } from 'yup';
 
@@ -43,8 +51,8 @@ interface IMainPageContext {
 	userImg: string;
 	pathPop: string;
 
-	dataUserBack: OnlineGameRemooveType;
-	setDataUserBack: Dispatch<SetStateAction<OnlineGameRemooveType>>;
+	dataUserBack: IOnlineGameRemove;
+	setDataUserBack: Dispatch<SetStateAction<IOnlineGameRemove>>;
 
 	setData: Dispatch<SetStateAction<never[]>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
@@ -77,13 +85,24 @@ interface IMainPageContext {
 	fetchDataUserMe: () => void;
 	onSubmit: (file: File, path: string) => void;
 	onSubmitUpload: (file: File) => void;
-	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
+	dialogMui: (
+		open: boolean,
+		disagree: () => void,
+		agree: () => void,
+		title: string,
+		description: string,
+	) => void;
 	setStatusColor: (status: string) => string;
 
 	isGameRandom: boolean;
 	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
 
-	dialogueLoading: (open: boolean, text: string, h1: string, h2: string) => void;
+	dialogueLoading: (
+		open: boolean,
+		text: string,
+		h1: string,
+		h2: string,
+	) => void;
 	disconectAuth: () => void;
 
 	gameWs: Socket | undefined;
@@ -197,9 +216,12 @@ const MainPageProvider = (props: any) => {
 
 	const fetchDataUserMe = async () => {
 		try {
-			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
-				withCredentials: true,
-			});
+			const { data } = await axios.get(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`,
+				{
+					withCredentials: true,
+				},
+			);
 			setData([data]);
 		} catch (err) {
 			console.log(err);
@@ -208,9 +230,14 @@ const MainPageProvider = (props: any) => {
 
 	const disconectAuth = async () => {
 		try {
-			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
-				withCredentials: true,
-			});
+			await axios.delete(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/auth/signout`,
+				{
+					withCredentials: true,
+				},
+			);
 			navigate('/');
 		} catch (error) {
 			console.log(error);
@@ -221,9 +248,13 @@ const MainPageProvider = (props: any) => {
 		let data = new FormData();
 		data.append('file', file);
 		try {
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path, data, {
-				withCredentials: true,
-			});
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path,
+				data,
+				{
+					withCredentials: true,
+				},
+			);
 			fetchDataUserMe();
 		} catch (err) {
 			console.log(err);
@@ -239,9 +270,13 @@ const MainPageProvider = (props: any) => {
 			data.append('file', file);
 		}
 		try {
-			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`, data, {
-				withCredentials: true,
-			});
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`,
+				data,
+				{
+					withCredentials: true,
+				},
+			);
 			fetchDataUserMe();
 		} catch (error) {
 			const err = error as AxiosError;
@@ -252,7 +287,13 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
-	const dialogMui = (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => {
+	const dialogMui = (
+		open: boolean,
+		disagree: () => void,
+		agree: () => void,
+		title: string,
+		description: string,
+	) => {
 		return (
 			<Dialog
 				open={open}
@@ -269,10 +310,16 @@ const MainPageProvider = (props: any) => {
 					</div>
 				</DialogTitle>
 				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">{description}</DialogContentText>
+					<DialogContentText id="alert-dialog-description">
+						{description}
+					</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
-					<Button className="buttonMui" sx={{ color: 'red' }} onClick={disagree}>
+					<Button
+						className="buttonMui"
+						sx={{ color: 'red' }}
+						onClick={disagree}
+					>
 						Disagree
 					</Button>
 
@@ -284,7 +331,12 @@ const MainPageProvider = (props: any) => {
 		);
 	};
 
-	const dialogueLoading = (open: boolean, title: string, h1: string, h2: string) => {
+	const dialogueLoading = (
+		open: boolean,
+		title: string,
+		h1: string,
+		h2: string,
+	) => {
 		return (
 			<Dialog
 				open={open}
@@ -300,8 +352,12 @@ const MainPageProvider = (props: any) => {
 					</div>
 				</DialogTitle>
 				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">{h1}</DialogContentText>
-					<DialogContentText id="alert-dialog-description">{h2}</DialogContentText>
+					<DialogContentText id="alert-dialog-description">
+						{h1}
+					</DialogContentText>
+					<DialogContentText id="alert-dialog-description">
+						{h2}
+					</DialogContentText>
 					<CircularProgress className="circularDialogMui" />
 				</DialogContent>
 			</Dialog>
@@ -434,7 +490,12 @@ const MainPageProvider = (props: any) => {
 		setOpen,
 	};
 
-	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
+	return (
+		<MainPageContext.Provider
+			value={ProviderValue}
+			{...props}
+		></MainPageContext.Provider>
+	);
 };
 
 const useMainPage = () => {
