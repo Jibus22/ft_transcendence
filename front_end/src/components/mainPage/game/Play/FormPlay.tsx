@@ -14,7 +14,12 @@ interface IProps {
 	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
 }
 
-export default function FormPlay({ Loadingclick, disable, loading, setPlayerGameLogic }: IProps) {
+export default function FormPlay({
+	Loadingclick,
+	disable,
+	loading,
+	setPlayerGameLogic,
+}: IProps) {
 	const anim = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -45,14 +50,19 @@ export default function FormPlay({ Loadingclick, disable, loading, setPlayerGame
 				);
 				const { login_opponent: string, ...userDto } = response.data;
 				const opponent: Partial<UserDto> = userDto;
-				setPlayerGameLogic({ isChallenge: true, isP1: true, opponent: opponent });
+				setPlayerGameLogic({
+					isChallenge: true,
+					isP1: true,
+					opponent: opponent,
+				});
 
 				Loadingclick();
 			} catch (error) {
 				const err = error as AxiosError;
 				const res_err = err.response;
 				if (res_err?.status === 404) setErrors({ loggin: 'User not found' });
-				else if (res_err?.status === 403) setErrors({ loggin: res_err?.data['message'] });
+				else if (res_err?.status === 403)
+					setErrors({ loggin: res_err?.data['message'] });
 				else setErrors({ loggin: 'Error, go to sleep' });
 			}
 		},
@@ -64,7 +74,9 @@ export default function FormPlay({ Loadingclick, disable, loading, setPlayerGame
 				<div className="formDivButton">
 					<form
 						onSubmit={formik.handleSubmit}
-						className={`${!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '} d-flex w-100 h-100`}
+						className={`${
+							!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '
+						} d-flex w-100 h-100`}
 					>
 						<TextField
 							className="muiButtonInput"

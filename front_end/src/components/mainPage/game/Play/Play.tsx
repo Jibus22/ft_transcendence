@@ -16,7 +16,11 @@ interface Props {
 	playerGameLogic: PlayerGameLogic;
 }
 
-export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic }: Props) {
+export default function Play({
+	Loadingclick,
+	setPlayerGameLogic,
+	playerGameLogic,
+}: Props) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -27,7 +31,14 @@ export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic
 		},
 	});
 
-	const { isDisable, loading, setSelectQuery, setIsGameRandom, loadingSocket, setRoomId } = useMainPage();
+	const {
+		isDisable,
+		loading,
+		setSelectQuery,
+		setIsGameRandom,
+		loadingSocket,
+		setRoomId,
+	} = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
 
@@ -37,7 +48,9 @@ export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic
 
 	const fetchDataGameRandom = async () => {
 		await axios({
-			url: `http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/join`,
+			url: `http://${
+				process.env.REACT_APP_BASE_URL || 'localhost:3000'
+			}/game/join`,
 			method: 'POST',
 			withCredentials: true,
 		})
@@ -45,8 +58,18 @@ export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic
 				const data: { game_id: string; P1: UserDto } = response.data;
 				console.log(data);
 				setRoomId(data.game_id);
-				if (!data.P1) setPlayerGameLogic({ ...playerGameLogic, isChallenge: false, isP1: true });
-				else setPlayerGameLogic({ isChallenge: false, isP1: false, opponent: data.P1 });
+				if (!data.P1)
+					setPlayerGameLogic({
+						...playerGameLogic,
+						isChallenge: false,
+						isP1: true,
+					});
+				else
+					setPlayerGameLogic({
+						isChallenge: false,
+						isP1: false,
+						opponent: data.P1,
+					});
 			})
 			.catch((err) => {
 				console.error(err);
@@ -89,7 +112,14 @@ export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic
 			</div>
 		);
 	} else {
-		buttonFriends = <FormPlay Loadingclick={Loadingclick} disable={isDisable} loading={loading} setPlayerGameLogic={setPlayerGameLogic} />;
+		buttonFriends = (
+			<FormPlay
+				Loadingclick={Loadingclick}
+				disable={isDisable}
+				loading={loading}
+				setPlayerGameLogic={setPlayerGameLogic}
+			/>
+		);
 	}
 
 	return (

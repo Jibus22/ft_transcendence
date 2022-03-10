@@ -4,9 +4,23 @@ import axios from 'axios';
 import React, { useEffect, useState, Dispatch } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
-import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
+import {
+	ErrorPage,
+	Game,
+	Header,
+	HistoryGame,
+	ParamUser,
+	SnackBarre,
+	UserRank,
+} from '..';
 import { useMainPage } from '../../MainPageContext';
-import { OnlineGameRemooveType, OnlineGameType, PlayerGameLogic, UserDto, UserMe } from '../type';
+import {
+	OnlineGameRemooveType,
+	OnlineGameType,
+	PlayerGameLogic,
+	UserDto,
+	UserMe,
+} from '../type';
 import './mainPage.scss';
 import { doDisconnect, connectWs } from './socketInit/socketCoreInit';
 import { gameCallbacks, setWsCallbacks } from './socketInit/socketCbInit';
@@ -47,11 +61,16 @@ const MainPage = () => {
 
 	const navigate = useNavigate();
 
-	const fetchDataUserMe = async (setter: Dispatch<React.SetStateAction<string>>) => {
+	const fetchDataUserMe = async (
+		setter: Dispatch<React.SetStateAction<string>>,
+	) => {
 		try {
-			const response = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
-				withCredentials: true,
-			});
+			const response = await axios.get(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`,
+				{
+					withCredentials: true,
+				},
+			);
 			const user: UserMe = response.data;
 			setData([response.data]);
 			setter(user.login);
@@ -69,8 +88,18 @@ const MainPage = () => {
 	useMount(async () => {
 		await fetchDataUserMe(setUserName)
 			.then(async (login: string | undefined) => {
-				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, setGameWs, setLoadingSocket);
-				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, setChatWs, setLoadingSocket);
+				await connectWs(
+					`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
+					gameCallbacks,
+					setGameWs,
+					setLoadingSocket,
+				);
+				await connectWs(
+					`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`,
+					setWsCallbacks,
+					setChatWs,
+					setLoadingSocket,
+				);
 			})
 			.catch(() => {
 				navigate('/');
@@ -83,9 +112,13 @@ const MainPage = () => {
 	const [wsId, setWsId] = useState('');
 
 	const handleCloseTimeSnack = () => {
-		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId }, (response: number) => {
-			if (response || !response) setTimeSnack(false);
-		});
+		gameWs?.emit(
+			'gameInvitResponse',
+			{ response: 'KO', to: wsId },
+			(response: number) => {
+				if (response || !response) setTimeSnack(false);
+			},
+		);
 		setTimeSnack(false);
 		setPlayerGameLogic(new PlayerGameLogic());
 		countInvit--;
@@ -93,13 +126,17 @@ const MainPage = () => {
 	};
 
 	const handleOkTimeSnack = () => {
-		gameWs?.emit('gameInvitResponse', { response: 'OK', to: wsId }, (response: number) => {
-			if (!response) {
-				setTimeSnack(false);
-				setStartGame(true);
-				navigate('/Mainpage');
-			}
-		});
+		gameWs?.emit(
+			'gameInvitResponse',
+			{ response: 'OK', to: wsId },
+			(response: number) => {
+				if (!response) {
+					setTimeSnack(false);
+					setStartGame(true);
+					navigate('/Mainpage');
+				}
+			},
+		);
 		setTimeSnack(false);
 		countInvit--;
 		clearInterval(timer);
@@ -136,30 +173,40 @@ const MainPage = () => {
 			//catch error
 		});
 
-		gameWs?.on('gameInvitation', async (challengerData: UserDto, challengerWsId: string) => {
-			countInvit++;
-			if (countInvit > 1) {
-				setDisableInvitOther(false);
-				gameWs?.emit('gameInvitResponse', { response: 'KO', to: challengerWsId });
-				countInvit--;
-			} else {
-				// setChallengData([challengerData]);
-				setPlayerGameLogic({ ...playerGameLogic, isP1: false, opponent: challengerData });
-				setWsId(challengerWsId);
-				setTimeSnack(true);
-				timer = setInterval(() => {
-					setProgress((oldProgress) => {
-						if (oldProgress === 102) {
-							handleCloseTimeSnack();
-							return 0;
-						}
-						const diff = Math.random() * 0.4;
-						return Math.min(oldProgress + diff, 102);
+		gameWs?.on(
+			'gameInvitation',
+			async (challengerData: UserDto, challengerWsId: string) => {
+				countInvit++;
+				if (countInvit > 1) {
+					setDisableInvitOther(false);
+					gameWs?.emit('gameInvitResponse', {
+						response: 'KO',
+						to: challengerWsId,
 					});
-				}, 20);
-				setDisableInvitOther(true);
-			}
-		});
+					countInvit--;
+				} else {
+					// setChallengData([challengerData]);
+					setPlayerGameLogic({
+						...playerGameLogic,
+						isP1: false,
+						opponent: challengerData,
+					});
+					setWsId(challengerWsId);
+					setTimeSnack(true);
+					timer = setInterval(() => {
+						setProgress((oldProgress) => {
+							if (oldProgress === 102) {
+								handleCloseTimeSnack();
+								return 0;
+							}
+							const diff = Math.random() * 0.4;
+							return Math.min(oldProgress + diff, 102);
+						});
+					}, 20);
+					setDisableInvitOther(true);
+				}
+			},
+		);
 
 		gameWs?.on('gaveUp', (usr: UserDto) => {
 			console.log(`💌  Event: gaveUp ->`);
@@ -197,7 +244,10 @@ const MainPage = () => {
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
-			<Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={time}>
+			<Backdrop
+				sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+				open={time}
+			>
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			{timeSnack && (
@@ -220,11 +270,20 @@ const MainPage = () => {
 			<Routes>
 				<Route
 					path="/MainPage"
-					element={<Game chatWs={chatWs} setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />}
+					element={
+						<Game
+							chatWs={chatWs}
+							setPlayerGameLogic={setPlayerGameLogic}
+							playerGameLogic={playerGameLogic}
+						/>
+					}
 				/>
 				<Route path="/History-Game" element={<HistoryGame />} />
 				<Route path="/Setting" element={<ParamUser setTime={setTime} />} />
-				<Route path="/Rank" element={<UserRank setPlayerGameLogic={setPlayerGameLogic} />} />
+				<Route
+					path="/Rank"
+					element={<UserRank setPlayerGameLogic={setPlayerGameLogic} />}
+				/>
 				<Route path="*" element={<ErrorPage isHeader={setIsHeader} />} />
 			</Routes>
 

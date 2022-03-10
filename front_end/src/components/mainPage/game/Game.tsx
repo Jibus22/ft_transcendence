@@ -20,8 +20,21 @@ configResponsive({
 	small: 1060,
 });
 
-export default function Game({ chatWs, setPlayerGameLogic, playerGameLogic }: IProps) {
-	const { setTimeSnack, isWatchGame, setIsDisable, setLoading, setIsFriends, selectNav, setStartGame, startGame } = useMainPage();
+export default function Game({
+	chatWs,
+	setPlayerGameLogic,
+	playerGameLogic,
+}: IProps) {
+	const {
+		setTimeSnack,
+		isWatchGame,
+		setIsDisable,
+		setLoading,
+		setIsFriends,
+		selectNav,
+		setStartGame,
+		startGame,
+	} = useMainPage();
 
 	// const { selectNav, setStartGame, startGame } = useMainPage();
 	const responsive = useResponsive();
@@ -60,13 +73,22 @@ export default function Game({ chatWs, setPlayerGameLogic, playerGameLogic }: IP
 			if (!startGame) {
 				return (
 					<div className="h-100 w-100 d-flex">
-						<Play Loadingclick={handleClick} setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />
+						<Play
+							Loadingclick={handleClick}
+							setPlayerGameLogic={setPlayerGameLogic}
+							playerGameLogic={playerGameLogic}
+						/>
 
 						<OnlineGame Loadingclick={handleClick} />
 					</div>
 				);
 			} else {
-				return <MainPong setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />;
+				return (
+					<MainPong
+						setPlayerGameLogic={setPlayerGameLogic}
+						playerGameLogic={playerGameLogic}
+					/>
+				);
 			}
 		}
 		if (!responsive.small) {
@@ -74,9 +96,20 @@ export default function Game({ chatWs, setPlayerGameLogic, playerGameLogic }: IP
 				return <OnlineGame Loadingclick={handleClick} />;
 			}
 			if (startGame || isWatchGame) {
-				return <MainPong setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />;
+				return (
+					<MainPong
+						setPlayerGameLogic={setPlayerGameLogic}
+						playerGameLogic={playerGameLogic}
+					/>
+				);
 			} else {
-				return <Play Loadingclick={handleClick} setPlayerGameLogic={setPlayerGameLogic} playerGameLogic={playerGameLogic} />;
+				return (
+					<Play
+						Loadingclick={handleClick}
+						setPlayerGameLogic={setPlayerGameLogic}
+						playerGameLogic={playerGameLogic}
+					/>
+				);
 			}
 		}
 	};

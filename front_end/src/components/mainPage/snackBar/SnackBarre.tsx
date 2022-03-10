@@ -15,8 +15,21 @@ interface IProps {
 	playerGameLogic: PlayerGameLogic;
 }
 
-export default function SnackBarre({ timeSnack, handleOk, handleClose, progress, playerGameLogic }: IProps) {
-	const { isFriends, gameWs, invitName, challengData, setStartGame, disableInvitOther } = useMainPage();
+export default function SnackBarre({
+	timeSnack,
+	handleOk,
+	handleClose,
+	progress,
+	playerGameLogic,
+}: IProps) {
+	const {
+		isFriends,
+		gameWs,
+		invitName,
+		challengData,
+		setStartGame,
+		disableInvitOther,
+	} = useMainPage();
 
 	const [userName, setUserName] = useState('');
 

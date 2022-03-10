@@ -35,9 +35,14 @@ const UserRank = ({ setPlayerGameLogic }: IProps) => {
 
 	const fetchData = async () => {
 		try {
-			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/leaderboard`, {
-				withCredentials: true,
-			});
+			const { data } = await axios.get(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/game/leaderboard`,
+				{
+					withCredentials: true,
+				},
+			);
 			setData(data);
 		} catch (error) {
 			const err = error as AxiosError;
@@ -46,9 +51,14 @@ const UserRank = ({ setPlayerGameLogic }: IProps) => {
 	};
 	const fetchDataFriends = async () => {
 		try {
-			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/friend`, {
-				withCredentials: true,
-			});
+			const { data } = await axios.get(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/users/friend`,
+				{
+					withCredentials: true,
+				},
+			);
 			setDataFriends(data);
 		} catch (error) {
 			const err = error as AxiosError;
@@ -65,12 +75,24 @@ const UserRank = ({ setPlayerGameLogic }: IProps) => {
 					</div>
 					<div className="mainSwitch">
 						<div className="switch-button">
-							<input onClick={handleClick} className="switch-button-checkbox" type="checkbox"></input>
+							<input
+								onClick={handleClick}
+								className="switch-button-checkbox"
+								type="checkbox"
+							></input>
 							<label className="switch-button-label d-flex " htmlFor="">
-								<div className={`${isWorld ? 'divSwitchOff' : 'divSwitchOn'} d-flex divSwitchButton`}>
+								<div
+									className={`${
+										isWorld ? 'divSwitchOff' : 'divSwitchOn'
+									} d-flex divSwitchButton`}
+								>
 									<span className="switch-button-label-span">World</span>
 								</div>
-								<div className={`${!isWorld ? 'divSwitchOff' : 'divSwitchOn'} d-flex divSwitchButton2`}>
+								<div
+									className={`${
+										!isWorld ? 'divSwitchOff' : 'divSwitchOn'
+									} d-flex divSwitchButton2`}
+								>
 									<span className="switch-button-label-span">Friends</span>
 								</div>
 							</label>
@@ -86,7 +108,12 @@ const UserRank = ({ setPlayerGameLogic }: IProps) => {
 				</div>
 
 				<div className="userPrintDIv">
-					<RankWorld setPlayerGameLogic={setPlayerGameLogic} data={data} dataFriends={dataFriends} isWorld={isWorld} />
+					<RankWorld
+						setPlayerGameLogic={setPlayerGameLogic}
+						data={data}
+						dataFriends={dataFriends}
+						isWorld={isWorld}
+					/>
 				</div>
 			</div>
 		</animated.div>

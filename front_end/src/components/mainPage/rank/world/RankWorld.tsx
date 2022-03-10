@@ -1,7 +1,15 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
-import { Avatar, Badge, useMediaQuery, CircularProgress, Tooltip, Fade, Typography } from '@mui/material';
+import {
+	Avatar,
+	Badge,
+	useMediaQuery,
+	CircularProgress,
+	Tooltip,
+	Fade,
+	Typography,
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
@@ -17,7 +25,12 @@ interface IProps {
 	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
 }
 
-const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) => {
+const RankWorld = ({
+	setPlayerGameLogic,
+	data,
+	dataFriends,
+	isWorld,
+}: IProps) => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -56,19 +69,13 @@ const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) =
 			const { login_opponent: string, ...userDto } = response.data;
 			const opponent: Partial<UserDto> = userDto;
 			setPlayerGameLogic({ isChallenge: true, isP1: true, opponent: opponent });
-
-			// setDataUserChallenge([response.data]);
-			// setIsOpponant(true);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	// console.log('disableInbitother rank', disableInvitOther);
-
 	const getGame = (data: User) => () => {
 		// setIsGameRandom(false);
-
 		fetchDataChallenge(data);
 		setStartGame(true);
 		setSelectNav(false);
@@ -114,7 +121,12 @@ const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) =
 								},
 							}}
 						>
-							<Avatar alt="userImg" src={data.user.photo_url} variant="square" className="domUser" />
+							<Avatar
+								alt="userImg"
+								src={data.user.photo_url}
+								variant="square"
+								className="domUser"
+							/>
 						</Badge>
 					</div>
 				) : null}
@@ -136,7 +148,11 @@ const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) =
 				<div className="buttonDIv d-flex">
 					<Tooltip
 						className="lalala"
-						title={<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>You can't challenge someone offline, in games or you</Typography>}
+						title={
+							<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>
+								You can't challenge someone offline, in games or you
+							</Typography>
+						}
 						followCursor={true}
 						TransitionComponent={Fade}
 						TransitionProps={{ timeout: 600 }}
@@ -148,7 +164,11 @@ const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) =
 								disabled={time || disableStatus}
 								variant="contained"
 								onClick={getGame(data.user)}
-								sx={{ width: 2 / 2, textTransform: 'none', backgroundColor: '#E69C6A' }}
+								sx={{
+									width: 2 / 2,
+									textTransform: 'none',
+									backgroundColor: '#E69C6A',
+								}}
 							>
 								{time && !disableStatus && <CircularProgress size="1.2em" />}
 								{!time && 'Challenge'}
@@ -162,9 +182,13 @@ const RankWorld = ({ setPlayerGameLogic, data, dataFriends, isWorld }: IProps) =
 
 	const sortByUser = () => {
 		if (!isWorld) {
-			const sortById = data.filter((e) => dataFriends.findIndex((x) => x.id === e.user.id) !== -1);
+			const sortById = data.filter(
+				(e) => dataFriends.findIndex((x) => x.id === e.user.id) !== -1,
+			);
 
-			return sortById.sort(userSortRank).map((data, rank) => userList(data, rank));
+			return sortById
+				.sort(userSortRank)
+				.map((data, rank) => userList(data, rank));
 		} else {
 			return data.sort(userSortRank).map((data, rank) => userList(data, rank));
 		}

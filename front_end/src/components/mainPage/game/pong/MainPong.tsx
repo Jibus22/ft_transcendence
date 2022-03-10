@@ -15,7 +15,10 @@ interface IProps {
 	playerGameLogic: PlayerGameLogic;
 }
 
-export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps) {
+export default function MainPong({
+	setPlayerGameLogic,
+	playerGameLogic,
+}: IProps) {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -32,24 +35,24 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 		userImg,
 		dialogMui,
 		setLeaveGame,
-		isGameRandom,
-		challengData,
+		// isGameRandom,
+		// challengData,
 		dialogueLoading,
 		dataUserChallenge,
-		setDataUserChallenge,
-		setPlayerNewGameInvit,
-		playerNewGameInvit,
-		setIsGameRandom,
+		// setDataUserChallenge,
+		// setPlayerNewGameInvit,
+		// playerNewGameInvit,
+		// setIsGameRandom,
 		roomId,
 		setRoomId,
 		gameWs,
-		isOpponant,
+		// isOpponant,
 		opacity,
 		setOpacity,
 		leaveGame,
-		playerNewGameJoin,
-		setDataPlayerNewGameJoin,
-		dataPlayerNewGameJoin,
+		// playerNewGameJoin,
+		// setDataPlayerNewGameJoin,
+		// dataPlayerNewGameJoin,
 		watchGameScore,
 		isWatchGame,
 		setIsWatchGame,
@@ -70,9 +73,9 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 
 	const [dataGameRandomSocket, setDataGameRandomSocket] = useState<User>();
 
-	const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
+	// const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
 
-	const [load, setLoad] = useState(false);
+	// const [load, setLoad] = useState(false);
 
 	const [pauseGame, setPauseGame] = useState(false);
 
@@ -106,7 +109,7 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 		}
 	};
 
-	const [data, setData] = useState<User[] | UserChallenge[]>([]);
+	// const [data, setData] = useState<User[] | UserChallenge[]>([]);
 	const [nbPlayer, setNbPlayer] = useState(0);
 
 	const [disableMap, setDisableMap] = useState<boolean>(false);
@@ -246,11 +249,14 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 			// console.log('map is ==== ', map);
 		});
 
-		gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
-			console.log(`💌  Event: GameData ->`, gameData);
-			setMap(gameData.map);
-			setWatchId(gameData.watch);
-		});
+		gameWs?.on(
+			'getGameData',
+			(gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
+				console.log(`💌  Event: GameData ->`, gameData);
+				setMap(gameData.map);
+				setWatchId(gameData.watch);
+			},
+		);
 	}, [map]);
 
 	// useEffect(() => {
@@ -347,7 +353,10 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 		<animated.div style={props} className="w-100  animatedGamePong ">
 			<div className="divMainPongGame">
 				<div className="w-100 h-100 ">
-					{((roomId !== '' && watchId !== '' && map !== null) || (isWatchGame && map !== null)) && scoreJ1 !== -1 && scoreJ2 !== -1 ? (
+					{((roomId !== '' && watchId !== '' && map !== null) ||
+						(isWatchGame && map !== null)) &&
+					scoreJ1 !== -1 &&
+					scoreJ2 !== -1 ? (
 						<div className="container__MapGame">
 							<PongGame
 								map={map}
@@ -363,10 +372,19 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
-								{acceptGame || !playerGameLogic.isP1 ? <span className="counterOutput">{count}</span> : titlePrint()}
+								{acceptGame || !playerGameLogic.isP1 ? (
+									<span className="counterOutput">{count}</span>
+								) : (
+									titlePrint()
+								)}
 							</div>
 
-							<div className={clsx('infoUser', !playerGameLogic.isP1 && 'infoUserReverse')}>
+							<div
+								className={clsx(
+									'infoUser',
+									!playerGameLogic.isP1 && 'infoUserReverse',
+								)}
+							>
 								<div className="photoUser">
 									<Avatar alt="userImg" src={userImg} />
 									<div>
@@ -374,11 +392,21 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 									</div>
 								</div>
 
-								<div className="loadingVersus">{acceptGame || !playerGameLogic.isP1 ? <h1>VS</h1> : <CircularProgress />}</div>
-								<div className={`${!opacity ? '' : 'photoOp'} photoUser `}>{infoOpponent()}</div>
+								<div className="loadingVersus">
+									{acceptGame || !playerGameLogic.isP1 ? (
+										<h1>VS</h1>
+									) : (
+										<CircularProgress />
+									)}
+								</div>
+								<div className={`${!opacity ? '' : 'photoOp'} photoUser `}>
+									{infoOpponent()}
+								</div>
 							</div>
 							<div className="titleMap">
-								{playerGameLogic.isP1 && !acceptGame ? <h1>Choose the map</h1> : null}
+								{playerGameLogic.isP1 && !acceptGame ? (
+									<h1>Choose the map</h1>
+								) : null}
 
 								{playerGameLogic.isP1 && (
 									<div className="selectMap">
@@ -399,13 +427,33 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 					)}
 				</div>
 				<div className="closeButton">
-					<Button className="buttonMui" variant="contained" onClick={() => setOpen(true)}>
+					<Button
+						className="buttonMui"
+						variant="contained"
+						onClick={() => setOpen(true)}
+					>
 						Leave
 					</Button>
 				</div>
-				{dialogMui(open, () => setOpen(false), closeGame, 'Warning !', 'Are you sure you want to quit the game ?')}
-				{dialogueLoading(openDialogLoading, 'Warning', 'your opponent did not accept the invitation', 'You will return to the home page')}
-				{dialogueLoading(pauseGame, 'Warning', 'Your opponent has disconnected', '')}
+				{dialogMui(
+					open,
+					() => setOpen(false),
+					closeGame,
+					'Warning !',
+					'Are you sure you want to quit the game ?',
+				)}
+				{dialogueLoading(
+					openDialogLoading,
+					'Warning',
+					'your opponent did not accept the invitation',
+					'You will return to the home page',
+				)}
+				{dialogueLoading(
+					pauseGame,
+					'Warning',
+					'Your opponent has disconnected',
+					'',
+				)}
 			</div>
 		</animated.div>
 	);
