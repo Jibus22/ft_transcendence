@@ -1,11 +1,12 @@
 import React from 'react';
 import { Socket } from 'socket.io-client';
+import { sleep } from '../utils/utils';
 import { doConnect, connectWs } from './socketCoreInit';
 
 export const setWsCallbacks = (
 	socket: Socket,
 	stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
-	login: string | undefined,
+	stateSetter2: (value: React.SetStateAction<boolean>) => void,
 ) => {
 	/* -----------------------
 	 ** Connection
@@ -23,7 +24,7 @@ export const setWsCallbacks = (
 
 	socket.on('connect_error', async (err) => {
 		console.log('[CHAT SOCKET 🍄 ] connect_error', err);
-		connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, stateSetter, login);
+		connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, stateSetter, stateSetter2);
 	});
 
 	socket.io.on('error', (error) => {
@@ -76,15 +77,16 @@ export const setWsCallbacks = (
 export const gameCallbacks = (
 	socket: Socket,
 	stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
-	login: string | undefined,
+	stateSetter2: (value: React.SetStateAction<boolean>) => void,
 ) => {
 	/* -----------------------
 	 ** Connection
 	 * -----------------------*/
 
-	socket.on('connect', () => {
+	socket.on('connect', async () => {
 		console.log(`[GAME SOCKET 🎲 ] WS CONNECT`);
-		// setLoadingSocket(true);//TODO: voir comment faire pour set ce truc qlqpart
+		await sleep(1000);
+		stateSetter2(true);
 	});
 
 	socket.on('disconnect', () => {
@@ -94,7 +96,7 @@ export const gameCallbacks = (
 
 	socket.on('connect_error', async (err) => {
 		console.log('[GAME SOCKET 🎲 ] connect_error', err);
-		connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, stateSetter, login);
+		connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, stateSetter, stateSetter2);
 	});
 
 	socket.io.on('error', (error) => {

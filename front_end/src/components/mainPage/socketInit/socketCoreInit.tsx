@@ -48,10 +48,14 @@ export const doConnect = async (socket: Socket, stateSetter: (value: React.SetSt
 
 export const connectWs = async (
 	uri: string,
-	cbSetter: (socket: Socket, stateSetter: React.Dispatch<React.SetStateAction<Socket | undefined>>, pouet: string | undefined) => void,
+	cbSetter: (
+		socket: Socket,
+		stateSetter: React.Dispatch<React.SetStateAction<Socket | undefined>>,
+		pouet: React.Dispatch<React.SetStateAction<boolean>>,
+	) => void,
 
 	stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
-	login: string | undefined,
+	stateSetter2: (value: React.SetStateAction<boolean>) => void,
 ) => {
 	await new Promise((res) => {
 		setTimeout(() => {
@@ -60,7 +64,7 @@ export const connectWs = async (
 				reconnection: false,
 				forceNew: true,
 			});
-			cbSetter(socket, stateSetter, login);
+			cbSetter(socket, stateSetter, stateSetter2);
 			stateSetter(socket);
 			doConnect(socket, stateSetter);
 			res('');
