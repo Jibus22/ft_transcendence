@@ -45,12 +45,10 @@ export default function ParamUser({ setTime }: Props) {
 	}, []);
 
 	useEffect(() => {
-		if (data.length > 0) {
-			setDataFa(data[0].hasTwoFASecret);
-			setDataPlay(data[0].games_nbr);
-			setDataWin(data[0].wins_nbr);
-			setDataLoose(data[0].losses_nbr);
-		}
+		setDataFa(data.hasTwoFASecret);
+		setDataPlay(data.games_nbr);
+		setDataWin(data.wins_nbr);
+		setDataLoose(data.losses_nbr);
 	}, [data]);
 
 	function printPopup() {
@@ -65,9 +63,14 @@ export default function ParamUser({ setTime }: Props) {
 	const agree = async () => {
 		setOpen(false);
 		try {
-			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
-				withCredentials: true,
-			});
+			await axios.delete(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/auth/signout`,
+				{
+					withCredentials: true,
+				},
+			);
 			setTime(true);
 			setTimeout(function () {
 				setTime(false);
@@ -96,7 +99,11 @@ export default function ParamUser({ setTime }: Props) {
 
 					{isHovering && !isPop ? (
 						<div className="userModif">
-							<IconButton sx={{ width: 2 / 2, height: 2 / 2 }} className="" onClick={printPopup}>
+							<IconButton
+								sx={{ width: 2 / 2, height: 2 / 2 }}
+								className=""
+								onClick={printPopup}
+							>
 								<img src={PencilIcon} alt="" />
 							</IconButton>
 						</div>
@@ -138,7 +145,13 @@ export default function ParamUser({ setTime }: Props) {
 						</Button>
 					</div>
 				</div>
-				{dialogMui(open, disagree, agree, 'Warning !', 'Are you sure you want to disconnect ?')}
+				{dialogMui(
+					open,
+					disagree,
+					agree,
+					'Warning !',
+					'Are you sure you want to disconnect ?',
+				)}
 			</div>
 		</animated.div>
 	);

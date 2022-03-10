@@ -6,18 +6,24 @@ import './header.scss';
 import NavHeader from './navHeader/NavHeader';
 
 export default function Header() {
-	const { data, userName, userImg, setUserName, setUserImg, selectQuery, setSelectNav } = useMainPage();
+	const {
+		data,
+		userName,
+		userImg,
+		setUserName,
+		setUserImg,
+		selectQuery,
+		setSelectNav,
+	} = useMainPage();
 
 	const query = useMediaQuery('(max-width: 850px)');
 	const queryNav = useMediaQuery('(max-width:1060px)');
 	const queryNavMobile = useMediaQuery('(max-width:600px)');
 
 	useEffect(() => {
-		if (data.length > 0) {
-			setUserName(data[0].login);
-			setUserImg(data[0].photo_url);
-		}
-	});
+		setUserName(data.login);
+		setUserImg(data.photo_url);
+	}, [data]);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -47,7 +53,10 @@ export default function Header() {
 
 							{queryNav ? (
 								<li className="nav-item  linkLogoNav queryNav">
-									<button onClick={handleClick} className={`${selectQuery ? 'selectedNave' : ''} `}>
+									<button
+										onClick={handleClick}
+										className={`${selectQuery ? 'selectedNave' : ''} `}
+									>
 										Game
 									</button>
 									<Menu
@@ -69,19 +78,34 @@ export default function Header() {
 								</li>
 							) : (
 								<li className="nav-item  linkLogoNav">
-									<Link className={(navData) => (navData.isActive ? 'selectedNave' : '')} to="/MainPage">
+									<Link
+										className={(navData) =>
+											navData.isActive ? 'selectedNave' : ''
+										}
+										to="/MainPage"
+									>
 										<h1>Games</h1>
 									</Link>
 								</li>
 							)}
 
 							<li className="nav-item leaderDiv  ">
-								<Link className={(navData) => (navData.isActive ? 'selectedNave' : '')} to="/Rank">
+								<Link
+									className={(navData) =>
+										navData.isActive ? 'selectedNave' : ''
+									}
+									to="/Rank"
+								>
 									<h1>LeaderBoard</h1>
 								</Link>
 							</li>
 							<li className="nav-item linkLogoNav ">
-								<Link className={(navData) => (navData.isActive ? 'selectedNave' : '')} to="/History-Game">
+								<Link
+									className={(navData) =>
+										navData.isActive ? 'selectedNave' : ''
+									}
+									to="/History-Game"
+								>
 									<h1>History</h1>
 								</Link>
 							</li>
@@ -89,7 +113,12 @@ export default function Header() {
 					</div>
 
 					<div className="logHeader d-flex ">
-						<Link className={(navData) => (navData.isActive ? 'SelectedNavLoggin' : '')} to="/Setting">
+						<Link
+							className={(navData) =>
+								navData.isActive ? 'SelectedNavLoggin' : ''
+							}
+							to="/Setting"
+						>
 							<div className="profil d-flex   ">
 								<div className="profilLoggin  ">
 									<h2 className="">{userName}</h2>
