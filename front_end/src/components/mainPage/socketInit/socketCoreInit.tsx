@@ -7,9 +7,14 @@ import { io, Socket } from 'socket.io-client';
  * -----------------------*/
 
 const getAuthToken = async () => {
-	return await axios(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/ws/token`, {
-		withCredentials: true,
-	}).then((response) => {
+	return await axios(
+		`http://${
+			process.env.REACT_APP_BASE_URL || 'localhost:3000'
+		}/auth/ws/token`,
+		{
+			withCredentials: true,
+		},
+	).then((response) => {
 		const { token } = response.data;
 		if (!token) {
 			throw new Error('no valid token');
@@ -18,7 +23,10 @@ const getAuthToken = async () => {
 	});
 };
 
-export const doDisconnect = async (socket: Socket | undefined, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
+export const doDisconnect = async (
+	socket: Socket | undefined,
+	stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
+) => {
 	stateSetter(undefined);
 	if (socket) {
 		socket.off('disconnect');
@@ -29,7 +37,10 @@ export const doDisconnect = async (socket: Socket | undefined, stateSetter: (val
 	}
 };
 
-export const doConnect = async (socket: Socket, stateSetter: (value: React.SetStateAction<Socket | undefined>) => void) => {
+export const doConnect = async (
+	socket: Socket,
+	stateSetter: (value: React.SetStateAction<Socket | undefined>) => void,
+) => {
 	setTimeout(async () => {
 		await getAuthToken()
 			.then((token) => {

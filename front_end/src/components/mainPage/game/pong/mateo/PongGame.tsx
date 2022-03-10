@@ -65,8 +65,24 @@ class PongGame extends React.Component<MyProps> {
 	};
 
 	_widthPlayer: number = 15;
-	_playerOne: Player = new Player('P1', 1, 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this._widthPlayer);
-	_playerTwo: Player = new Player('P2', 2, 'ArrowUp', 'ArrowDown', 80, this._widthPlayer, this.width - 2 * this._widthPlayer);
+	_playerOne: Player = new Player(
+		'P1',
+		1,
+		'ArrowUp',
+		'ArrowDown',
+		80,
+		this._widthPlayer,
+		this._widthPlayer,
+	);
+	_playerTwo: Player = new Player(
+		'P2',
+		2,
+		'ArrowUp',
+		'ArrowDown',
+		80,
+		this._widthPlayer,
+		this.width - 2 * this._widthPlayer,
+	);
 	_ball: Ball = new Ball(this.width, this.height);
 	_keystate: any = {};
 	_canvas: HTMLCanvasElement | undefined = undefined;
@@ -96,12 +112,20 @@ class PongGame extends React.Component<MyProps> {
 	_printText(str: string) {
 		this._drawBackground();
 		this._ctx!.fillStyle = this.fillStyle;
-		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2);
+		this._ctx!.fillText(
+			str,
+			this.width / 2 - (15 * str.length) / 2,
+			this.height / 2,
+		);
 	}
 
 	_printPowerUp(str: string) {
 		this._ctx!.fillStyle = this.fillStyle;
-		this._ctx!.fillText(str, this.width / 2 - (15 * str.length) / 2, this.height / 2 + 30);
+		this._ctx!.fillText(
+			str,
+			this.width / 2 - (15 * str.length) / 2,
+			this.height / 2 + 30,
+		);
 	}
 
 	_initPongGame() {
@@ -133,7 +157,10 @@ class PongGame extends React.Component<MyProps> {
 		if (this.map === 2) {
 			this.imgBackground.src = 'Fondmap2.jpg';
 			this.imgBackground.alt = 'alt';
-			this.fontFace = new FontFace('Chonburi', 'url(https://fonts.gstatic.com/s/chonburi/v8/8AtqGs-wOpGRTBq66LWdHLz5ixfY.woff2)');
+			this.fontFace = new FontFace(
+				'Chonburi',
+				'url(https://fonts.gstatic.com/s/chonburi/v8/8AtqGs-wOpGRTBq66LWdHLz5ixfY.woff2)',
+			);
 			this.fillStyle = '#CFB217';
 			this._ctx!.fillStyle = this.fillStyle;
 			this._ctx!.shadowColor = '#EAD043';
@@ -301,21 +328,36 @@ class PongGame extends React.Component<MyProps> {
 
 		//Draw Player1
 		if (this.map === 1) {
-			let gradient1 = this._ctx!.createLinearGradient(0, this.height / 2, this._playerOne.width * 3, this.height / 2)!;
+			let gradient1 = this._ctx!.createLinearGradient(
+				0,
+				this.height / 2,
+				this._playerOne.width * 3,
+				this.height / 2,
+			)!;
 			gradient1.addColorStop(0, 'black');
 			gradient1.addColorStop(0.5, '#38FC25');
 			gradient1.addColorStop(1, 'black');
 			this._ctx!.fillStyle = gradient1;
 		}
 		if (this.map === 2) {
-			let gradient1 = this._ctx!.createLinearGradient(0, this.height / 2, this._playerOne.width * 3, this.height / 2)!;
+			let gradient1 = this._ctx!.createLinearGradient(
+				0,
+				this.height / 2,
+				this._playerOne.width * 3,
+				this.height / 2,
+			)!;
 			gradient1.addColorStop(0, '#88642F');
 			gradient1.addColorStop(0.5, '#E6C619');
 			gradient1.addColorStop(1, '#E6C619');
 			//gradient1.addColorStop(1,"#88642F");
 			this._ctx!.fillStyle = gradient1;
 		}
-		this._ctx!.fillRect(this._playerOne.x, this._playerOne.y, this._widthPlayer, this._playerOne.size);
+		this._ctx!.fillRect(
+			this._playerOne.x,
+			this._playerOne.y,
+			this._widthPlayer,
+			this._playerOne.size,
+		);
 
 		//Draw Player 2
 		if (this.map === 1) {
@@ -342,26 +384,49 @@ class PongGame extends React.Component<MyProps> {
 			gradient2.addColorStop(1, '#88642F');
 			this._ctx!.fillStyle = gradient2;
 		}
-		this._ctx!.fillRect(this._playerTwo.x, this._playerTwo.y, this._widthPlayer, this._playerTwo.size);
+		this._ctx!.fillRect(
+			this._playerTwo.x,
+			this._playerTwo.y,
+			this._widthPlayer,
+			this._playerTwo.size,
+		);
 
 		//Score
 		this._ctx!.fillStyle = this.fillStyle;
-		if (this.map === 0) this._ctx!.fillText(this.scoreP1 + ' ' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
-		else this._ctx!.fillText(this.scoreP1 + ':' + this.scoreP2, this.width / 2 - (15 * 3) / 2, 30);
+		if (this.map === 0)
+			this._ctx!.fillText(
+				this.scoreP1 + ' ' + this.scoreP2,
+				this.width / 2 - (15 * 3) / 2,
+				30,
+			);
+		else
+			this._ctx!.fillText(
+				this.scoreP1 + ':' + this.scoreP2,
+				this.width / 2 - (15 * 3) / 2,
+				30,
+			);
 	}
 
 	_controller = new AbortController();
 
 	_startGame() {
 		const keystate = this._keystate;
-		document.addEventListener('keydown', function (evt) {
-			evt.preventDefault();
-			keystate[evt.key] = true;
-		}, {signal: this._controller.signal});
-		document.addEventListener('keyup', function (evt) {
-			evt.preventDefault();
-			delete keystate[evt.key];
-		}, {signal: this._controller.signal});
+		document.addEventListener(
+			'keydown',
+			function (evt) {
+				evt.preventDefault();
+				keystate[evt.key] = true;
+			},
+			{ signal: this._controller.signal },
+		);
+		document.addEventListener(
+			'keyup',
+			function (evt) {
+				evt.preventDefault();
+				delete keystate[evt.key];
+			},
+			{ signal: this._controller.signal },
+		);
 		/*
 		//eventlistener mobile
 		document.addEventListener(
@@ -461,8 +526,18 @@ class PongGame extends React.Component<MyProps> {
 		});
 
 		this.props.socket?.on('powerUpUpdate', (powerUp: PowerUp) => {
-			if (powerUp.effect === 'inverted Control' && powerUp.playerNb === 2 && this._P2) this._playerTwo._invertControlTemporarily();
-			if (powerUp.effect === 'large Paddle' && powerUp.playerNb === 2 && this._P2) this._playerTwo._largePaddle(this.height);
+			if (
+				powerUp.effect === 'inverted Control' &&
+				powerUp.playerNb === 2 &&
+				this._P2
+			)
+				this._playerTwo._invertControlTemporarily();
+			if (
+				powerUp.effect === 'large Paddle' &&
+				powerUp.playerNb === 2 &&
+				this._P2
+			)
+				this._playerTwo._largePaddle(this.height);
 			let message = 'Player ';
 			if (powerUp.playerNb === 1) message += 'One ';
 			else message += 'Two ';
@@ -489,7 +564,10 @@ class PongGame extends React.Component<MyProps> {
 	private _touch(e: any) {
 		console.log(e);
 		e.preventDefault();
-		let yPos = e.touches[0].pageY - e.touches[0].target.offsetTop - this._playerOne.size / 2;
+		let yPos =
+			e.touches[0].pageY -
+			e.touches[0].target.offsetTop -
+			this._playerOne.size / 2;
 		this._playerOne.y = yPos;
 	}
 
