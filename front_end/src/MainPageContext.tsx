@@ -54,7 +54,7 @@ interface IMainPageContext {
 	dataUserBack: IOnlineGameRemove;
 	setDataUserBack: Dispatch<SetStateAction<IOnlineGameRemove>>;
 
-	setData: Dispatch<SetStateAction<never[]>>;
+	setData: Dispatch<SetStateAction<UserMe>>;
 	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
 	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
 	setDataPlayerNewGameJoin: Dispatch<SetStateAction<User>>;

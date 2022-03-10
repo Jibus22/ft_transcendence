@@ -16,11 +16,7 @@ interface Props {
 	playerGameLogic: PlayerGameLogic;
 }
 
-export default function Play({
-	Loadingclick,
-	setPlayerGameLogic,
-	playerGameLogic,
-}: Props) {
+export default function Play({ Loadingclick, setPlayerGameLogic }: Props) {
 	console.log('--------- PLAY ---------');
 	const props = useSpring({
 		opacity: 1,
@@ -92,7 +88,6 @@ export default function Play({
 	const getGame = () => {
 		setIsGameRandom(true);
 		fetchDataGameRandom();
-		// setStartGame(true);
 		Loadingclick();
 	};
 

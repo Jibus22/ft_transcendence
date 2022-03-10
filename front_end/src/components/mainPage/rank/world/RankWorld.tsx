@@ -41,18 +41,8 @@ const RankWorld = ({
 		},
 	});
 
-	// const [friendsList, setFriendsRank] = useState<Array<User>>([]);
-	const {
-		setStatusColor,
-		setIsGameRandom,
-		setStartGame,
-		setSelectNav,
-		setDataUserChallenge,
-		setIsOpponant,
-		userName,
-		countInvit,
-		disableInvitOther,
-	} = useMainPage();
+	const { setStatusColor, setStartGame, setSelectNav, userName } =
+		useMainPage();
 	const query = useMediaQuery('(max-width: 1000px)');
 	let navigate = useNavigate();
 	const [time, setTime] = useState(false);
@@ -81,7 +71,6 @@ const RankWorld = ({
 	};
 
 	const getGame = (data: User) => () => {
-		// setIsGameRandom(false);
 		fetchDataChallenge(data);
 		setStartGame(true);
 		setSelectNav(false);

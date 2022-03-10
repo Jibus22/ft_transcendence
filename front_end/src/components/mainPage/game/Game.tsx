@@ -1,4 +1,3 @@
-import { useMediaQuery } from '@mui/material';
 import React, { useEffect, Dispatch } from 'react';
 import { Socket } from 'socket.io-client';
 import { OnlineGame, Play } from '../..';
@@ -27,19 +26,15 @@ export default function Game({
 }: IProps) {
 	console.log('--------- GAME ---------');
 	const {
-		setTimeSnack,
 		isWatchGame,
 		setIsDisable,
 		setLoading,
-		setIsFriends,
 		selectNav,
 		setStartGame,
 		startGame,
 	} = useMainPage();
 
-	// const { selectNav, setStartGame, startGame } = useMainPage();
 	const responsive = useResponsive();
-	// const query = useMediaQuery('(max-width:1060px)');
 	function handleClick() {
 		/*
          TEST MESSAGE EMIT for ingame status: set
@@ -48,18 +43,13 @@ export default function Game({
         */
 		chatWs && chatWs.emit('ingame', 'in');
 
-		// setStartGame(true);
-
 		setLoading(true);
 		setIsDisable(false);
-		// setIsFriends(false);
-		// setTimeSnack(false);
 
 		setTimeout(function () {
 			setLoading(false);
 			setIsDisable(true);
 			setStartGame(true);
-			// setTimeSnack(true);
 		}, 1500);
 	}
 

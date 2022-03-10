@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
 import { LinearProgress } from '@mui/material';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
-import { useMainPage } from '../../../MainPageContext';
-import { User, Rank, PlayerGameLogic } from '../../type';
+import { PlayerGameLogic } from '../../type';
 import './snackBarre.scss';
-import { useNavigate } from 'react-router-dom';
 
 interface IProps {
 	timeSnack: boolean;
@@ -22,37 +19,6 @@ export default function SnackBarre({
 	progress,
 	playerGameLogic,
 }: IProps) {
-	const {
-		isFriends,
-		gameWs,
-		invitName,
-		challengData,
-		setStartGame,
-		disableInvitOther,
-	} = useMainPage();
-
-	const [userName, setUserName] = useState('');
-
-	// const [countInvit, setCountInvit] = useState(1);
-	// setCountInvit(countInvit + 1);
-
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		// setCountInvit(countInvit + 1);
-
-		// console.log(countInvit);
-
-		return () => {};
-	}, []);
-
-	// useEffect(() => {
-	// 	if (countInvit > 1) {
-	// 		console.log('DENIEEEEEED');
-	// 		gameWs?.emit('gameInvitResponse', { response: 'KO', to: wsId });
-	// 	}
-	// }, [countInvit]);
-
 	const action = (
 		<>
 			<div className="contentButton">

@@ -1,15 +1,9 @@
-//import { useRef, useState, useEffect } from 'react';
-//import ReactDOM from 'react-dom';
 import { Socket } from 'socket.io-client';
 import React from 'react';
 import { Ball } from './Ball';
 import { Player } from './Player';
 import './PongGame.scss';
 import '../pongGame.scss';
-
-//Client
-//const W3CWebSocket = require('websocket').w3cwebsocket;
-//let client = new W3CWebSocket('ws://localhost:8000');
 
 interface Score {
 	score1: number;
@@ -51,10 +45,6 @@ type MyProps = {
 };
 
 class PongGame extends React.Component<MyProps> {
-	///////////////////////////////////////////
-
-	//////////////////////////////////////
-
 	width = 700;
 	height = 400;
 	sleepduration = 5000;
@@ -427,22 +417,6 @@ class PongGame extends React.Component<MyProps> {
 			},
 			{ signal: this._controller.signal },
 		);
-		/*
-		//eventlistener mobile
-		document.addEventListener(
-			'ontouchstart',
-			function (e) {
-				// e.preventDefault();
-			},
-			false,
-		);
-		document.addEventListener(
-			'ontouchmove',
-			function (e) {
-				// e.preventDefault();
-			},
-			false,
-		);*/
 		this.props.socket!.send(
 			JSON.stringify({
 				type: 'message',
@@ -479,19 +453,7 @@ class PongGame extends React.Component<MyProps> {
 
 			this.gamerunning = true;
 			this.props.setPauseGame(false);
-
-			//le joueur représenté par 'obj' est revenu: on peut reprendre le jeu
 		});
-
-		// this.props.socket?.on('playerGiveUp', (obj: any) => {
-		// 	console.log(`💌  Event: playerGiveUp -> `);
-		// 	console.log(obj);
-		// 	//Quand un des 2 joueurs abandonne (leave) l'autre joueur et les watchers
-		// 	//reçoivent cet event.
-		// 	//dans 'obj' c'est un UserDto qui permet d'afficher qui a abandonné.
-		// 	//Ensuite faut retourner à la page d'accueil
-		// 	false;
-		// });
 
 		this.props.socket?.on('playerUpdate', (player: Player, nb: number) => {
 			if (nb === 1) this._playerOne = player;
@@ -548,8 +510,6 @@ class PongGame extends React.Component<MyProps> {
 	}
 
 	componentWillUnmount() {
-		//if (client) client.close();
-
 		this.gamerunning = false;
 		this.props.socket?.off('playerDisconnection');
 		this.props.socket?.off('playerCameBack');
