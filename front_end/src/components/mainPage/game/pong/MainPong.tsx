@@ -1,14 +1,12 @@
 import { Avatar, Button, CircularProgress } from '@mui/material';
-import { useInterval } from 'ahooks';
 import clsx from 'clsx';
 import React, { useEffect, useState, Dispatch } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import MapChoice from './mapChoice/MapChoice';
 import PongGame from './mateo/PongGame';
 import './pongGame.scss';
-import { User, UserChallenge, UserDto, PlayerGameLogic } from '../../../type';
+import { UserDto, PlayerGameLogic } from '../../../type';
 import { clearPlayerGameLogic } from '../../utils/utils';
 
 interface IProps {
@@ -37,56 +35,31 @@ export default function MainPong({
 		userImg,
 		dialogMui,
 		setLeaveGame,
-		// isGameRandom,
-		// challengData,
 		dialogueLoading,
-		dataUserChallenge,
-		// setDataUserChallenge,
-		// setPlayerNewGameInvit,
-		// playerNewGameInvit,
-		// setIsGameRandom,
 		roomId,
 		setRoomId,
 		gameWs,
-		// isOpponant,
 		opacity,
 		setOpacity,
 		leaveGame,
-		// playerNewGameJoin,
-		// setDataPlayerNewGameJoin,
-		// dataPlayerNewGameJoin,
 		watchGameScore,
 		isWatchGame,
 		setIsWatchGame,
 		backInGame,
 		dataUserBack,
-		setDataUserBack,
 		open,
 		setOpen,
 	} = useMainPage();
 
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
 	const [count, setCount] = useState<number | undefined>();
-
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
-	// const [roomId, setRoomId] = useState('');
 	const [watchId, setWatchId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
-
-	const [dataGameRandomSocket, setDataGameRandomSocket] = useState<User>();
-
-	// const [loadingNewGamePlayer, setLoadingNewGamePlayer] = useState(false);
-
-	// const [load, setLoad] = useState(false);
-
 	const [pauseGame, setPauseGame] = useState(false);
 
 	const closeGame = () => {
-		// setOpen(false);
-		// setStartGame(false);
-		// setLeaveGame(false);
-
 		if (isWatchGame) {
 			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
 			setOpen(false);
@@ -114,11 +87,8 @@ export default function MainPong({
 		}
 	};
 
-	// const [data, setData] = useState<User[] | UserChallenge[]>([]);
 	const [nbPlayer, setNbPlayer] = useState(0);
-
 	const [disableMap, setDisableMap] = useState<boolean>(false);
-
 	const [scoreJ1, setScoreJ1] = useState(-1);
 	const [scoreJ2, setScoreJ2] = useState(-1);
 
@@ -130,7 +100,6 @@ export default function MainPong({
 	}, [isWatchGame, watchGameScore]);
 
 	useEffect(() => {
-		// setLeaveGame(true);
 		if (backInGame) {
 			setScoreJ1(dataUserBack.challenger.score);
 			setScoreJ2(dataUserBack.opponent.score);
@@ -145,31 +114,37 @@ export default function MainPong({
 		if (!playerGameLogic.isP1) {
 			setNbPlayer(2);
 			setLeaveGame(true);
-			// setData(challengData);
 		} else {
 			setNbPlayer(1);
 			setLeaveGame(true);
-			// setData(dataUserChallenge);
-
-			if (acceptGame === false) {
-				setOpacity(true);
-			}
+			if (acceptGame === false) setOpacity(true);
 		}
 
-		return () => {
-			// setIsGameRandom(false);
-			// setLeaveGame(false);
-			// setPlayerNewGameInvit(false);
-			// setIsOpponant(false);
-		};
-	}, [leaveGame, dataUserChallenge, nbPlayer]);
+		return () => {};
+	}, [leaveGame, nbPlayer]);
 
 	useEffect(() => {
+		gameWs?.on('countDown', (count: number) => {
+			setCount(count);
+		});
+
+		return () => {
+			gameWs?.off('countDown');
+		};
+	}, [gameWs, count]);
+
+	useEffect(() => {
+		gameWs?.on('startGame', (room: string) => {
+			console.log(`💌  Event: startGame -> ${room}`);
+			setRoomId(room);
+		});
+
 		gameWs?.on('gameAccepted', (opponentData) => {
 			console.log(`💌  Event: gameAccepted -> ${opponentData}`);
 			setAcceptGame(true);
 			setOpacity(false);
 		});
+
 		gameWs?.on('gameDenied', (opponentData) => {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
@@ -179,11 +154,6 @@ export default function MainPong({
 				setOpenDialogLoading(false);
 				closeGame();
 			}, 3000);
-		});
-
-		gameWs?.on('countDown', (count: number) => {
-			// console.log(`count: ${count}`);
-			setCount(count);
 		});
 
 		gameWs?.on('newPlayerJoined', (opponent: UserDto) => {
@@ -196,18 +166,6 @@ export default function MainPong({
 			});
 			setAcceptGame(true);
 			setOpacity(false);
-		});
-
-		// return () => {
-		// 	setLeaveGame(false);
-		// 	console.log('QUITTTTTTTEEEEEEEE');
-		// };
-	}, [gameWs, count, dataGameRandomSocket, openDialogLoading]);
-
-	useEffect(() => {
-		gameWs?.on('startGame', (room: string) => {
-			console.log(`💌  Event: startGame -> ${room}`);
-			setRoomId(room);
 		});
 
 		gameWs?.on('gaveUp', (usr: UserDto) => {
@@ -223,16 +181,10 @@ export default function MainPong({
 			console.log(`💌  Event: playerGiveUp -> `);
 			console.log(obj);
 
-			// setOpen(false);
 			setPlayerGameLogic((prevState: PlayerGameLogic) =>
 				clearPlayerGameLogic(prevState),
 			);
 			setStartGame(false);
-			// setLeaveGame(false);
-			// setIsWatchGame(false);
-			// setMap(null);
-			// setWatchId('');
-			// setRoomId('');
 		});
 
 		return () => {
@@ -243,7 +195,6 @@ export default function MainPong({
 			gameWs?.off('getGameData');
 			gameWs?.off('gameAccepted');
 			gameWs?.off('gameDenied');
-			gameWs?.off('countDown');
 			gameWs?.off('newPlayerJoined');
 			gameWs?.off('gaveUp');
 		};
@@ -251,15 +202,12 @@ export default function MainPong({
 
 	useEffect(() => {
 		gameWs?.on('setMap', (room: string) => {
-			// console.log(`💌  Event: setMap -> ${cb}`);
-
 			if (map !== null) {
 				gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
 					console.log('P1 callback watch return: ', watch);
 					setWatchId(watch);
 				});
 			}
-			// console.log('map is ==== ', map);
 		});
 
 		gameWs?.on(
@@ -272,43 +220,13 @@ export default function MainPong({
 		);
 	}, [map]);
 
-	// useEffect(() => {
-	// 	if (backInGame) {
-	// 		setOpen(false);
-	// 		setStartGame(false);
-	// 		setLeaveGame(false);
-	// 		setIsWatchGame(false);
-
-	// 		if (userName === dataUserBack.challenger.login) {
-	// 			setNbPlayer(1);
-	// 		} else {
-	// 			setNbPlayer(2);
-	// 		}
-	// 	}
-	// }, [backInGame, dataUserBack]);
-
-	// useEffect(() => {
-	// 	gameWs?.on('getGameData', (gameData: { map: null | 'one' | 'two' | 'three'; watch: string }) => {
-	// 		console.log(`💌  Event: getMap ->`, gameData);
-	// 		setMap(gameData.map);
-	// 		setWatchId(gameData.watch);
-
-	// 		console.log('joueur 2 ===== map', map);
-	// 	});
-	// }, [map]);
-
 	useEffect(() => {
 		if (isWatchGame) {
-			// setLoad(true);
-
 			setNbPlayer(0);
 			setScoreJ1(watchGameScore.challenger.score);
 			setScoreJ2(watchGameScore.opponent.score);
 			setMap(watchGameScore.map);
 		}
-		// return () => {
-		// 	setIsWatchGame(false);
-		// };
 	}, [isWatchGame, watchGameScore, map, scoreJ1, scoreJ2]);
 
 	const titlePrint = () => {
