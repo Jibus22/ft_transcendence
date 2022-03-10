@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState, Dispatch } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
-import { User, UserDto, UserMe, PlayerGameLogic } from '../../../type';
+import { UserDto, PlayerGameLogic } from '../../../type';
 import FormPlay from './FormPlay';
 import IconGame from './img/raquette.png';
 import './play.scss';
@@ -27,19 +27,7 @@ export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic
 		},
 	});
 
-	const {
-		isDisable,
-		loading,
-		setSelectQuery,
-		setIsGameRandom,
-		loadingSocket,
-		setPlayerNewGameInvit,
-		setIsOpponant,
-		setPlayerNewGameJoin,
-		setDataPlayerNewGameJoin,
-		roomId,
-		setRoomId,
-	} = useMainPage();
+	const { isDisable, loading, setSelectQuery, setIsGameRandom, loadingSocket, setRoomId } = useMainPage();
 
 	const [isForm, setIsForm] = useState<boolean>(false);
 
@@ -56,18 +44,9 @@ export default function Play({ Loadingclick, setPlayerGameLogic, playerGameLogic
 			.then((response) => {
 				const data: { game_id: string; P1: UserDto } = response.data;
 				console.log(data);
-				if (!data.P1) {
-					setRoomId(data.game_id);
-					setPlayerGameLogic({ ...playerGameLogic, isChallenge: false, isP1: true });
-					// setPlayerNewGameInvit(true);
-					// setIsOpponant(true);
-				} else {
-					setRoomId(data.game_id);
-					setPlayerGameLogic({ isChallenge: false, isP1: false, opponent: data.P1 });
-					// setDataPlayerNewGameJoin(data.P1);
-					// setIsOpponant(false);
-					// setPlayerNewGameJoin(true);
-				}
+				setRoomId(data.game_id);
+				if (!data.P1) setPlayerGameLogic({ ...playerGameLogic, isChallenge: false, isP1: true });
+				else setPlayerGameLogic({ isChallenge: false, isP1: false, opponent: data.P1 });
 			})
 			.catch((err) => {
 				console.error(err);
