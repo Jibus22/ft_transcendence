@@ -1,9 +1,9 @@
-import { Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
+import { Backdrop, CircularProgress } from '@mui/material';
 import { useMount } from 'ahooks';
 import axios from 'axios';
 import React, { useEffect, useState, Dispatch } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { io, Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import {
 	ErrorPage,
 	Game,
@@ -14,15 +14,9 @@ import {
 	UserRank,
 } from '..';
 import { useMainPage } from '../../MainPageContext';
-import {
-	IOnlineGameRemove,
-	OnlineGameType,
-	PlayerGameLogic,
-	UserDto,
-	UserMe,
-} from '../type';
+import { IOnlineGameRemove, PlayerGameLogic, UserDto, UserMe } from '../type';
 import './mainPage.scss';
-import { doDisconnect, connectWs } from './socketInit/socketCoreInit';
+import { connectWs } from './socketInit/socketCoreInit';
 import { gameCallbacks, setWsCallbacks } from './socketInit/socketCbInit';
 import { clearPlayerGameLogic } from './utils/utils';
 
@@ -30,31 +24,20 @@ const MainPage = () => {
 	console.log('--------- MAINPAGE ---------');
 	const {
 		gameWs,
-		challengData,
 		setGameWs,
 		setData,
-		setChallengData,
 		leaveGame,
 		dialogueLoading,
 		disconectAuth,
 		setLoadingSocket,
-		setIsGameRandom,
-		setPlayerNewGameInvit,
-		setIsOpponant,
 		setStartGame,
 		setBackInGame,
 		setDataUserBack,
 		setUserName,
 		userName,
 		setDisableInvitOther,
-		disableInvitOther,
-		data,
 	} = useMainPage();
 
-	// const [connectionTrieschatWs, setConnectionsTriesChatWs] = useState<number>(0);
-	// const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
-	// const [connectionTriesgameWs, setConnectionsTriesGameWs] = useState<number>(0);
-	// const [load, setLoad] = useState(false);
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
 	const [time, setTime] = useState(false);
 	const [isHeader, setIsHeader] = useState(true);
@@ -74,7 +57,7 @@ const MainPage = () => {
 				},
 			);
 			const user: UserMe = response.data;
-			setData([response.data]);
+			setData(user);
 			setter(user.login);
 			return user.login;
 		} catch (error) {
@@ -89,7 +72,7 @@ const MainPage = () => {
 
 	useMount(async () => {
 		await fetchDataUserMe(setUserName)
-			.then(async (login: string | undefined) => {
+			.then(async () => {
 				await connectWs(
 					`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
 					gameCallbacks,
@@ -150,10 +133,6 @@ const MainPage = () => {
 		clearInterval(timer);
 	};
 
-	// const [opponent, setOpponent] = useState(new UserDto());
-	// const [isP2, setIsP2] = useState(false);
-	// const [isJoinGame, setIsJoinGame] = useState(false);
-
 	useEffect(() => {
 		gameWs?.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
@@ -179,15 +158,7 @@ const MainPage = () => {
 					};
 				});
 			setDataUserBack(gameData);
-
-			// if (userName === gameData.challenger.login) {
-			// 	setIsOpponant(true);
-			// } else {
-			// 	setIsOpponant(false);
-			// }
 			setBackInGame(true);
-			// setIsGameRandom(true);
-			// setPlayerNewGameInvit(true);
 			setStartGame(true);
 		});
 
@@ -208,7 +179,6 @@ const MainPage = () => {
 					});
 					countInvit--;
 				} else {
-					// setChallengData([challengerData]);
 					setPlayerGameLogic((prevState: PlayerGameLogic) => {
 						return {
 							...prevState,
@@ -252,11 +222,6 @@ const MainPage = () => {
 		};
 	}, [gameWs]);
 
-	function disconnectGameWs() {
-		console.log('Click disconnect Chat ', gameWs?.id);
-		doDisconnect(gameWs, setGameWs);
-	}
-
 	const headerLeave = () => {
 		if (!leaveGame && isHeader) {
 			return (
@@ -284,14 +249,7 @@ const MainPage = () => {
 					playerGameLogic={playerGameLogic}
 				/>
 			)}
-
-			{/* <div>
-				<button onClick={disconnectGameWs}>DISCONNECT GAME WS</button>
-			</div> */}
 			{headerLeave()}
-
-			{/* <button onClick={blabla}> push </button> */}
-
 			<Routes>
 				<Route
 					path="/MainPage"
