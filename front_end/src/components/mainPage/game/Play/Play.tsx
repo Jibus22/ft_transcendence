@@ -21,6 +21,7 @@ export default function Play({
 	setPlayerGameLogic,
 	playerGameLogic,
 }: Props) {
+	console.log('--------- PLAY ---------');
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -59,16 +60,20 @@ export default function Play({
 				console.log(data);
 				setRoomId(data.game_id);
 				if (!data.P1)
-					setPlayerGameLogic({
-						...playerGameLogic,
-						isChallenge: false,
-						isP1: true,
+					setPlayerGameLogic((prevState: PlayerGameLogic) => {
+						return {
+							...prevState,
+							isChallenge: false,
+							isP1: true,
+						};
 					});
 				else
-					setPlayerGameLogic({
-						isChallenge: false,
-						isP1: false,
-						opponent: data.P1,
+					setPlayerGameLogic(() => {
+						return {
+							isChallenge: false,
+							isP1: false,
+							opponent: data.P1,
+						};
 					});
 			})
 			.catch((err) => {

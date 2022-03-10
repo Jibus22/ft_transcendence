@@ -25,6 +25,7 @@ export default function Game({
 	setPlayerGameLogic,
 	playerGameLogic,
 }: IProps) {
+	console.log('--------- GAME ---------');
 	const {
 		setTimeSnack,
 		isWatchGame,

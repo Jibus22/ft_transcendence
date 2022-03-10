@@ -9,6 +9,7 @@ import MapChoice from './mapChoice/MapChoice';
 import PongGame from './mateo/PongGame';
 import './pongGame.scss';
 import { User, UserChallenge, UserDto, PlayerGameLogic } from '../../../type';
+import { clearPlayerGameLogic } from '../../utils/utils';
 
 interface IProps {
 	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
@@ -19,6 +20,7 @@ export default function MainPong({
 	setPlayerGameLogic,
 	playerGameLogic,
 }: IProps) {
+	console.log('--------- MAINPONG ---------');
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -97,7 +99,9 @@ export default function MainPong({
 				bcast: { room: roomId, watchers: watchId, op: game_ws },
 			});
 			setOpen(false);
-			setPlayerGameLogic(new PlayerGameLogic());
+			setPlayerGameLogic((prevState: PlayerGameLogic) =>
+				clearPlayerGameLogic(prevState),
+			);
 			setTimeout(function () {
 				setStartGame(false);
 				setLeaveGame(false);
@@ -184,8 +188,12 @@ export default function MainPong({
 
 		gameWs?.on('newPlayerJoined', (opponent: UserDto) => {
 			console.log(`💌  Event: newPlayerJoined -> `, opponent);
-			// setDataGameRandomSocket(obj);
-			setPlayerGameLogic({ ...playerGameLogic, opponent: opponent });
+			setPlayerGameLogic((prevState: PlayerGameLogic) => {
+				return {
+					...prevState,
+					opponent: opponent,
+				};
+			});
 			setAcceptGame(true);
 			setOpacity(false);
 		});
@@ -205,7 +213,9 @@ export default function MainPong({
 		gameWs?.on('gaveUp', (usr: UserDto) => {
 			console.log(`💌  Event: gaveUp -> `);
 			console.log(usr);
-			setPlayerGameLogic(new PlayerGameLogic());
+			setPlayerGameLogic((prevState: PlayerGameLogic) =>
+				clearPlayerGameLogic(prevState),
+			);
 			setStartGame(false);
 		});
 
@@ -214,7 +224,9 @@ export default function MainPong({
 			console.log(obj);
 
 			// setOpen(false);
-			setPlayerGameLogic(new PlayerGameLogic());
+			setPlayerGameLogic((prevState: PlayerGameLogic) =>
+				clearPlayerGameLogic(prevState),
+			);
 			setStartGame(false);
 			// setLeaveGame(false);
 			// setIsWatchGame(false);

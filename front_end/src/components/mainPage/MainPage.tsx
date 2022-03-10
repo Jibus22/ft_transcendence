@@ -24,8 +24,10 @@ import {
 import './mainPage.scss';
 import { doDisconnect, connectWs } from './socketInit/socketCoreInit';
 import { gameCallbacks, setWsCallbacks } from './socketInit/socketCbInit';
+import { clearPlayerGameLogic } from './utils/utils';
 
 const MainPage = () => {
+	console.log('--------- MAINPAGE ---------');
 	const {
 		gameWs,
 		challengData,
@@ -111,6 +113,10 @@ const MainPage = () => {
 	const [progress, setProgress] = React.useState(0);
 	const [wsId, setWsId] = useState('');
 
+	const [playerGameLogic, setPlayerGameLogic] = useState(() => {
+		return new PlayerGameLogic();
+	});
+
 	const handleCloseTimeSnack = () => {
 		gameWs?.emit(
 			'gameInvitResponse',
@@ -120,7 +126,9 @@ const MainPage = () => {
 			},
 		);
 		setTimeSnack(false);
-		setPlayerGameLogic(new PlayerGameLogic());
+		setPlayerGameLogic((prevState: PlayerGameLogic) =>
+			clearPlayerGameLogic(prevState),
+		);
 		countInvit--;
 		clearInterval(timer);
 	};
@@ -145,7 +153,6 @@ const MainPage = () => {
 	// const [opponent, setOpponent] = useState(new UserDto());
 	// const [isP2, setIsP2] = useState(false);
 	// const [isJoinGame, setIsJoinGame] = useState(false);
-	const [playerGameLogic, setPlayerGameLogic] = useState(new PlayerGameLogic());
 
 	useEffect(() => {
 		gameWs?.on('gameFinished', (room: string) => {
@@ -156,16 +163,20 @@ const MainPage = () => {
 		gameWs?.on('goBackInGame', (gameData: IOnlineGameRemove) => {
 			console.log(`💌  Event: goBackInGame ->`);
 			if (userName === gameData.challenger.login)
-				setPlayerGameLogic({
-					opponent: gameData.opponent,
-					isP1: true,
-					isChallenge: false,
+				setPlayerGameLogic(() => {
+					return {
+						opponent: gameData.opponent,
+						isP1: true,
+						isChallenge: false,
+					};
 				});
 			else
-				setPlayerGameLogic({
-					opponent: gameData.challenger,
-					isP1: false,
-					isChallenge: false,
+				setPlayerGameLogic(() => {
+					return {
+						opponent: gameData.challenger,
+						isP1: false,
+						isChallenge: false,
+					};
 				});
 			setDataUserBack(gameData);
 
@@ -198,10 +209,12 @@ const MainPage = () => {
 					countInvit--;
 				} else {
 					// setChallengData([challengerData]);
-					setPlayerGameLogic({
-						...playerGameLogic,
-						isP1: false,
-						opponent: challengerData,
+					setPlayerGameLogic((prevState: PlayerGameLogic) => {
+						return {
+							...prevState,
+							isP1: false,
+							opponent: challengerData,
+						};
 					});
 					setWsId(challengerWsId);
 					setTimeSnack(true);

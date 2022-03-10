@@ -68,7 +68,13 @@ const RankWorld = ({
 			);
 			const { login_opponent: string, ...userDto } = response.data;
 			const opponent: Partial<UserDto> = userDto;
-			setPlayerGameLogic({ isChallenge: true, isP1: true, opponent: opponent });
+			setPlayerGameLogic(() => {
+				return {
+					isChallenge: true,
+					isP1: true,
+					opponent: opponent,
+				};
+			});
 		} catch (error) {
 			console.error(error);
 		}

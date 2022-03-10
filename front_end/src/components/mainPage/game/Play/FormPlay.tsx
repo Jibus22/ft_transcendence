@@ -20,6 +20,7 @@ export default function FormPlay({
 	loading,
 	setPlayerGameLogic,
 }: IProps) {
+	console.log('--------- FORMPLAY ---------');
 	const anim = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -50,10 +51,12 @@ export default function FormPlay({
 				);
 				const { login_opponent: string, ...userDto } = response.data;
 				const opponent: Partial<UserDto> = userDto;
-				setPlayerGameLogic({
-					isChallenge: true,
-					isP1: true,
-					opponent: opponent,
+				setPlayerGameLogic((prevState: PlayerGameLogic) => {
+					return {
+						isChallenge: true,
+						isP1: true,
+						opponent: opponent,
+					};
 				});
 
 				Loadingclick();
