@@ -25,7 +25,7 @@ export default function Game({ chatWs, setPlayerGameLogic, playerGameLogic }: IP
 
 	// const { selectNav, setStartGame, startGame } = useMainPage();
 	const responsive = useResponsive();
-	const query = useMediaQuery('(max-width:1060px)');
+	// const query = useMediaQuery('(max-width:1060px)');
 	function handleClick() {
 		/*
          TEST MESSAGE EMIT for ingame status: set

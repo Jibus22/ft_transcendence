@@ -88,20 +88,12 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 			setLeaveGame(false);
 			setIsWatchGame(false);
 		} else {
-			let game_ws: string;
-			if (dataUserChallenge.length > 0) game_ws = dataUserChallenge[0].game_ws;
-			else if (dataGameRandomSocket?.game_ws) game_ws = dataGameRandomSocket.game_ws;
-			else if (dataPlayerNewGameJoin?.game_ws) game_ws = dataPlayerNewGameJoin.game_ws;
-			else game_ws = '';
-
+			const game_ws = playerGameLogic.opponent.game_ws;
 			gameWs?.emit('giveUpGame', {
 				bcast: { room: roomId, watchers: watchId, op: game_ws },
 			});
 			setOpen(false);
-
-			if (dataUserChallenge.length > 0) setDataUserChallenge([new UserChallenge()]);
-			else if (dataGameRandomSocket?.game_ws) setDataGameRandomSocket(new UserDto());
-			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
+			setPlayerGameLogic(new PlayerGameLogic());
 			setTimeout(function () {
 				setStartGame(false);
 				setLeaveGame(false);
@@ -131,37 +123,25 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 
 	useEffect(() => {
 		// setLeaveGame(true);
+		if (backInGame) {
+			setScoreJ1(dataUserBack.challenger.score);
+			setScoreJ2(dataUserBack.opponent.score);
+			setMap(dataUserBack.map);
+			setRoomId(dataUserBack.id);
+			setWatchId(dataUserBack.watch);
+		} else {
+			setScoreJ1(0);
+			setScoreJ2(0);
+		}
 
-		if (!isOpponant) {
+		if (!playerGameLogic.isP1) {
 			setNbPlayer(2);
 			setLeaveGame(true);
-			setData(challengData);
-
-			if (backInGame) {
-				setScoreJ1(dataUserBack.challenger.score);
-				setScoreJ2(dataUserBack.opponent.score);
-				setMap(dataUserBack.map);
-				setRoomId(dataUserBack.id);
-				setWatchId(dataUserBack.watch);
-			} else {
-				setScoreJ1(0);
-				setScoreJ2(0);
-			}
+			// setData(challengData);
 		} else {
 			setNbPlayer(1);
 			setLeaveGame(true);
-			setData(dataUserChallenge);
-
-			if (backInGame) {
-				setScoreJ1(dataUserBack.challenger.score);
-				setScoreJ2(dataUserBack.opponent.score);
-				setMap(dataUserBack.map);
-				setRoomId(dataUserBack.id);
-				setWatchId(dataUserBack.watch);
-			} else {
-				setScoreJ1(0);
-				setScoreJ2(0);
-			}
+			// setData(dataUserChallenge);
 
 			if (acceptGame === false) {
 				setOpacity(true);
@@ -174,7 +154,7 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 			// setPlayerNewGameInvit(false);
 			// setIsOpponant(false);
 		};
-	}, [isOpponant, leaveGame, dataUserChallenge, nbPlayer]);
+	}, [leaveGame, dataUserChallenge, nbPlayer]);
 
 	useEffect(() => {
 		gameWs?.on('gameAccepted', (opponentData) => {
@@ -221,20 +201,16 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 		gameWs?.on('gaveUp', (usr: UserDto) => {
 			console.log(`💌  Event: gaveUp -> `);
 			console.log(usr);
+			setPlayerGameLogic(new PlayerGameLogic());
 			setStartGame(false);
-			if (dataUserChallenge.length > 0) setDataUserChallenge([new UserChallenge()]);
-			else if (dataGameRandomSocket?.game_ws) setDataGameRandomSocket(new UserDto());
-			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
 		});
 
 		gameWs?.on('playerGiveUp', (obj: UserDto) => {
 			console.log(`💌  Event: playerGiveUp -> `);
 			console.log(obj);
 
-			if (dataUserChallenge.length > 0) setDataUserChallenge([new UserChallenge()]);
-			else if (dataGameRandomSocket?.game_ws) setDataGameRandomSocket(new UserDto());
-			else if (dataPlayerNewGameJoin?.game_ws) setDataPlayerNewGameJoin(new UserDto());
 			// setOpen(false);
+			setPlayerGameLogic(new PlayerGameLogic());
 			setStartGame(false);
 			// setLeaveGame(false);
 			// setIsWatchGame(false);
@@ -317,41 +293,41 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 	}, [isWatchGame, watchGameScore, map, scoreJ1, scoreJ2]);
 
 	const titlePrint = () => {
-		if (!isGameRandom) {
-			return <h1>Waiting for {data[0]?.login}...</h1>;
+		if (playerGameLogic.isChallenge) {
+			return <h1>Waiting for {playerGameLogic.opponent.login}...</h1>;
 		} else {
 			return <h1>Waiting for an opponent...</h1>;
 		}
 	};
 
 	const infoOpponent = () => {
-		if (!isGameRandom) {
+		if (playerGameLogic.isChallenge) {
 			return (
 				<>
-					<Avatar alt="userImg" src={data[0]?.photo_url} />
+					<Avatar alt="userImg" src={playerGameLogic.opponent.photo_url} />
 					<div>
-						<h1>{data[0]?.login}</h1>
+						<h1>{playerGameLogic.opponent.login}</h1>
 					</div>
 				</>
 			);
 		}
-		if (playerNewGameInvit && acceptGame) {
+		if (playerGameLogic.isP1 && acceptGame) {
 			return (
 				<>
-					<Avatar alt="userImg" src={dataGameRandomSocket?.photo_url} />
+					<Avatar alt="userImg" src={playerGameLogic.opponent.photo_url} />
 					<div>
-						<h1>{dataGameRandomSocket?.login}</h1>
+						<h1>{playerGameLogic.opponent.login}</h1>
 					</div>
 				</>
 			);
 		}
 
-		if (playerNewGameJoin) {
+		if (!playerGameLogic.isP1) {
 			return (
 				<>
-					<Avatar alt="userImg" src={dataPlayerNewGameJoin?.photo_url} />
+					<Avatar alt="userImg" src={playerGameLogic.opponent.photo_url} />
 					<div>
-						<h1>{dataPlayerNewGameJoin?.login}</h1>
+						<h1>{playerGameLogic.opponent.login}</h1>
 					</div>
 				</>
 			);
@@ -387,10 +363,10 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 					) : (
 						<div className="mainPongGame">
 							<div className="titlePongGame">
-								{acceptGame || !isOpponant ? <span className="counterOutput">{count}</span> : titlePrint()}
+								{acceptGame || !playerGameLogic.isP1 ? <span className="counterOutput">{count}</span> : titlePrint()}
 							</div>
 
-							<div className={clsx('infoUser', !isOpponant && 'infoUserReverse')}>
+							<div className={clsx('infoUser', !playerGameLogic.isP1 && 'infoUserReverse')}>
 								<div className="photoUser">
 									<Avatar alt="userImg" src={userImg} />
 									<div>
@@ -398,13 +374,13 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 									</div>
 								</div>
 
-								<div className="loadingVersus">{acceptGame || !isOpponant ? <h1>VS</h1> : <CircularProgress />}</div>
+								<div className="loadingVersus">{acceptGame || !playerGameLogic.isP1 ? <h1>VS</h1> : <CircularProgress />}</div>
 								<div className={`${!opacity ? '' : 'photoOp'} photoUser `}>{infoOpponent()}</div>
 							</div>
 							<div className="titleMap">
-								{isOpponant && !acceptGame ? <h1>Choose the map</h1> : null}
+								{playerGameLogic.isP1 && !acceptGame ? <h1>Choose the map</h1> : null}
 
-								{isOpponant && (
+								{playerGameLogic.isP1 && (
 									<div className="selectMap">
 										<MapChoice
 											disableMap={disableMap}
@@ -412,7 +388,7 @@ export default function MainPong({ setPlayerGameLogic, playerGameLogic }: IProps
 											isChoiceMap={isChoiceMap}
 											setIsChoiceMap={setIsChoiseMao}
 											count={count}
-											isOpponant={isOpponant}
+											isOpponant={playerGameLogic.isP1}
 											setMap={setMap}
 											map={map}
 										/>

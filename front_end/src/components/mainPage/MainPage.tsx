@@ -1,7 +1,7 @@
 import { Backdrop, CircularProgress, useMediaQuery } from '@mui/material';
 import { useMount } from 'ahooks';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { ErrorPage, Game, Header, HistoryGame, ParamUser, SnackBarre, UserRank } from '..';
@@ -29,10 +29,10 @@ const MainPage = () => {
 		setBackInGame,
 		setDataUserBack,
 		setUserName,
+		userName,
 		setDisableInvitOther,
 		disableInvitOther,
 		data,
-		userName,
 	} = useMainPage();
 
 	// const [connectionTrieschatWs, setConnectionsTriesChatWs] = useState<number>(0);
@@ -47,13 +47,14 @@ const MainPage = () => {
 
 	const navigate = useNavigate();
 
-	const fetchDataUserMe = async () => {
+	const fetchDataUserMe = async (setter: Dispatch<React.SetStateAction<string>>) => {
 		try {
 			const response = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`, {
 				withCredentials: true,
 			});
 			const user: UserMe = response.data;
 			setData([response.data]);
+			setter(user.login);
 			return user.login;
 		} catch (error) {
 			setOpenDIalog(true);
@@ -66,10 +67,10 @@ const MainPage = () => {
 	};
 
 	useMount(async () => {
-		await fetchDataUserMe()
+		await fetchDataUserMe(setUserName)
 			.then(async (login: string | undefined) => {
-				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, setGameWs, login);
-				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, setChatWs, login);
+				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`, gameCallbacks, setGameWs, setLoadingSocket);
+				await connectWs(`ws://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/chat`, setWsCallbacks, setChatWs, setLoadingSocket);
 			})
 			.catch(() => {
 				navigate('/');
@@ -86,6 +87,7 @@ const MainPage = () => {
 			if (response || !response) setTimeSnack(false);
 		});
 		setTimeSnack(false);
+		setPlayerGameLogic(new PlayerGameLogic());
 		countInvit--;
 		clearInterval(timer);
 	};
@@ -109,10 +111,6 @@ const MainPage = () => {
 	const [playerGameLogic, setPlayerGameLogic] = useState(new PlayerGameLogic());
 
 	useEffect(() => {
-		/* -----------------------
-		 ** Game events
-		 * -----------------------*/
-
 		gameWs?.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
 			//enlever l'objet onlinegame de la liste des onlinegames
@@ -120,14 +118,9 @@ const MainPage = () => {
 
 		gameWs?.on('goBackInGame', (obj: OnlineGameRemooveType) => {
 			console.log(`💌  Event: goBackInGame ->`);
-			// console.log('ici ====', obj);
-			//Server detected the client was playing before disconnecting so it gives
-			//thru this event an OnlineGameDto so that we can call the game component
-			//and go back to the game.
-
 			setDataUserBack(obj);
 
-			if (login === obj.challenger.login) {
+			if (userName === obj.challenger.login) {
 				setIsOpponant(true);
 			} else {
 				setIsOpponant(false);
@@ -208,7 +201,13 @@ const MainPage = () => {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			{timeSnack && (
-				<SnackBarre timeSnack={timeSnack} handleOk={handleOkTimeSnack} handleClose={handleCloseTimeSnack} progress={progress} />
+				<SnackBarre
+					timeSnack={timeSnack}
+					handleOk={handleOkTimeSnack}
+					handleClose={handleCloseTimeSnack}
+					progress={progress}
+					playerGameLogic={playerGameLogic}
+				/>
 			)}
 
 			{/* <div>
