@@ -102,3 +102,12 @@ export interface IOnlineGameRemove {
 	createdAt: number;
 	id: string;
 }
+
+export interface IBigUser {
+	id: string;
+	login: string;
+	photo_url: string;
+	status: string;
+	score: number;
+	game_ws: string;
+}
