@@ -38,7 +38,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	const [users, setUsers] = useState<any[]>([]);
 	const [friends, setFriends] = useState<any[]>([]);
 
-	const getChats = async () => {
+	const getChats = async (openChatId = null) => {
 		try {
 			if (window.chatLoading)
 				return;
@@ -48,6 +48,12 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			});
 			setChats(data);
 			window.chatLoading = false;
+			if (openChatId) {
+				const chat = (data as Array<any>).find((x: any) => x.id === openChatId);
+				if (chat) {
+					openChat(chat);
+				}
+			}
 		} catch (e: any) { console.log(e) };
 	};
 
@@ -198,9 +204,8 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 	
 		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-			console.log("SHOULD REFRESH PUBLIC ROOM");
-			openPublicRoom(detail.id);
-			getChats();
+			// openPublicRoom(detail.id);
+			getChats(detail.id);
 		})
 	
 		window.addEventListener("friendsUpdated", ({ detail }: any) => {
