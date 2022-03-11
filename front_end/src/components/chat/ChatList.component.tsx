@@ -166,8 +166,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			openPublicRoom(room.id);
 		})
 		.catch(error => {
-			console.log("CANNOT JOIN", error)
-			alert("Wrong password!");
+			alert(error?.response?.data?.message || "There was an error while joining the room");
 		});
 	};
 
@@ -194,6 +193,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			if (window.roomsLoading)
 				return;
 			getPublicRooms();
+			getChats();
 		})
 	
 		window.addEventListener("userAdded", ({ detail }: any) => {
