@@ -11,11 +11,13 @@ import { CreateRestrictionDto } from './dto/create-restriction.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateIsPrivateDto } from './dto/update-isPrivate.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
+import { ParticipantDto } from './dto/participant.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ChatMessage } from './entities/chatMessage.entity';
 import { Participant } from './entities/participant.entity';
 import { Restriction } from './entities/restriction.entity';
 import { Room } from './entities/room.entity';
+import { plainToClass } from 'class-transformer';
 const scrypt = promisify(_scrypt);
 
 @Injectable()
@@ -55,7 +57,7 @@ export class ChatService {
     const user = await this.usersService.findOne(userId);
     if (user) {
       const newParticipant = this.repoParticipants.create({ user, room });
-      const isOwner = (roomOwner.id === userId || user.is_site_owner);
+      const isOwner = roomOwner.id === userId || user.is_site_owner;
       newParticipant.is_owner = isOwner;
       newParticipant.is_moderator = isOwner;
       return await this.repoParticipants.save(newParticipant);
@@ -145,6 +147,7 @@ export class ChatService {
         relations: [
           'participants',
           'participants.user',
+          'participants.user.local_photo',
           'messages',
           'messages.sender',
         ],
@@ -267,14 +270,17 @@ export class ChatService {
   async updateParticipant(updateDto: UpdateParticipantDto) {
     const participant = await this.repoParticipants.findOne(
       updateDto.participant_id,
-      { relations: [ 'user' ]}
+      { relations: ['user'] },
     );
     if (!participant) {
       throw {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
       };
-    } else if (participant?.user.is_site_owner && updateDto.is_moderator === false) {
+    } else if (
+      participant?.user.is_site_owner &&
+      updateDto.is_moderator === false
+    ) {
       throw {
         status: HttpStatus.FORBIDDEN,
         error: `targeted user status prevents removing moderation rights`,
@@ -305,7 +311,11 @@ export class ChatService {
         status: HttpStatus.NOT_FOUND,
         error: `participant missing`,
       };
-    } else if (targetedParticipant.is_owner || targetedParticipant.is_moderator || targetedParticipant.user.is_site_owner) {
+    } else if (
+      targetedParticipant.is_owner ||
+      targetedParticipant.is_moderator ||
+      targetedParticipant.user.is_site_owner
+    ) {
       throw {
         status: HttpStatus.FORBIDDEN,
         error: `targeted user status prevents this restriction to apply`,

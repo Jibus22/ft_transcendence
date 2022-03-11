@@ -38,16 +38,23 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	const [users, setUsers] = useState<any[]>([]);
 	const [friends, setFriends] = useState<any[]>([]);
 
-	const getChats = async () => {
+	const getChats = async (openChatId = null) => {
 		try {
 			if (window.chatLoading)
 				return;
 			window.chatLoading = true;
+			console.log("RELOADING CHATS");
 			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms`, {
 				withCredentials: true
 			});
 			setChats(data);
 			window.chatLoading = false;
+			if (openChatId) {
+				const chat = (data as Array<any>).find((x: any) => x.id === openChatId);
+				if (chat) {
+					openChat(chat);
+				}
+			}
 		} catch (e: any) { console.log(e) };
 	};
 
@@ -160,8 +167,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			openPublicRoom(room.id);
 		})
 		.catch(error => {
-			console.log("CANNOT JOIN", error)
-			alert("Wrong password!");
+			alert(error?.response?.data?.message || "There was an error while joining the room");
 		});
 	};
 
@@ -185,9 +191,8 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 	
 		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
 			getPublicRooms();
+			getChats();
 		})
 	
 		window.addEventListener("userAdded", ({ detail }: any) => {
@@ -198,9 +203,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 	
 		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-			console.log("SHOULD REFRESH PUBLIC ROOM");
-			openPublicRoom(detail.id);
-			getChats();
+			getChats(detail.id);
 		})
 	
 		window.addEventListener("friendsUpdated", ({ detail }: any) => {
@@ -392,6 +395,11 @@ const LargeButton = styled.button`
 	color: #CA6C88;
 	border: none;
 	background-color: white;
+	transition: background-color .3s ease;
+
+	:hover {
+		background-color: #ddd;
+	}
 `;
 
 export default ChatList;

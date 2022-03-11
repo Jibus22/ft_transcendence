@@ -246,6 +246,11 @@ const Button = styled.div`
 	background-color: white;
 	text-align: center;
 	cursor: pointer;
+	transition: background-color .3s ease;
+
+	:hover {
+		background-color: #ddd;
+	}
 `;
 
 const ActionButtons = styled.div`
