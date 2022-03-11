@@ -43,6 +43,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			if (window.chatLoading)
 				return;
 			window.chatLoading = true;
+			console.log("RELOADING CHATS");
 			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms`, {
 				withCredentials: true
 			});
@@ -190,8 +191,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 	
 		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
 			getPublicRooms();
 			getChats();
 		})
@@ -204,7 +203,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 	
 		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-			// openPublicRoom(detail.id);
 			getChats(detail.id);
 		})
 	
