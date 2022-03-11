@@ -35,11 +35,13 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			return;
 		}
 		try {
-			axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
+			setMessage("");
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
 			{ body: message.slice(0, 10000) },
 			{ withCredentials: true });
-			setMessage("");
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { 
+			alert(e?.response?.data?.message || "Cannot send the message");
+		 };
 	}
 
 	const getNameIfDM = () => {
