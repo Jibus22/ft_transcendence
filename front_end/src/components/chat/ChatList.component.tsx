@@ -397,6 +397,11 @@ const LargeButton = styled.button`
 	color: #CA6C88;
 	border: none;
 	background-color: white;
+	transition: background-color .3s ease;
+
+	:hover {
+		background-color: #ddd;
+	}
 `;
 
 export default ChatList;
