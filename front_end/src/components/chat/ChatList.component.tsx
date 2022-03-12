@@ -25,7 +25,7 @@ const chatName = (chat: any, currentUser: any) => {
 	} catch {}
 	let name = "";
 	chat.participants.forEach((p: any) => name += p.user.login[0]);
-	return name.slice(0, 8);
+	return name.split("").sort((x: string, y: string) => x > y ? 1 : -1).join("").slice(0, 8);
 }
 
 const ChatList = ({ openChat, currentUser }: any) => {
@@ -182,19 +182,19 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				return;
 			getPublicRooms();
 		})
-	
+
 		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
 			if (window.roomsLoading)
 				return;
 			getPublicRooms();
 			getChats();
 		})
-	
+
 		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
 			getPublicRooms();
 			getChats();
 		})
-	
+
 		window.addEventListener("userAdded", ({ detail }: any) => {
 			if (window.roomsLoading)
 				return;
@@ -215,6 +215,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		window.addEventListener("quitRoom", () => {
 			openChat(null);
 		})
+
 	}, []);
 
 	return (
