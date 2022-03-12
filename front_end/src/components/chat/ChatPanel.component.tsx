@@ -8,8 +8,8 @@ import RoomSettings from "./RoomSettings.component";
 
 const chatName = (participants: any) => {
 	let name = "";
-	participants.forEach((p: any) => name += p.user.login[0]);
-	return name;
+	participants.sort((x: any, y: any) => x.id > y.id).forEach((p: any) => name += p.user.login[0]);
+	return name.split("").sort((x: string, y: string) => x > y ? 1 : -1).join("").slice(0, 8);
 }
 
 const ChatPanel = ({ room, currentUser }: any) => {
@@ -35,11 +35,13 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			return;
 		}
 		try {
-			axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
+			setMessage("");
+			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
 			{ body: message.slice(0, 10000) },
 			{ withCredentials: true });
-			setMessage("");
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { 
+			alert(e?.response?.data?.message || "Cannot send the message");
+		 };
 	}
 
 	const getNameIfDM = () => {
@@ -226,6 +228,7 @@ const Message = styled.div<{self: boolean}>`
 		background-color: #F1F1F1;
 		padding: 5px 7px;
 		position: relative;
+		word-break: break-all;
 
 		svg {
 			position: absolute;

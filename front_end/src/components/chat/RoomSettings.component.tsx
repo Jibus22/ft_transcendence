@@ -105,7 +105,6 @@ const RoomSettings = ({ room, currentUser }: any) => {
 				return;
 			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-					participant_id: user.id,
 					user_id: user.user.id,
 					restriction_type: "mute",
 					duration: parseInt(duration)
@@ -128,7 +127,6 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			}
 			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
-					participant_id: user.id,
 					user_id: user.user.id,
 					restriction_type: "ban",
 					duration: parseInt(duration)
@@ -184,7 +182,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			room.participants.map((user: any) => (<User key={user.id}>
 				<img onClick={() => showUserDetail(user)} src={user.user.photo_url} alt={user.user.login} />
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
-				{isModerator() && user.user.id !== currentUser.id && (
+				{isModerator() && user.user.id !== currentUser.id && !user.is_site_owner && (
 					<ActionButtons>
 						<Tooltip title="Ban user"><button onClick={() => ban(user)}>
 							<BlockIcon />
@@ -248,6 +246,11 @@ const Button = styled.div`
 	background-color: white;
 	text-align: center;
 	cursor: pointer;
+	transition: background-color .3s ease;
+
+	:hover {
+		background-color: #ddd;
+	}
 `;
 
 const ActionButtons = styled.div`
