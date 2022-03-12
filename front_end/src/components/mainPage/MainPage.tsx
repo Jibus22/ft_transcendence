@@ -133,6 +133,26 @@ const MainPage = () => {
 			//catch error
 		});
 
+		gameWs?.on('gaveUp', (usr: UserDto) => {
+			console.log(`💌  Event: gaveUp ->`);
+			console.log(usr);
+			setTimeSnack(false);
+		});
+
+		return () => {
+			console.log('MAINPAGE CLEANUP');
+			gameWs?.off('gaveUp');
+			gameWs?.off('connect');
+			gameWs?.off('disconnect');
+			gameWs?.off('connect_error');
+			gameWs?.off('error');
+			gameWs?.off('gameFinished');
+			gameWs?.off('goBackInGame');
+			gameWs?.off('myerror');
+		};
+	}, [gameWs, countInvit]);
+
+	useEffect(() => {
 		gameWs?.on(
 			'gameInvitation',
 			async (challengerData: UserDto, challengerWsId: string) => {
@@ -158,23 +178,8 @@ const MainPage = () => {
 			},
 		);
 
-		gameWs?.on('gaveUp', (usr: UserDto) => {
-			console.log(`💌  Event: gaveUp ->`);
-			console.log(usr);
-			setTimeSnack(false);
-		});
-
 		return () => {
-			console.log('MAINPAGE CLEANUP');
-			gameWs?.off('gaveUp');
 			gameWs?.off('gameInvitation');
-			gameWs?.off('connect');
-			gameWs?.off('disconnect');
-			gameWs?.off('connect_error');
-			gameWs?.off('error');
-			gameWs?.off('gameFinished');
-			gameWs?.off('goBackInGame');
-			gameWs?.off('myerror');
 		};
 	}, [gameWs, countInvit]);
 
