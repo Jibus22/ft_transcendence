@@ -233,7 +233,7 @@ describe('CHAT: Restrictions', () => {
         expect(response.status).toBe(HttpStatus.FORBIDDEN);
         expect(response.body).toHaveProperty(
           'error',
-          'owner of the room cannot be banned',
+          'targeted user status prevents this restriction to apply',
         );
         return await chatHelper.getUserRooms();
       })
