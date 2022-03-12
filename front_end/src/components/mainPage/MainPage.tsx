@@ -1,7 +1,7 @@
 import { Backdrop, CircularProgress } from '@mui/material';
 import { useMount } from 'ahooks';
 import axios from 'axios';
-import React, { useEffect, useState, Dispatch } from 'react';
+import React, { useEffect, useState, Dispatch, useCallback } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import {
@@ -35,7 +35,6 @@ const MainPage = () => {
 		setDataUserBack,
 		setUserName,
 		userName,
-		setDisableInvitOther,
 		playerGameLogic,
 		setPlayerGameLogic,
 	} = useMainPage();
@@ -93,37 +92,11 @@ const MainPage = () => {
 			});
 	});
 
-	let countInvit = 0;
-	let timer: NodeJS.Timer;
-	const [progress, setProgress] = React.useState(0);
+	// let countInvit = 0;
 	const [wsId, setWsId] = useState('');
+	const [countInvit, setCountInvit] = useState(0);
 
-	const handleCloseTimeSnack = () => {
-		gameWs?.emit(
-			'gameInvitResponse',
-			{ response: 'KO', to: wsId },
-			(response: number) => {},
-		);
-		setTimeSnack(false);
-		setPlayerGameLogic((prevState: PlayerGameLogic) =>
-			clearPlayerGameLogic(prevState),
-		);
-		countInvit--;
-		clearInterval(timer);
-	};
-
-	const handleOkTimeSnack = () => {
-		gameWs?.emit(
-			'gameInvitResponse',
-			{ response: 'OK', to: wsId },
-			(response: number) => {
-				if (!response) setStartGame(true);
-			},
-		);
-		setTimeSnack(false);
-		countInvit--;
-		clearInterval(timer);
-	};
+	console.log(`countInvit inisde ManPage component: ${countInvit}`);
 
 	useEffect(() => {
 		console.log('INTO MAINPAGE UUSEFFECTTTTT');
@@ -163,14 +136,13 @@ const MainPage = () => {
 		gameWs?.on(
 			'gameInvitation',
 			async (challengerData: UserDto, challengerWsId: string) => {
-				countInvit++;
+				setCountInvit((c) => c + 1);
 				if (countInvit > 1) {
-					setDisableInvitOther(false);
 					gameWs?.emit('gameInvitResponse', {
 						response: 'KO',
 						to: challengerWsId,
 					});
-					countInvit--;
+					setCountInvit((c) => c - 1);
 				} else {
 					setPlayerGameLogic((prevState: PlayerGameLogic) => {
 						return {
@@ -181,17 +153,6 @@ const MainPage = () => {
 					});
 					setWsId(challengerWsId);
 					setTimeSnack(true);
-					timer = setInterval(() => {
-						setProgress((oldProgress) => {
-							if (oldProgress === 102) {
-								handleCloseTimeSnack();
-								return 0;
-							}
-							const diff = Math.random() * 0.4;
-							return Math.min(oldProgress + diff, 102);
-						});
-					}, 20);
-					setDisableInvitOther(true);
 				}
 			},
 		);
@@ -226,6 +187,34 @@ const MainPage = () => {
 		}
 	};
 
+	const handleKo = useCallback(() => {
+		gameWs?.emit(
+			'gameInvitResponse',
+			{ response: 'KO', to: wsId },
+			(response: number) => {},
+		);
+		setPlayerGameLogic((prevState: PlayerGameLogic) =>
+			clearPlayerGameLogic(prevState),
+		);
+		setCountInvit(countInvit - 1);
+		console.log(`countInvit inside close CB after dec: ${countInvit}`);
+		setTimeSnack(false);
+	}, [countInvit, wsId]);
+
+	const handleOk = useCallback(() => {
+		gameWs?.emit(
+			'gameInvitResponse',
+			{ response: 'OK', to: wsId },
+			(response: number) => {
+				if (response === 0) setStartGame(true);
+				console.log(`response event: ${response}`);
+			},
+		);
+		setCountInvit(countInvit - 1);
+		console.log(`countInvit inside ok CB after dec: ${countInvit}`);
+		setTimeSnack(false);
+	}, [countInvit, wsId]);
+
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>
 			<Backdrop
@@ -237,10 +226,9 @@ const MainPage = () => {
 			{timeSnack && (
 				<SnackBarre
 					timeSnack={timeSnack}
-					handleOk={handleOkTimeSnack}
-					handleClose={handleCloseTimeSnack}
-					progress={progress}
 					playerGameLogic={playerGameLogic}
+					handleOk={handleOk}
+					handleKo={handleKo}
 				/>
 			)}
 			{headerLeave()}

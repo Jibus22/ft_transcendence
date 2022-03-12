@@ -136,9 +136,6 @@ interface IMainPageContext {
 	backInGame: boolean;
 	setBackInGame: Dispatch<SetStateAction<boolean>>;
 
-	disableInvitOther: boolean;
-	setDisableInvitOther: Dispatch<SetStateAction<boolean>>;
-
 	testLol: boolean;
 	setTestLol: Dispatch<SetStateAction<boolean>>;
 
@@ -208,8 +205,6 @@ const MainPageProvider = (props: any) => {
 	const [countInvit, setCountInvit] = useState(0);
 
 	const [backInGame, setBackInGame] = useState(false);
-
-	const [disableInvitOther, setDisableInvitOther] = useState(false);
 
 	const [testLol, setTestLol] = useState(false);
 
@@ -484,9 +479,6 @@ const MainPageProvider = (props: any) => {
 
 		dataUserBack,
 		setDataUserBack,
-
-		disableInvitOther,
-		setDisableInvitOther,
 
 		testLol,
 		setTestLol,
