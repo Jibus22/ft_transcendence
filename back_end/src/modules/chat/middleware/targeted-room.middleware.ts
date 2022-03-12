@@ -1,4 +1,9 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NestMiddleware,
+  NotFoundException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ChatService } from '../chat.service';
 import { Restriction } from '../entities/restriction.entity';
@@ -21,7 +26,6 @@ export class TargetedRoomMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: Function) {
     const currentUser = req.currentUser;
     const targetedRoomId = req.params?.room_id;
-
     const logger = new Logger(' 🛠 💬  Chat Middlewear');
     if (currentUser && targetedRoomId) {
       await this.chatService
@@ -38,6 +42,7 @@ export class TargetedRoomMiddleware implements NestMiddleware {
         })
         .catch((error) => {
           logger.debug('Could not find Room targeted: ', error);
+          throw new NotFoundException('Cannot find targeted room');
         });
     } else {
       if (!targetedRoomId) logger.debug('No targeted room request');

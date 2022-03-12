@@ -14,7 +14,7 @@ import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import { UserDto, PlayerGameLogic } from '../../../type';
 
 interface IProps {
@@ -47,14 +47,13 @@ const RankWorld = ({
 	const [time, setTime] = useState(false);
 
 	const fetchDataChallenge = async (data: User) => {
-		try {
-			const response = await axios.post(
-				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
-				{ login_opponent: data.login },
-				{
-					withCredentials: true,
-				},
-			);
+		return await axios.post(
+			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
+			{ login_opponent: data.login },
+			{
+				withCredentials: true,
+			},
+		).then((response) => {
 			const { login_opponent: string, ...userDto } = response.data;
 			const opponent: Partial<UserDto> = userDto;
 			setPlayerGameLogic(() => {
@@ -64,16 +63,21 @@ const RankWorld = ({
 					opponent: opponent,
 				};
 			});
-		} catch (error) {
-			console.error(error);
-		}
+		});
 	};
 
-	const getGame = (data: User) => () => {
-		fetchDataChallenge(data);
-		setStartGame(true);
-		setSelectNav(false);
-		navigate('/Mainpage');
+	const getGame = (data: User) => async () => {
+		await fetchDataChallenge(data)
+			.then(() => {
+				setStartGame(true);
+				setSelectNav(false);
+				navigate('/Mainpage');
+			})
+			.catch((error) => {
+				const err = error as AxiosError;
+				const res_err = err.response;
+				alert(res_err?.data['message'] || 'There was an error with this user');
+			});
 	};
 
 	const userSortRank = (a: Rank, b: Rank) => {
