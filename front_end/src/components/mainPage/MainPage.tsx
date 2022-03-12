@@ -36,6 +36,8 @@ const MainPage = () => {
 		setUserName,
 		userName,
 		setDisableInvitOther,
+		playerGameLogic,
+		setPlayerGameLogic,
 	} = useMainPage();
 
 	const [chatWs, setChatWs] = useState<Socket | undefined>(undefined);
@@ -95,10 +97,6 @@ const MainPage = () => {
 	let timer: NodeJS.Timer;
 	const [progress, setProgress] = React.useState(0);
 	const [wsId, setWsId] = useState('');
-
-	const [playerGameLogic, setPlayerGameLogic] = useState(() => {
-		return new PlayerGameLogic();
-	});
 
 	const handleCloseTimeSnack = () => {
 		gameWs?.emit(

@@ -19,6 +19,7 @@ import {
 	UserChallenge,
 	OnlineGameAndMapType,
 	IOnlineGameRemove,
+	PlayerGameLogic,
 } from './components/type';
 
 interface IMainPageContext {
@@ -143,6 +144,9 @@ interface IMainPageContext {
 
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
+
+	setPlayerGameLogic: Dispatch<SetStateAction<PlayerGameLogic>>;
+	playerGameLogic: PlayerGameLogic;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
@@ -210,6 +214,10 @@ const MainPageProvider = (props: any) => {
 	const [testLol, setTestLol] = useState(false);
 
 	const [open, setOpen] = useState(false);
+
+	const [playerGameLogic, setPlayerGameLogic] = useState(() => {
+		return new PlayerGameLogic();
+	});
 
 	const fetchDataUserMe = async () => {
 		try {
@@ -485,6 +493,9 @@ const MainPageProvider = (props: any) => {
 
 		open,
 		setOpen,
+
+		setPlayerGameLogic,
+		playerGameLogic,
 	};
 
 	return (
