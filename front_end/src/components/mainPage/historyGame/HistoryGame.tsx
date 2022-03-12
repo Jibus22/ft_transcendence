@@ -59,25 +59,11 @@ const HistoryGame = () => {
 		setIsActive(!isActive);
 	};
 
-	const formatDuration = (totalSeconds: number) => {
-		const hours = Math.floor(totalSeconds / 3600);
-		const minutes = Math.floor((totalSeconds % 3600) / 60);
-		const seconds = totalSeconds - hours * 3600 - minutes * 60;
-
-		let min;
-		let sec;
-		if (minutes <= 9) {
-			min = '0' + minutes;
-		} else {
-			min = minutes;
-		}
-		if (seconds <= 9) {
-			sec = '0' + seconds;
-		} else {
-			sec = seconds;
-		}
-
-		return [`${min}`, `:`, `${sec}`];
+	const formatDuration = (durationInMs: number) => {
+		const duration = new Date(durationInMs);
+		const min = duration.getMinutes().toString().padStart(2, '0');
+		const sec = duration.getSeconds().toString().padStart(2, '0');
+		return `${min}:${sec}`;
 	};
 
 	const convertTime = (int: number, option: number) => {
