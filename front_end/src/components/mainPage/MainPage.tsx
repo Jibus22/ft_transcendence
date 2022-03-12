@@ -104,9 +104,7 @@ const MainPage = () => {
 		gameWs?.emit(
 			'gameInvitResponse',
 			{ response: 'KO', to: wsId },
-			(response: number) => {
-				if (response || !response) setTimeSnack(false);
-			},
+			(response: number) => {},
 		);
 		setTimeSnack(false);
 		setPlayerGameLogic((prevState: PlayerGameLogic) =>
@@ -121,11 +119,7 @@ const MainPage = () => {
 			'gameInvitResponse',
 			{ response: 'OK', to: wsId },
 			(response: number) => {
-				if (!response) {
-					setTimeSnack(false);
-					setStartGame(true);
-					navigate('/Mainpage');
-				}
+				if (!response) setStartGame(true);
 			},
 		);
 		setTimeSnack(false);
@@ -134,6 +128,7 @@ const MainPage = () => {
 	};
 
 	useEffect(() => {
+		console.log('INTO MAINPAGE UUSEFFECTTTTT');
 		gameWs?.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
 			//enlever l'objet onlinegame de la liste des onlinegames
@@ -157,7 +152,7 @@ const MainPage = () => {
 						isChallenge: false,
 					};
 				});
-			setDataUserBack(gameData);
+			setDataUserBack(() => gameData);
 			setBackInGame(true);
 			setStartGame(true);
 		});
@@ -210,6 +205,7 @@ const MainPage = () => {
 		});
 
 		return () => {
+			console.log('MAINPAGE CLEANUP');
 			gameWs?.off('gaveUp');
 			gameWs?.off('gameInvitation');
 			gameWs?.off('connect');

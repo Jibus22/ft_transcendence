@@ -54,9 +54,17 @@ export default function Game({
 	}
 
 	useEffect(() => {
+		console.log('--GAME-- USEFFECT');
 		window.addEventListener('gameStartedFromChat', () => {
 			handleClick();
 		});
+
+		return () => {
+			console.log('--GAME-- CLEANUP');
+			window.removeEventListener('gameStartedFromChat', () => {
+				handleClick();
+			});
+		};
 	}, []);
 
 	const selectGame = () => {

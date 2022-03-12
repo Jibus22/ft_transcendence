@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch } from 'react';
 import '../userRank.scss';
 import { useSpring, animated } from 'react-spring';
 import {
@@ -14,9 +14,8 @@ import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
 import { useNavigate } from 'react-router-dom';
-import MainPong from '../../game/pong/MainPong';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { UserDto, UserChallenge, PlayerGameLogic } from '../../../type';
+import axios from 'axios';
+import { UserDto, PlayerGameLogic } from '../../../type';
 
 interface IProps {
 	data: Array<Rank>;
