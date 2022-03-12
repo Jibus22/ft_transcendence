@@ -193,7 +193,7 @@ const MainPageProvider = (props: any) => {
 
 	const [playerNewGameJoin, setPlayerNewGameJoin] = useState(false);
 
-	// const [dataHistory, setDataHistory] = useState([]);
+	const [dataHistory, setDataHistory] = useState([]);
 
 	const [loadingSocket, setLoadingSocket] = useState(false);
 
@@ -211,78 +211,78 @@ const MainPageProvider = (props: any) => {
 
 	const [open, setOpen] = useState(false);
 
-	// const fetchDataUserMe = async () => {
-	// 	try {
-	// 		const { data } = await axios.get(
-	// 			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`,
-	// 			{
-	// 				withCredentials: true,
-	// 			},
-	// 		);
-	// 		setData(data);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
+	const fetchDataUserMe = async () => {
+		try {
+			const { data } = await axios.get(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`,
+				{
+					withCredentials: true,
+				},
+			);
+			setData(data);
+		} catch (err) {
+			console.log(err);
+		}
+	};
 
-	// const disconectAuth = async () => {
-	// 	try {
-	// 		await axios.delete(
-	// 			`http://${
-	// 				process.env.REACT_APP_BASE_URL || 'localhost:3000'
-	// 			}/auth/signout`,
-	// 			{
-	// 				withCredentials: true,
-	// 			},
-	// 		);
-	// 		navigate('/');
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// };
+	const disconectAuth = async () => {
+		try {
+			await axios.delete(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/auth/signout`,
+				{
+					withCredentials: true,
+				},
+			);
+			navigate('/');
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-	// const onSubmit = async (file: File, path: string) => {
-	// 	let data = new FormData();
-	// 	data.append('file', file);
-	// 	try {
-	// 		await axios.post(
-	// 			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path,
-	// 			data,
-	// 			{
-	// 				withCredentials: true,
-	// 			},
-	// 		);
-	// 		fetchDataUserMe();
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
-	// const onSubmitUpload = async (file: File) => {
-	// 	let data = new FormData();
-	// 	if (customPhoto) {
-	// 		setOpenSure(true);
-	// 	}
+	const onSubmit = async (file: File, path: string) => {
+		let data = new FormData();
+		data.append('file', file);
+		try {
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path,
+				data,
+				{
+					withCredentials: true,
+				},
+			);
+			fetchDataUserMe();
+		} catch (err) {
+			console.log(err);
+		}
+	};
+	const onSubmitUpload = async (file: File) => {
+		let data = new FormData();
+		if (customPhoto) {
+			setOpenSure(true);
+		}
 
-	// 	if (file) {
-	// 		data.append('file', file);
-	// 	}
-	// 	try {
-	// 		await axios.post(
-	// 			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`,
-	// 			data,
-	// 			{
-	// 				withCredentials: true,
-	// 			},
-	// 		);
-	// 		fetchDataUserMe();
-	// 	} catch (error) {
-	// 		const err = error as AxiosError;
-	// 		if (err.response?.status === 400) {
-	// 			setOpenUpload(true);
-	// 			return;
-	// 		}
-	// 	}
-	// };
+		if (file) {
+			data.append('file', file);
+		}
+		try {
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`,
+				data,
+				{
+					withCredentials: true,
+				},
+			);
+			fetchDataUserMe();
+		} catch (error) {
+			const err = error as AxiosError;
+			if (err.response?.status === 400) {
+				setOpenUpload(true);
+				return;
+			}
+		}
+	};
 
 	const dialogMui = (
 		open: boolean,
@@ -410,13 +410,13 @@ const MainPageProvider = (props: any) => {
 		setTimeSnack,
 		setIsDisable,
 		setLoading,
-		// fetchDataUserMe,
+		fetchDataUserMe,
 		setUserName,
 		setUserImg,
 		setIsFriends,
 		setOpenSure,
-		// onSubmit,
-		// onSubmitUpload,
+		onSubmit,
+		onSubmitUpload,
 		setPathPop,
 		setIsUpload,
 		setSelectedImage,
@@ -427,8 +427,8 @@ const MainPageProvider = (props: any) => {
 		setSelectNav,
 		setLeaveGame,
 
-		// dataHistory,
-		// setDataHistory,
+		dataHistory,
+		setDataHistory,
 
 		// fetchDataHistory,
 
@@ -437,7 +437,7 @@ const MainPageProvider = (props: any) => {
 
 		dialogueLoading,
 
-		// disconectAuth,
+		disconectAuth,
 
 		gameWs,
 		setGameWs,
