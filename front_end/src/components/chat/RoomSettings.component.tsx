@@ -182,7 +182,7 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			room.participants.map((user: any) => (<User key={user.id}>
 				<img onClick={() => showUserDetail(user)} src={user.user.photo_url} alt={user.user.login} />
 				<span onClick={() => showUserDetail(user)}>{user.user.login}</span>
-				{isModerator() && user.user.id !== currentUser.id && (
+				{isModerator() && user.user.id !== currentUser.id && !user.is_site_owner && (
 					<ActionButtons>
 						<Tooltip title="Ban user"><button onClick={() => ban(user)}>
 							<BlockIcon />
