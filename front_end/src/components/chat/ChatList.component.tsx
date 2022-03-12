@@ -118,7 +118,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			setSearchResults([]);
 			setSearch("");
 			openChat(data);
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { console.log("Cannot join", e) };
 	};
 
 	const createChat = async () => {
@@ -141,14 +141,15 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openPublicRoom = async (roomId: any) => {
-		if (window.roomsLoading)
-			return;
-		window.roomsLoading = true;
+		// if (window.roomsLoading)
+		// 	return;
+		// console
+		// window.roomsLoading = true;
 		try {
 			const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
 			openChat(data);
 		} catch (e: any) { console.log(e) };
-		window.roomsLoading = false;
+		// window.roomsLoading = false;
 	};
 
 	const joinPublicChatRoom = async (room: any) => {
@@ -163,7 +164,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		}
 		axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms/${room.id}`, { password }, { withCredentials: true })
 		.then(data => {
-			console.log("Joined public", data);
 			openPublicRoom(room.id);
 		})
 		.catch(error => {
