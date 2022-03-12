@@ -31,6 +31,7 @@ export default function MainPong({
 
 	const {
 		setStartGame,
+		startGame,
 		userName,
 		userImg,
 		dialogMui,
@@ -129,6 +130,10 @@ export default function MainPong({
 		gameWs?.on('countDown', (count: number) => {
 			setCount(count);
 		});
+
+		return () => {
+			gameWs?.off('countDown');
+		};
 	}, [gameWs, count]);
 
 	useEffect(() => {
@@ -152,7 +157,7 @@ export default function MainPong({
 			setTimeout(function () {
 				setOpenDialogLoading(false);
 				closeGame();
-			}, 3000);
+			}, 1500);
 		});
 
 		gameWs?.on('newPlayerJoined', (opponent: UserDto) => {

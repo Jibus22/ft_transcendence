@@ -137,7 +137,8 @@ const MainPage = () => {
 			'gameInvitation',
 			async (challengerData: UserDto, challengerWsId: string) => {
 				setCountInvit((c) => c + 1);
-				if (countInvit > 1) {
+				console.log(`countInvit inside game invitation: ${countInvit}`);
+				if (countInvit > 0) {
 					gameWs?.emit('gameInvitResponse', {
 						response: 'KO',
 						to: challengerWsId,
@@ -175,7 +176,7 @@ const MainPage = () => {
 			gameWs?.off('goBackInGame');
 			gameWs?.off('myerror');
 		};
-	}, [gameWs]);
+	}, [gameWs, countInvit]);
 
 	const headerLeave = () => {
 		if (!leaveGame && isHeader) {
@@ -214,6 +215,9 @@ const MainPage = () => {
 		console.log(`countInvit inside ok CB after dec: ${countInvit}`);
 		setTimeSnack(false);
 	}, [countInvit, wsId]);
+
+	console.log('playerGameLogic');
+	console.log(playerGameLogic);
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>

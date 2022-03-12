@@ -199,22 +199,32 @@ export class GameGateway
       { relations: ['players'] },
     );
     client.to(bcast.op).emit('gaveUp', myPtoUserDto(users[0]));
-    try {
-      const game = await this.gameService.findOne(bcast.room, {
-        relations: ['players', 'players.user'],
-      });
-      await this.wsGameService.handleGameEnd(
-        client.id,
-        game,
-        this.server,
-        users[0],
-      );
-    } catch (e) {
+    if (bcast.room) {
+      try {
+        const game = await this.gameService.findOne(bcast.room, {
+          relations: ['players', 'players.user'],
+        });
+        await this.wsGameService.handleGameEnd(
+          client.id,
+          game,
+          this.server,
+          users[0],
+        );
+      } catch (e) {
+        this.wsGameService.updatePlayerStatus(users[0], { is_in_game: false });
+        if (users.length > 1)
+          this.wsGameService.updatePlayerStatus(users[1], {
+            is_in_game: false,
+          });
+        console.log('catch e.status: ', e.status);
+        console.log('catch e.message: ', e.message);
+      }
+    } else {
       this.wsGameService.updatePlayerStatus(users[0], { is_in_game: false });
       if (users.length > 1)
-        this.wsGameService.updatePlayerStatus(users[1], { is_in_game: false });
-      console.log('catch e.status: ', e.status);
-      console.log('catch e.message: ', e.message);
+        this.wsGameService.updatePlayerStatus(users[1], {
+          is_in_game: false,
+        });
     }
   }
 
