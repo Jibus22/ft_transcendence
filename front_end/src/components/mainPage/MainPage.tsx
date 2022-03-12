@@ -126,6 +126,7 @@ const MainPage = () => {
 		socket.on('publicUserInfosUpdated', (message) => {
 			console.log(`💌  Event: publicUserInfosUpdated ->`, message);
 			window.dispatchEvent(new CustomEvent('publicRoomUpdated', { detail: message }));
+			window.dispatchEvent(new CustomEvent('publicUserInfosUpdated', { detail: message }));
 		});
 	};
 

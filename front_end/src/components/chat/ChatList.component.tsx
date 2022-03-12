@@ -196,8 +196,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		})
 
 		window.addEventListener("userAdded", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
 			getPublicRooms();
 			getChats();
 		})
