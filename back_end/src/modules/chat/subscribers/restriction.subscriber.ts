@@ -32,7 +32,7 @@ export class RestrictionSubscriber
       await this.utils.fetchPossiblyMissingData(
         event.connection.getRepository(Restriction),
         event.entity,
-        ['room', 'room.participants', 'user'],
+        ['room', 'room.participants', 'room.participants.user', 'user'],
       );
 
       this.chatGateway.sendEventToClient(
