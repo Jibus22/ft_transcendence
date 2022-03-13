@@ -136,6 +136,7 @@ const MainPage = () => {
 		gameWs?.on('gaveUp', (usr: UserDto) => {
 			console.log(`💌  Event: gaveUp ->`);
 			console.log(usr);
+			if (countInvit > 0) setCountInvit((c) => c - 1);
 			setTimeSnack(false);
 		});
 
