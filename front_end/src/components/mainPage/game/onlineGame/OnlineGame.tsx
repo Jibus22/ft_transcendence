@@ -2,13 +2,11 @@ import React, { useState, useEffect, FC } from 'react';
 import './onlineGame.scss';
 import { useSpring, animated } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
-import FF from '../../../homePage/section/photos/FF.png';
-import JB from '../../../homePage/section/photos/JB.png';
 import { AvatarGroup, Avatar, Badge, CircularProgress } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import axios from 'axios';
 import { OnlineGameType, OnlineGameAndMapType } from '../../../type';
-import { io, Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -26,13 +24,13 @@ interface MapProps {
 const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 	const [time, setTime] = useState(false);
 	let navigate = useNavigate();
-	const { setWatchGameScore, setStartGame, setSelectNav, setIsWatchGame } = useMainPage();
+	const { setWatchGameScore, setStartGame, setSelectNav, setIsWatchGame } =
+		useMainPage();
 
-	const handleClick = (watch: string) => {
+	const handleClick = async (watch: string) => {
 		gameWs?.emit('watchGame', watch, (response: OnlineGameAndMapType) => {
-			console.log(`CLIENT: response from server -> ${response}`);
-			setWatchGameScore(response);
-			// console.log('ici=========', response);
+			console.log(`CLIENT: response from server -> `, response);
+			setWatchGameScore(() => response);
 		});
 		setTime(true);
 		setTimeout(function () {
@@ -48,11 +46,31 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 		<div className="partyOnline d-flex ">
 			<div className="userImg d-flex">
 				<AvatarGroup max={2}>
-					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-						<Avatar alt="userImg" src={data.challenger.photo_url} variant="square" className="domUser" />
+					<Badge
+						overlap="circular"
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+						variant="dot"
+						sx={{}}
+					>
+						<Avatar
+							alt="userImg"
+							src={data.challenger.photo_url}
+							variant="square"
+							className="domUser"
+						/>
 					</Badge>
-					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-						<Avatar alt="userImg" src={data.opponent.photo_url} variant="rounded" className="extUser" />
+					<Badge
+						overlap="circular"
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+						variant="dot"
+						sx={{}}
+					>
+						<Avatar
+							alt="userImg"
+							src={data.opponent.photo_url}
+							variant="rounded"
+							className="extUser"
+						/>
 					</Badge>
 				</AvatarGroup>
 			</div>
@@ -120,9 +138,14 @@ export default function OnlineGame({ Loadingclick }: Props) {
 
 	const fetchDataOnLineGame = async () => {
 		try {
-			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/onlineGames`, {
-				withCredentials: true,
-			});
+			const { data } = await axios.get(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/game/onlineGames`,
+				{
+					withCredentials: true,
+				},
+			);
 			setData(data);
 		} catch (err) {
 			console.error(err);
@@ -146,6 +169,7 @@ export default function OnlineGame({ Loadingclick }: Props) {
 
 		return () => {
 			setSelectQuery(false);
+			gameWs?.off('newOnlineGame');
 		};
 	}, [gameWs, open]);
 

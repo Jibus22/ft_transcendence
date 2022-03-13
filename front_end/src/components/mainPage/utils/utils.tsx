@@ -1,4 +1,9 @@
-import { IBigUser, IOnlineGameRemove, PlayerGameLogic } from '../../type';
+import {
+	OnlineGameAndMapType,
+	IBigUser,
+	IOnlineGameRemove,
+	PlayerGameLogic,
+} from '../../type';
 
 export const sleep = (ms: number) => {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -27,5 +32,13 @@ export const clearGameData = (gameData: IOnlineGameRemove) => {
 	gameData.id = '';
 	clearUser(gameData.challenger);
 	clearUser(gameData.opponent);
+	return gameData;
+};
+
+export const clearWatchGameScore = (gameData: OnlineGameAndMapType) => {
+	clearUser(gameData.opponent);
+	clearUser(gameData.challenger);
+	gameData.watch = '';
+	gameData.map = null;
 	return gameData;
 };

@@ -166,11 +166,29 @@ export class GameGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
+    this.logger.log(`watchGame, ${room}`);
     const [game] = await this.gameService.findGameWithAnyParam(
       [{ watch: room }],
       { relations: ['players', 'players.user', 'players.user.local_photo'] },
     );
-    if (!game || !game.watch) return null;
+    if (!game || !game.watch) {
+      const opponent = {
+        login: '',
+        photo_url: '',
+        status: '',
+        game_ws: '',
+        score: 0,
+      };
+      const challenger = opponent;
+      return {
+        id: '',
+        watch: '',
+        map: '',
+        createdAt: '',
+        challenger: challenger,
+        opponent: opponent,
+      };
+    }
     client.join(room);
     return myPtoOnlineGameDto(game);
   }

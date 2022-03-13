@@ -31,7 +31,6 @@ export default function MainPong({
 
 	const {
 		setStartGame,
-		startGame,
 		userName,
 		userImg,
 		dialogMui,
@@ -102,6 +101,7 @@ export default function MainPong({
 				if (!acceptGame) setOpacity(true);
 			}
 		} else {
+			if (watchGameScore?.watch === '') setStartGame(false);
 			setNbPlayer(0);
 			setScoreJ1(watchGameScore.challenger.score);
 			setScoreJ2(watchGameScore.opponent.score);
