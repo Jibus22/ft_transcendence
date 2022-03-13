@@ -14,7 +14,7 @@ import { LoadingButton } from '@mui/lab';
 import { useMainPage } from '../../../../MainPageContext';
 import { User, Rank } from '../../../type';
 import { useNavigate } from 'react-router-dom';
-import axios, {AxiosError} from 'axios';
+import axios, { AxiosError } from 'axios';
 import { UserDto, PlayerGameLogic } from '../../../type';
 
 interface IProps {
@@ -47,23 +47,25 @@ const RankWorld = ({
 	const [time, setTime] = useState(false);
 
 	const fetchDataChallenge = async (data: User) => {
-		return await axios.post(
-			`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
-			{ login_opponent: data.login },
-			{
-				withCredentials: true,
-			},
-		).then((response) => {
-			const { login_opponent: string, ...userDto } = response.data;
-			const opponent: Partial<UserDto> = userDto;
-			setPlayerGameLogic(() => {
-				return {
-					isChallenge: true,
-					isP1: true,
-					opponent: opponent,
-				};
+		return await axios
+			.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
+				{ login_opponent: data.login },
+				{
+					withCredentials: true,
+				},
+			)
+			.then((response) => {
+				const { login_opponent: string, ...userDto } = response.data;
+				const opponent: Partial<UserDto> = userDto;
+				setPlayerGameLogic(() => {
+					return {
+						isChallenge: true,
+						isP1: true,
+						opponent: opponent,
+					};
+				});
 			});
-		});
 	};
 
 	const getGame = (data: User) => async () => {

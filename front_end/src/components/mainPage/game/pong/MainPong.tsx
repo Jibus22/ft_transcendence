@@ -154,10 +154,10 @@ export default function MainPong({
 			setAcceptGame(false);
 			setOpenDialogLoading(true);
 
-			setTimeout(function () {
+			setTimeout(() => {
 				setOpenDialogLoading(false);
-				closeGame();
-			}, 1500);
+				setStartGame(false);
+			}, 1000);
 		});
 
 		gameWs?.on('newPlayerJoined', (opponent: UserDto) => {
