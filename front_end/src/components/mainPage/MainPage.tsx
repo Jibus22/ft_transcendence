@@ -205,6 +205,7 @@ const MainPage = () => {
 		setCountInvit(countInvit - 1);
 		console.log(`countInvit inside close CB after dec: ${countInvit}`);
 		setTimeSnack(false);
+		// navigate('/Mainpage');
 	}, [countInvit, wsId]);
 
 	const handleOk = useCallback(() => {
@@ -219,6 +220,7 @@ const MainPage = () => {
 		setCountInvit(countInvit - 1);
 		console.log(`countInvit inside ok CB after dec: ${countInvit}`);
 		setTimeSnack(false);
+		navigate('/Mainpage');
 	}, [countInvit, wsId]);
 
 	console.log('playerGameLogic');
