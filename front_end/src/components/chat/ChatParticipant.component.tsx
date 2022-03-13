@@ -117,9 +117,6 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 	const askGame = async (login: any) => {
 		try {
 			if (!playButtonVisible) return;
-			setStartGame(true);
-			setSelectNav(false);
-			navigate('/Mainpage');
 			const response = await axios.post(
 				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
 				{ login_opponent: login },
@@ -138,6 +135,9 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 					opponent: opponent,
 				};
 			});
+			setStartGame(true);
+			setSelectNav(false);
+			navigate('/Mainpage');
 			window.dispatchEvent(
 				new CustomEvent('gameStartedFromChat', { detail: { login } }),
 			);
