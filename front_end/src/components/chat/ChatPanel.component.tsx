@@ -8,8 +8,8 @@ import RoomSettings from "./RoomSettings.component";
 
 const chatName = (participants: any) => {
 	let name = "";
-	participants.forEach((p: any) => name += p.user.login[0]);
-	return name;
+	participants.sort((x: any, y: any) => x.id > y.id).forEach((p: any) => name += p.user.login[0]);
+	return name.split("").sort((x: string, y: string) => x > y ? 1 : -1).join("").slice(0, 8);
 }
 
 const ChatPanel = ({ room, currentUser }: any) => {

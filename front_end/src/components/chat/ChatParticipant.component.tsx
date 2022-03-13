@@ -44,6 +44,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				},
 			);
 			setProfile(result?.data);
+			console.log('PROFILE', result?.data);
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -187,14 +188,25 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		getFriends();
 		getBlocks();
 		getProfile();
+
+		window.addEventListener('publicUserInfosUpdated', ({ detail }: any) => {
+			console.log('INFO UPDTED', detail);
+			if (detail.id === user.user.id) {
+				console.log('UPDATED');
+				getProfile();
+			}
+		});
 	}, []);
 
 	return (
 		<>
 			<DetailsView>
-				<img src={user?.user.photo_url} alt={user?.user.login} />
-				<h3>{user?.user.login}</h3>
-				<span>{user?.user.status}</span>
+				<img
+					src={profile?.user.photo_url || user?.user.photo_url}
+					alt={user?.user.login}
+				/>
+				<h3>{profile?.user.login || user?.user.login}</h3>
+				<span>{profile?.user.status || user?.user.status}</span>
 			</DetailsView>
 			{currentUser && user && currentUser.id !== user.user.id && (
 				<ButtonRow>

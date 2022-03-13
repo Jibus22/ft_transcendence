@@ -25,7 +25,7 @@ const chatName = (chat: any, currentUser: any) => {
 	} catch {}
 	let name = "";
 	chat.participants.forEach((p: any) => name += p.user.login[0]);
-	return name.slice(0, 8);
+	return name.split("").sort((x: string, y: string) => x > y ? 1 : -1).join("").slice(0, 8);
 }
 
 const ChatList = ({ openChat, currentUser }: any) => {
@@ -118,7 +118,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			setSearchResults([]);
 			setSearch("");
 			openChat(data);
-		} catch (e: any) { console.log(e) };
+		} catch (e: any) { console.log("Cannot join", e) };
 	};
 
 	const createChat = async () => {
@@ -141,14 +141,15 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openPublicRoom = async (roomId: any) => {
-		if (window.roomsLoading)
-			return;
-		window.roomsLoading = true;
+		// if (window.roomsLoading)
+		// 	return;
+		// console
+		// window.roomsLoading = true;
 		try {
 			const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
 			openChat(data);
 		} catch (e: any) { console.log(e) };
-		window.roomsLoading = false;
+		// window.roomsLoading = false;
 	};
 
 	const joinPublicChatRoom = async (room: any) => {
@@ -163,7 +164,6 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		}
 		axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms/${room.id}`, { password }, { withCredentials: true })
 		.then(data => {
-			console.log("Joined public", data);
 			openPublicRoom(room.id);
 		})
 		.catch(error => {
@@ -182,22 +182,20 @@ const ChatList = ({ openChat, currentUser }: any) => {
 				return;
 			getPublicRooms();
 		})
-	
+
 		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
 			if (window.roomsLoading)
 				return;
 			getPublicRooms();
 			getChats();
 		})
-	
+
 		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
 			getPublicRooms();
 			getChats();
 		})
-	
+
 		window.addEventListener("userAdded", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
 			getPublicRooms();
 			getChats();
 		})
@@ -215,6 +213,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		window.addEventListener("quitRoom", () => {
 			openChat(null);
 		})
+
 	}, []);
 
 	return (
