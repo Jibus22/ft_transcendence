@@ -8,15 +8,15 @@ import './snackBarre.scss';
 interface IProps {
 	timeSnack: boolean;
 	playerGameLogic: PlayerGameLogic;
-	handleOk: () => void;
-	handleKo: () => void;
+	handleAccept: () => void;
+	handleDeny: () => void;
 }
 
 export default function SnackBarre({
 	timeSnack,
 	playerGameLogic,
-	handleOk,
-	handleKo,
+	handleAccept,
+	handleDeny,
 }: IProps) {
 	console.log('=====  SNACKBAR ====');
 	let timer: NodeJS.Timer;
@@ -27,7 +27,7 @@ export default function SnackBarre({
 			setProgress((oldProgress) => {
 				if (oldProgress === 102) {
 					setTimeout(() => {
-						handleKo();
+						handleDeny();
 					}, 0);
 					clearInterval(timer);
 					return -100;
@@ -45,10 +45,10 @@ export default function SnackBarre({
 	const action = (
 		<>
 			<div className="contentButton">
-				<Button className="buttonMui" onClick={handleOk}>
+				<Button className="buttonMui" onClick={handleAccept}>
 					ACCEPT
 				</Button>
-				<Button className="buttonMui" onClick={handleKo}>
+				<Button className="buttonMui" onClick={handleDeny}>
 					REFUSE
 				</Button>
 			</div>
