@@ -53,7 +53,7 @@ export default function MainPong({
 	} = useMainPage();
 
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
-	const [count, setCount] = useState<number | undefined>();
+	const [count, setCount] = useState<number>(10);
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [watchId, setWatchId] = useState('');
@@ -326,15 +326,18 @@ export default function MainPong({
 						</div>
 					)}
 				</div>
-				<div className="closeButton">
-					<Button
-						className="buttonMui"
-						variant="contained"
-						onClick={() => setOpen(true)}
-					>
-						Leave
-					</Button>
-				</div>
+				{((playerGameLogic.isP1 && (!acceptGame || count < 1)) ||
+					(!playerGameLogic.isP1 && count < 1)) && (
+					<div className="closeButton">
+						<Button
+							className="buttonMui"
+							variant="contained"
+							onClick={() => setOpen(true)}
+						>
+							Leave
+						</Button>
+					</div>
+				)}
 				{dialogMui(
 					open,
 					() => setOpen(false),
