@@ -198,6 +198,8 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		});
 	}, []);
 
+	console.log("Profile", profile);
+
 	return (
 		<>
 			<DetailsView>
