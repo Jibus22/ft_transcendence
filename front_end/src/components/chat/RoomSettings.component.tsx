@@ -103,6 +103,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			const duration = prompt("Mute duration, in minutes");
 			if (duration !== "" && !duration)
 				return;
+			if (!/^[0-9]*$/.test(duration))
+				return alert("Only number accepted");
 			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 					user_id: user.user.id,
@@ -125,6 +127,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			if (duration !== "" && !duration) {
 				return;
 			}
+			if (!/^[0-9]*$/.test(duration))
+				return alert("Only number accepted");
 			if (parseInt(duration)) {
 				await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/restriction`, {
 					user_id: user.user.id,
