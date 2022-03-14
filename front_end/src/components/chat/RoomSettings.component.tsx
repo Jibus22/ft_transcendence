@@ -46,6 +46,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 
 	const changePassword = async () => {
 		const newPassword = prompt("New password (empty for no password)");
+		if (newPassword === null)
+			return;
 		axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/password`, {
 			password: newPassword
 		}, { withCredentials: true })
