@@ -25,6 +25,13 @@ export class ParticipantDto {
 
   @ApiProperty()
   @Expose()
+  @Transform((value) => {
+    return value.obj.user.is_site_owner;
+  })
+  is_site_owner: boolean;
+
+  @ApiProperty()
+  @Expose()
   is_owner: boolean;
 
   @ApiProperty()

@@ -1,75 +1,73 @@
-import React from 'react';
+import { LinearProgress } from '@mui/material';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import { useEffect, useState } from 'react';
+import { PlayerGameLogic } from '../../type';
 import './snackBarre.scss';
-import Horloge from './img/Horloge.png';
-import Emoji from './img/emoji.png';
 
-// import 'react-toastify/scss/main.scss';
-// import 'react-toastify/dist/ReactToastify.css';
-import { injectStyle } from 'react-toastify/dist/inject-style';
-import { ToastContainer, toast } from 'react-toastify';
-import { useMainPage } from '../../../MainPageContext';
-
-interface ISnackBarreProps {
-	onClose: () => void;
+interface IProps {
+	timeSnack: boolean;
+	playerGameLogic: PlayerGameLogic;
+	handleAccept: () => void;
+	handleDeny: () => void;
 }
 
-export default function SnackBarre({ onClose }: ISnackBarreProps) {
-	const { isFriends } = useMainPage();
+export default function SnackBarre({
+	timeSnack,
+	playerGameLogic,
+	handleAccept,
+	handleDeny,
+}: IProps) {
+	console.log('=====  SNACKBAR ====');
+	let timer: NodeJS.Timer;
+	const [progress, setProgress] = useState(0);
 
-	if (typeof window !== 'undefined') {
-		injectStyle();
-	}
+	useEffect(() => {
+		timer = setInterval(() => {
+			setProgress((oldProgress) => {
+				if (oldProgress === 102) {
+					setTimeout(() => {
+						handleDeny();
+					}, 0);
+					clearInterval(timer);
+					return -100;
+				}
+				const diff = Math.random() * 0.4;
+				return Math.min(oldProgress + diff, 102);
+			});
+		}, 20);
 
-	const notify = () => {
-		!isFriends
-			? toast(
-					({ closeToast }) => (
-						<div className="mainSnackBarre d-flex">
-							<div className="snackBarImg">
-								<img src={Horloge} alt="" />
-							</div>
-							<div className="snackBarText">
-								<p>No one is here to play now.</p>
-								<p>Retry later</p>
-							</div>
-						</div>
-					),
-					{
-						onClose,
-					},
-			  )
-			: toast(
-					({ closeToast }) => (
-						<div className="mainSnackBarre d-flex">
-							<div className="snackBarImg">
-								<img src={Emoji} alt="" />
-							</div>
-							<div className="snackBarText">
-								<p>Your friend isn’t available for a</p>
-								<p>game right now</p>
-							</div>
-						</div>
-					),
-					{
-						onClose,
-					},
-			  );
-	};
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
 
-	notify();
+	const action = (
+		<>
+			<div className="contentButton">
+				<Button className="buttonMui" onClick={handleAccept}>
+					ACCEPT
+				</Button>
+				<Button className="buttonMui" onClick={handleDeny}>
+					REFUSE
+				</Button>
+			</div>
+			<div className="progressMui">
+				<LinearProgress variant="determinate" value={progress} />
+			</div>
+		</>
+	);
+
 	return (
 		<div className="SnackBarreGame">
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick={false}
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover={false}
-				limit={1}
+			<Snackbar
+				open={timeSnack}
+				anchorOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				message={`${playerGameLogic.opponent.login} Challenge you`}
+				action={action}
 			/>
 		</div>
 	);

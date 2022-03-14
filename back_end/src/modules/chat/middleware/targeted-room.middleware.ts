@@ -1,12 +1,20 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NestMiddleware,
+  NotFoundException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ChatService } from '../chat.service';
+import { Restriction } from '../entities/restriction.entity';
 import { Room } from '../entities/room.entity';
 
 declare global {
   namespace Express {
     interface Request {
       targetedRoom?: Room;
+      targetedRoomActiveBan?: Restriction[];
+      targetedRoomActiveMute?: Restriction[];
     }
   }
 }
@@ -17,23 +25,28 @@ export class TargetedRoomMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: Function) {
     const currentUser = req.currentUser;
-    const targetedRoomId = req.params.room_id;
-
+    const targetedRoomId = req.params?.room_id;
     const logger = new Logger(' 🛠 💬  Chat Middlewear');
-
     if (currentUser && targetedRoomId) {
       await this.chatService
-        .findOneWithRelations(targetedRoomId)
+        .findOneWithParticipantsAndRestrictions(targetedRoomId)
         .then((room) => {
           req.targetedRoom = room;
-          logger.log(`Room targeted: ${req.targetedRoom.id}`); // TODO remove debug
+          req.targetedRoomActiveBan = this.chatService.extractValidRestrictions(
+            room,
+            'ban',
+          );
+          req.targetedRoomActiveMute =
+            this.chatService.extractValidRestrictions(room, 'mute');
+          logger.debug(`Room targeted: ${req?.targetedRoom?.id}`);
         })
         .catch((error) => {
-          logger.log('Could not find Room targeted: ', error); // TODO remove debug
+          logger.debug('Could not find Room targeted: ', error);
+          throw new NotFoundException('Cannot find targeted room');
         });
     } else {
-      if (!currentUser) logger.log('No user id in session');
-      if (!targetedRoomId) logger.log('No targeted room request');
+      if (!targetedRoomId) logger.debug('No targeted room request');
+      if (!currentUser) logger.debug('No user id in session');
     }
 
     next();

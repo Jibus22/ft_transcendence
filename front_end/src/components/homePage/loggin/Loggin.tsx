@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
 import './StyleLoggin.scss';
 import FormLogin from './formLogin/FormLogin';
-import Lock from './other/Vector.png';
+import unLock from './other/unlocked.png';
+import inLock from './other/lock.png';
 import Button from '@mui/material/Button';
-// import useMediaQuery from '@mui/material/useMediaQuery';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useMount } from 'ahooks';
 
-export default function Loggin() {
-	// const matches = useMediaQuery('(max-width:1000px)');
-	// const [isNav, setIsNav] = useState(false);
+import { Bounce } from 'react-awesome-reveal';
 
+export default function Loggin() {
 	const [isKey, setIsKey] = useState(false);
 
 	let navigate = useNavigate();
 	const isLogged = async () => {
 		try {
-			const response = await axios.get('http://localhost:3000/me/is-logged', {
+			const response = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/is-logged`, {
 				withCredentials: true,
 			});
 
@@ -44,7 +43,7 @@ export default function Loggin() {
 
 	const changeUser = async () => {
 		try {
-			await axios.delete('http://localhost:3000/auth/signout', {
+			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/signout`, {
 				withCredentials: true,
 			});
 			isLogged();
@@ -60,20 +59,22 @@ export default function Loggin() {
 			<div className="welcome ">
 				<h1>Welcome to ft_transcendence</h1>
 			</div>
-			<div className="lockImg d-flex flex-column">
-				<img src={Lock} alt="" />
+			<div className="inLockImg d-flex flex-column">
+				<img src={unLock} alt="" />
 				<h1>Connect with 42</h1>
 			</div>
 			<div className="buttonConnect d-flex">
-				{/* <Bounce delay={1300} className='w-100 h1-100' > */}
-				<form className="TextLog w-100 h-100">
-					<a href="https://api.intra.42.fr/oauth/authorize?client_id=7610cae5bea0cf5544204791cb2461c29e2d38081bcadfb36a30fa7b01531fb4&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public&state=coucou42">
-						<Button className="buttonMuiConnect " variant="contained" sx={{ borderRadius: 2, textTransform: 'none' }}>
-							Connect
-						</Button>
-					</a>
-				</form>
-				{/* </Bounce> */}
+				<Bounce delay={1000} className="w-100 h1-100">
+					<form className="TextLog w-100 h-100">
+						<a
+							href={`https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_AUTH_CALLBACK_URL}&response_type=code&scope=public&state=${process.env.REACT_APP_AUTH_CLIENT_STATE}`}
+						>
+							<Button className="buttonMuiConnect " variant="contained" sx={{ borderRadius: 2, textTransform: 'none' }}>
+								Connect
+							</Button>
+						</a>
+					</form>
+				</Bounce>
 			</div>
 		</div>
 	);
@@ -85,7 +86,7 @@ export default function Loggin() {
 			</div>
 			<div>
 				<div className="lockImg d-flex flex-column">
-					<img src={Lock} alt="" />
+					<img src={inLock} alt="" />
 					<h1>Connect with Key-Auth</h1>
 				</div>
 			</div>
@@ -97,19 +98,6 @@ export default function Loggin() {
 			</div>
 		</div>
 	);
-
-	// function handleClick() {
-	// 	setIsNav(!isNav);
-	// }
-
-	// return !matches ? (
-	// 	<div className="mainLoggin">{deskop}</div>
-	// ) : (
-	// 	<div className="mainNavMenuLoggin d-flex ">
-	// 		{isNav && null}
-	// 		{!isNav && <NavLogin />}
-	// 	</div>
-	// );
 
 	return <div className="mainLoggin">{!isKey ? logIn42 : logInKey}</div>;
 }

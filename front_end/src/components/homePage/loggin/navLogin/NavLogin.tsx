@@ -37,12 +37,10 @@ export default function NavLogin() {
 						<h1>Welcome to transcendance</h1>
 					</div>
 					<div className="navLock" onMouseOver={toggleUnlock} onMouseLeave={toggleUnlock}>
-						<a href="https://api.intra.42.fr/oauth/authorize?client_id=7610cae5bea0cf5544204791cb2461c29e2d38081bcadfb36a30fa7b01531fb4&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&response_type=code&scope=public&state=coucou42">
-							{isLock ? (
-								<img src="/lock-1.1s-200px.svg" alt="" />
-							) : (
-								<img src="/unlock-1.1s-200px.svg" alt="" />
-							)}
+						<a
+							href={`https://api.intra.42.fr/oauth/authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_AUTH_CALLBACK_URL}&response_type=code&scope=public&state=coucou42`}
+						>
+							{isLock ? <img src="/lock-1.1s-200px.svg" alt="" /> : <img src="/unlock-1.1s-200px.svg" alt="" />}
 						</a>
 					</div>
 					<div className="navConnect d-flex flex-column">

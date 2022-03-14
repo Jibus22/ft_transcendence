@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../paramUser.scss';
-import { Modal, Box, FormControlLabel, Switch, Button } from '@mui/material';
+import { Modal, FormControlLabel, Switch, Button } from '@mui/material';
 import { useMainPage } from '../../../../MainPageContext';
 import axios from 'axios';
 import FormAuth from './form/FormAuth';
+import './modalAuth.scss';
 
 interface Props {
 	isPop: boolean;
@@ -11,21 +12,7 @@ interface Props {
 }
 
 export default function DoubleAuth({ isPop, dataFa }: Props) {
-	const style = {
-		position: 'absolute' as 'absolute',
-		top: '50%',
-		left: '50%',
-		transform: 'translate(-50%, -50%)',
-		width: '27%',
-		height: '58%',
-		bgcolor: 'white',
-		border: '1px solid #000',
-		borderRadius: '6%',
-		boxShadow: 24,
-		p: 4,
-	};
-
-	const { dialogMui } = useMainPage();
+	const { dialogMui, fetchDataUserMe } = useMainPage();
 
 	const [iFa, setFa] = useState(false);
 
@@ -48,6 +35,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 	const agree = async () => {
 		setOpenDeleteKey(false);
 		deleteKey();
+		fetchDataUserMe();
 	};
 
 	const handleChange = () => {
@@ -64,7 +52,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 
 	const activeAuth = async () => {
 		await axios({
-			url: 'http://localhost:3000/auth/2fa/generate',
+			url: `http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/2fa/generate`,
 			method: 'POST',
 			withCredentials: true,
 			responseType: 'blob',
@@ -76,7 +64,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 
 	const deleteKey = async () => {
 		await axios({
-			url: 'http://localhost:3000/auth/2fa/turn-off',
+			url: `http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/auth/2fa/turn-off`,
 			method: 'POST',
 			withCredentials: true,
 		}).catch((error) => {
@@ -94,9 +82,8 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 		<div className="switchMui ">
 			<FormControlLabel control={<Switch checked={iFa} onChange={handleChange} />} label="2FA" disabled={isPop} />
 			{dialogMui(openDeleteKey, disagree, agree, 'Warning !', 'Are you sure you want to remove your OAuth system ?')}
-			<button onClick={deleteKey}>OFF</button>
 			<Modal open={open} onClose={handleClose}>
-				<Box sx={style}>
+				<div className="modalBox ">
 					<div className="d-flex flex-column">
 						<div className="titleInfo">
 							<h1>Scan the QR code with your favorite app</h1>
@@ -121,7 +108,7 @@ export default function DoubleAuth({ isPop, dataFa }: Props) {
 							</div>
 						</div>
 					</div>
-				</Box>
+				</div>
 			</Modal>
 		</div>
 	);

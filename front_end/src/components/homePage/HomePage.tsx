@@ -1,14 +1,17 @@
 import React from 'react';
-// import './StyleHomePage.scss'
 import { TitlePage, Loggin, Section } from '..';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export default function Homepage() {
+	const query = useMediaQuery('(max-width:900px)');
+
 	return (
-		<div className="d-flex HomePage  justify-content-between ">
+		<div className={` ${query ? 'd-flex flex-column' : 'd-flex justify-content-between'} HomePage `}>
 			<div className="d-flex flex-column ">
 				<TitlePage />
-				<Section />
+				{!query ? <Section /> : null}
 			</div>
+
 			<Loggin />
 		</div>
 	);

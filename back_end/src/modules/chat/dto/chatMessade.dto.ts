@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { UserDto } from '../../users/dtos/user.dto';
 import { RoomDto } from './room.dto';
@@ -18,9 +18,19 @@ export class ChatMessageDto {
 
   @ApiProperty()
   @Expose()
+  @Transform((value) => {
+    return value.obj?.room?.id;
+  })
+  room_id: string;
+
+  @ApiProperty()
+  @Expose()
   body: string;
 
   @ApiProperty()
   @Expose()
+  @Transform((value) => {
+    return parseInt(value.obj.timestamp);
+  })
   timestamp: number;
 }

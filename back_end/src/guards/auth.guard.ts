@@ -5,6 +5,7 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
+import { User } from '../modules/users/entities/users.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,12 +16,14 @@ export class AuthGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💂‍♂️ AuthGuard'); //TODO REMOVE LOGGER HERE
-    const session = context.switchToHttp().getRequest().session;
-    if (session && session.userId && this.isTwoFaOk(session)) {
-      logger.log(`User id: ${session.userId}`);
+    const logger = new Logger('🚪 💂‍♂️ AuthGuard');
+    const session = context.switchToHttp().getRequest()?.session;
+    const user: User = context.switchToHttp().getRequest()?.currentUser;
+    if (user && session.userId && this.isTwoFaOk(session)) {
+      logger.debug(`User id: ${user.id}`);
       return true;
     }
-    throw new UnauthorizedException();
+    logger.debug(`USER IS NOT LOGGED 🚫 `);
+    throw new UnauthorizedException('user must be logged');
   }
 }

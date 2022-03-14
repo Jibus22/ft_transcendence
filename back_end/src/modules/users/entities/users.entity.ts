@@ -12,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Participant } from '../../chat/entities/participant.entity';
+import { Player } from '../../game/entities/player.entity';
 import { UserDto } from '../dtos/user.dto';
 import { UserPhoto } from './users_photo.entity';
 
@@ -32,20 +33,23 @@ export class User {
   @Column({ unique: true })
   login_42: string;
 
-  @Column()
+  @Column({ default: 'https://cdn.intra.42.fr/users/medium_default.png' })
   photo_url_42: string;
 
-  @Column()
+  @Column({ default: false })
   use_local_photo: boolean;
+
+  @Column({ default: false })
+  is_site_owner: boolean;
 
   @OneToOne(() => UserPhoto, (photo) => photo.owner)
   local_photo: UserPhoto;
 
-  @ManyToMany((type) => User, (user) => user.friends_list)
+  @ManyToMany(() => User, (user) => user.friends_list)
   @JoinTable()
   friends_list: UserDto[];
 
-  @ManyToMany((type) => User, (user) => user.blocked_list)
+  @ManyToMany(() => User, (user) => user.blocked_list)
   @JoinTable()
   blocked_list: UserDto[];
 
@@ -58,34 +62,15 @@ export class User {
   @Column({ nullable: true, unique: true })
   ws_id: string;
 
+  @Column({ nullable: true, unique: true })
+  game_ws: string;
+
   @Column({ default: false })
   is_in_game: boolean;
 
-  @OneToMany((type) => Participant, (participant) => participant.user)
-  rooms_participation: Participant[];
+  @OneToMany(() => Player, (player) => player.user)
+  players: Player[];
 
-  /*
-   ** Lifecycle functions
-   */
-
-  @AfterInsert()
-  logInsert() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Inserted User: ', this);
-    }
-  }
-
-  @AfterRemove()
-  logRemove() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Removed User: ', this);
-    }
-  }
-
-  @AfterUpdate()
-  logUpdate() {
-    if (conf.get('NODE_ENV') === 'dev') {
-      console.log('Updated User: ', this);
-    }
-  }
+  @OneToMany(() => Participant, (participant) => participant.user)
+  room_participations: Participant[];
 }

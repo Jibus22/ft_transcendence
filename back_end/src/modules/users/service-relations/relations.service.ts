@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { UserDto } from '../dtos/user.dto';
 import { User } from '../entities/users.entity';
 
@@ -17,6 +17,22 @@ export enum RelationType {
 export class RelationsService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
+  async readFriendsRelation(userId: string) {
+    return await getRepository(User)
+      .createQueryBuilder('user')
+      .innerJoin('user.friends_list', 'flst')
+      .innerJoin('flst.local_photo', 'l_ph')
+      .select(['user', 'flst', 'l_ph.fileName'])
+      .where('user.id = :id', { id: userId })
+      .getOne()
+      .then((usr: User) => {
+        return usr.friends_list;
+      })
+      .catch((error) => {
+        throw new ConflictException(error.message);
+      });
+  }
+
   async readAllRelations(userId: string, relation: RelationType) {
     return await this.repo
       .createQueryBuilder()
@@ -27,7 +43,7 @@ export class RelationsService {
         return value;
       })
       .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+        throw new ConflictException(error.message);
       });
   }
 
@@ -45,7 +61,7 @@ export class RelationsService {
       .of(userId)
       .add(targetId)
       .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+        throw new ConflictException(error.message);
       });
   }
 
@@ -60,7 +76,7 @@ export class RelationsService {
       .of(userId)
       .remove(targetId)
       .catch((error) => {
-        throw new ConflictException(error.message); // TODO error message to be refined
+        throw new ConflictException(error.message);
       });
   }
 }

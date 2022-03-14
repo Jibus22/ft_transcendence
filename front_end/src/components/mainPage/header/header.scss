@@ -1,31 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
 .mainHeader {
-	width: 100%;
-	justify-content: center;
-	height: 100px;
-	margin: 6% 0 0 0;
+	// animation hover //
 
-	.logo {
-		width: 50px;
-		height: 50px;
-		margin: 0 0 0 20px;
+	a {
+		text-decoration: none;
 	}
+
+	nav ul li h1,
+	nav ul li h1:after,
+	nav ul li h1:before {
+		transition: all 0.5s;
+	}
+
+	nav.stroke ul li h1,
+	nav.fill ul li h1 {
+		position: relative;
+	}
+	nav.stroke ul li h1:after,
+	nav.fill ul li h1:after {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		margin: auto;
+		width: 0%;
+		content: '.';
+		color: transparent;
+		background: #e6da6a;
+		height: 3px;
+		height: 0.1vw;
+	}
+	nav.stroke ul li h1:hover:after {
+		width: 100%;
+	}
+
+	width: 100%;
+	display: flex;
+
+	height: 5vw;
+	height: 80px;
+	height: 100%;
+	margin: 130px 0 0 0;
 
 	.menuHeader {
 		width: 80%;
-		height: 85px;
-
-		margin: 100px auto;
+		height: 100%;
+		margin: 0px auto;
 		display: flex;
-
+		flex-direction: row;
 		background: rgba(230, 156, 106, 0.2);
 		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 		backdrop-filter: blur(7.5px);
 		-webkit-backdrop-filter: blur(7.5px);
-		border: 1px solid rgba(255, 255, 255, 0.8);
-		border-radius: 20px;
+		border: 2px solid rgba(255, 255, 255, 0.6);
+		border-radius: 1.5vw;
 
 		.selectedNave {
+			height: 100%;
 			border-bottom: 2px #e6da6a solid;
+			transition: ease-out 0.2s;
 		}
 	}
 
@@ -36,19 +69,13 @@
 	.headerMenu {
 		margin: 0 auto;
 		display: flex;
+		flex-direction: row;
 		justify-content: space-around;
+		align-self: center;
 
-		.toNavLink {
-			width: 100%;
-		}
-
-		.iconHeader {
-			color: rgba(255, 255, 255, 0.2);
-
-			// margin: 0 80px 0 80px;
-		}
 		li {
 			width: 90px;
+			height: 37px;
 		}
 		.leaderDiv {
 			width: 155px;
@@ -58,12 +85,11 @@
 			font-family: Montserrat, sans-serif;
 			color: white;
 			font-weight: 500;
-			font-size: 23px;
+			font-size: 1.4vw;
 			line-height: 35px;
-			margin: 0 auto;
 		}
 		h1:hover {
-			font-size: 26px;
+			font-size: 1.5vw;
 		}
 	}
 
@@ -75,34 +101,43 @@
 
 	.logHeader {
 		width: 15%;
-		margin: 0 0 0 0px;
+		display: flex;
+		justify-content: flex-end;
+		margin-right: 20px;
+
+		.SelectedNavLoggin {
+			background-color: rgba(243, 213, 192, 0.1);
+			border-radius: 2vw;
+			transition: ease-out 0.2s;
+		}
 
 		.profil {
+			display: flex;
+			justify-content: flex-end;
+			gap: 0.6vw;
 			.profilLoggin {
 				display: flex;
 				justify-content: center;
 				align-items: center;
 
+				padding-left: 0.6vw;
 				h2 {
 					font-family: Montserrat, sans-serif;
 					color: white;
 					font-weight: 500;
-					font-size: 23px;
-					text-align: center;
+					font-size: 1.3vw;
+					transition: ease-out 0.3s;
 				}
 			}
-
 			.profilLogginImg {
 				.MuiBadge-badge {
-					width: 17%;
+					width: 19%;
 					height: 19%;
-					// background-color: red;
-					// color: #44b700;
+
 					border-radius: 100%;
 					box-shadow: 0 0 0 0.5px;
 				}
 				.MuiBadge-badge::after {
-					position: absolute;
 					top: 0;
 					left: 0;
 					width: 100%;
@@ -114,43 +149,176 @@
 				}
 
 				.MuiAvatar-root {
-					width: 90px;
-					height: 80px;
+					width: 4.4vw;
+					height: 4.2vw;
 				}
 			}
 		}
 
 		.profil:hover {
+			background-color: rgba(243, 213, 192, 0.1);
+			border-radius: 2vw;
 			h2 {
-				font-size: 26px;
+				font-size: 1.35vw;
 			}
 		}
 	}
 }
 
-///////////////////////////////////////////////
-//////// reponsive max-width: 1440px  /////////
-///////////////////////////////////////////////
+@media screen and (max-width: 1700px) {
+	.mainHeader {
+		margin: 90px 0 0 0;
+		.menuHeader {
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			border-radius: 23px;
+		}
+	}
+}
+
+/////////////////////////////////////////////
+////// reponsive macbook 13 pouces  /////////
+/////////////////////////////////////////////
 
 @media screen and (max-width: 1440px) {
 	.mainHeader {
 		width: 100%;
+		// justify-content: center;
+
+		nav.stroke ul li h1:after,
+		nav.fill ul li h1:after {
+			top: 90%;
+
+			height: 0.09vw;
+		}
+
+		height: 75px;
+		.menuHeader {
+			border-radius: 1.5vw;
+
+			.selectedNave {
+				height: 90%;
+				border-bottom: 1px #e6da6a solid;
+			}
+		}
+
+		.logHeader {
+			// width: 20%;
+
+			.profil {
+				// width: 100%;
+
+				.profilLoggin {
+					// display: flex;
+					// justify-content: center;
+					// align-items: center;
+
+					h2 {
+					}
+				}
+
+				.profilLogginImg {
+					// width: 50%;
+					// margin-top: -3px;
+
+					.MuiBadge-badge {
+						// width: 19%;
+						// height: 19%;
+
+						// border-radius: 100%;
+						// box-shadow: 0 0 0 0.5px;
+					}
+				}
+			}
+
+			.profil:hover {
+				h2 {
+					// font-size: 1.5vw;
+				}
+			}
+		}
+	}
+}
+
+// @media screen and (max-width: 1300px) {
+// 	.mainHeader {
+// 		.logHeader {
+// 			border: 1px solid green;
+// 			.testSelectedNav {
+// 				margin-right: 30px !important;
+// 				border: 1px solid red;
+// 			}
+// 		}
+// 	}
+// }
+
+@media screen and (max-width: 1100px) {
+	.mainHeader {
+		width: 100%;
 		justify-content: center;
 
-		nav ul li h1,
-		nav ul li h1:after,
-		nav ul li h1:before {
+		nav.stroke ul li h1:after,
+		nav.fill ul li h1:after {
+			top: 80%;
+			height: 0.01vw;
+		}
+
+		height: 50px;
+
+		.menuHeader {
+			height: 80px;
+			.selectedNave {
+				height: 80%;
+			}
+		}
+		.headerMenu {
+			h1 {
+				font-size: 14px;
+			}
+			h1:hover {
+				font-size: 15px;
+			}
+		}
+		.logHeader {
+			.profil {
+				.profilLoggin {
+					h2 {
+						font-size: 14px;
+					}
+				}
+
+				.profilLogginImg {
+					.MuiAvatar-root {
+						width: 46px;
+						height: 45px;
+					}
+				}
+			}
+
+			.profil:hover {
+				h2 {
+					font-size: 15px;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1060px) {
+	.mainHeader {
+		nav ul li button,
+		nav ul li button:after,
+		nav ul li button:before {
 			transition: all 0.5s;
 		}
 
-		nav.stroke ul li h1,
-		nav.fill ul li h1 {
+		nav.stroke ul li button,
+		nav.fill ul li button {
 			position: relative;
 		}
-		nav.stroke ul li h1:after,
-		nav.fill ul li h1:after {
+		nav.stroke ul li button:after,
+		nav.fill ul li button:after {
 			position: absolute;
-			bottom: 0;
+			top: 24px !important;
 			left: 0;
 			right: 0;
 			margin: auto;
@@ -160,215 +328,140 @@
 			background: #e6da6a;
 			height: 1px;
 		}
-		nav.stroke ul li h1:hover:after {
+		nav.stroke ul li button:hover:after {
 			width: 100%;
 		}
 
+		nav.stroke ul li h1:after,
+		nav.fill ul li h1:after {
+			top: 80%;
+			height: 1px;
+		}
+
 		.menuHeader {
-			width: 81%;
-			height: 66px;
-			margin: 90px auto;
-			display: flex;
 			border: 1px solid rgba(255, 255, 255, 0.6);
-			border-radius: 18px;
+			border-radius: 16px;
+		}
+		.queryNav {
+			button {
+				text-transform: none;
+				border: none;
+				background: none;
+				color: white;
+				font-size: 14px;
+				margin-top: 5px;
+				height: 25px !important;
+			}
 
-			.selectedNave {
-				border-bottom: 1px #e6da6a solid;
+			button:hover {
+				font-size: 15px;
 			}
 		}
-
-		.mainNavMenu {
-			width: 80%;
+		.MuiMenu-root {
 		}
-
-		.headerMenu {
-			margin: 0 auto;
-
-			.toNavLink {
-				width: 100%;
-			}
-
-			li {
-				width: 70px;
-			}
-
-			.leaderDiv {
-				width: 105px;
-			}
-
-			h1 {
-				font-size: 17px;
-				line-height: 25px;
-				margin: 0 auto;
-			}
-			h1:hover {
-				font-size: 19px;
-			}
+		.MuiPaper-elevation {
+			// background: #4f3e35 !important;
+			border-radius: 15px !important;
+			border: 1px solid rgba(255, 255, 255, 0.6);
+			margin: -1.9px 10px 0% -10px;
 		}
+	}
 
-		.nav-item {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
+	.MuiPaper-elevation {
+		// background: #4f3e35 !important;
+		border-radius: 15px !important;
+		// border: 1px solid rgba(255, 255, 255, 0.6);
+		margin: -1.9px 10px 0% -10px;
+	}
+
+	.MuiMenuItem-root {
+		color: black !important;
+		font-size: 12px !important;
+		font-family: 'Poppins', sans-serif;
+	}
+	.MuiMenuItem-root:hover {
+		background-color: rgba(213, 115, 129, 0.8) !important;
+		border-radius: 6px;
+		color: white !important;
+	}
+}
+
+@media screen and (max-width: 850px) {
+	.mainHeader {
+		width: 100%;
+		justify-content: center;
 
 		.logHeader {
-			width: 15%;
-			margin: 0 0 0 0px;
-
+			margin-right: 4px;
+			.SelectedNavLoggin {
+			}
 			.profil {
-				margin: 0 0 0 20px;
 				.profilLoggin {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					width: 90px;
-
 					h2 {
-						font-size: 17px;
-						text-align: center;
-					}
-				}
-
-				.profilLogginImg {
-					width: 60px;
-					height: 60px;
-
-					.MuiBadge-colorPrimary {
-						color: #ff0000;
-					}
-				}
-				.profilLogginImg {
-					.MuiBadge-badge {
-						width: 18%;
-						height: 15%;
-						// background-color: #44b700;
-						// color: #44b700;
-						border-radius: 100%;
-						box-shadow: 0 0 0 0.5px;
-					}
-					.MuiBadge-badge::after {
-						position: absolute;
-						top: 0;
-						left: 0;
-						width: 100%;
-						height: 100%;
-						border-radius: 50%;
-						animation: badgeAnim 1.2s infinite ease-in-out;
-						border: 1px solid;
-						content: '';
-					}
-					.MuiAvatar-root {
-						width: 60px;
-						height: 60px;
+						padding: 10px 0 10px 0px;
 					}
 				}
 			}
-
 			.profil:hover {
 				h2 {
-					font-size: 19px;
+					font-size: 14.5px;
+					transition: ease-out 0.2s;
 				}
 			}
 		}
 	}
 }
 
-///////////////////////////////////////////////
-//////// reponsive max-width: 1366px  /////////
-///////////////////////////////////////////////
-
-@media screen and (max-width: 1366px) {
+@media screen and (max-width: 600px) {
 	.mainHeader {
-		width: 100%;
-		justify-content: center;
+		margin-top: 35px;
+	}
+}
 
-		.menuHeader {
-			width: 80%;
-			height: 60px;
-
-			margin: 70px auto;
-			display: flex;
-			border: 1px solid rgba(255, 255, 255, 0.5);
-			border-radius: 16px;
-
-			.selectedNave {
-				border-bottom: 1px #e6da6a solid;
-			}
-		}
-
-		.mainNavMenu {
-			width: 80%;
-		}
-
+@media screen and (max-width: 590px) {
+	.mainHeader {
 		.headerMenu {
 			margin: 0 auto;
 			display: flex;
+			flex-direction: row;
 			justify-content: space-around;
 
-			.toNavLink {
-				width: 100%;
-			}
-
 			li {
-				width: 70px;
+				width: 50px;
 			}
 			.leaderDiv {
-				width: 105px;
-			}
-
-			h1 {
-				font-weight: 500;
-				font-size: 16px;
-				line-height: 25px;
-				margin: 0 auto;
-			}
-			h1:hover {
-				font-size: 18px;
+				width: 90px;
 			}
 		}
+	}
+}
 
-		.nav-item {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
+@media screen and (max-width: 1060px) {
+	@-moz-document url-prefix() {
+		.mainHeader {
+			// animation hover //
 
-		.logHeader {
-			width: 15%;
-			margin: 0 0 0 0px;
-
-			.profil {
-				.profilLoggin {
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					h2 {
-						font-family: Montserrat, sans-serif;
-						color: white;
-						font-weight: 500;
-						font-size: 15px;
-						text-align: center;
-					}
-				}
-
-				.profilLogginImg {
-					// margin: 0 0 0 45px;
-
-					img {
-						width: 50px;
-						height: 50px;
-					}
-					.MuiBadge-colorPrimary {
-						color: #ff0000;
-					}
+			.menuHeader {
+				.selectedNave {
 				}
 			}
 
-			.profil:hover {
-				h2 {
-					font-size: 26px;
+			.mainNavMenu {
+			}
+
+			.headerMenu {
+				li {
 				}
+				.leaderDiv {
+				}
+
+				h1 {
+				}
+				h1:hover {
+				}
+			}
+
+			.nav-item {
 			}
 		}
 	}

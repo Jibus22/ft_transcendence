@@ -1,38 +1,121 @@
-import React from 'react';
-import { Socket } from "socket.io-client";
-import { Play, OnlineGame } from '../..';
+import React, { useEffect, Dispatch } from 'react';
+import { Socket } from 'socket.io-client';
+import { OnlineGame, Play } from '../..';
+// import { Play, OnlineGame } from '../..';
 import { useMainPage } from '../../../MainPageContext';
+import { PlayerGameLogic } from '../../type';
+import './game.scss';
+import MainPong from './pong/MainPong';
 
-interface Props {
-    wsStatus: Socket | undefined;
-  }
+import { configResponsive, useResponsive } from 'ahooks';
 
-export default function Game({wsStatus}: Props) {
-	const { setTimeSnack, timer, setIsDisable, setLoading, setIsFriends } = useMainPage();
+interface IProps {
+	chatWs: Socket | undefined;
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
+	playerGameLogic: PlayerGameLogic;
+}
 
+configResponsive({
+	small: 1060,
+});
+
+export default function Game({
+	chatWs,
+	setPlayerGameLogic,
+	playerGameLogic,
+}: IProps) {
+	console.log('--------- GAME ---------');
+	const {
+		isWatchGame,
+		setIsDisable,
+		setLoading,
+		selectNav,
+		setStartGame,
+		startGame,
+	} = useMainPage();
+
+	const responsive = useResponsive();
 	function handleClick() {
-        /*
+		/*
          TEST MESSAGE EMIT for ingame status: set
-         TODO: add `wsStatus && wsStatus.emit('ingame', 'out');`
+         TODO: add `chatWs && chatWs.emit('ingame', 'out');`
             when user exits game!
         */
-        wsStatus && wsStatus.emit('ingame', 'in');
+		chatWs && chatWs.emit('ingame', 'in');
 
 		setLoading(true);
 		setIsDisable(false);
-		setTimeSnack(false);
-		setIsFriends(false);
+
 		setTimeout(function () {
 			setLoading(false);
 			setIsDisable(true);
-			setTimeSnack(true);
-		}, timer);
+			setStartGame(true);
+		}, 1500);
 	}
+
+	useEffect(() => {
+		console.log('--GAME-- USEFFECT');
+		window.addEventListener('gameStartedFromChat', () => {
+			handleClick();
+		});
+
+		return () => {
+			console.log('--GAME-- CLEANUP');
+			window.removeEventListener('gameStartedFromChat', () => {
+				handleClick();
+			});
+		};
+	}, []);
+
+	const selectGame = () => {
+		if (responsive.small) {
+			if (!startGame) {
+				return (
+					<div className="h-100 w-100 d-flex">
+						<Play
+							Loadingclick={handleClick}
+							setPlayerGameLogic={setPlayerGameLogic}
+							playerGameLogic={playerGameLogic}
+						/>
+
+						<OnlineGame Loadingclick={handleClick} />
+					</div>
+				);
+			} else {
+				return (
+					<MainPong
+						setPlayerGameLogic={setPlayerGameLogic}
+						playerGameLogic={playerGameLogic}
+					/>
+				);
+			}
+		}
+		if (!responsive.small) {
+			if (selectNav) {
+				return <OnlineGame Loadingclick={handleClick} />;
+			}
+			if (startGame || isWatchGame) {
+				return (
+					<MainPong
+						setPlayerGameLogic={setPlayerGameLogic}
+						playerGameLogic={playerGameLogic}
+					/>
+				);
+			} else {
+				return (
+					<Play
+						Loadingclick={handleClick}
+						setPlayerGameLogic={setPlayerGameLogic}
+						playerGameLogic={playerGameLogic}
+					/>
+				);
+			}
+		}
+	};
 
 	return (
 		<div className="d-flex MainGame">
-			<Play Loadingclick={handleClick} />
-			<OnlineGame Loadingclick={handleClick} />
+			<div className="h-100 w-100">{selectGame()}</div>
 		</div>
 	);
 }

@@ -1,18 +1,26 @@
-import React from 'react';
+import { CircularProgress, IconButton, TextField } from '@mui/material';
+import axios, { AxiosError } from 'axios';
 import { useFormik } from 'formik';
-import { IconButton, CircularProgress, TextField } from '@mui/material';
-import { useSpring, animated } from 'react-spring';
-import IconMess from './img/carbon_send-alt-filled.png';
+import React, { Dispatch } from 'react';
+import { animated, useSpring } from 'react-spring';
 import * as yup from 'yup';
-import { useMainPage } from '../../../../MainPageContext';
+import { UserDto, PlayerGameLogic } from '../../../type';
+import IconMess from './img/carbon_send-alt-filled.png';
 
-interface Props {
+interface IProps {
 	Loadingclick: () => void;
 	disable: boolean;
 	loading: boolean;
+	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
 }
 
-export default function FormPlay({ Loadingclick, disable, loading }: Props) {
+export default function FormPlay({
+	Loadingclick,
+	disable,
+	loading,
+	setPlayerGameLogic,
+}: IProps) {
+	console.log('--------- FORMPLAY ---------');
 	const anim = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -23,8 +31,6 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 		},
 	});
 
-	const { setIsFriends } = useMainPage();
-
 	const validationSchema = yup.object({
 		loggin: yup.string().required('Enter a Nickname'),
 	});
@@ -34,9 +40,34 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 			loggin: '',
 		},
 		validationSchema: validationSchema,
-		onSubmit: (values) => {
-			Loadingclick();
-			setIsFriends(true);
+		onSubmit: async (values, { setErrors }) => {
+			try {
+				const response = await axios.post(
+					`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game`,
+					{ login_opponent: values.loggin },
+					{
+						withCredentials: true,
+					},
+				);
+				const { login_opponent: string, ...userDto } = response.data;
+				const opponent: Partial<UserDto> = userDto;
+				setPlayerGameLogic(() => {
+					return {
+						isChallenge: true,
+						isP1: true,
+						opponent: opponent,
+					};
+				});
+
+				Loadingclick();
+			} catch (error) {
+				const err = error as AxiosError;
+				const res_err = err.response;
+				if (res_err?.status === 404) setErrors({ loggin: 'User not found' });
+				else if (res_err?.status === 403)
+					setErrors({ loggin: res_err?.data['message'] });
+				else setErrors({ loggin: 'Error, go to sleep' });
+			}
 		},
 	});
 
@@ -46,7 +77,9 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 				<div className="formDivButton">
 					<form
 						onSubmit={formik.handleSubmit}
-						className={`${!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '} d-flex w-100 h-100`}
+						className={`${
+							!Boolean(formik.errors.loggin) ? 'formDiv' : 'formDivButtonAnim '
+						} d-flex w-100 h-100`}
 					>
 						<TextField
 							className="muiButtonInput"
@@ -58,10 +91,13 @@ export default function FormPlay({ Loadingclick, disable, loading }: Props) {
 							error={formik.touched.loggin && Boolean(formik.errors.loggin)}
 							helperText={formik && formik.errors.loggin}
 							disabled={!disable}
+							inputProps={{
+								maxLength: 10,
+							}}
 						/>
 
 						<div className="buttonDiv">
-							{loading && <CircularProgress size="1.4em" sx={{ mt: '40%' }} />}
+							{loading && <CircularProgress />}
 							{!loading && (
 								<IconButton type="submit" className="w-100 h-100">
 									<img src={IconMess} alt="" />

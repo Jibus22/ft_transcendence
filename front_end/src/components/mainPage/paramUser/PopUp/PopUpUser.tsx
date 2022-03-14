@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './popUp.scss';
 import { IconButton } from '@mui/material';
-
+import '../safari.css';
 import LCL from '../photos/close-icon.png';
 import FormUpload from './formUpload/FormUpload';
 import Form42Upload from './form42Upload/Form42Upload';
@@ -40,10 +40,8 @@ export default function PopUpUser({ printPopup }: Props) {
 	const file = new File([blob], 'random.svg', { type: 'image/svg' });
 
 	useEffect(() => {
-		if (data.length > 0) {
-			setCustomPhoto(data[0].storeCustomPhoto);
-		}
-	});
+		setCustomPhoto(data.storeCustomPhoto);
+	}, [data]);
 
 	const disagree = () => {
 		setIsUpload(false);
@@ -77,7 +75,13 @@ export default function PopUpUser({ printPopup }: Props) {
 				</IconButton>
 			</div>
 
-			{dialogMui(openSure, disagree, agree, 'Warning !', 'Are you sure you want to delete your photo?')}
+			{dialogMui(
+				openSure,
+				disagree,
+				agree,
+				'Warning !',
+				'Are you sure you want to delete your photo?',
+			)}
 		</div>
 	);
 }

@@ -1,19 +1,36 @@
-import React, { useState, useContext } from 'react';
-import axios, { AxiosError } from 'axios';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-
-interface Type {
-	id: number;
-	login: string;
-	photo_url: string;
-	status: string;
-	storeCustomPhoto: boolean;
-	hasTwoFASecret: boolean;
-}
+import {
+	Button,
+	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+} from '@mui/material';
+import { Socket } from 'socket.io-client';
+import axios, { AxiosError } from 'axios';
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+	UserMe,
+	LoginGame,
+	User,
+	UserChallenge,
+	OnlineGameAndMapType,
+	IOnlineGameRemove,
+	PlayerGameLogic,
+} from './components/type';
 
 interface IMainPageContext {
-	data: Array<Type>;
+	data: UserMe;
+
+	dataUserGame: Array<LoginGame>;
+	dataUserChallenge: Array<UserChallenge>;
+
+	dataPlayerNewGameJoin: User;
+
+	challengData: Array<User>;
 	timeSnack: boolean;
 	isDisable: boolean;
 	isFriends: boolean;
@@ -22,66 +39,208 @@ interface IMainPageContext {
 	openSure: boolean;
 	isUpload: boolean;
 	openUpload: boolean;
+	selectNav: Boolean;
+	startGame: Boolean;
+	leaveGame: boolean;
 	userStatus: boolean;
+	selectQuery: boolean;
 	selectedImage: File;
-	timer: number;
 	userName: string;
 	userImg: string;
 	pathPop: string;
-	statusUser: string;
 
-	setData: React.Dispatch<React.SetStateAction<never[]>>;
-	setTimeSnack: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsDisable: React.Dispatch<React.SetStateAction<boolean>>;
-	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-	setCustomPhoto: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsFriends: React.Dispatch<React.SetStateAction<boolean>>;
-	setOpenSure: React.Dispatch<React.SetStateAction<boolean>>;
-	setIsUpload: React.Dispatch<React.SetStateAction<boolean>>;
-	setOpenUpload: React.Dispatch<React.SetStateAction<boolean>>;
-	setSelectedImage: React.Dispatch<React.SetStateAction<File>>;
-	setTimer: React.Dispatch<React.SetStateAction<number>>;
-	setUserName: React.Dispatch<React.SetStateAction<string>>;
-	setUserImg: React.Dispatch<React.SetStateAction<string>>;
-	setPathPop: React.Dispatch<React.SetStateAction<string>>;
-	setStatusUser: React.Dispatch<React.SetStateAction<string>>;
+	dataUserBack: IOnlineGameRemove;
+	setDataUserBack: Dispatch<SetStateAction<IOnlineGameRemove>>;
+
+	setData: Dispatch<SetStateAction<UserMe>>;
+	setDataUserGame: Dispatch<SetStateAction<LoginGame[]>>;
+	setDataUserChallenge: Dispatch<SetStateAction<UserChallenge[]>>;
+	setDataPlayerNewGameJoin: Dispatch<SetStateAction<User>>;
+
+	setChallengData: Dispatch<SetStateAction<User[]>>;
+
+	watchGameScore: OnlineGameAndMapType;
+	setWatchGameScore: Dispatch<SetStateAction<OnlineGameAndMapType>>;
+
+	setTimeSnack: Dispatch<SetStateAction<boolean>>;
+	setIsDisable: Dispatch<SetStateAction<boolean>>;
+	setLoading: Dispatch<SetStateAction<boolean>>;
+	setSelectQuery: Dispatch<SetStateAction<boolean>>;
+	setCustomPhoto: Dispatch<SetStateAction<boolean>>;
+	setIsFriends: Dispatch<SetStateAction<boolean>>;
+	setOpenSure: Dispatch<SetStateAction<boolean>>;
+	setIsUpload: Dispatch<SetStateAction<boolean>>;
+	setOpenUpload: Dispatch<SetStateAction<boolean>>;
+	setStartGame: Dispatch<SetStateAction<boolean>>;
+	setSelectNav: Dispatch<SetStateAction<boolean>>;
+	setLeaveGame: Dispatch<SetStateAction<boolean>>;
+	setSelectedImage: Dispatch<SetStateAction<File>>;
+	setUserName: Dispatch<SetStateAction<string>>;
+	setUserImg: Dispatch<SetStateAction<string>>;
+	setPathPop: Dispatch<SetStateAction<string>>;
 
 	printSnackBar: () => void;
 	fetchDataUserMe: () => void;
 	onSubmit: (file: File, path: string) => void;
 	onSubmitUpload: (file: File) => void;
-	dialogMui: (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => void;
+	dialogMui: (
+		open: boolean,
+		disagree: () => void,
+		agree: () => void,
+		title: string,
+		description: string,
+	) => void;
 	setStatusColor: (status: string) => string;
+
+	isGameRandom: boolean;
+	setIsGameRandom: Dispatch<SetStateAction<boolean>>;
+
+	dialogueLoading: (
+		open: boolean,
+		text: string,
+		h1: string,
+		h2: string,
+	) => void;
+	disconectAuth: () => void;
+
+	gameWs: Socket | undefined;
+	setGameWs: Dispatch<SetStateAction<Socket | undefined>>;
+
+	roomId: string;
+	setRoomId: Dispatch<SetStateAction<string>>;
+
+	invitName: string;
+	setInvitName: Dispatch<SetStateAction<string>>;
+
+	isOpponant: boolean;
+	setIsOpponant: Dispatch<SetStateAction<boolean>>;
+
+	opacity: boolean;
+	setOpacity: Dispatch<SetStateAction<boolean>>;
+
+	playerNewGameInvit: boolean;
+	setPlayerNewGameInvit: Dispatch<SetStateAction<boolean>>;
+
+	playerNewGameJoin: boolean;
+	setPlayerNewGameJoin: Dispatch<SetStateAction<boolean>>;
+
+	isWatchGame: boolean;
+	setIsWatchGame: Dispatch<SetStateAction<boolean>>;
+
+	loadingSocket: boolean;
+	setLoadingSocket: Dispatch<SetStateAction<boolean>>;
+
+	countInvit: number;
+	setCountInvit: Dispatch<SetStateAction<number>>;
+
+	backInGame: boolean;
+	setBackInGame: Dispatch<SetStateAction<boolean>>;
+
+	testLol: boolean;
+	setTestLol: Dispatch<SetStateAction<boolean>>;
+
+	open: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
+
+	setPlayerGameLogic: Dispatch<SetStateAction<PlayerGameLogic>>;
+	playerGameLogic: PlayerGameLogic;
 }
 
 const MainPageContext = React.createContext({} as IMainPageContext);
 
 const MainPageProvider = (props: any) => {
 	const [data, setData] = useState([]);
+	const [dataUserGame, setDataUserGame] = useState([]);
+
+	const [dataPlayerNewGameJoin, setDataPlayerNewGameJoin] = useState();
+
+	const [dataUserChallenge, setDataUserChallenge] = useState([]);
+
+	const [dataUserBack, setDataUserBack] = useState();
+
+	const [watchGameScore, setWatchGameScore] = useState([]);
+
+	const [challengData, setChallengData] = useState([]);
+
 	const [timeSnack, setTimeSnack] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [isFriends, setIsFriends] = useState(false);
 	const [openSure, setOpenSure] = useState(false);
 	const [isUpload, setIsUpload] = useState(false);
+	const [selectNav, setSelectNav] = useState(false);
+	const [startGame, setStartGame] = useState(false);
 	const [openUpload, setOpenUpload] = useState(false);
+	const [leaveGame, setLeaveGame] = useState(false);
 	const [isDisable, setIsDisable] = useState(true);
 	const [customPhoto, setCustomPhoto] = useState(true);
-	const [timer, setTimer] = useState(5000);
 	const [userName, setUserName] = useState('');
 	const [userImg, setUserImg] = useState('');
-	const [userStatus, setUserStatus] = useState('');
 	const [pathPop, setPathPop] = useState('');
 	const [selectedImage, setSelectedImage] = useState();
-	const [statusUser, setStatusUser] = useState('');
+	const [selectQuery, setSelectQuery] = useState(false);
+
+	const [isGameRandom, setIsGameRandom] = useState(false);
+
+	const [gameWs, setGameWs] = useState<Socket | undefined>(undefined);
+
+	const [invitName, setInvitName] = useState('');
+
+	const [isOpponant, setIsOpponant] = useState(false);
+	const [opacity, setOpacity] = useState(false);
+
+	const navigate = useNavigate();
+
+	const [playerNewGameInvit, setPlayerNewGameInvit] = useState(false);
+
+	const [playerNewGameJoin, setPlayerNewGameJoin] = useState(false);
+
+	const [dataHistory, setDataHistory] = useState([]);
+
+	const [loadingSocket, setLoadingSocket] = useState(false);
+
+	const [roomId, setRoomId] = useState('');
+
+	const [isWatchGame, setIsWatchGame] = useState(false);
+
+	const [countInvit, setCountInvit] = useState(0);
+
+	const [backInGame, setBackInGame] = useState(false);
+
+	const [testLol, setTestLol] = useState(false);
+
+	const [open, setOpen] = useState(false);
+
+	const [playerGameLogic, setPlayerGameLogic] = useState(() => {
+		return new PlayerGameLogic();
+	});
 
 	const fetchDataUserMe = async () => {
 		try {
-			const { data } = await axios.get('http://localhost:3000/me', {
-				withCredentials: true,
-			});
-			setData([data]);
+			const { data } = await axios.get(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me`,
+				{
+					withCredentials: true,
+				},
+			);
+			setData(data);
 		} catch (err) {
 			console.log(err);
+		}
+	};
+
+	const disconectAuth = async () => {
+		try {
+			await axios.delete(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/auth/signout`,
+				{
+					withCredentials: true,
+				},
+			);
+			navigate('/');
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -89,9 +248,13 @@ const MainPageProvider = (props: any) => {
 		let data = new FormData();
 		data.append('file', file);
 		try {
-			await axios.post('http://localhost:3000/' + path, data, {
-				withCredentials: true,
-			});
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/` + path,
+				data,
+				{
+					withCredentials: true,
+				},
+			);
 			fetchDataUserMe();
 		} catch (err) {
 			console.log(err);
@@ -107,9 +270,13 @@ const MainPageProvider = (props: any) => {
 			data.append('file', file);
 		}
 		try {
-			await axios.post('http://localhost:3000/me/photo', data, {
-				withCredentials: true,
-			});
+			await axios.post(
+				`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/photo`,
+				data,
+				{
+					withCredentials: true,
+				},
+			);
 			fetchDataUserMe();
 		} catch (error) {
 			const err = error as AxiosError;
@@ -120,7 +287,13 @@ const MainPageProvider = (props: any) => {
 		}
 	};
 
-	const dialogMui = (open: boolean, disagree: () => void, agree: () => void, title: string, description: string) => {
+	const dialogMui = (
+		open: boolean,
+		disagree: () => void,
+		agree: () => void,
+		title: string,
+		description: string,
+	) => {
 		return (
 			<Dialog
 				open={open}
@@ -137,39 +310,84 @@ const MainPageProvider = (props: any) => {
 					</div>
 				</DialogTitle>
 				<DialogContent className="contentDialogMui">
-					<DialogContentText id="alert-dialog-description">{description}</DialogContentText>
+					<DialogContentText id="alert-dialog-description">
+						{description}
+					</DialogContentText>
 				</DialogContent>
 				<DialogActions className="actionDialogMui">
-					<Button sx={{ color: 'red' }} onClick={disagree}>
+					<Button
+						className="buttonMui"
+						sx={{ color: 'red' }}
+						onClick={disagree}
+					>
 						Disagree
 					</Button>
 
-					<Button onClick={agree}>Agree</Button>
+					<Button className="buttonMui" onClick={agree}>
+						Agree
+					</Button>
 				</DialogActions>
+			</Dialog>
+		);
+	};
+
+	const dialogueLoading = (
+		open: boolean,
+		title: string,
+		h1: string,
+		h2: string,
+	) => {
+		return (
+			<Dialog
+				open={open}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+				scroll="body"
+				className="mainDialogMui"
+			>
+				<DialogTitle id="alert-dialog-title" className="d-flex">
+					<ErrorIcon sx={{ color: 'orange' }} />
+					<div className="titleDialogMui">
+						<p>{title}</p>
+					</div>
+				</DialogTitle>
+				<DialogContent className="contentDialogMui">
+					<DialogContentText id="alert-dialog-description">
+						{h1}
+					</DialogContentText>
+					<DialogContentText id="alert-dialog-description">
+						{h2}
+					</DialogContentText>
+					<CircularProgress className="circularDialogMui" />
+				</DialogContent>
 			</Dialog>
 		);
 	};
 
 	const setStatusColor = (status: string): string => {
 		if (status === 'offline') {
-			return 'red';
+			return '#FF3F00';
 		}
 		if (status === 'online') {
 			return 'green';
 		}
 		if (status === 'ingame') {
-			return 'orange';
+			return '#FFC900';
 		} else {
 			return 'green';
 		}
 	};
 
 	const ProviderValue = {
+		data,
+		dataUserGame,
+		dataUserChallenge,
+
+		challengData,
+
 		timeSnack,
-		timer,
 		isDisable,
 		loading,
-		data,
 		userName,
 		userImg,
 		isFriends,
@@ -179,13 +397,22 @@ const MainPageProvider = (props: any) => {
 		isUpload,
 		selectedImage,
 		openUpload,
-		statusUser,
+		selectQuery,
+		selectNav,
+		startGame,
+		leaveGame,
+
+		setData,
+		setDataUserGame,
+		setDataUserChallenge,
+
+		setChallengData,
+
+		setSelectQuery,
 		setCustomPhoto,
 		setTimeSnack,
-		setTimer,
 		setIsDisable,
 		setLoading,
-		setData,
 		fetchDataUserMe,
 		setUserName,
 		setUserImg,
@@ -198,10 +425,77 @@ const MainPageProvider = (props: any) => {
 		setSelectedImage,
 		setOpenUpload,
 		dialogMui,
-		setStatusUser,
+		setStatusColor,
+		setStartGame,
+		setSelectNav,
+		setLeaveGame,
+
+		dataHistory,
+		setDataHistory,
+
+		// fetchDataHistory,
+
+		isGameRandom,
+		setIsGameRandom,
+
+		dialogueLoading,
+
+		disconectAuth,
+
+		gameWs,
+		setGameWs,
+
+		roomId,
+		setRoomId,
+
+		invitName,
+		setInvitName,
+		isOpponant,
+		setIsOpponant,
+		opacity,
+		setOpacity,
+		playerNewGameInvit,
+		setPlayerNewGameInvit,
+
+		playerNewGameJoin,
+		setPlayerNewGameJoin,
+		dataPlayerNewGameJoin,
+		setDataPlayerNewGameJoin,
+
+		watchGameScore,
+		setWatchGameScore,
+
+		isWatchGame,
+		setIsWatchGame,
+
+		loadingSocket,
+		setLoadingSocket,
+
+		countInvit,
+		setCountInvit,
+
+		backInGame,
+		setBackInGame,
+
+		dataUserBack,
+		setDataUserBack,
+
+		testLol,
+		setTestLol,
+
+		open,
+		setOpen,
+
+		setPlayerGameLogic,
+		playerGameLogic,
 	};
 
-	return <MainPageContext.Provider value={ProviderValue} {...props}></MainPageContext.Provider>;
+	return (
+		<MainPageContext.Provider
+			value={ProviderValue}
+			{...props}
+		></MainPageContext.Provider>
+	);
 };
 
 const useMainPage = () => {

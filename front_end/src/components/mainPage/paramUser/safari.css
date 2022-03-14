@@ -1,0 +1,68 @@
+@media not all and (min-resolution: 0.001dpcm) {
+	@supports (-webkit-appearance: none) {
+		.mainParamUser .imgUser .userModif {
+			position: absolute;
+			margin: -9% 0% 0% 0% !important;
+		}
+		.mainPopUpUser {
+			width: 30% !important;
+			height: 2.9vw !important;
+			margin: 1.5% 0% 0% 3% !important;
+			justify-content: space-around !important;
+			position: absolute !important;
+		}
+		.alertValidateIcon {
+			position: absolute !important;
+			left: 46% !important;
+			top: 32vw !important;
+			transform: translate(-50%, -50%) !important;
+		}
+		.alertValidateIcon .MuiSvgIcon-fontSizeInherit {
+			width: 1.5vw !important;
+			height: 1.5vw !important;
+		}
+		.alertValidateIcon .MuiAlert-root {
+			background: transparent !important;
+			margin: 3% 0 0 -2% !important;
+			color: white !important;
+			font-size: 0.9vw !important;
+			border: none !important;
+		}
+		.switchMui .MuiSwitch-thumb {
+			width: 1.3vw !important;
+			height: 1.3vw !important;
+		}
+		.switchMui .MuiSwitch-root {
+			height: 1.8vw !important;
+		}
+	}
+}
+
+@media screen and (max-width: 1950px) {
+	@media not all and (min-resolution: 0.001dpcm) {
+		@supports (-webkit-appearance: none) {
+			.switchMui .MuiSwitch-thumb {
+				width: 1.1vw !important;
+				height: 1.1vw !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1440px) {
+	@media not all and (min-resolution: 0.001dpcm) {
+		@supports (-webkit-appearance: none) {
+			.mainParamUser .imgUser .userModif {
+				width: 130px !important;
+				height: 133px !important;
+				margin: -130px 0 0 0 !important;
+			}
+			.alertValidateIcon {
+				position: absolute !important;
+				left: 46% !important;
+
+				margin-top: 65px !important;
+			}
+		}
+	}
+}

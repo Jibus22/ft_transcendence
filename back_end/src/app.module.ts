@@ -7,46 +7,41 @@ import {
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatController } from './modules/chat/chat.controller';
 import { ChatModule } from './modules/chat/chat.module';
-import { ChatMessage } from './modules/chat/entities/chatMessage.entity';
-import { Participant } from './modules/chat/entities/participant.entity';
-import { Room } from './modules/chat/entities/room.entity';
+import { ChatGatewayModule } from './modules/chat/gateways/chatgateway.module';
 import { TargetedRoomMiddleware } from './modules/chat/middleware/targeted-room.middleware';
+import { DatabaseModule } from './modules/database/database.module';
 import { DevelopmentModule } from './modules/dev/development.module';
-import { User } from './modules/users/entities/users.entity';
-import { UserPhoto } from './modules/users/entities/users_photo.entity';
+import { GameModule } from './modules/game/game.module';
 import { CurrentUserMiddleware } from './modules/users/middleware/current-user.middleware';
 import { AuthService } from './modules/users/service-auth/auth.service';
 import { UsersModule } from './modules/users/users.module';
-import { StatusGateway } from './status.gateway';
+import { AppUtilsModule } from './utils/app-utils.module';
 const cookieSession = require('cookie-session');
 
 @Module({
   imports: [
+    AppUtilsModule,
+    ScheduleModule.forRoot(),
     CacheModule.register({
       isGlobal: true,
     }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: process.env.DB_NAME,
-      entities: [User, UserPhoto, Room, ChatMessage, Participant, ChatMessage],
-      synchronize: true,
-    }),
+    DatabaseModule.forRoot(),
+    DevelopmentModule.forRoot(),
     HttpModule,
     ChatModule,
     UsersModule,
-    DevelopmentModule,
+    GameModule,
+    ChatGatewayModule,
   ],
   controllers: [AppController],
   providers: [
-    StatusGateway,
     AuthService,
     AppService,
     {
@@ -65,7 +60,7 @@ export class AppModule {
       .apply(
         cookieSession({
           keys: [this.configService.get('COOKIE_KEY')],
-          sameSite: 'Lax'
+          sameSite: 'Lax',
         }),
       )
       .forRoutes('*');
@@ -73,7 +68,9 @@ export class AppModule {
      * The order of the MiddleWear is important for the TargetedRoom middlewear
      * to have access to the CurrentUser
      */
-    consumer.apply(CurrentUserMiddleware).exclude('/auth/*').forRoutes('*');
-    consumer.apply(TargetedRoomMiddleware).forRoutes(ChatController);
+    consumer.apply(CurrentUserMiddleware).exclude('/dev/(.*)').forRoutes('*');
+    consumer
+      .apply(TargetedRoomMiddleware)
+      .forRoutes('/room/:room_id/*', '/me/rooms/:room_id*');
   }
 }

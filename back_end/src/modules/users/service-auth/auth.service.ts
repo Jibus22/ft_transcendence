@@ -50,7 +50,7 @@ export class AuthService {
     });
   }
 
-  async getUserData(token: string): Promise<Partial<User>> {
+  async getUserData(token: string) {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -75,12 +75,12 @@ export class AuthService {
   }
 
   async updateDatabase(user: Partial<User>) {
-    const users = await this.usersService.find(user);
+    const users = await this.usersService.find({ login_42: user.login_42 });
     if (users.length) {
       return await this.usersService
         .update(users[0].id, {
-          photo_url_42: users[0].photo_url_42,
-        } as User)
+          photo_url_42: user.photo_url_42,
+        })
         .catch((e) => {
           throw new BadGatewayException(e.message);
         });
@@ -111,8 +111,7 @@ export class AuthService {
   }
 
   async create2faKey(user: User) {
-    // TODO uncomment to avoid key deletion
-    if (user.twoFASecret) {
+    if (user.twoFASecret && user.useTwoFA) {
       throw '2fa key already set';
     }
 
@@ -154,7 +153,7 @@ export class AuthService {
   async turn2fa_on(session, token: string) {
     const user = await this.getValidUser(session);
     if (user) {
-      if (!this.checkToken(token, user.twoFASecret)) {
+      if (!authenticator.check(token, user.twoFASecret)) {
         throw 'invalid token';
       }
       session.useTwoFA = true;
@@ -167,20 +166,14 @@ export class AuthService {
   async authenticate2fa(session, token: string) {
     const user = await this.getValidUser(session);
 
-    if (!user.useTwoFA) {
-      return this.turn2fa_off(session);
+    if (!user.useTwoFA || !user.twoFASecret) {
+      throw 'user has no 2fa activated secret';
     }
 
-    if (this.checkToken(token, user.twoFASecret)) {
+    if (authenticator.check(token, user.twoFASecret)) {
       session.isTwoFAutanticated = true;
     } else {
       throw 'invalid token';
     }
-  }
-
-  private checkToken(token: string, secret: string) {
-    const output = authenticator.check(token, secret);
-    // console.log(token, secret, ' verify =', output);
-    return output;
   }
 }

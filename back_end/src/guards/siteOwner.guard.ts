@@ -1,23 +1,23 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   Logger,
-  UnauthorizedException,
 } from '@nestjs/common';
+import { User } from '../modules/users/entities/users.entity';
 
 @Injectable()
 export class SiteOwnerGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
-    const logger = new Logger('💂‍♂️ Site Owner Guard'); //TODO REMOVE LOGGER HERE
-    const session = context.switchToHttp().getRequest().session;
-
-    return true; // TODO REMOVE !!!!!! ---- FOR TEST ONLY
-
-    if (session && session.userId && session.isSiteOwner) {
-      logger.log(`User id: ${session.userId}`);
+    const logger = new Logger('🔓 💂‍♂️ Site Owner Guard');
+    const currentUser: User = context.switchToHttp().getRequest()?.currentUser;
+    if (currentUser && currentUser.is_site_owner) {
+      logger.debug(`User id: ${currentUser.id}`);
+      logger.debug(`SITE OWNER ACCESS GRANTED !`);
       return true;
     }
-    throw new UnauthorizedException();
+    logger.debug(`USER IS NOT SITE OWNER 🚫 `);
+    throw new ForbiddenException('User must be site owner');
   }
 }

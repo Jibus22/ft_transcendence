@@ -1,11 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AppUtilsService } from '../../../utils/app-utils.service';
+import { Room } from '../../chat/entities/room.entity';
+import { UpdateUserDto } from '../dtos/update-users.dto';
 import { User } from '../entities/users.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private repoUser: Repository<User>) {}
+  constructor(
+    private readonly appUtils: AppUtilsService,
+    @InjectRepository(User) private repoUser: Repository<User>,
+  ) {}
+
+  async whoAmI(user: User) {
+    await this.appUtils.fetchPossiblyMissingData(this.repoUser, user, [
+      'players',
+    ]);
+  }
 
   async create(user: Partial<User> | Partial<User>[]) {
     const newUser = this.repoUser.create(user as Partial<User>);
@@ -27,13 +39,47 @@ export class UsersService {
     return await this.repoUser.findOne(id);
   }
 
+  async findOneWithAnyParam(
+    param: Partial<User>[],
+    relations: { relations: string[] },
+  ) {
+    let users: User[] = [];
+    for (let elem of param) {
+      let user: User;
+      if (relations) user = await this.repoUser.findOne(elem, relations);
+      else user = await this.repoUser.findOne(elem);
+      if (user) users.push(user);
+    }
+    return users;
+  }
+
+  async findLogin(login: string) {
+    if (!login) {
+      return null;
+    }
+    return await this.repoUser.findOne({ login: login });
+  }
+
   async findOneWithRelations(id: string) {
     if (!id) {
       return null;
     }
     return await this.repoUser.findOne(id, {
-      relations: ['local_photo'],
+      relations: ['local_photo', 'players'],
     });
+  }
+
+  async findRoomParticipations(id: string): Promise<Room[]> {
+    if (!id) {
+      return null;
+    }
+    return await this.repoUser
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: id })
+      .innerJoin('user.room_participations', 'participations')
+      .innerJoin('participations.room', 'room')
+      .select('room.id', 'id')
+      .getRawMany();
   }
 
   async find(user: Partial<User>) {
@@ -43,8 +89,23 @@ export class UsersService {
     });
   }
 
-  async update(id: string, attrs: Partial<User>) {
+  async findUserWithGamesData(user: Partial<User>) {
+    return await this.repoUser.find({
+      where: user,
+      relations: ['local_photo', 'players'],
+    });
+  }
+
+  async update(id: string, attrs: UpdateUserDto) {
     const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    Object.assign(user, attrs);
+    return await this.repoUser.save(user);
+  }
+
+  async updateUser(user: User, attrs: UpdateUserDto) {
     if (!user) {
       throw new NotFoundException('user not found');
     }
@@ -55,6 +116,12 @@ export class UsersService {
   async getAllUsers() {
     return await this.repoUser.find({
       relations: ['local_photo'],
+    });
+  }
+
+  async getAllPlayersUsers() {
+    return await this.repoUser.find({
+      relations: ['local_photo', 'players'],
     });
   }
 }

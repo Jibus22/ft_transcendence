@@ -1,83 +1,210 @@
-import React, { useState } from 'react';
-import './historyGame.scss';
+import { Avatar, AvatarGroup, Badge, Button, useMediaQuery } from '@mui/material';
+import axios, { AxiosError } from 'axios';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import { animated, useSpring } from 'react-spring';
 import 'semantic-ui-css/semantic.min.css';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-import { pink } from '@mui/material/colors';
-import { styled } from '@mui/material/styles';
-import { useSpring, animated } from 'react-spring';
-import FF from '../../homePage/section/photos/FF.png';
-import JB from '../../homePage/section/photos/JB.png';
-import { InputAdornment, Button, AvatarGroup, Avatar, Badge } from '@mui/material';
-
-const CssTextField = styled(TextField)({
-	'& label.Mui-focused': {
-		color: 'white',
-	},
-	'& .MuiOutlinedInput-root': {
-		'& fieldset': {
-			borderColor: '#E69C6A',
-		},
-	},
-});
+import { useMainPage } from '../../../MainPageContext';
+import { Game } from '../../type';
+import FormHistory from './formHistory/FormHistory';
+import './historyGame.scss';
 
 const HistoryGame = () => {
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
-		from: { opacity: 0, transform: 'translate(0px, 500px)' },
+		from: { opacity: 0, transform: 'translate(0px, 5vw)' },
 		config: {
 			delay: 300,
 			duration: 300,
 		},
 	});
 
-	let divHistory = (
-		<div className="infoHistory ">
-			<div className="userImg d-flex ">
-				<AvatarGroup max={2}>
-					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-						<Avatar alt="userImg" src={FF} variant="square" className="domUser" />
-					</Badge>
-					<Badge overlap="circular" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant="dot" sx={{}}>
-						<Avatar alt="userImg" src={JB} variant="rounded" className="extUser" />
-					</Badge>
-				</AvatarGroup>
-			</div>
+	const fade = useSpring({
+		opacity: 1,
+		transform: 'translate(0px, 0px)',
+		from: { opacity: 0, transform: 'translate(0px, 0px)' },
+		config: {
+			delay: 2000,
+			duration: 2000,
+		},
+	});
 
-			<div className="playerName ">
-				<div className="player d-flex ">
-					<p>frfrance</p>
-					<p className="vs">vs</p>
-					<p>jl-core</p>
-				</div>
-			</div>
-			<div className="playerScore d-flex ">
-				<div>
-					<p>5</p>
-				</div>
-				<div className="semilicon">
-					<p>:</p>
-				</div>
-				<div>
-					<p>12</p>
-				</div>
-			</div>
-			<div className="date d-flex flex-column ">
-				<p>01/12/21</p>
-				<p className="timeHours">23 : 44</p>
-			</div>
-			<div className="duration d-flex ">
-				<p>00:00:15</p>
-			</div>
-		</div>
-	);
+	const { userName, setStatusColor, gameWs } = useMainPage();
+	const [dataGame, setDataGame] = useState<Array<Game>>([]);
+	const query = useMediaQuery('(max-width: 700px)');
 
 	const [isActive, setIsActive] = useState(false);
 
-	function handleIsActive() {
+	const fetchData = async () => {
+		try {
+			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/history`, {
+				withCredentials: true,
+			});
+			console.log(data);
+			setDataGame(data);
+		} catch (error) {
+			const err = error as AxiosError;
+			console.log(err);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
+
+	const [isMyGame, setIsMyGame] = useState(false);
+
+	const searchMyGame = () => {
+		setIsMyGame(!isMyGame);
 		setIsActive(!isActive);
-	}
+	};
+
+	const formatDuration = (durationInMs: number) => {
+		const duration = new Date(durationInMs);
+		const min = duration.getMinutes().toString().padStart(2, '0');
+		const sec = duration.getSeconds().toString().padStart(2, '0');
+		return `${min}:${sec}`;
+	};
+
+	const convertTime = (int: number, option: number) => {
+		const date = new Date(int);
+		let time;
+		time = date.getMinutes() + ':' + date.getSeconds();
+
+		var minutes = Math.floor(int / 60);
+		var seconds = int - minutes * 60;
+
+		if (option === 1) {
+			time = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+		}
+
+		return time;
+	};
+
+	const userList = (data: any) => {
+		return (
+			<animated.div style={fade} className="animatedDiv" key={data.id}>
+				<div className="infoHistory ">
+					<div className="mainPlayer">
+						{!query ? (
+							<div className="userImg d-flex ">
+								<AvatarGroup max={2}>
+									<Badge
+										overlap="circular"
+										anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+										variant="dot"
+										sx={{
+											'.MuiBadge-badge': {
+												backgroundColor: setStatusColor(data.players[0].user.status),
+												color: setStatusColor(data.players[0].user.status),
+												borderColor: setStatusColor(data.players[0].user.status),
+												boxShadow: setStatusColor(data.players[0].user.status),
+											},
+											'.MuiBadge-badge::after': {
+												borderColor: setStatusColor(data.players[0].user.status),
+											},
+										}}
+									>
+										<Avatar alt="userImg" src={data.players[0].user.photo_url} variant="square" className="domUser" />
+									</Badge>
+									<Badge
+										overlap="circular"
+										anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+										variant="dot"
+										sx={{
+											'.MuiBadge-badge': {
+												backgroundColor: setStatusColor(data.players[1].user.status),
+												color: setStatusColor(data.players[1].user.status),
+												borderColor: setStatusColor(data.players[1].user.status),
+												boxShadow: setStatusColor(data.players[1].user.status),
+											},
+											'.MuiBadge-badge::after': {
+												borderColor: setStatusColor(data.players[1].user.status),
+											},
+										}}
+									>
+										<Avatar alt="userImg" src={data.players[1].user.photo_url} variant="rounded" className="extUser" />
+									</Badge>
+								</AvatarGroup>
+							</div>
+						) : null}
+						<div className="playerName ">
+							<div className="player d-flex ">
+								<div className="playerDiv justify-content-end">
+									<p>{data.players[0].user.login}</p>
+								</div>
+								<div className="vs">
+									<p>vs</p>
+								</div>
+								<div className="playerDiv justify-content-start">
+									<p>{data.players[1].user.login}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="playerScore d-flex ">
+						<div>
+							<p>{data.players[0].score}</p>
+						</div>
+						<div className="semilicon">
+							<p>:</p>
+						</div>
+						<div>
+							<p>{data.players[1].score}</p>
+						</div>
+					</div>
+					<div className="date d-flex flex-column ">
+						<p>{convertTime(data.createdAt, 1)}</p>
+					</div>
+					<div className="duration d-flex ">
+						<p>{formatDuration(data.duration)}</p>
+					</div>
+				</div>
+			</animated.div>
+		);
+	};
+
+	const [name, setName] = useState('');
+	const [foundUsers, setFoundUsers] = useState<Array<Game>>([]);
+	const [inKeyword, setInKeyWord] = useState(false);
+
+	const filter = (e: ChangeEvent<HTMLInputElement>) => {
+		const keyword = e.target.value;
+
+		setInKeyWord(false);
+		if (keyword !== '') {
+			setInKeyWord(true);
+			const results = dataGame.filter((dataGame) => {
+				return (
+					dataGame.players[0].user.login.toLocaleLowerCase().startsWith(keyword.toLocaleLowerCase()) ||
+					dataGame.players[1].user.login.toLocaleLowerCase().startsWith(keyword.toLocaleLowerCase())
+				);
+			});
+			setFoundUsers(results);
+		} else {
+			setFoundUsers(dataGame);
+		}
+		setName(keyword);
+	};
+
+	const userSortDate = (a: Game, b: Game) => {
+		return b.createdAt - a.createdAt;
+	};
+
+	const sortByUser = () => {
+		if (isMyGame) {
+			const sortByName = dataGame.filter(
+				(dataGame) => dataGame.players[0].user.login === userName || dataGame.players[1].user.login === userName,
+			);
+			return sortByName.sort(userSortDate).map((data) => userList(data));
+		}
+		if (foundUsers && foundUsers.length > 0) {
+			return foundUsers.sort(userSortDate).map((data) => userList(data));
+		}
+		if (inKeyword === false) {
+			return dataGame.sort(userSortDate).map((data) => userList(data));
+		}
+	};
 
 	return (
 		<animated.div style={props} className="w-100">
@@ -85,34 +212,19 @@ const HistoryGame = () => {
 				<div className="searchCase ">
 					<h1>History</h1>
 
-					<div className="d-flex">
+					<div className="d-flex  MainmyGameDIv ">
 						<div className="myGameDIv d-flex">
 							<Button
-								onClick={handleIsActive}
-								className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton`}
+								onClick={searchMyGame}
+								className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton `}
 								variant="contained"
-								sx={{ width: 2 / 2, textTransform: 'none' }}
+								sx={{ width: 2 / 2, height: 2 / 2, textTransform: 'none' }}
 							>
 								My game
 							</Button>
 						</div>
 						<div>
-							<CssTextField
-								sx={{ textDecoration: 'none', height: 2 / 2 }}
-								autoComplete="off"
-								className="searchBarre "
-								id="outlined-basic"
-								variant="outlined"
-								size="small"
-								label="Search"
-								InputProps={{
-									endAdornment: (
-										<InputAdornment position="end">
-											<SearchIcon sx={{ color: pink[50], fontSize: 20 }} />
-										</InputAdornment>
-									),
-								}}
-							/>
+							<FormHistory name={name} filter={filter} isActive={isActive} />
 						</div>
 					</div>
 				</div>
@@ -125,13 +237,7 @@ const HistoryGame = () => {
 				</div>
 
 				<div className="pageOverflow ">
-					<div className="histUser ">
-						{divHistory}
-						{divHistory}
-						{divHistory}
-						{divHistory}
-						{divHistory}
-					</div>
+					<div className="histUser ">{sortByUser()}</div>
 				</div>
 			</div>
 		</animated.div>
