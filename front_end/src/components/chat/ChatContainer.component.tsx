@@ -4,6 +4,8 @@ import ChatList from "./ChatList.component";
 import ChatPanel from "./ChatPanel.component";
 import axios from "axios";
 
+declare let window: any;
+
 const ChatContainer = ({ open }: any) => {
 
 	const [chat, setChat] = useState<any>(null);
@@ -11,6 +13,7 @@ const ChatContainer = ({ open }: any) => {
 
 	const openChat = (room: any) => {
 		setChat(room);
+		window.chatId = room.id;
 	};
 
 	const getCurrentUser = async () => {

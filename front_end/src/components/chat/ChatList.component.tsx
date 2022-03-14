@@ -187,7 +187,8 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			if (window.roomsLoading)
 				return;
 			getPublicRooms();
-			getChats();
+			console.log(`Updating chat ${window.chatId}`);
+			getChats(window.chatId || null);
 		})
 
 		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
