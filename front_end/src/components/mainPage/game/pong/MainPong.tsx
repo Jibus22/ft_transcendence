@@ -334,7 +334,8 @@ export default function MainPong({
 					)}
 				</div>
 				{((playerGameLogic.isP1 && (!acceptGame || count < 1)) ||
-					(!playerGameLogic.isP1 && count < 1)) && (
+					(!playerGameLogic.isP1 && count < 1) ||
+					backInGame) && (
 					<div className="closeButton">
 						<Button
 							className="buttonMui"
