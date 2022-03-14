@@ -154,6 +154,8 @@ export default function MainPong({
 		gameWs?.on('gameDenied', (opponentData) => {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
+			setIsWatchGame(false);
+			setOpen(false);
 			setOpenDialogLoading(true);
 
 			setTimeout(() => {

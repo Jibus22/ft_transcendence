@@ -61,8 +61,7 @@ const UserRank = ({ setPlayerGameLogic }: IProps) => {
 			);
 			setDataFriends(data);
 		} catch (error) {
-			const err = error as AxiosError;
-			console.log(err);
+			// const err = error as AxiosError;
 		}
 	};
 
