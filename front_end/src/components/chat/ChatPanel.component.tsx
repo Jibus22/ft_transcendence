@@ -24,8 +24,11 @@ const ChatPanel = ({ room, currentUser }: any) => {
 
 	const getMessages = async () => {
 		try {
-			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
-			const sortedMessages = (data as Array<any>).sort((a: any, b: any) => a.timestamp - b.timestamp);
+			const { data: messages } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
+			const { data: blockedUsers } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true });
+
+			const nonBlockedUsersMessages = (messages as Array<any>).filter(message => !(blockedUsers as Array<any>).find(user => user.id === message.sender.id));
+			const sortedMessages = nonBlockedUsersMessages.sort((a: any, b: any) => a.timestamp - b.timestamp);
 			setMessages(sortedMessages);
 		} catch (e: any) { console.log(e) };
 	};
@@ -39,7 +42,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 			await axios.post(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`,
 			{ body: message.slice(0, 10000) },
 			{ withCredentials: true });
-		} catch (e: any) { 
+		} catch (e: any) {
 			alert(e?.response?.data?.message || "Cannot send the message");
 		 };
 	}
@@ -71,8 +74,15 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		scrollChatDown();
 	}, [messages]);
 
-	window.addEventListener("newMessage", ({ detail }: any) => {
+	window.addEventListener("newMessage", async({ detail }: any) => {
+
+		const { data: blockedUsers } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true });
 		const message: any = detail;
+
+		if ((blockedUsers as Array<any>).some(blockedUser => blockedUser.id === message.sender.id)) {
+			return;
+		}
+
 		if (message.room_id !== room.id) {
 			return;
 		}
