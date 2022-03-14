@@ -146,7 +146,7 @@ dockerfclean:  ## Remove all volumes, images and data from Docker
 dbclean:  ## Remove all database related files and volumes
 	${RM} -rf database
 	${RM} back_end/dbDev.sqlite back_end/dbDev.sqlite-shm back_end/dbDev.sqlite-wal
-	docker volume rm repo_database_storage
+	docker volume rm $(shell basename `pwd` | tr '[:upper:]' '[:lower:]')_database_storage
 
 photoclean:  ## Remove all user photos files
 	${RM} data/users_photos_*/*
