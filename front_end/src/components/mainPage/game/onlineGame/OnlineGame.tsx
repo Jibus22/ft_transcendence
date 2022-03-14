@@ -39,7 +39,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 			setStartGame(true);
 			setSelectNav(false);
 			navigate('/Mainpage');
-		}, 2000);
+		}, 1000);
 	};
 
 	return (

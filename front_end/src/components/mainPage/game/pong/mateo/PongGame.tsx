@@ -1,7 +1,8 @@
 import { Socket } from 'socket.io-client';
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Ball } from './Ball';
 import { Player } from './Player';
+import { sleep as sleep2 } from '../../../utils/utils';
 import './PongGame.scss';
 import '../pongGame.scss';
 
@@ -42,6 +43,9 @@ type MyProps = {
 	setPauseGame: React.Dispatch<React.SetStateAction<boolean>>;
 	scoreJ1: number;
 	scoreJ2: number;
+	setStartGame: Dispatch<SetStateAction<boolean>>;
+	setIsWatchGame: Dispatch<SetStateAction<boolean>>;
+	isWatchGame: boolean;
 };
 
 class PongGame extends React.Component<MyProps> {
@@ -73,15 +77,23 @@ class PongGame extends React.Component<MyProps> {
 		this._widthPlayer,
 		this.width - 2 * this._widthPlayer,
 	);
+	private _maxScore = 4;
+
 	_ball: Ball = new Ball(this.width, this.height);
 	_keystate: any = {};
 	_canvas: HTMLCanvasElement | undefined = undefined;
 	_ctx: CanvasRenderingContext2D | undefined = undefined;
+
 	_P1: boolean = false;
 	_P2: boolean = false;
 	scoreP1: number = this.props.scoreJ1;
 	scoreP2: number = this.props.scoreJ2;
+
+	setStartGame = this.props.setStartGame;
+	setIsWatchGame = this.props.setIsWatchGame;
+	isWatchGame = this.props.isWatchGame;
 	gamerunning = true;
+
 	powerUp = true;
 	imgBackground = new Image();
 	font: string = '30px Arial';
@@ -165,7 +177,7 @@ class PongGame extends React.Component<MyProps> {
 		else this._printText('watch Game');
 	}
 
-	private _score(ret: number) {
+	private async _score(ret: number) {
 		//Maj Score
 		if (ret === 2) this.scoreP2++; //J2 score
 		if (ret === 1) this.scoreP1++;
@@ -178,10 +190,10 @@ class PongGame extends React.Component<MyProps> {
 			},
 		});
 
-		if (this.scoreP1 === 10 || this.scoreP2 === 10) {
+		if (this.scoreP1 === this._maxScore || this.scoreP2 === this._maxScore) {
 			let winner: string;
 			this.gamerunning = false;
-			if (this.scoreP1 === 10) winner = 'One';
+			if (this.scoreP1 === this._maxScore) winner = 'One';
 			else winner = 'Two';
 			this._printText(`Player ${winner} win`);
 			this.props.socket?.emit('endGame', {
@@ -191,6 +203,8 @@ class PongGame extends React.Component<MyProps> {
 					score2: this.scoreP2,
 				},
 			});
+			await sleep2(2500);
+			this.setStartGame(false);
 			return;
 		}
 
@@ -401,28 +415,24 @@ class PongGame extends React.Component<MyProps> {
 
 	_startGame() {
 		const keystate = this._keystate;
-		document.addEventListener(
-			'keydown',
-			function (evt) {
-				evt.preventDefault();
-				keystate[evt.key] = true;
-			},
-			{ signal: this._controller.signal },
-		);
-		document.addEventListener(
-			'keyup',
-			function (evt) {
-				evt.preventDefault();
-				delete keystate[evt.key];
-			},
-			{ signal: this._controller.signal },
-		);
-		this.props.socket!.send(
-			JSON.stringify({
-				type: 'message',
-				object: 'Ready',
-			}),
-		);
+		if (!this.isWatchGame) {
+			document.addEventListener(
+				'keydown',
+				function (evt) {
+					evt.preventDefault();
+					keystate[evt.key] = true;
+				},
+				{ signal: this._controller.signal },
+			);
+			document.addEventListener(
+				'keyup',
+				function (evt) {
+					evt.preventDefault();
+					delete keystate[evt.key];
+				},
+				{ signal: this._controller.signal },
+			);
+		}
 		let loop = () => {
 			if (this.gamerunning) this._update();
 			if (this.gamerunning) this._draw();
@@ -465,18 +475,21 @@ class PongGame extends React.Component<MyProps> {
 			this._ball.y = ballPos.y;
 		});
 
-		this.props.socket?.on('scoreUpdate', (score: Score) => {
+		this.props.socket?.on('scoreUpdate', async (score: Score) => {
 			const p1Score = score.score1 > this.scoreP1;
 			this.scoreP1 = score.score1;
 			this.scoreP2 = score.score2;
 
 			//Affichage du gagnant
-			if (this.scoreP1 === 10 || this.scoreP2 === 10) {
+			if (this.scoreP1 === this._maxScore || this.scoreP2 === this._maxScore) {
 				let winner: string;
 				this.gamerunning = false;
-				if (this.scoreP1 === 10) winner = 'One';
+				if (this.scoreP1 === this._maxScore) winner = 'One';
 				else winner = 'Two';
 				this._printText(`Player ${winner} win`);
+				await sleep2(2500);
+				this.setIsWatchGame(false);
+				this.setStartGame(false);
 				return;
 			}
 

@@ -136,6 +136,7 @@ const MainPage = () => {
 		gameWs?.on('gaveUp', (usr: UserDto) => {
 			console.log(`💌  Event: gaveUp ->`);
 			console.log(usr);
+			if (countInvit > 0) setCountInvit((c) => c - 1);
 			setTimeSnack(false);
 		});
 
@@ -193,7 +194,7 @@ const MainPage = () => {
 		}
 	};
 
-	const handleKo = useCallback(() => {
+	const handleDeny = useCallback(() => {
 		gameWs?.emit(
 			'gameInvitResponse',
 			{ response: 'KO', to: wsId },
@@ -207,7 +208,7 @@ const MainPage = () => {
 		setTimeSnack(false);
 	}, [countInvit, wsId]);
 
-	const handleOk = useCallback(() => {
+	const handleAccept = useCallback(() => {
 		gameWs?.emit(
 			'gameInvitResponse',
 			{ response: 'OK', to: wsId },
@@ -219,6 +220,7 @@ const MainPage = () => {
 		setCountInvit(countInvit - 1);
 		console.log(`countInvit inside ok CB after dec: ${countInvit}`);
 		setTimeSnack(false);
+		navigate('/Mainpage');
 	}, [countInvit, wsId]);
 
 	console.log('playerGameLogic');
@@ -236,8 +238,8 @@ const MainPage = () => {
 				<SnackBarre
 					timeSnack={timeSnack}
 					playerGameLogic={playerGameLogic}
-					handleOk={handleOk}
-					handleKo={handleKo}
+					handleAccept={handleAccept}
+					handleDeny={handleDeny}
 				/>
 			)}
 			{headerLeave()}

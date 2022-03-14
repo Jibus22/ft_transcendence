@@ -150,7 +150,7 @@ const RankWorld = ({
 						className="lalala"
 						title={
 							<Typography fontSize={`${query ? '7px' : '0.7vw'} `}>
-								You can't challenge someone offline, in games or you
+								You can't challenge someone offline, already playing or yourself
 							</Typography>
 						}
 						followCursor={true}

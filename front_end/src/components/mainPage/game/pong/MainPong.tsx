@@ -8,6 +8,7 @@ import PongGame from './mateo/PongGame';
 import './pongGame.scss';
 import { IOnlineGameRemove, UserDto, PlayerGameLogic } from '../../../type';
 import { clearGameData, clearPlayerGameLogic } from '../../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface IProps {
 	setPlayerGameLogic: Dispatch<React.SetStateAction<PlayerGameLogic>>;
@@ -53,7 +54,7 @@ export default function MainPong({
 	} = useMainPage();
 
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
-	const [count, setCount] = useState<number | undefined>();
+	const [count, setCount] = useState<number>(10);
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [watchId, setWatchId] = useState('');
@@ -63,6 +64,7 @@ export default function MainPong({
 	const closeGame = () => {
 		if (isWatchGame) {
 			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
+			setIsWatchGame(false);
 			setStartGame(false);
 		} else {
 			const game_ws = playerGameLogic.opponent.game_ws;
@@ -267,6 +269,9 @@ export default function MainPong({
 								setPauseGame={setPauseGame}
 								scoreJ1={scoreJ1}
 								scoreJ2={scoreJ2}
+								setStartGame={setStartGame}
+								setIsWatchGame={setIsWatchGame}
+								isWatchGame={isWatchGame}
 							/>
 						</div>
 					) : (
@@ -326,15 +331,18 @@ export default function MainPong({
 						</div>
 					)}
 				</div>
-				<div className="closeButton">
-					<Button
-						className="buttonMui"
-						variant="contained"
-						onClick={() => setOpen(true)}
-					>
-						Leave
-					</Button>
-				</div>
+				{((playerGameLogic.isP1 && (!acceptGame || count < 1)) ||
+					(!playerGameLogic.isP1 && count < 1)) && (
+					<div className="closeButton">
+						<Button
+							className="buttonMui"
+							variant="contained"
+							onClick={() => setOpen(true)}
+						>
+							Leave
+						</Button>
+					</div>
+				)}
 				{dialogMui(
 					open,
 					() => setOpen(false),
