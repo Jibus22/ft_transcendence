@@ -20,7 +20,6 @@ export default function FormPlay({
 	loading,
 	setPlayerGameLogic,
 }: IProps) {
-	console.log('--------- FORMPLAY ---------');
 	const anim = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',

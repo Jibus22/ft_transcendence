@@ -44,7 +44,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				},
 			);
 			setProfile(result?.data);
-			console.log('PROFILE', result?.data);
+			// console.log('PROFILE', result?.data);
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -60,7 +60,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			)
 			.catch(console.error);
 		setBlocked(result?.data || []);
-		console.log('REOADING BLOCKS', result?.data);
+		// console.log('REOADING BLOCKS', result?.data);
 	};
 
 	const isBlocked = () => {
@@ -162,7 +162,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				{ withCredentials: true },
 			);
 			getBlocks();
-			window.dispatchEvent(new CustomEvent("userBlocked", { detail: { id } }));
+			window.dispatchEvent(new CustomEvent('userBlocked', { detail: { id } }));
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -180,7 +180,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				},
 			);
 			getBlocks();
-			window.dispatchEvent(new CustomEvent("userBlocked", { detail: { id } }));
+			window.dispatchEvent(new CustomEvent('userBlocked', { detail: { id } }));
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -188,7 +188,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 
 	const updateUserInfo = ({ detail }: any) => {
 		if (detail.id === user.user.id) {
-			console.log('UPDATED');
+			// console.log('UPDATED');
 			getProfile();
 		}
 	};
@@ -205,7 +205,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		};
 	}, []);
 
-	console.log("Profile", profile);
+	// console.log("Profile", profile);
 
 	return (
 		<>
@@ -271,16 +271,15 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 						<span>Games</span>
 					</div>
 				</ProfileView>
-						)}
-	<Rules>
-
-					<div >
-						<h2>Rules</h2>
-						<p>Here is a simple Pong Game, made with love</p>
-						<p>Join the game and use your Up and Down keys to play.</p>
-						<p>First player with 10 points wins the match.</p>
-					</div>
-	</Rules>
+			)}
+			<Rules>
+				<div>
+					<h2>Rules</h2>
+					<p>Here is a simple Pong Game, made with love</p>
+					<p>Join the game and use your Up and Down keys to play.</p>
+					<p>First player with 10 points wins the match.</p>
+				</div>
+			</Rules>
 		</>
 	);
 };

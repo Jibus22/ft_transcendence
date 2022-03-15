@@ -34,7 +34,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 
 	const handleClick = async (watch: string) => {
 		gameWs?.emit('watchGame', watch, (response: OnlineGameAndMapType) => {
-			console.log(`CLIENT: response from server -> `, response);
+			// console.log(`CLIENT: response from server -> `, response);
 			setWatchGameScore(() => response);
 		});
 		setTime(true);

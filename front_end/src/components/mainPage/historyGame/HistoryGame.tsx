@@ -1,4 +1,10 @@
-import { Avatar, AvatarGroup, Badge, Button, useMediaQuery } from '@mui/material';
+import {
+	Avatar,
+	AvatarGroup,
+	Badge,
+	Button,
+	useMediaQuery,
+} from '@mui/material';
 import axios, { AxiosError } from 'axios';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
@@ -37,10 +43,14 @@ const HistoryGame = () => {
 
 	const fetchData = async () => {
 		try {
-			const { data } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/game/history`, {
-				withCredentials: true,
-			});
-			console.log(data);
+			const { data } = await axios.get(
+				`http://${
+					process.env.REACT_APP_BASE_URL || 'localhost:3000'
+				}/game/history`,
+				{
+					withCredentials: true,
+				},
+			);
 			setDataGame(data);
 		} catch (error) {
 			const err = error as AxiosError;
@@ -95,17 +105,28 @@ const HistoryGame = () => {
 										variant="dot"
 										sx={{
 											'.MuiBadge-badge': {
-												backgroundColor: setStatusColor(data.players[0].user.status),
+												backgroundColor: setStatusColor(
+													data.players[0].user.status,
+												),
 												color: setStatusColor(data.players[0].user.status),
-												borderColor: setStatusColor(data.players[0].user.status),
+												borderColor: setStatusColor(
+													data.players[0].user.status,
+												),
 												boxShadow: setStatusColor(data.players[0].user.status),
 											},
 											'.MuiBadge-badge::after': {
-												borderColor: setStatusColor(data.players[0].user.status),
+												borderColor: setStatusColor(
+													data.players[0].user.status,
+												),
 											},
 										}}
 									>
-										<Avatar alt="userImg" src={data.players[0].user.photo_url} variant="square" className="domUser" />
+										<Avatar
+											alt="userImg"
+											src={data.players[0].user.photo_url}
+											variant="square"
+											className="domUser"
+										/>
 									</Badge>
 									<Badge
 										overlap="circular"
@@ -113,17 +134,28 @@ const HistoryGame = () => {
 										variant="dot"
 										sx={{
 											'.MuiBadge-badge': {
-												backgroundColor: setStatusColor(data.players[1].user.status),
+												backgroundColor: setStatusColor(
+													data.players[1].user.status,
+												),
 												color: setStatusColor(data.players[1].user.status),
-												borderColor: setStatusColor(data.players[1].user.status),
+												borderColor: setStatusColor(
+													data.players[1].user.status,
+												),
 												boxShadow: setStatusColor(data.players[1].user.status),
 											},
 											'.MuiBadge-badge::after': {
-												borderColor: setStatusColor(data.players[1].user.status),
+												borderColor: setStatusColor(
+													data.players[1].user.status,
+												),
 											},
 										}}
 									>
-										<Avatar alt="userImg" src={data.players[1].user.photo_url} variant="rounded" className="extUser" />
+										<Avatar
+											alt="userImg"
+											src={data.players[1].user.photo_url}
+											variant="rounded"
+											className="extUser"
+										/>
 									</Badge>
 								</AvatarGroup>
 							</div>
@@ -176,8 +208,12 @@ const HistoryGame = () => {
 			setInKeyWord(true);
 			const results = dataGame.filter((dataGame) => {
 				return (
-					dataGame.players[0].user.login.toLocaleLowerCase().startsWith(keyword.toLocaleLowerCase()) ||
-					dataGame.players[1].user.login.toLocaleLowerCase().startsWith(keyword.toLocaleLowerCase())
+					dataGame.players[0].user.login
+						.toLocaleLowerCase()
+						.startsWith(keyword.toLocaleLowerCase()) ||
+					dataGame.players[1].user.login
+						.toLocaleLowerCase()
+						.startsWith(keyword.toLocaleLowerCase())
 				);
 			});
 			setFoundUsers(results);
@@ -194,7 +230,9 @@ const HistoryGame = () => {
 	const sortByUser = () => {
 		if (isMyGame) {
 			const sortByName = dataGame.filter(
-				(dataGame) => dataGame.players[0].user.login === userName || dataGame.players[1].user.login === userName,
+				(dataGame) =>
+					dataGame.players[0].user.login === userName ||
+					dataGame.players[1].user.login === userName,
 			);
 			return sortByName.sort(userSortDate).map((data) => userList(data));
 		}
@@ -216,7 +254,9 @@ const HistoryGame = () => {
 						<div className="myGameDIv d-flex">
 							<Button
 								onClick={searchMyGame}
-								className={`${isActive ? 'muiButtonActive' : 'muiButtonInactiv'} muiButton `}
+								className={`${
+									isActive ? 'muiButtonActive' : 'muiButtonInactiv'
+								} muiButton `}
 								variant="contained"
 								sx={{ width: 2 / 2, height: 2 / 2, textTransform: 'none' }}
 							>

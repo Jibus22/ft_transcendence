@@ -21,7 +21,6 @@ import { gameCallbacks, setWsCallbacks } from './socketInit/socketCbInit';
 import { clearPlayerGameLogic } from './utils/utils';
 
 const MainPage = () => {
-	console.log('--------- MAINPAGE ---------');
 	const {
 		gameWs,
 		setGameWs,
@@ -96,10 +95,7 @@ const MainPage = () => {
 	const [wsId, setWsId] = useState('');
 	const [countInvit, setCountInvit] = useState(0);
 
-	console.log(`countInvit inisde ManPage component: ${countInvit}`);
-
 	useEffect(() => {
-		console.log('INTO MAINPAGE UUSEFFECTTTTT');
 		gameWs?.on('gameFinished', (room: string) => {
 			console.log(`💌  Event: gameFinished -> ${room}`);
 			//enlever l'objet onlinegame de la liste des onlinegames
@@ -141,7 +137,6 @@ const MainPage = () => {
 		});
 
 		return () => {
-			console.log('MAINPAGE CLEANUP');
 			gameWs?.off('gaveUp');
 			gameWs?.off('connect');
 			gameWs?.off('disconnect');
@@ -158,7 +153,6 @@ const MainPage = () => {
 			'gameInvitation',
 			async (challengerData: UserDto, challengerWsId: string) => {
 				setCountInvit((c) => c + 1);
-				console.log(`countInvit inside game invitation: ${countInvit}`);
 				if (countInvit > 0) {
 					gameWs?.emit('gameInvitResponse', {
 						response: 'KO',
@@ -204,7 +198,6 @@ const MainPage = () => {
 			clearPlayerGameLogic(prevState),
 		);
 		setCountInvit(countInvit - 1);
-		console.log(`countInvit inside close CB after dec: ${countInvit}`);
 		setTimeSnack(false);
 	}, [countInvit, wsId]);
 
@@ -218,13 +211,9 @@ const MainPage = () => {
 			},
 		);
 		setCountInvit(countInvit - 1);
-		console.log(`countInvit inside ok CB after dec: ${countInvit}`);
 		setTimeSnack(false);
 		navigate('/Mainpage');
 	}, [countInvit, wsId]);
-
-	console.log('playerGameLogic');
-	console.log(playerGameLogic);
 
 	return (
 		<div className={`${isHeader ? 'mainPageBody' : ''} d-flex flex-column `}>

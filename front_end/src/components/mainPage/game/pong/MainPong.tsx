@@ -19,7 +19,6 @@ export default function MainPong({
 	setPlayerGameLogic,
 	playerGameLogic,
 }: IProps) {
-	console.log('--------- MAINPONG ---------');
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -84,7 +83,6 @@ export default function MainPong({
 	const [scoreJ2, setScoreJ2] = useState(-1);
 
 	useEffect(() => {
-		console.log('       MAINPONG.   USEFFECT MOUNTING');
 		setLeaveGame(true);
 		if (!isWatchGame) {
 			if (backInGame) {
@@ -112,7 +110,6 @@ export default function MainPong({
 		}
 
 		return () => {
-			console.log('       MAINPONG.   USEFFECT MOUNTING CLEANUP');
 			setLeaveGame(false);
 			setIsWatchGame(false);
 			setRoomId('');
@@ -129,7 +126,6 @@ export default function MainPong({
 	}, []);
 
 	useEffect(() => {
-		console.log('       MAINPONG.   USEFFECT count');
 		gameWs?.on('countDown', (count: number) => {
 			setCount(count);
 		});
@@ -140,7 +136,6 @@ export default function MainPong({
 	}, [gameWs, count]);
 
 	useEffect(() => {
-		console.log('       MAINPONG.   USEFFECT listeners');
 		gameWs?.on('startGame', (room: string) => {
 			console.log(`💌  Event: startGame -> ${room}`);
 			setRoomId(room);
@@ -199,7 +194,6 @@ export default function MainPong({
 		});
 
 		return () => {
-			console.log('       MAINPONG.   USEFFECT listeners CLEANUP');
 			gameWs?.off('startGame');
 			gameWs?.off('playerGiveUp');
 			gameWs?.off('getGameData');
@@ -214,7 +208,6 @@ export default function MainPong({
 	useEffect(() => {
 		gameWs?.on('setMap', (room: string) => {
 			gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
-				console.log('P1 callback watch return: ', watch);
 				setWatchId(watch);
 			});
 		});

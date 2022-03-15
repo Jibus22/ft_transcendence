@@ -18,7 +18,6 @@ export default function SnackBarre({
 	handleAccept,
 	handleDeny,
 }: IProps) {
-	console.log('=====  SNACKBAR ====');
 	let timer: NodeJS.Timer;
 	const [progress, setProgress] = useState(0);
 
