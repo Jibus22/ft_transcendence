@@ -184,18 +184,23 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		}
 	};
 
+	const updateUserInfo = (details: any) => {
+		if (details.id === user.user.id) {
+			console.log('UPDATED');
+			getProfile();
+		}
+	};
+
 	useEffect(() => {
 		getFriends();
 		getBlocks();
 		getProfile();
 
-		window.addEventListener('publicUserInfosUpdated', ({ detail }: any) => {
-			console.log('INFO UPDTED', detail);
-			if (detail.id === user.user.id) {
-				console.log('UPDATED');
-				getProfile();
-			}
-		});
+		window.addEventListener('publicUserInfosUpdated', updateUserInfo);
+
+		return () => {
+			window.removeEventListener('publicUserInfosUpdated', updateUserInfo);
+		};
 	}, []);
 
 	console.log("Profile", profile);

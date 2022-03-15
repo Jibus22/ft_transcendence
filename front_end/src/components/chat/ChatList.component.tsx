@@ -141,15 +141,10 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openPublicRoom = async (roomId: any) => {
-		// if (window.roomsLoading)
-		// 	return;
-		// console
-		// window.roomsLoading = true;
 		try {
 			const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
 			openChat(data);
 		} catch (e: any) { console.log(e) };
-		// window.roomsLoading = false;
 	};
 
 	const joinPublicChatRoom = async (room: any) => {
@@ -187,8 +182,9 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			if (window.roomsLoading)
 				return;
 			getPublicRooms();
-			console.log(`Updating chat ${window.chatId}`);
-			getChats(window.chatId || null);
+			if (window.chatId !== null) {
+				getChats(window.chatId || null);
+			}
 		})
 
 		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
@@ -224,7 +220,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
 		{ tab === 0 && !search.length && (<List>
-			{chats.map((chat: any) => (chat && <Preview key={chat.id} onClick={() => openChat(chat)}>
+			{chats.filter((chat: any) => chat.participants.length > 0).map((chat: any) => (chat && <Preview key={chat.id} onClick={() => openChat(chat)}>
 				{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 				<div>
 					<h4>{chatName(chat, currentUser)}</h4>
@@ -245,7 +241,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		{ tab === 2 && !search.length && (
 			<>
 				<List>
-					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => joinPublicChatRoom(chat)}>
+					{publicChats.filter((chat: any) => chat.participants.length > 0).map((chat: any) => (<Preview key={chat.id} onClick={() => joinPublicChatRoom(chat)}>
 						{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 						<div>
 							<h4>{chatName(chat, currentUser)}</h4>

@@ -11,9 +11,9 @@ const ChatContainer = ({ open }: any) => {
 	const [chat, setChat] = useState<any>(null);
 	const [currentUser, setCurrentUser] = useState<any>(null);
 
-	const openChat = (room: any) => {
+	const openChat = (room: any | null) => {
 		setChat(room);
-		window.chatId = room.id;
+		window.chatId = room?.id;
 	};
 
 	const getCurrentUser = async () => {
