@@ -264,7 +264,16 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 						<span>Games</span>
 					</div>
 				</ProfileView>
-			)}
+						)}
+	<Rules>
+
+					<div >
+						<h2>Rules</h2>
+						<p>Here is a simple Pong Game, made with love</p>
+						<p>Join the game and use your Up and Down keys to play.</p>
+						<p>First player with 10 points wins the match.</p>
+					</div>
+	</Rules>
 		</>
 	);
 };
@@ -307,6 +316,24 @@ const ButtonRow = styled.div`
 
 const ProfileView = styled.div`
 	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	margin-top: 20px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		span:nth-child(1) {
+			font-size: 20px;
+		}
+	}
+`;
+
+const Rules = styled.div`
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-evenly;
 	margin-top: 20px;
 
