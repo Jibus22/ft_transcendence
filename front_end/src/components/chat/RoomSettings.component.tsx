@@ -46,6 +46,9 @@ const RoomSettings = ({ room, currentUser }: any) => {
 
 	const changePassword = async () => {
 		const newPassword = prompt("New password (empty for no password)");
+		if (newPassword === null) {
+			return;
+		}
 		axios.patch(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/password`, {
 			password: newPassword
 		}, { withCredentials: true })
@@ -151,16 +154,8 @@ const RoomSettings = ({ room, currentUser }: any) => {
 			await axios.delete(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/me/rooms/${room.id}`, { withCredentials: true });
 			setTimeout(
 				() => window.dispatchEvent(new CustomEvent("shouldRefreshPublicRoom", { detail: { id: room.id } })),
-				1000
+				200
 			)
-			setTimeout(
-				() => window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } })),
-				1000
-			);
-			setTimeout(
-				() => window.dispatchEvent(new CustomEvent("quitRoom", { detail: { } })),
-				2000
-			);
 		} catch (e: any) { alert(e.response?.data?.error) };
 	}
 
