@@ -186,8 +186,8 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		}
 	};
 
-	const updateUserInfo = (details: any) => {
-		if (details.id === user.user.id) {
+	const updateUserInfo = ({ detail }: any) => {
+		if (detail.id === user.user.id) {
 			console.log('UPDATED');
 			getProfile();
 		}

@@ -166,50 +166,52 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		});
 	};
 
+	const refreshRooms = () => {
+		// Sometimes the API responds before the db was updated
+		// So we wait 200ms to make sure to have the latest changes
+		setTimeout(() => getPublicRooms(), 200);
+		setTimeout(() => getChats(), 200);
+	}
+
+	const refreshRoomAndHydrate = ({ detail }: any) => {
+		getPublicRooms();
+		if (window.chatId !== null) {
+			getChats(window.chatId || null);
+		}
+	};
+
+	const refreshFriends = () => {
+		getFriends();
+	}
+
+	const handleQuitRoom = () => {
+		getPublicRooms();
+		openChat(null);
+	}
+
 	useEffect(() => {
 		getUsers();
 		getChats();
 		getFriends();
 		getPublicRooms();
 
-		window.addEventListener("publicRoomCreated", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
-			setTimeout(() => getPublicRooms(), 100);
-		})
-
-		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
-			getPublicRooms();
-			if (window.chatId !== null) {
-				getChats(window.chatId || null);
-			}
-		})
-
-		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
-			getPublicRooms();
-			getChats();
-		})
-
-		window.addEventListener("userAdded", ({ detail }: any) => {
-			getPublicRooms();
-			getChats();
-		})
-	
-		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-			getChats(detail.id);
-		})
-	
-		window.addEventListener("friendsUpdated", ({ detail }: any) => {
-			if (window.friendsLoading)
-				return;
-			getFriends();
-		})
-
-		window.addEventListener("quitRoom", () => {
-			openChat(null);
-		})
+		window.addEventListener("publicRoomCreated", refreshRooms);
+		window.addEventListener("roomParticipantUpdated", refreshRooms);
+		window.addEventListener("userAdded", refreshRooms);
+		window.addEventListener("shouldRefreshPublicRoom", refreshRoomAndHydrate);
+		window.addEventListener("publicRoomUpdated", refreshRoomAndHydrate);
+		window.addEventListener("friendsUpdated", refreshFriends);
+		window.addEventListener("quitRoom", handleQuitRoom);
+		
+		return () => {
+			window.removeEventListener("publicRoomCreated", refreshRooms);
+			window.removeEventListener("roomParticipantUpdated", refreshRooms);
+			window.removeEventListener("userAdded", refreshRooms);
+			window.removeEventListener("shouldRefreshPublicRoom", refreshRoomAndHydrate);
+			window.removeEventListener("publicRoomUpdated", refreshRoomAndHydrate);
+			window.removeEventListener("friendsUpdated", refreshFriends);
+			window.removeEventListener("quitRoom", handleQuitRoom);
+		};
 
 	}, []);
 
@@ -248,7 +250,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 							{chat.is_password_protected && <span><LockIcon sx={{ fontSize: 14 }}/>Locked</span>}
 						</div>
 					</Preview>))}
-					{!publicChats.length && <span className="empty-message">No chat yet</span>}
+					{!publicChats.filter((chat: any) => chat.participants.length > 0).length && <span className="empty-message">No chat yet</span>}
 				</List>
 				<LargeButton onClick={() => createChat()}>+ Create group</LargeButton>
 			</>
