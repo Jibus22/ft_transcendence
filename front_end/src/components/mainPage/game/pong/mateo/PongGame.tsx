@@ -77,7 +77,7 @@ class PongGame extends React.Component<MyProps> {
 		this._widthPlayer,
 		this.width - 2 * this._widthPlayer,
 	);
-	private _maxScore = 4;
+	private _maxScore = 10;
 
 	_ball: Ball = new Ball(this.width, this.height);
 	_keystate: any = {};
