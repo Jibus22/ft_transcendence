@@ -175,7 +175,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		window.addEventListener("publicRoomCreated", ({ detail }: any) => {
 			if (window.roomsLoading)
 				return;
-			getPublicRooms();
+			setTimeout(() => getPublicRooms(), 100);
 		})
 
 		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
