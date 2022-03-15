@@ -67,8 +67,7 @@ export default function MainPong({
 			setIsWatchGame(false);
 			setStartGame(false);
 		} else {
-			if (playerGameLogic.opponent.game_ws && !watchId)
-				await sleep((count + 1) * 1000);
+			if (count < 6 && count > 0 && !watchId) await sleep((count + 1) * 1000);
 			const game_ws = playerGameLogic.opponent.game_ws;
 			gameWs?.emit('giveUpGame', {
 				bcast: { room: roomId, watchers: watchId, op: game_ws },
