@@ -1,6 +1,6 @@
 import { Avatar, Button, CircularProgress } from '@mui/material';
 import clsx from 'clsx';
-import React, { useEffect, useState, Dispatch } from 'react';
+import React, { useEffect, useCallback, useState, Dispatch } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import MapChoice from './mapChoice/MapChoice';
@@ -54,14 +54,14 @@ export default function MainPong({
 	} = useMainPage();
 
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
-	const [count, setCount] = useState<number>(10);
+	const [count, setCount] = useState<number>(6);
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [watchId, setWatchId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
 	const [pauseGame, setPauseGame] = useState(false);
 
-	const closeGame = async () => {
+	const closeGame = useCallback(async () => {
 		if (isWatchGame) {
 			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
 			setIsWatchGame(false);
@@ -77,7 +77,7 @@ export default function MainPong({
 				setStartGame(false);
 			}, 1500);
 		}
-	};
+	}, [roomId, watchId]);
 
 	const [nbPlayer, setNbPlayer] = useState(0);
 	const [disableMap, setDisableMap] = useState<boolean>(false);
@@ -348,13 +348,14 @@ export default function MainPong({
 						</Button>
 					</div>
 				)}
-				{dialogMui(
-					open,
-					() => setOpen(false),
-					closeGame,
-					'Warning !',
-					'Are you sure you want to quit the game ?',
-				)}
+				{(count > 5 || count < 1) &&
+					dialogMui(
+						open,
+						() => setOpen(false),
+						closeGame,
+						'Warning !',
+						'Are you sure you want to quit the game ?',
+					)}
 				{dialogueLoading(
 					openDialogLoading,
 					'Warning',
