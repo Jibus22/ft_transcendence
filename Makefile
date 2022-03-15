@@ -1,7 +1,7 @@
 TEST_ARG := $(if $(TARGET),--testRegex="$(TARGET)",$())
 
 all:  ##
-	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up ; docker-compose rm -fsv
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up ; docker-compose rm -fsv
 ## TODO -> change to prod !
 
 ## -----------------------------------------------------------------------------

@@ -9,11 +9,11 @@ import { DevelopmentService } from './development.service';
 })
 export class DevelopmentModule {
   static forRoot(): DynamicModule {
-    // if (process.env.NODE_ENV === 'production') {
-    //   return {
-    //     module: DevelopmentModule,
-    //   };
-    // }
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        module: DevelopmentModule,
+      };
+    }
 
     return {
       module: DevelopmentModule,
