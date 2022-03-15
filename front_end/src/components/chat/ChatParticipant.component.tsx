@@ -162,6 +162,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				{ withCredentials: true },
 			);
 			getBlocks();
+			window.dispatchEvent(new CustomEvent("userBlocked", { detail: { id } }));
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -179,6 +180,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				},
 			);
 			getBlocks();
+			window.dispatchEvent(new CustomEvent("userBlocked", { detail: { id } }));
 		} catch (e: any) {
 			console.log(e);
 		}
