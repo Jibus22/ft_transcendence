@@ -92,7 +92,10 @@ export class UsersController {
     description: 'Array of users in the friends list',
   })
   async readAllFriends(@CurrentUser() user: User) {
-    return await this.relationsService.readFriendsRelation(user.id);
+    return await this.relationsService.readAllRelations(
+      user.id,
+      RelationType.Friend,
+    );
   }
 
   @Post('/friend')
