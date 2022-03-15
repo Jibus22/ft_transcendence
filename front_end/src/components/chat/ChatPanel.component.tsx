@@ -101,6 +101,7 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		getBlockedUsers();
 		getMessages();
 		window.removeEventListener("newMessage", manageNewMessage);
+		window.removeEventListener("userBlocked", manageNewBlock);
 		window.addEventListener("newMessage", manageNewMessage);
 		window.addEventListener("userBlocked", manageNewBlock);
 
