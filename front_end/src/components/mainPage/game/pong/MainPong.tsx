@@ -7,7 +7,7 @@ import MapChoice from './mapChoice/MapChoice';
 import PongGame from './mateo/PongGame';
 import './pongGame.scss';
 import { IOnlineGameRemove, UserDto, PlayerGameLogic } from '../../../type';
-import { clearGameData, clearPlayerGameLogic } from '../../utils/utils';
+import { sleep, clearGameData, clearPlayerGameLogic } from '../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
 interface IProps {
@@ -61,12 +61,14 @@ export default function MainPong({
 	const [acceptGame, setAcceptGame] = useState(false);
 	const [pauseGame, setPauseGame] = useState(false);
 
-	const closeGame = () => {
+	const closeGame = async () => {
 		if (isWatchGame) {
 			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
 			setIsWatchGame(false);
 			setStartGame(false);
 		} else {
+			if (playerGameLogic.opponent.game_ws && !watchId)
+				await sleep((count + 1) * 1000);
 			const game_ws = playerGameLogic.opponent.game_ws;
 			gameWs?.emit('giveUpGame', {
 				bcast: { room: roomId, watchers: watchId, op: game_ws },
