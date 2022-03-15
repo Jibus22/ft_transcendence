@@ -95,6 +95,10 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		getMessages();
 		window.removeEventListener("newMessage", manageNewMessage);
 		window.addEventListener("newMessage", manageNewMessage);
+
+		return () => {
+			window.removeEventListener("newMessage", manageNewMessage);
+		}
 	}, []);
 
 	return (<MessagesPaneWrapper>

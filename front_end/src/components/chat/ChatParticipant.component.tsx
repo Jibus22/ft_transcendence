@@ -28,7 +28,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				}/users/friend`,
 				{ withCredentials: true },
 			)
-			.catch(console.error);
+			.catch(console.log);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
 	};
