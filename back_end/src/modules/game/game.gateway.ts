@@ -153,11 +153,11 @@ export class GameGateway
     client.to(room).emit('getGameData', gameData);
 
     ///// TEST // TODO: delete test below
-    console.log(`client id: ${client.id}`);
-    console.log(
-      'countdown finished, game: ',
-      await this.gameService.findOne(room, null),
-    );
+    // console.log(`client id: ${client.id}`);
+    // console.log(
+    //   'countdown finished, game: ',
+    //   await this.gameService.findOne(room, null),
+    // );
     return gameData.watch;
   }
 
@@ -234,8 +234,8 @@ export class GameGateway
           this.wsGameService.updatePlayerStatus(users[1], {
             is_in_game: false,
           });
-        console.log('catch e.status: ', e.status);
-        console.log('catch e.message: ', e.message);
+        // console.log('catch e.status: ', e.status);
+        // console.log('catch e.message: ', e.message);
       }
     } else {
       this.wsGameService.updatePlayerStatus(users[0], { is_in_game: false });

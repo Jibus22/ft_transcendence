@@ -141,15 +141,10 @@ const ChatList = ({ openChat, currentUser }: any) => {
 	};
 
 	const openPublicRoom = async (roomId: any) => {
-		// if (window.roomsLoading)
-		// 	return;
-		// console
-		// window.roomsLoading = true;
 		try {
 			const { data }: any = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${roomId}/infos`, { withCredentials: true });
 			openChat(data);
 		} catch (e: any) { console.log(e) };
-		// window.roomsLoading = false;
 	};
 
 	const joinPublicChatRoom = async (room: any) => {
@@ -171,48 +166,52 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		});
 	};
 
+	const refreshRooms = () => {
+		// Sometimes the API responds before the db was updated
+		// So we wait 200ms to make sure to have the latest changes
+		setTimeout(() => getPublicRooms(), 200);
+		setTimeout(() => getChats(), 200);
+	}
+
+	const refreshRoomAndHydrate = ({ detail }: any) => {
+		getPublicRooms();
+		if (window.chatId !== null) {
+			getChats(window.chatId || null);
+		}
+	};
+
+	const refreshFriends = () => {
+		getFriends();
+	}
+
+	const handleQuitRoom = () => {
+		getPublicRooms();
+		openChat(null);
+	}
+
 	useEffect(() => {
 		getUsers();
 		getChats();
 		getFriends();
 		getPublicRooms();
 
-		window.addEventListener("publicRoomCreated", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
-			getPublicRooms();
-		})
-
-		window.addEventListener("publicRoomUpdated", ({ detail }: any) => {
-			if (window.roomsLoading)
-				return;
-			getPublicRooms();
-			getChats();
-		})
-
-		window.addEventListener("roomParticipantUpdated", ({ detail }: any) => {
-			getPublicRooms();
-			getChats();
-		})
-
-		window.addEventListener("userAdded", ({ detail }: any) => {
-			getPublicRooms();
-			getChats();
-		})
-	
-		window.addEventListener("shouldRefreshPublicRoom", ({ detail }: any) => {
-			getChats(detail.id);
-		})
-	
-		window.addEventListener("friendsUpdated", ({ detail }: any) => {
-			if (window.friendsLoading)
-				return;
-			getFriends();
-		})
-
-		window.addEventListener("quitRoom", () => {
-			openChat(null);
-		})
+		window.addEventListener("publicRoomCreated", refreshRooms);
+		window.addEventListener("roomParticipantUpdated", refreshRooms);
+		window.addEventListener("userAdded", refreshRooms);
+		window.addEventListener("shouldRefreshPublicRoom", refreshRoomAndHydrate);
+		window.addEventListener("publicRoomUpdated", refreshRoomAndHydrate);
+		window.addEventListener("friendsUpdated", refreshFriends);
+		window.addEventListener("quitRoom", handleQuitRoom);
+		
+		return () => {
+			window.removeEventListener("publicRoomCreated", refreshRooms);
+			window.removeEventListener("roomParticipantUpdated", refreshRooms);
+			window.removeEventListener("userAdded", refreshRooms);
+			window.removeEventListener("shouldRefreshPublicRoom", refreshRoomAndHydrate);
+			window.removeEventListener("publicRoomUpdated", refreshRoomAndHydrate);
+			window.removeEventListener("friendsUpdated", refreshFriends);
+			window.removeEventListener("quitRoom", handleQuitRoom);
+		};
 
 	}, []);
 
@@ -223,7 +222,7 @@ const ChatList = ({ openChat, currentUser }: any) => {
 			<SearchIcon style={{ fontSize: "32px", color: "#CA6C88" }} className="icon" />
 		</SearchField>
 		{ tab === 0 && !search.length && (<List>
-			{chats.map((chat: any) => (chat && <Preview key={chat.id} onClick={() => openChat(chat)}>
+			{chats.filter((chat: any) => chat.participants.length > 0).map((chat: any) => (chat && <Preview key={chat.id} onClick={() => openChat(chat)}>
 				{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 				<div>
 					<h4>{chatName(chat, currentUser)}</h4>
@@ -244,14 +243,14 @@ const ChatList = ({ openChat, currentUser }: any) => {
 		{ tab === 2 && !search.length && (
 			<>
 				<List>
-					{publicChats.map((chat: any) => (<Preview key={chat.id} onClick={() => joinPublicChatRoom(chat)}>
+					{publicChats.filter((chat: any) => chat.participants.length > 0).map((chat: any) => (<Preview key={chat.id} onClick={() => joinPublicChatRoom(chat)}>
 						{chat.participants.filter((user: any) => user?.user?.id !== currentUser?.id).slice(0, 3).map((user: any) => <img key={user.id} src={user?.user?.photo_url} alt={user?.user?.login} />)}
 						<div>
 							<h4>{chatName(chat, currentUser)}</h4>
 							{chat.is_password_protected && <span><LockIcon sx={{ fontSize: 14 }}/>Locked</span>}
 						</div>
 					</Preview>))}
-					{!publicChats.length && <span className="empty-message">No chat yet</span>}
+					{!publicChats.filter((chat: any) => chat.participants.length > 0).length && <span className="empty-message">No chat yet</span>}
 				</List>
 				<LargeButton onClick={() => createChat()}>+ Create group</LargeButton>
 			</>

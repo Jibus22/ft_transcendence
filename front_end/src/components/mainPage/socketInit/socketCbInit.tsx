@@ -86,6 +86,9 @@ export const setWsCallbacks = (
 		window.dispatchEvent(
 			new CustomEvent('publicRoomUpdated', { detail: message }),
 		);
+		window.dispatchEvent(
+			new CustomEvent('publicUserInfosUpdated', { detail: message }),
+		);
 	});
 };
 
@@ -100,7 +103,7 @@ export const gameCallbacks = (
 
 	socket.on('connect', async () => {
 		console.log(`[GAME SOCKET 🎲 ] WS CONNECT`);
-		await sleep(1000);
+		await sleep(2000);
 		stateSetter2(true);
 	});
 

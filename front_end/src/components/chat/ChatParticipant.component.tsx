@@ -28,7 +28,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				}/users/friend`,
 				{ withCredentials: true },
 			)
-			.catch(console.error);
+			.catch(console.log);
 		setFriends(result?.data || []);
 		setFriendsLoading(false);
 	};
@@ -44,7 +44,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				},
 			);
 			setProfile(result?.data);
-			console.log('PROFILE', result?.data);
+			// console.log('PROFILE', result?.data);
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -60,7 +60,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 			)
 			.catch(console.error);
 		setBlocked(result?.data || []);
-		console.log('REOADING BLOCKS', result?.data);
+		// console.log('REOADING BLOCKS', result?.data);
 	};
 
 	const isBlocked = () => {
@@ -162,6 +162,7 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				{ withCredentials: true },
 			);
 			getBlocks();
+			window.dispatchEvent(new CustomEvent('userBlocked', { detail: { id } }));
 		} catch (e: any) {
 			console.log(e);
 		}
@@ -179,8 +180,16 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 				},
 			);
 			getBlocks();
+			window.dispatchEvent(new CustomEvent('userBlocked', { detail: { id } }));
 		} catch (e: any) {
 			console.log(e);
+		}
+	};
+
+	const updateUserInfo = ({ detail }: any) => {
+		if (detail.id === user.user.id) {
+			// console.log('UPDATED');
+			getProfile();
 		}
 	};
 
@@ -189,14 +198,14 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 		getBlocks();
 		getProfile();
 
-		window.addEventListener('publicUserInfosUpdated', ({ detail }: any) => {
-			console.log('INFO UPDTED', detail);
-			if (detail.id === user.user.id) {
-				console.log('UPDATED');
-				getProfile();
-			}
-		});
+		window.addEventListener('publicUserInfosUpdated', updateUserInfo);
+
+		return () => {
+			window.removeEventListener('publicUserInfosUpdated', updateUserInfo);
+		};
 	}, []);
+
+	// console.log("Profile", profile);
 
 	return (
 		<>
@@ -263,6 +272,14 @@ const ChatParticipant = ({ user, currentUser }: any) => {
 					</div>
 				</ProfileView>
 			)}
+			<Rules>
+				<div>
+					<h2>Rules</h2>
+					<p>Here is a simple Pong Game, made with love</p>
+					<p>Join the game and use your Up and Down keys to play.</p>
+					<p>First player with 10 points wins the match.</p>
+				</div>
+			</Rules>
 		</>
 	);
 };
@@ -305,6 +322,24 @@ const ButtonRow = styled.div`
 
 const ProfileView = styled.div`
 	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	margin-top: 20px;
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		span:nth-child(1) {
+			font-size: 20px;
+		}
+	}
+`;
+
+const Rules = styled.div`
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-evenly;
 	margin-top: 20px;
 

@@ -1,13 +1,13 @@
 import { Avatar, Button, CircularProgress } from '@mui/material';
 import clsx from 'clsx';
-import React, { useEffect, useState, Dispatch } from 'react';
+import React, { useEffect, useCallback, useState, Dispatch } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { useMainPage } from '../../../../MainPageContext';
 import MapChoice from './mapChoice/MapChoice';
 import PongGame from './mateo/PongGame';
 import './pongGame.scss';
 import { IOnlineGameRemove, UserDto, PlayerGameLogic } from '../../../type';
-import { clearGameData, clearPlayerGameLogic } from '../../utils/utils';
+import { sleep, clearGameData, clearPlayerGameLogic } from '../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
 interface IProps {
@@ -19,7 +19,6 @@ export default function MainPong({
 	setPlayerGameLogic,
 	playerGameLogic,
 }: IProps) {
-	console.log('--------- MAINPONG ---------');
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
@@ -54,19 +53,20 @@ export default function MainPong({
 	} = useMainPage();
 
 	const [openDialogLoading, setOpenDialogLoading] = useState(false);
-	const [count, setCount] = useState<number>(10);
+	const [count, setCount] = useState<number>(6);
 	const [isChoiceMap, setIsChoiseMao] = useState(false);
 	const [map, setMap] = useState<null | 'one' | 'two' | 'three'>(null);
 	const [watchId, setWatchId] = useState('');
 	const [acceptGame, setAcceptGame] = useState(false);
 	const [pauseGame, setPauseGame] = useState(false);
 
-	const closeGame = () => {
+	const closeGame = useCallback(async () => {
 		if (isWatchGame) {
 			gameWs?.emit('leaveWatchGame', watchGameScore.watch);
 			setIsWatchGame(false);
 			setStartGame(false);
 		} else {
+			if (count < 6 && count > 0 && !watchId) await sleep((count + 1) * 1000);
 			const game_ws = playerGameLogic.opponent.game_ws;
 			gameWs?.emit('giveUpGame', {
 				bcast: { room: roomId, watchers: watchId, op: game_ws },
@@ -75,7 +75,7 @@ export default function MainPong({
 				setStartGame(false);
 			}, 1500);
 		}
-	};
+	}, [roomId, watchId]);
 
 	const [nbPlayer, setNbPlayer] = useState(0);
 	const [disableMap, setDisableMap] = useState<boolean>(false);
@@ -83,7 +83,6 @@ export default function MainPong({
 	const [scoreJ2, setScoreJ2] = useState(-1);
 
 	useEffect(() => {
-		console.log('       MAINPONG.   USEFFECT MOUNTING');
 		setLeaveGame(true);
 		if (!isWatchGame) {
 			if (backInGame) {
@@ -105,13 +104,12 @@ export default function MainPong({
 		} else {
 			if (watchGameScore?.watch === '') setStartGame(false);
 			setNbPlayer(0);
-			setScoreJ1(watchGameScore.challenger.score);
-			setScoreJ2(watchGameScore.opponent.score);
-			setMap(watchGameScore.map);
+			setScoreJ1(watchGameScore?.challenger?.score);
+			setScoreJ2(watchGameScore?.opponent?.score);
+			setMap(watchGameScore?.map);
 		}
 
 		return () => {
-			console.log('       MAINPONG.   USEFFECT MOUNTING CLEANUP');
 			setLeaveGame(false);
 			setIsWatchGame(false);
 			setRoomId('');
@@ -128,7 +126,6 @@ export default function MainPong({
 	}, []);
 
 	useEffect(() => {
-		console.log('       MAINPONG.   USEFFECT count');
 		gameWs?.on('countDown', (count: number) => {
 			setCount(count);
 		});
@@ -139,7 +136,6 @@ export default function MainPong({
 	}, [gameWs, count]);
 
 	useEffect(() => {
-		console.log('       MAINPONG.   USEFFECT listeners');
 		gameWs?.on('startGame', (room: string) => {
 			console.log(`💌  Event: startGame -> ${room}`);
 			setRoomId(room);
@@ -154,6 +150,8 @@ export default function MainPong({
 		gameWs?.on('gameDenied', (opponentData) => {
 			console.log(`💌  Event: gameDenied -> ${opponentData}`);
 			setAcceptGame(false);
+			setIsWatchGame(false);
+			setOpen(false);
 			setOpenDialogLoading(true);
 
 			setTimeout(() => {
@@ -196,7 +194,6 @@ export default function MainPong({
 		});
 
 		return () => {
-			console.log('       MAINPONG.   USEFFECT listeners CLEANUP');
 			gameWs?.off('startGame');
 			gameWs?.off('playerGiveUp');
 			gameWs?.off('getGameData');
@@ -211,7 +208,6 @@ export default function MainPong({
 	useEffect(() => {
 		gameWs?.on('setMap', (room: string) => {
 			gameWs?.emit('setMap', { room: room, map: map }, (watch: string) => {
-				console.log('P1 callback watch return: ', watch);
 				setWatchId(watch);
 			});
 		});
@@ -332,7 +328,8 @@ export default function MainPong({
 					)}
 				</div>
 				{((playerGameLogic.isP1 && (!acceptGame || count < 1)) ||
-					(!playerGameLogic.isP1 && count < 1)) && (
+					(!playerGameLogic.isP1 && count < 1) ||
+					backInGame) && (
 					<div className="closeButton">
 						<Button
 							className="buttonMui"
@@ -343,13 +340,14 @@ export default function MainPong({
 						</Button>
 					</div>
 				)}
-				{dialogMui(
-					open,
-					() => setOpen(false),
-					closeGame,
-					'Warning !',
-					'Are you sure you want to quit the game ?',
-				)}
+				{(count > 5 || count < 1) &&
+					dialogMui(
+						open,
+						() => setOpen(false),
+						closeGame,
+						'Warning !',
+						'Are you sure you want to quit the game ?',
+					)}
 				{dialogueLoading(
 					openDialogLoading,
 					'Warning',

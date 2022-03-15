@@ -47,10 +47,10 @@ export default function Section() {
 					<UserInfo img={FF} name={'Frfrance'} info={'Front-end Developer'} duration={1000} translate={'translate(-500px, 0px)'} />
 				</div>
 				<div className=" profil profil2  ">
-					<UserInfo img={JB} name={'Jle-corr'} info={'Back-end Developer'} duration={1500} translate={'translate(-1000px, 0px)'} />
+					<UserInfo img={JB} name={'Jle-corr'} info={'Fullstack Developer'} duration={1500} translate={'translate(-1000px, 0px)'} />
 				</div>
 				<div className=" profil profil3  ">
-					<UserInfo img={MA} name={'Mrouchy'} info={'Back-end Developer'} duration={2000} translate={'translate(-1500px, 0px)'} />
+					<UserInfo img={MA} name={'Mrouchy'} info={'Canvas Artist'} duration={2000} translate={'translate(-1500px, 0px)'} />
 				</div>
 			</div>
 			<div className="listProfil-2">
@@ -58,7 +58,7 @@ export default function Section() {
 					<UserInfo img={VG} name={'Vgoldman'} info={'Front-end Developer'} duration={1200} translate={'translate(-1000px, 0px)'} />
 				</div>
 				<div className=" profil profil5 ">
-					<UserInfo img={BG} name={'Bvalette'} info={'Back-end Developer'} duration={1700} translate={'translate(-1000px, 0px)'} />
+					<UserInfo img={BG} name={'Bvalette'} info={'DevOps & Fullstack Developer'} duration={1700} translate={'translate(-1000px, 0px)'} />
 				</div>
 			</div>
 		</div>

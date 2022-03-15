@@ -20,7 +20,7 @@
     "start:dev": "npm run seed:siteOwners && nest start --watch",
     "start:devNoSeed": "nest start --watch",
     "start:debug": "npm run seed:siteOwners && nest start --debug 0.0.0.0:9229 --watch",
-    "start:prod": "./wait_and_init_db.sh && nest start --watch",
+    "start:prod": "./wait_and_init_db.sh && nest start",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "npm run seed:siteOwners && jest",
     "test:watch": "npm run seed:siteOwners && jest --watchAll --maxWorkers=1",

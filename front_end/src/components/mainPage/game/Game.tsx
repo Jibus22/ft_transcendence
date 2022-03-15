@@ -24,7 +24,6 @@ export default function Game({
 	setPlayerGameLogic,
 	playerGameLogic,
 }: IProps) {
-	console.log('--------- GAME ---------');
 	const {
 		isWatchGame,
 		setIsDisable,
@@ -54,13 +53,11 @@ export default function Game({
 	}
 
 	useEffect(() => {
-		console.log('--GAME-- USEFFECT');
 		window.addEventListener('gameStartedFromChat', () => {
 			handleClick();
 		});
 
 		return () => {
-			console.log('--GAME-- CLEANUP');
 			window.removeEventListener('gameStartedFromChat', () => {
 				handleClick();
 			});

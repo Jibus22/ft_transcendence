@@ -17,7 +17,6 @@ interface Props {
 }
 
 export default function Play({ Loadingclick, setPlayerGameLogic }: Props) {
-	console.log('--------- PLAY ---------');
 	const props = useSpring({
 		opacity: 1,
 		transform: 'translate(0px, 0px)',
