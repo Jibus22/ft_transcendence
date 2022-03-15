@@ -106,9 +106,9 @@ export default function MainPong({
 		} else {
 			if (watchGameScore?.watch === '') setStartGame(false);
 			setNbPlayer(0);
-			setScoreJ1(watchGameScore.challenger.score);
-			setScoreJ2(watchGameScore.opponent.score);
-			setMap(watchGameScore.map);
+			setScoreJ1(watchGameScore?.challenger?.score);
+			setScoreJ2(watchGameScore?.opponent?.score);
+			setMap(watchGameScore?.map);
 		}
 
 		return () => {

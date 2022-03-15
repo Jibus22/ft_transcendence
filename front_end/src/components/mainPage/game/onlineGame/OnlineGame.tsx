@@ -24,8 +24,13 @@ interface MapProps {
 const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 	const [time, setTime] = useState(false);
 	let navigate = useNavigate();
-	const { setWatchGameScore, setStartGame, setSelectNav, setIsWatchGame } =
-		useMainPage();
+	const {
+		loadingSocket,
+		setWatchGameScore,
+		setStartGame,
+		setSelectNav,
+		setIsWatchGame,
+	} = useMainPage();
 
 	const handleClick = async (watch: string) => {
 		gameWs?.emit('watchGame', watch, (response: OnlineGameAndMapType) => {
@@ -103,7 +108,7 @@ const ListGame: FC<MapProps> = ({ data, loading, gameWs }) => {
 				<LoadingButton
 					className="muiButton"
 					onClick={() => handleClick(data.watch)}
-					disabled={loading || time}
+					disabled={!loadingSocket || loading || time}
 					variant="contained"
 					sx={{
 						borderRadius: 4,
