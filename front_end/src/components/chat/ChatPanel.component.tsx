@@ -1,11 +1,10 @@
-import styled from "styled-components";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import SendIcon from '@mui/icons-material/Send';
 import axios from "axios";
 import { useEffect, useState } from "react";
+import styled from "styled-components";
 import RoomSettings from "./RoomSettings.component";
-
 const chatName = (participants: any) => {
 	let name = "";
 	participants.sort((x: any, y: any) => x.id > y.id).forEach((p: any) => name += p.user.login[0]);
@@ -17,17 +16,22 @@ const ChatPanel = ({ room, currentUser }: any) => {
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState<any[]>([]);
 	const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
+	const [blockedUsers, setBlockedUsers] = useState<any[]>([]);
 
 	const onMessage = (e: any) => {
 		setMessage(e.target.value);
 	};
 
+	const getBlockedUsers = async () => {
+		const { data: receivedBlockedUsers } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true });
+		setBlockedUsers(receivedBlockedUsers);
+	}
+
 	const getMessages = async () => {
 		try {
 			const { data: messages } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/room/${room.id}/message`, { withCredentials: true });
-			const { data: blockedUsers } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true });
 
-			const nonBlockedUsersMessages = (messages as Array<any>).filter(message => !(blockedUsers as Array<any>).find(user => user.id === message.sender.id));
+			const nonBlockedUsersMessages = (messages as Array<any>).filter(message => !blockedUsers.find(user => user.id === message.sender.id));
 			const sortedMessages = nonBlockedUsersMessages.sort((a: any, b: any) => a.timestamp - b.timestamp);
 			setMessages(sortedMessages);
 		} catch (e: any) { console.log(e) };
@@ -74,27 +78,23 @@ const ChatPanel = ({ room, currentUser }: any) => {
 		scrollChatDown();
 	}, [messages]);
 
-	window.addEventListener("newMessage", async({ detail }: any) => {
+	function manageNewMessage(payload: any) {
+		const message = payload.detail;
+		console.log('event listenner starty', message);
 
-		const { data: blockedUsers } = await axios.get(`http://${process.env.REACT_APP_BASE_URL || 'localhost:3000'}/users/block`, { withCredentials: true });
-		const message: any = detail;
-
-		if ((blockedUsers as Array<any>).some(blockedUser => blockedUser.id === message.sender.id)) {
-			return;
+		if (message.room_id === room.id && !messages.some((m: any) => message.id === m.id)) {
+			const isFromBlockedUser = blockedUsers.some(user => user.id === message.sender.id);
+			if (!isFromBlockedUser) {
+				getMessages();
+			}
 		}
-
-		if (message.room_id !== room.id) {
-			return;
-		}
-		const found = messages.filter((m: any) => message.id === m.id);
-		if (found.length > 0) {
-			return;
-		}
-		setMessages([...messages, message]);
-	});
+	}
 
 	useEffect(() => {
+		getBlockedUsers();
 		getMessages();
+		window.removeEventListener("newMessage", manageNewMessage);
+		window.addEventListener("newMessage", manageNewMessage);
 	}, []);
 
 	return (<MessagesPaneWrapper>
